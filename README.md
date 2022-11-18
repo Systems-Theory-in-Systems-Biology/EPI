@@ -1,5 +1,7 @@
 # Implementation of the Euler Parameter Inference (EPI) algorithm
 
+EPIC = Euler Parameter Inference Codebase
+
 The EPI returns a parameter distribution, which is consistent with
 the observed data by solving the inverse problem directly. In
 the case of a one-to-one mapping, this is the true underlying
