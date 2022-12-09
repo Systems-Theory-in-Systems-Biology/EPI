@@ -99,6 +99,13 @@
 <section id="for-developers">
 <h4>For developers<a class="headerlink" href="#for-developers" title="Permalink to this heading"></a></h4>
 <p>Here are some infos on how to work with sphinx, github, …</p>
+<section id="poetry">
+<h5>Poetry<a class="headerlink" href="#poetry" title="Permalink to this heading"></a></h5>
+<p>We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> before the command.</p>
+<p>You can also use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code> to activate the virtual environment and exit it with <code class="docutils literal notranslate"><span class="pre">exit</span></code>.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">xxx</span></code> to add <code class="docutils literal notranslate"><span class="pre">xxx</span></code> as dependencie to your project or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">myPackage</span></code> to add <code class="docutils literal notranslate"><span class="pre">myPackage</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code>dependencies. You can have arbitrary group names.</p>
+<p>For more information read [Poetry]<a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project</a>.</p>
+</section>
 <section id="code-quality-checks">
 <h5>Code quality checks<a class="headerlink" href="#code-quality-checks" title="Permalink to this heading"></a></h5>
 <p>We use black and flake8 to maintain a common style and check the code. Please check your code:</p>
