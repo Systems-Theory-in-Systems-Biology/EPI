@@ -7,8 +7,10 @@ For the implementation it is important to follow the PEP8 guidelines and write a
 
 ## TODO
 
-- [ ] Add dependencies of epi to toml
+- [x] Add dependencies of epi to toml
+- [ ] Fix plotting in pytest, what happens afterwards?
 - [ ] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
+
 
 - [ ] create module for straight forward EPI usage
 - [ ] create and implement example usecases

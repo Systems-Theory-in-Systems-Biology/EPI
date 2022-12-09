@@ -12,6 +12,15 @@ The EPI returns a parameter distribution, which is consistent with the observed 
 
 The documentation can be found under [Go to documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/)
 
+## Quickstart
+
+Run
+```git clone https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git```
+or
+```git clone git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git```.
+```cd EPIC && pip install poetry```
+```poetry install && poetry run pytest```
+
 ### For developers
 
 Here are some infos on how to work with sphinx, github, ...
