@@ -16,6 +16,16 @@ The documentation can be found under [Go to documentation](https://Systems-Theor
 
 Here are some infos on how to work with sphinx, github, ...
 
+#### Poetry
+
+We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending ```poetry run``` before the command.
+
+You can also use ```poetry shell``` to activate the virtual environment and exit it with ```exit```.
+
+Run ```poetry add xxx``` to add ```xxx``` as dependencie to your project or ```poetry add --group dev myPackage``` to add ```myPackage``` to your ```dev```dependencies. You can have arbitrary group names.
+
+For more information read [Poetry]<https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project>.
+
 #### Code quality checks
 
 We use black and flake8 to maintain a common style and check the code. Please check your code:
