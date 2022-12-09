@@ -1,0 +1,17 @@
+# Citation
+
+To cite EPIC in publications, please use:
+
+ H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York,
+ 2009.
+
+A BibTeX entry for LaTeX users is
+
+@Book{,
+   author = {Hadley Wickham},
+   title = {ggplot2: elegant graphics for data analysis},
+   publisher = {Springer New York},
+   year = {2009},
+   isbn = {978-0-387-98140-6},
+   url = {http://had.co.nz/ggplot2/book},
+ }
