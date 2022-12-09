@@ -84,7 +84,7 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 
@@ -133,6 +133,21 @@ description = "Distribution utilities"
 category = "dev"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "emcee"
+version = "3.1.3"
+description = "The Python ensemble sampling toolkit for MCMC"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = "*"
+
+[package.extras]
+extras = ["h5py", "scipy"]
+tests = ["coverage[toml]", "pytest", "pytest-cov"]
 
 [[package]]
 name = "equinox"
@@ -268,6 +283,18 @@ cuda11-cudnn805 = ["jaxlib (==0.3.25+cuda11.cudnn805)"]
 cuda11-cudnn82 = ["jaxlib (==0.3.25+cuda11.cudnn82)"]
 minimum-jaxlib = ["jaxlib (==0.3.22)"]
 tpu = ["jaxlib (==0.3.25)", "libtpu-nightly (==0.1.dev20221109)", "requests"]
+
+[[package]]
+name = "jaxlib"
+version = "0.3.25"
+description = "XLA library for JAX"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+numpy = ">=1.20"
+scipy = ">=1.5"
 
 [[package]]
 name = "jaxtyping"
@@ -646,6 +673,23 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "tqdm"
+version = "4.64.1"
+description = "Fast, Extensible Progress Meter"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["py-make (>=0.1.0)", "twine", "wheel"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
+
+[[package]]
 name = "typeguard"
 version = "2.13.3"
 description = "Run-time type checker for Python"
@@ -714,7 +758,7 @@ requests = ">=2.26"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "7482367601f5d484fb3d257e35e7f45c9fa9c454e02377193a89a6ae5c013d0e"
+content-hash = "e3106cc44def4b2b776976a4539eea2915a6d94f156c226f4efbf858388addf1"
 
 [metadata.files]
 appdirs = [
@@ -851,6 +895,10 @@ distlib = [
     {file = "distlib-0.3.6-py2.py3-none-any.whl", hash = "sha256:f35c4b692542ca110de7ef0bea44d73981caeb34ca0b9b6b2e6d7790dda8f80e"},
     {file = "distlib-0.3.6.tar.gz", hash = "sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46"},
 ]
+emcee = [
+    {file = "emcee-3.1.3-py2.py3-none-any.whl", hash = "sha256:508a4d78933bd4f25c595acb44d3d0f810be69cb0e9b12012a5ed9bd35657987"},
+    {file = "emcee-3.1.3.tar.gz", hash = "sha256:fb6865b38a3f03402b79e0d90685ecb87c4124dd6e7eb41555ba7a6d094fcad0"},
+]
 equinox = [
     {file = "equinox-0.9.2-py3-none-any.whl", hash = "sha256:e562eef30155e3eb28a68acfa1e1bdaf4b901465901dee8206955c5abc7c0011"},
     {file = "equinox-0.9.2.tar.gz", hash = "sha256:b3bf14dee2d4a7d0943347677097c55a8b9fb17c8adcfc4a8a11b5bbb682c192"},
@@ -889,6 +937,22 @@ isort = [
 ]
 jax = [
     {file = "jax-0.3.25.tar.gz", hash = "sha256:18bea69321cb95ea5ea913adfe5e2c1d453cade9d4cfd0dc814ecba9fc0cb6e3"},
+]
+jaxlib = [
+    {file = "jaxlib-0.3.25-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:09508f7000c0fa958fba29267338e8de75b31d7ea29bd79719a568c38f0f8d31"},
+    {file = "jaxlib-0.3.25-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3c75c8efd3702687968820446e3fb9ff997f8a2a07ab92e33b80e2f12eab3d9a"},
+    {file = "jaxlib-0.3.25-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:6e2f4e51041b8371aa3976b5a3a9cdcdccb1bd7b040c9b1345cbf24bd28a8d19"},
+    {file = "jaxlib-0.3.25-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:f2d517635fd77e2729c0ab7863be0d290927d01b2abb2f5dc955c821f8b0d53e"},
+    {file = "jaxlib-0.3.25-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:13446a8382aa9ed944c16af636ca111d0afbbead91eed5cc2dc71195045e71b3"},
+    {file = "jaxlib-0.3.25-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:71866aeaafbc9a12b59dcbe443353772ef235b40c53f8bd7403d39311822c276"},
+    {file = "jaxlib-0.3.25-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:1e59ba58c9e93c1e1cef243f2609ec0b0c0a81160c20b9555aecdea32ccd6a78"},
+    {file = "jaxlib-0.3.25-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:5295354ed5db111e6f3e88cdfa4010d11c33dd926ac61735b9096b4e0746aa7b"},
+    {file = "jaxlib-0.3.25-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:9f3116389ee834b3cdeb30001b085f4b55d7741366034f041c1d377154aa5afa"},
+    {file = "jaxlib-0.3.25-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:78b29c72d0680829db9377ed9be326875849258a60b8173b4a388b34ad18bc78"},
+    {file = "jaxlib-0.3.25-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:2e008e0a6c10aa7e949555e98dc0471e0d550d5d7c109771e38a971b49480538"},
+    {file = "jaxlib-0.3.25-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:fec043cdd55f3257d02e9d8880b33860eacadcae1bd5e26f43fdd08ada23614d"},
+    {file = "jaxlib-0.3.25-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:a50193ba0cbf879021c9d73d7bcfa7eafb9138895d057b774c301aac3701f9a5"},
+    {file = "jaxlib-0.3.25-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:1f1448f102a9d05186f579b6931fa0c607783ecc915fdfaa482c19538affa180"},
 ]
 jaxtyping = [
     {file = "jaxtyping-0.2.9-py3-none-any.whl", hash = "sha256:979a43ef1d6b1e5b985e447a7cab79200f6f8febec565a39bc3277ad9a38eb23"},
@@ -1357,6 +1421,10 @@ toml = [
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+tqdm = [
+    {file = "tqdm-4.64.1-py2.py3-none-any.whl", hash = "sha256:6fee160d6ffcd1b1c68c65f14c829c22832bc401726335ce92c52d395944a6a1"},
+    {file = "tqdm-4.64.1.tar.gz", hash = "sha256:5f4f682a004951c1b450bc753c710e9280c5746ce6ffedee253ddbcbf54cf1e4"},
 ]
 typeguard = [
     {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
