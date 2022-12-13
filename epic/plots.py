@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import cm
 
 from epic.functions import evalKDECauchy, evalKDEGauss, evalLogTransformedDensity
-from epic.models import calcStdevs, dataLoader, paramLoader
+from epic.models import calcStdevs, dataLoader, modelLoader, paramLoader
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0
@@ -52,8 +52,22 @@ def plotKDEoverGrid(data, stdevs):
 
 
 def plotGridResults(modelName):
-    model, modelJac, paramDim, data, stdevs = modelSelector(modelName)
+    model, modelJac = modelLoader(modelName)
+    (
+        paramDim,
+        dataDim,
+        numDataPoints,
+        centralParam,
+        data,
+        stdevs,
+    ) = dataLoader(modelName)
+
     plt.rcParams.update({"font.size": 13})
+
+    # TODO: Fix var names etc.
+    trueParams = paramStdevs = None
+    if "Artificial" in modelName:
+        trueParams, paramStdevs = paramLoader(modelName)
 
     if modelName == "TemperatureArtificial":
         rawTrueLatitudes = np.loadtxt(
@@ -74,15 +88,15 @@ def plotGridResults(modelName):
         simulatedTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
-            trueDensity[i] = evalKDE(
+            trueDensity[i] = evalKDEGauss(
                 trueLatitudes,
                 np.array([latitudesGrid[i]]),
                 trueLatitudesStdevs,
             )
-            trafoDensity[i], _ = evalTransformedDensity(
+            trafoDensity[i], _ = evalLogTransformedDensity(
                 model, modelJac, np.array([latitudesGrid[i]]), data, stdevs
             )
-            simulatedTemperatures[i] = evalKDE(
+            simulatedTemperatures[i] = evalKDEGauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
             )
 
@@ -271,15 +285,15 @@ def plotGridResults(modelName):
         measuredTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
-            trueDensity[i] = evalKDE(
+            trueDensity[i] = evalKDEGauss(
                 trueLatitudes,
                 np.array([latitudesGrid[i]]),
                 trueLatitudesStdevs,
             )
-            trafoDensity[i], _ = evalTransformedDensity(
+            trafoDensity[i], _ = evalLogTransformedDensity(
                 model, modelJac, np.array([latitudesGrid[i]]), data, stdevs
             )
-            measuredTemperatures[i] = evalKDE(
+            measuredTemperatures[i] = evalKDEGauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
             )
 
@@ -299,7 +313,7 @@ def plotGridResults(modelName):
 
         inferredTemperatures = np.zeros(resolution)
         for i in range(resolution):
-            inferredTemperatures[i] = evalKDE(
+            inferredTemperatures[i] = evalKDEGauss(
                 inferredTemperaturesSample,
                 np.array([temperaturesGrid[i]]),
                 stdevs,
