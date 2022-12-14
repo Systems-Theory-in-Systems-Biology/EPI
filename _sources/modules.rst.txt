@@ -5,3 +5,4 @@ EPIC
    :maxdepth: 4
 
    epic
+   tests
