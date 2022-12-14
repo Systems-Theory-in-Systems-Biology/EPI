@@ -6,7 +6,7 @@ from epic.core.model import ArtificialModelInterface, Model
 
 # TODO: defaults to [DefaultParamVal], resolution=100?
 # This should bei either set here and in the other functions or not mentioned at all
-def calcDataMarginals(model: Model, resolution):
+def calcDataMarginals(model: Model, resolution: int) -> None:
     """Evaluate the one-dimensional marginals of the original data over equi-distant grids.
         The stored evaluations can then be used for result visualization.
 
@@ -56,8 +56,8 @@ def calcDataMarginals(model: Model, resolution):
 
 
 def calcEmceeSimResultsMarginals(
-    model: Model, numBurnSamples, occurrence, resolution
-):
+    model: Model, numBurnSamples: int, occurrence: int, resolution: int
+) -> None:
     """Evaluate the one-dimensional marginals of the emcee sampling simulation results over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
@@ -118,7 +118,9 @@ def calcEmceeSimResultsMarginals(
     )
 
 
-def calcParamMarginals(model: Model, numBurnSamples, occurrence, resolution):
+def calcParamMarginals(
+    model: Model, numBurnSamples: int, occurrence: int, resolution: int
+) -> None:
     """Evaluate the one-dimensional marginals of the emcee sampling parameters (and potentially true parameters) over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 

@@ -21,7 +21,7 @@ colorExtra2 = np.array([255.0, 218.0, 174.0]) / 255.0
 # Output: None (except for figures)
 
 
-def plotKDEoverGrid(data, stdevs):
+def plotKDEoverGrid(data: np.ndarray, stdevs: np.ndarray) -> None:
     resolution = 51
 
     for dim in range(data.shape[1]):
@@ -52,7 +52,7 @@ def plotKDEoverGrid(data, stdevs):
 # Output: None (except for figures)
 
 
-def plotGridResults(model: Model):
+def plotGridResults(model: Model) -> None:
 
     (
         paramDim,

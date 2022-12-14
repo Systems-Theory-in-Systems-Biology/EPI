@@ -2,7 +2,9 @@ import numpy as np
 from scipy.stats import cauchy, norm
 
 
-def evalKDECauchy(data, simRes, scales):
+def evalKDECauchy(
+    data: np.ndarray, simRes: np.ndarray, scales: np.ndarray
+) -> np.double:
     r"""Evaluates a Cauchy Kernel Density estimator in one simulation result.
         Assumes that each data point is a potentially high-dimensional sample
         from a joint data distribution.
@@ -24,7 +26,9 @@ def evalKDECauchy(data, simRes, scales):
     )
 
 
-def evalKDEGauss(data, simRes, scales):
+def evalKDEGauss(
+    data: np.ndarray, simRes: np.ndarray, scales: np.ndarray
+) -> np.double:
     """Evaluates a Gaussian Kernel Density estimator in one simulation result.
         Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
         This is for example given for time-series data, where each evaluation time is one dimension of the data point.
@@ -41,7 +45,7 @@ def evalKDEGauss(data, simRes, scales):
     )
 
 
-def calcKernelWidth(data):
+def calcKernelWidth(data: np.ndarray) -> np.double:
     """Sets the width of the kernels used for density estimation of the data according to the Silverman rule
 
     Input: data: 2d array with shape (#Samples, #MeasurementDimensions): data for the model

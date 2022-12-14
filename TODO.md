@@ -14,6 +14,9 @@ Implementation:
 - [ ] make the toolbox usable for SBML models
 - [ ] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
 
+Type Hints:
+- [ ] np.double vs np.ndarray if more dimensions are passed?
+
 Documentation:
 
 - [ ] Fix [Development Quickstart Guide](./DEVELOPMENT.md#quickstart) link in sphinx

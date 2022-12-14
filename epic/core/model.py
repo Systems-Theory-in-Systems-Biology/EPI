@@ -1,5 +1,6 @@
 import abc
 import math
+from typing import Callable
 
 import numpy as np
 from jax import jacrev
@@ -13,6 +14,11 @@ config.update("jax_enable_x64", True)
 
 
 class Model(abc.ABC):
+    """The base class for all models using the EPI algorithm.
+
+    It contains three abstract methods which need to be implemented by subclasses
+    """
+
     def __init__(self) -> None:
         # self.modelName = ""
         self.jacrev_jacobian = None
@@ -35,16 +41,19 @@ class Model(abc.ABC):
     # Define model-specific lower and upper borders for sampling
     # to avoid parameter regions where the simulation can only be evaluated instably.
     @abc.abstractmethod
-    def getParamSamplingLimits(self):
+    def getParamSamplingLimits(self) -> np.ndarray:
         raise NotImplementedError
 
-    def getModelName(self):
+    def getModelName(self) -> str:
         return self.__class__.__name__
 
-    def getCentralParam(self):
+    @abc.abstractmethod
+    def getCentralParam(self) -> np.ndarray:
         raise NotImplementedError
 
-    def dataLoader(self):
+    def dataLoader(
+        self,
+    ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
         paramDim = self.getCentralParam().shape[0]
 
         data = np.loadtxt(
@@ -65,28 +74,41 @@ class Model(abc.ABC):
             dataStdevs,
         )
 
-    def getForward(self):
+    def getForward(self) -> Callable:
         return self.forward
 
     # TODO: Best practice avilable for this?
-    def getJacobian(self):
+    def getJacobian(self) -> Callable:
         self.jacrev_jacobian = jacrev(self.forward)
         return self.jacrev_jacobian
 
+    @abc.abstractmethod
     def forward(self, param):
-        pass
+        """Executed the forward pass of the model to obtain data from a parameter. Do not call the forward method! Instead do :code:`model(param)`.
+
+        :param param: The parameter(set) for which the model should be evaluated.
+        :raises NotImplementedError: If the method is not implemented in the subclass
+        """
+        raise NotImplementedError
 
     def jacobian(self, param):
+        """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method. If the method is not provided in the subclass
+        the jacobian is calculated by  :func:`jax.jacrev`.
+
+        :param param: _description_
+        :type param: _type_
+        :return: _description_
+        :rtype: _type_
+        """
         if self.jacrev_jacobian is None:
             self.jacrev_jacobian = jacrev(self.forward)
         return self.jacrev_jacobian(param)
 
-    def correction(self, param):
+    def correction(self, param) -> np.double:
         """Evaluate the pseudo-determinant of the simulation jacobian (that serves as a correction term) in one specific parameter point.
 
-        :parameter modelJac: (algorithmic differentiation object for Jacobian of the sim model)
-        :parameter param: (parameter at which the simulation model is evaluated)
-        :return: correction (correction factor for density transformation)
+        :parameter param: parameter at which the simulation model is evaluated
+        :return: correction correction factor for density transformation)
         """
 
         # Evaluate the algorithmic differentiation object in the parameter
@@ -110,10 +132,10 @@ class Model(abc.ABC):
 # TODO: Inherit from Model or Interface? (See python-interface)
 class ArtificialModelInterface(abc.ABC):
     @abc.abstractmethod
-    def generateArtificialData(self):
+    def generateArtificialData(self) -> None:
         raise NotImplementedError
 
-    def paramLoader(self):
+    def paramLoader(self) -> tuple[np.ndarray, np.ndarray]:
         """Load and return all parameters for artificial set ups
 
         Args:
@@ -138,15 +160,37 @@ class ArtificialModelInterface(abc.ABC):
 # TODO: Its not really an interface?
 # TODO: Inherit from Model or Interface? (See python-interface)
 class VisualizationModelInterface(abc.ABC):
+    """Provides the function for the generation of the dataGrid and paramGrid for the visualization of the distributions.
+    It forces subclasses to implement the abstract methods  getParamBounds: and getDataBounds:.
+    """
+
     @abc.abstractmethod
-    def getParamBounds(self):
+    def getParamBounds(self) -> np.ndarray:
+        """Returns the bounds on the parameters used to visualize the parameter distribution.
+
+        Returns:
+              np.array: An array of the form [[lowerLimit_dim1, upperLimit_dim1], [lowerLimit_dim2, upperLimit_dim2],...]
+
+        Raises:
+            NotImplementedError: If the method is not implemented in the subclass
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def getDataBounds(self):
+    def getDataBounds(self) -> np.ndarray:
+        """Returns the bounds on the data used to visualize the data distribution.
+
+        Returns:
+              np.array: An array of the form [[lowerLimit_dim1, upperLimit_dim1], [lowerLimit_dim2, upperLimit_dim2],...]
+
+        Raises:
+            NotImplementedError: If the method is not implemented in the subclass
+        """
         raise NotImplementedError
 
-    def generateVisualizationGrid(self, resolution):
+    def generateVisualizationGrid(
+        self, resolution: int
+    ) -> tuple[np.ndarray, np.ndarray]:
         # allocate storage for the parameter and data plotting grid
         paramGrid = np.zeros((resolution, self.paramDim))
         dataGrid = np.zeros((resolution, self.dataDim))

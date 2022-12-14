@@ -4,7 +4,9 @@ from epic.core.kernel_density_estimation import evalKDEGauss
 from epic.core.model import Model
 
 
-def evalLogTransformedDensity(param, model: Model, data, dataStdevs):
+def evalLogTransformedDensity(
+    param: np.ndarray, model: Model, data: np.ndarray, dataStdevs: np.ndarray
+) -> tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.
         This function is intended to be used with the emcee sampler and can be implemented more efficiently at some points.
 

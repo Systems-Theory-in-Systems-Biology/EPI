@@ -5,8 +5,8 @@ from matplotlib import cm
 from epic.core.kernel_density_estimation import evalKDECauchy, evalKDEGauss
 
 
-# test both kernel density estimator by using one data point and evaluating the Kernel Density Estimation over a grid
 def test_KDE1DataPoint():
+    """Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid"""
     # define the one data point
     data = np.array([[0.5, 2.0]])
 

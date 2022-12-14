@@ -1,4 +1,5 @@
 def pytest_sessionstart(session):
+    """Called once at the start of a pytest session"""
     import matplotlib
 
     matplotlib.use(

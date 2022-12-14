@@ -8,7 +8,7 @@ from epic.core.functions import evalLogTransformedDensity
 from epic.core.model import Model
 
 
-def countEmceeSubRuns(model: Model):
+def countEmceeSubRuns(model: Model) -> int:
     """This data organization function counts how many sub runs are saved for the specified scenario.
 
     Input: model
@@ -31,8 +31,12 @@ def countEmceeSubRuns(model: Model):
 
 
 def runEmceeSampling(
-    model: Model, numRuns, numWalkers, numSteps, numProcesses
-):
+    model: Model,
+    numRuns: int,
+    numWalkers: int,
+    numSteps: int,
+    numProcesses: int,
+) -> None:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
         Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
@@ -254,7 +258,7 @@ def concatenateEmceeSamplingResults(model: Model):
     )
 
 
-def calcWalkerAcceptance(model: Model, numBurnSamples, numWalkers):
+def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
         This is especially important to find "zombie" walkers, that are never movig.
 

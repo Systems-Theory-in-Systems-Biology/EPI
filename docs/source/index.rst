@@ -7,6 +7,7 @@ Welcome to EPIC's documentation!
 ================================
 .. role:: python(code)
    :language: python
+   :class: highlight
 
 .. include:: welcome.rst
 
@@ -14,6 +15,7 @@ Welcome to EPIC's documentation!
    :maxdepth: 1
    :caption: Contents:
 
+   Usage Examples<examples>
    MarkdownLinks/readme
    MarkdownLinks/development
    MarkdownLinks/contributing
