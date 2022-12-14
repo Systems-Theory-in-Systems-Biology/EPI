@@ -9,6 +9,8 @@ from epic.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 
+# TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?!
+
 class Model(abc.ABC):
     def __init__(self) -> None:
         self.modelName = ""
@@ -17,9 +19,13 @@ class Model(abc.ABC):
 
         self.paramBounds : np.array = None #[[lower, upper], ...]
         self.dataBounds : np.array = None  #[[lower, upper], ...]
-        # TODO:
+        # TODO: Determine if saving this is usefull and when/how calc it
         # self.dataDim for visgrid
         # self.paramDim for ""
+
+        # TODO: Also need this for each model....
+        # self.paramsLowerLimits = None
+        # self.paramsUpperLimits = None
         pass
 
     def getModelName(self):
