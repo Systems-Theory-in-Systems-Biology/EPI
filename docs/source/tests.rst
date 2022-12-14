@@ -4,10 +4,26 @@ tests package
 Submodules
 ----------
 
-tests.test\_linear\_ode module
-------------------------------
+tests.conftest module
+---------------------
 
-.. automodule:: tests.test_linear_ode
+.. automodule:: tests.conftest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_kde module
+----------------------
+
+.. automodule:: tests.test_kde
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_simple\_models module
+---------------------------------
+
+.. automodule:: tests.test_simple_models
    :members:
    :undoc-members:
    :show-inheritance:
