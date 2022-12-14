@@ -1,15 +1,23 @@
-from epic.models.model import Model, ArtificialModelInterface
+import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
-import jax.numpy as jnp
+
+from epic.models.model import (
+    ArtificialModelInterface,
+    Model,
+    VisualizationModelInterface,
+)
 
 
-class Stock(Model):
+class Stock(Model, VisualizationModelInterface):
     def getDataBounds(self):
-        return np.array([[-7.5,7.5]*self.dataDim])
+        return np.array([[-7.5, 7.5] * self.dataDim])
 
     def getParamBounds(self):
-        return np.array([[-2.0,2.0]*self.paramDim])
+        return np.array([[-2.0, 2.0] * self.paramDim])
+
+    def getParamSamplingLimits(self):
+        return np.array([[-10.0, 10.0] * self.paramDim])
 
     def getCentralParam(self):
         return np.array(
@@ -22,7 +30,7 @@ class Stock(Model):
                 0.64869251,
             ]
         )
-    
+
     def downloadData(self, tickerList, tickerListName):
         start = "2022-01-31"
         end = "2022-03-01"
@@ -69,7 +77,8 @@ class Stock(Model):
 
                     # subtract initial value of complete timeline
                     stockData[successCounter, :] = (
-                        stockData[successCounter, :] - stockData[successCounter, 0]
+                        stockData[successCounter, :]
+                        - stockData[successCounter, 0]
                     )
 
                     if np.all(np.abs(stockData[successCounter, :]) < 100.0):
@@ -103,7 +112,7 @@ class Stock(Model):
 
     def dataLoader(self, downloadData=False):
         if downloadData:
-            #TODO: What is/are the tickerLists and names?
+            # TODO: What is/are the tickerLists and names?
             self.downloadData()
         return super().dataLoader()
 
@@ -171,12 +180,20 @@ class Stock(Model):
 
         return timeCourse[:, 0]
 
+
 class StockArtificial(Stock, ArtificialModelInterface):
     def generateArtificialData(self):
         numSamples = 100000
 
         mean = np.array(
-            [0.41406223, 1.04680993, 1.21173553, 0.8078955, 1.07772437, 0.64869251]
+            [
+                0.41406223,
+                1.04680993,
+                1.21173553,
+                0.8078955,
+                1.07772437,
+                0.64869251,
+            ]
         )
         stdevs = np.array([0.005, 0.01, 0.05, 0.005, 0.01, 0.05])
 
@@ -191,7 +208,12 @@ class StockArtificial(Stock, ArtificialModelInterface):
             trueParamSample[j, :] += mean
             artificialData[j, :] = self.forward(trueParamSample[j, :])
 
-        np.savetxt("Data/StockArtificialData.csv", artificialData, delimiter=",")
+        np.savetxt(
+            "Data/StockArtificialData.csv", artificialData, delimiter=","
+        )
         np.savetxt(
             "Data/StockArtificialParams.csv", trueParamSample, delimiter=","
         )
+
+    def getParamSamplingLimits(self):
+        return np.array([[-1.0, 3.0] * self.paramDim])

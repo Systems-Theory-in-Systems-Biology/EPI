@@ -5,14 +5,13 @@ import emcee
 import numpy as np
 
 from epic.functions import evalLogTransformedDensity
-from epic.models import dataLoader
 from epic.models.model import Model
 
 
-def countEmceeSubRuns(model:Model):
+def countEmceeSubRuns(model: Model):
     """This data organization function counts how many sub runs are saved for the specified scenario.
 
-    Input: modelName (model ID)
+    Input: model
     Output: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
     """
     # Initialize the number of existing files to be 0
@@ -31,11 +30,13 @@ def countEmceeSubRuns(model:Model):
     return numExistingFiles
 
 
-def runEmceeSampling(model:Model, numRuns, numWalkers, numSteps, numProcesses):
+def runEmceeSampling(
+    model: Model, numRuns, numWalkers, numSteps, numProcesses
+):
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
         Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
-    Input: modelName (model ID)
+    Input: model
            numRuns (number of stored sub runs)
            numWalkers (number of particles in the particle swarm sampler)
            numSteps (number of samples each particle performs before storing the sub run)
@@ -68,9 +69,12 @@ def runEmceeSampling(model:Model, numRuns, numWalkers, numSteps, numProcesses):
         print("Run ", run)
 
         # If there are current walker positions defined by runs before this one, use them.
-        if path.isfile("Applications/" + model.getModelName() + "/currentPos.csv"):
+        if path.isfile(
+            "Applications/" + model.getModelName() + "/currentPos.csv"
+        ):
             walkerInitParams = np.loadtxt(
-                "Applications/" + model.getModelName() + "/currentPos.csv", delimiter=","
+                "Applications/" + model.getModelName() + "/currentPos.csv",
+                delimiter=",",
             )
             print("continue sampling")
 
@@ -128,17 +132,29 @@ def runEmceeSampling(model:Model, numRuns, numWalkers, numSteps, numProcesses):
 
         # Save all sampling results in .csv files.
         np.savetxt(
-            "Applications/" + model.getModelName() + "/Params/" + str(run) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/Params/"
+            + str(run)
+            + ".csv",
             allRes[:, 0:paramDim],
             delimiter=",",
         )
         np.savetxt(
-            "Applications/" + model.getModelName() + "/SimResults/" + str(run) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/SimResults/"
+            + str(run)
+            + ".csv",
             allRes[:, paramDim : paramDim + dataDim],
             delimiter=",",
         )
         np.savetxt(
-            "Applications/" + model.getModelName() + "/DensityEvals/" + str(run) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/DensityEvals/"
+            + str(run)
+            + ".csv",
             allRes[:, -1],
             delimiter=",",
         )
@@ -152,11 +168,11 @@ def runEmceeSampling(model:Model, numRuns, numWalkers, numSteps, numProcesses):
         # print(sampler.get_autocorr_time()[0])
 
 
-def concatenateEmceeSamplingResults(model:Model):
+def concatenateEmceeSamplingResults(model: Model):
     """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
         These files are later used for result visualization.
 
-    Input: modelName (model ID)
+    Input: model
     Output: <none except for stored files>
     """
 
@@ -192,19 +208,31 @@ def concatenateEmceeSamplingResults(model:Model):
         overallDensityEvals[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile
         ] = np.loadtxt(
-            "Applications/" + model.getModelName() + "/DensityEvals/" + str(i) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/DensityEvals/"
+            + str(i)
+            + ".csv",
             delimiter=",",
         )
         overallSimResults[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            "Applications/" + model.getModelName() + "/SimResults/" + str(i) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/SimResults/"
+            + str(i)
+            + ".csv",
             delimiter=",",
         )
         overallParams[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            "Applications/" + model.getModelName() + "/Params/" + str(i) + ".csv",
+            "Applications/"
+            + model.getModelName()
+            + "/Params/"
+            + str(i)
+            + ".csv",
             delimiter=",",
         )
 
@@ -225,11 +253,12 @@ def concatenateEmceeSamplingResults(model:Model):
         delimiter=",",
     )
 
-def calcWalkerAcceptance(model:Model, numBurnSamples, numWalkers):
+
+def calcWalkerAcceptance(model: Model, numBurnSamples, numWalkers):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
         This is especially important to find "zombie" walkers, that are never movig.
 
-    Input: modelName (model ID)
+    Input: model
            numBurnSamples (integer number of ignored first samples of each chain)
            numWalkers (integer number of emcee walkers)
 
@@ -238,7 +267,8 @@ def calcWalkerAcceptance(model:Model, numBurnSamples, numWalkers):
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        "Applications/" + model.getModelName() + "/OverallParams.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        delimiter=",",
     )[numBurnSamples:, :]
 
     # calculate the number of steps each walker walked

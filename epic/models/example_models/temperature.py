@@ -1,6 +1,8 @@
-from epic.models.model import Model, ArtificialModelInterface
 import jax.numpy as jnp
 import numpy as np
+
+from epic.models.model import ArtificialModelInterface, Model
+
 
 # TODO: Does this model realyl not provide a visGrid?
 class Temperature(Model):
@@ -13,10 +15,14 @@ class Temperature(Model):
     def getCentralParam(self):
         return np.array([np.pi / 4.0])
 
+    def getParamSamplingLimits(self):
+        return np.array([[0, np.pi / 2]])
+
+
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
     def generateArtificialData(self):
         rawTrueParamSample = np.loadtxt(
-        "Data/TemperatureArtificialParams.csv", delimiter=","
+            "Data/TemperatureArtificialParams.csv", delimiter=","
         )
         trueParamSample = np.zeros((rawTrueParamSample.shape[0], 1))
         trueParamSample[:, 0] = rawTrueParamSample

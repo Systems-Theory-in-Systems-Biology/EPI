@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epic.functions import evalKDECauchy, evalKDEGauss, evalLogTransformedDensity
-from epic.models import calcKernelWidth, dataLoader, modelLoader, paramLoader
+from epic.functions import evalLogTransformedDensity
+from epic.kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
+from epic.models.model import ArtificialModelInterface, Model
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0
@@ -47,12 +48,12 @@ def plotKDEoverGrid(data, stdevs):
 
 # The temperature model for artificial and real data is evaluated over a grid
 
-# Input: modelName (model ID)
+# Input: model
 # Output: None (except for figures)
 
 
-def plotGridResults(modelName):
-    model, modelJac = modelLoader(modelName)
+def plotGridResults(model: Model):
+
     (
         paramDim,
         dataDim,
@@ -60,23 +61,24 @@ def plotGridResults(modelName):
         centralParam,
         data,
         stdevs,
-    ) = dataLoader(modelName)
+    ) = model.dataLoader()
 
     plt.rcParams.update({"font.size": 13})
 
     # TODO: Fix var names etc.
     trueParams = paramStdevs = None
-    if "Artificial" in modelName:
-        trueParams, paramStdevs = paramLoader(modelName)
+    artificialBool = issubclass(model.__class__, ArtificialModelInterface)
+    if artificialBool:
+        trueParams, paramStdevs = model.paramLoader()
 
-    if modelName == "TemperatureArtificial":
+    if model.getModelName() == "TemperatureArtificial":
         rawTrueLatitudes = np.loadtxt(
             "Applications/Temperature/Latitudes.csv", delimiter=","
         )
         trueLatitudes = np.zeros((rawTrueLatitudes.shape[0], 1))
         trueLatitudes[:, 0] = rawTrueLatitudes
 
-        trueLatitudesStdevs = calcKernelWidth(trueLatitudes, modelName)
+        trueLatitudesStdevs = calcKernelWidth(trueLatitudes)
 
         resolution = 1000
 
@@ -94,7 +96,7 @@ def plotGridResults(modelName):
                 trueLatitudesStdevs,
             )
             trafoDensity[i], _ = evalLogTransformedDensity(
-                model, modelJac, np.array([latitudesGrid[i]]), data, stdevs
+                model, np.array([latitudesGrid[i]]), data, stdevs
             )
             simulatedTemperatures[i] = evalKDEGauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
@@ -266,14 +268,14 @@ def plotGridResults(modelName):
         )
         plt.show()
 
-    elif modelName == "Temperature":
+    elif model.getModelName() == "Temperature":
         rawTrueLatitudes = np.loadtxt(
             "Applications/Temperature/Latitudes.csv", delimiter=","
         )
         trueLatitudes = np.zeros((rawTrueLatitudes.shape[0], 1))
         trueLatitudes[:, 0] = rawTrueLatitudes
 
-        trueLatitudesStdevs = calcKernelWidth(trueLatitudes, modelName)
+        trueLatitudesStdevs = calcKernelWidth(trueLatitudes)
 
         resolution = 400
 
@@ -291,7 +293,7 @@ def plotGridResults(modelName):
                 trueLatitudesStdevs,
             )
             trafoDensity[i], _ = evalLogTransformedDensity(
-                model, modelJac, np.array([latitudesGrid[i]]), data, stdevs
+                model, np.array([latitudesGrid[i]]), data, stdevs
             )
             measuredTemperatures[i] = evalKDEGauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
@@ -507,14 +509,14 @@ def plotGridResults(modelName):
 
 # plot sampling results in comparison to true results
 
-# Input: modelName (model ID)
+# Input: model
 #        numBurnSamples (Ignore the first samples of each chain)
 #        occurence (step of sampling from chains)
 #        artificialBool (indicated whether true parameter information is available and shall be loaded)
 # Output: None (except for figures)
 
 
-def plotEmceeResults(modelName, numBurnSamples, occurrence, artificialBool):
+def plotEmceeResults(model: Model, numBurnSamples, occurrence, artificialBool):
     resolution = 100
 
     (
@@ -524,20 +526,23 @@ def plotEmceeResults(modelName, numBurnSamples, occurrence, artificialBool):
         centralParam,
         data,
         dataStdevs,
-    ) = dataLoader(modelName)
+    ) = model.dataLoader()
 
     densityEvals = np.loadtxt(
-        "Applications/" + modelName + "/OverallDensityEvals.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallDensityEvals.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence]
     simResults = np.loadtxt(
-        "Applications/" + modelName + "/OverallSimResults.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
     paramChain = np.loadtxt(
-        "Applications/" + modelName + "/OverallParams.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
 
     if artificialBool == 1:
-        trueParams, paramStdevs = paramLoader(modelName)
+        trueParams, paramStdevs = model.paramLoader()
     else:
         paramStdevs = calcKernelWidth(paramChain)
 
@@ -633,7 +638,7 @@ def plotEmceeResults(modelName, numBurnSamples, occurrence, artificialBool):
         plt.show()
 
 
-def plotDataMarginals(modelName):
+def plotDataMarginals(model: Model):
     (
         paramDim,
         dataDim,
@@ -641,13 +646,16 @@ def plotDataMarginals(modelName):
         centralParam,
         data,
         dataStdevs,
-    ) = dataLoader(modelName)
+    ) = model.loadData()
 
     dataGrid = np.loadtxt(
-        "Applications/" + modelName + "/Plots/dataGrid.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/Plots/dataGrid.csv",
+        delimiter=",",
     )
     trueDataMarginals = np.loadtxt(
-        "Applications/" + modelName + "/Plots/trueDataMarginals.csv",
+        "Applications/"
+        + model.getModelName()
+        + "/Plots/trueDataMarginals.csv",
         delimiter=",",
     )
 
@@ -670,21 +678,16 @@ def plotDataMarginals(modelName):
         plt.show()
 
 
-def plotMarginals(modelName, numBurnSamples, occurrence):
-    artificialBool = 0
-
-    if (
-        (modelName == "TemperatureArtificial")
-        or (modelName == "CoronaArtificial")
-        or (modelName == "StockArtificial")
-    ):
-        artificialBool = 1
+def plotMarginals(model: Model, numBurnSamples, occurrence):
+    artificialBool = issubclass(model.__class__, ArtificialModelInterface)
 
     simResults = np.loadtxt(
-        "Applications/" + modelName + "/OverallSimResults.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
     paramChain = np.loadtxt(
-        "Applications/" + modelName + "/OverallParams.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
 
     (
@@ -694,32 +697,42 @@ def plotMarginals(modelName, numBurnSamples, occurrence):
         centralParam,
         data,
         dataStdevs,
-    ) = dataLoader(modelName)
+    ) = model.dataLoader()
 
     paramGrid = np.loadtxt(
-        "Applications/" + modelName + "/Plots/paramGrid.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/Plots/paramGrid.csv",
+        delimiter=",",
     )
     inferredParamMarginals = np.loadtxt(
-        "Applications/" + modelName + "/Plots/inferredParamMarginals.csv",
+        "Applications/"
+        + model.getModelName()
+        + "/Plots/inferredParamMarginals.csv",
         delimiter=",",
     )
 
     if artificialBool == 1:
-        trueParams, paramStdevs = paramLoader(modelName)
+        trueParams, paramStdevs = model.paramLoader()
         trueParamMarginals = np.loadtxt(
-            "Applications/" + modelName + "/Plots/trueParamMarginals.csv",
+            "Applications/"
+            + model.getModelName()
+            + "/Plots/trueParamMarginals.csv",
             delimiter=",",
         )
 
     dataGrid = np.loadtxt(
-        "Applications/" + modelName + "/Plots/dataGrid.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/Plots/dataGrid.csv",
+        delimiter=",",
     )
     trueDataMarginals = np.loadtxt(
-        "Applications/" + modelName + "/Plots/trueDataMarginals.csv",
+        "Applications/"
+        + model.getModelName()
+        + "/Plots/trueDataMarginals.csv",
         delimiter=",",
     )
     inferredDataMarginals = np.loadtxt(
-        "Applications/" + modelName + "/Plots/inferredDataMarginals.csv",
+        "Applications/"
+        + model.getModelName()
+        + "/Plots/inferredDataMarginals.csv",
         delimiter=",",
     )
 
@@ -766,7 +779,7 @@ def plotMarginals(modelName, numBurnSamples, occurrence):
         plt.show()
 
 
-def plotSpiderWebs(modelName, numBurnSamples, occurrence):
+def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     """Draw each sample (row of the matrix) as a circle of linear interpolations of its dimensions.
     Loads all necessary data and subsequently calls the method singleWeb 3 or 4 times
 
@@ -777,32 +790,28 @@ def plotSpiderWebs(modelName, numBurnSamples, occurrence):
 
     """
 
-    # By default, we assume that no true parameter information is available
-    artificialBool = 0
-
     # If the model name indicates an artificial setting, indicate that true parameter information is available
-    if (
-        (modelName == "TemperatureArtificial")
-        or (modelName == "CoronaArtificial")
-        or (modelName == "StockArtificial")
-    ):
-        artificialBool = 1
+    artificialBool = issubclass(model.__class__, ArtificialModelInterface)
 
     # load emcee parameter samples and corresponding simulation results
     emceeParams = np.loadtxt(
-        "Applications/" + modelName + "/OverallParams.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
     emceeSimResults = np.loadtxt(
-        "Applications/" + modelName + "/OverallSimResults.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        delimiter=",",
     )[numBurnSamples::occurrence, :]
 
     # load underlying data
-    trueData = np.loadtxt("Data/" + modelName + "Data.csv", delimiter=",")
+    trueData = np.loadtxt(
+        "Data/" + model.getModelName() + "Data.csv", delimiter=","
+    )
 
     # if available, load also the true parameter values
     if artificialBool == 1:
         trueParams = np.loadtxt(
-            "Data/" + modelName + "Params.csv", delimiter=","
+            "Data/" + model.getModelName() + "Params.csv", delimiter=","
         )
 
     # compute the upper and lower bound of each data dimension
@@ -826,7 +835,9 @@ def plotSpiderWebs(modelName, numBurnSamples, occurrence):
         dpi,
     )
     plt.savefig(
-        "Applications/" + modelName + "/SpiderWebs/emceeSimResults.png",
+        "Applications/"
+        + model.getModelName()
+        + "/SpiderWebs/emceeSimResults.png",
         dpi=dpi,
     )
 
@@ -834,14 +845,16 @@ def plotSpiderWebs(modelName, numBurnSamples, occurrence):
         trueData, lowerBoundsSimResults, upperBoundsSimResults, colorY, dpi
     )
     plt.savefig(
-        "Applications/" + modelName + "/SpiderWebs/trueData.png", dpi=dpi
+        "Applications/" + model.getModelName() + "/SpiderWebs/trueData.png",
+        dpi=dpi,
     )
 
     emceeParamsWeb = singleWeb(
         emceeParams, lowerBoundsParams, upperBoundsParams, colorQApprox, dpi
     )
     plt.savefig(
-        "Applications/" + modelName + "/SpiderWebs/emceeParams.png", dpi=dpi
+        "Applications/" + model.getModelName() + "/SpiderWebs/emceeParams.png",
+        dpi=dpi,
     )
 
     if artificialBool == 1:
@@ -849,7 +862,10 @@ def plotSpiderWebs(modelName, numBurnSamples, occurrence):
             trueParams, lowerBoundsParams, upperBoundsParams, colorQ, dpi
         )
         plt.savefig(
-            "Applications/" + modelName + "/SpiderWebs/trueParams.png", dpi=dpi
+            "Applications/"
+            + model.getModelName()
+            + "/SpiderWebs/trueParams.png",
+            dpi=dpi,
         )
 
 
@@ -924,11 +940,11 @@ def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
     return fig
 
 
-def plotTest(modelName):
+def plotTestmodel(model: Model):
     """Visualize the results of EPI applied to a model with 2 parameters and
         2 output dimensions as surface plots.
 
-    Inputs: modelName: str: model ID
+    Inputs: model
 
     Outputs: <none>
     """
@@ -942,7 +958,7 @@ def plotTest(modelName):
         centralParam,
         data,
         dataStdevs,
-    ) = dataLoader(modelName)
+    ) = model.dataLoader()
 
     # define the number of grid points per data dimension
     dataPlotResolution = 25
@@ -984,7 +1000,8 @@ def plotTest(modelName):
     # ---------------------------------------------------------------------------
     # Second, we load the emcee parameter sampling results and als visualize them
     paramChain = np.loadtxt(
-        "Applications/" + modelName + "/OverallParams.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        delimiter=",",
     )
 
     # calculate reasonable standard deviations for the KDE
@@ -1035,7 +1052,8 @@ def plotTest(modelName):
 
     # Load the MCMC simulation results
     simResultsChain = np.loadtxt(
-        "Applications/" + modelName + "/OverallSimResults.csv", delimiter=","
+        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        delimiter=",",
     )
 
     # calculate reasonable standard deviations for the KDE

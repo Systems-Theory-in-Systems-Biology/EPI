@@ -1,15 +1,23 @@
-from epic.models.model import Model, ArtificialModelInterface
+import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
-import diffrax as dx
+
+from epic.models.model import (
+    ArtificialModelInterface,
+    Model,
+    VisualizationModelInterface,
+)
 
 
-class Corona(Model):
+class Corona(Model, VisualizationModelInterface):
     def getDataBounds(self):
-        return np.array([[0.0,4.0], [0.0, 40.0],
-                         [0.0,80.0],[0.0,3.5]])
+        return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
+
     def getParamBounds(self):
-        return np.array([[-4.0,0.0], [-2.0,2.0], [-1.0,3.0]])
+        return np.array([[-4.0, 0.0], [-2.0, 2.0], [-1.0, 3.0]])
+
+    def getParamSamplingLimits(self):
+        return np.array([[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]])
 
     def getCentralParam(self):
         return np.array([-1.8, 0.0, 0.7])
@@ -70,7 +78,12 @@ class CoronaArtificial(Corona, ArtificialModelInterface):
             )
             artificialData[j, :] = self.forward(trueParamSample[j, :])
 
-        np.savetxt("Data/CoronaArtificialData.csv", artificialData, delimiter=",")
+        np.savetxt(
+            "Data/CoronaArtificialData.csv", artificialData, delimiter=","
+        )
         np.savetxt(
             "Data/CoronaArtificialParams.csv", trueParamSample, delimiter=","
         )
+
+    def getParamSamplingLimits(self):
+        return np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])

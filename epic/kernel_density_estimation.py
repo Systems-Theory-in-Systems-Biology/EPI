@@ -8,11 +8,12 @@ def evalKDECauchy_fast(data, simRes, scales):
         / data.shape[0]
     )
 
+
 def evalKDEGauss_fast(data, simRes, scales):
     return (
-        np.sum(np.prod(norm.pdf(data, simRes, scales), axis=1))
-        / data.shape[0]
+        np.sum(np.prod(norm.pdf(data, simRes, scales), axis=1)) / data.shape[0]
     )
+
 
 def evalKDECauchy(data, simRes, scales):
     r"""Evaluates a Cauchy Kernel Density estimator in one simulation result.
@@ -91,7 +92,7 @@ def calcKernelWidth(data):
     means = np.mean(data, axis=0)
     stdevs = np.std(data, axis=0, ddof=1)
     maxStderiv = np.amax(stdevs)
-    
+
     # Silvermans rule
     return stdevs * (numDataPoints * (dataDim + 2) / 4.0) ** (
         -1.0 / (dataDim + 4)

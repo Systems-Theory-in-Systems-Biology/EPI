@@ -11,14 +11,15 @@ config.update("jax_enable_x64", True)
 
 # TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?!
 
+
 class Model(abc.ABC):
     def __init__(self) -> None:
-        self.modelName = ""
+        # self.modelName = ""
 
-        self.centralParam : np.array = None
+        # self.centralParam : np.array = None
 
-        self.paramBounds : np.array = None #[[lower, upper], ...]
-        self.dataBounds : np.array = None  #[[lower, upper], ...]
+        # self.paramBounds : np.array = None #[[lower, upper], ...]
+        # self.dataBounds : np.array = None  #[[lower, upper], ...]
         # TODO: Determine if saving this is usefull and when/how calc it
         # self.dataDim for visgrid
         # self.paramDim for ""
@@ -28,38 +29,17 @@ class Model(abc.ABC):
         # self.paramsUpperLimits = None
         pass
 
+    # Define model-specific lower and upper borders for sampling
+    # to avoid parameter regions where the simulation can only be evaluated instably.
+    @abc.abstractmethod
+    def getParamSamplingLimits(self):
+        raise NotImplementedError
+
     def getModelName(self):
         return self.__class__.__name__
 
     def getCentralParam(self):
         raise NotImplementedError
-
-    def getParamBounds(self):
-        raise NotImplementedError
-    def getDataBounds(self):
-        raise NotImplementedError
-
-    def generateVisualizationGrid(self, resolution):
-            # allocate storage for the parameter and data plotting grid
-        paramGrid = np.zeros((resolution, self.paramDim))
-        dataGrid = np.zeros((resolution, self.dataDim))
-        for d in range(self.dataDim):
-            dataGrid[:, d] = np.linspace(*self.dataBounds[d,:], resolution)
-        for d in range(self.paramDim):
-            dataGrid[:, d] = np.linspace(*self.paramBounds[d,:], resolution)
-        
-        # store both grids as csv files into the model-specific plot directory
-        np.savetxt(
-            "Applications/" + self.modelName + "/Plots/dataGrid.csv",
-            dataGrid,
-            delimiter=",",
-        )
-        np.savetxt(
-            "Applications/" + self.modelName + "/Plots/paramGrid.csv",
-            paramGrid,
-            delimiter=",",
-        )
-        return dataGrid, paramGrid
 
     def dataLoader(self):
         paramDim = self.centralParam.shape[0]
@@ -71,25 +51,28 @@ class Model(abc.ABC):
         dataStdevs = calcKernelWidth(data)
         numDataPoints, dataDim = data.shape
 
-        return paramDim, dataDim, numDataPoints, self.centralParam, data, dataStdevs
-
-    # TODO: The model loader doesn not make sense in the model class
-    # Replaced by constructor?
-    # def modelLoader():
-    #     pass
+        return (
+            paramDim,
+            dataDim,
+            numDataPoints,
+            self.centralParam,
+            data,
+            dataStdevs,
+        )
 
     def getForward(self):
         return self.forward
 
+    # TODO: Best practice avilable for this?
     def getJacobian(self):
-        return jacrev(self.forward)
+        self.jacrev_jacobian = jacrev(self.forward)
+        return self.jacrev_jacobian
 
     def forward(self, param):
         pass
 
-    # Optional? Else obtain by jacrev(forward) ???
     def jacobian(self, param):
-        pass
+        return self.jacrev_jacobian(param)
 
     def correction(self, param):
         """Evaluate the pseudo-determinant of the simulation jacobian (that serves as a correction term) in one specific parameter point.
@@ -115,8 +98,9 @@ class Model(abc.ABC):
 
         return correction
 
-#TODO: Its not really an interface?
-#TODO: Inherit from Model or Interface? (See python-interface)
+
+# TODO: Its not really an interface?
+# TODO: Inherit from Model or Interface? (See python-interface)
 class ArtificialModelInterface(abc.ABC):
     @abc.abstractmethod
     def generateArtificialData(self):
@@ -126,13 +110,15 @@ class ArtificialModelInterface(abc.ABC):
         """Load and return all parameters for artificial set ups
 
         Args:
-            modelName (_type_): Model ID
+            model
 
         Returns:
             _type_: params (true parameters used to generate artificial data)
                     paramStdevs (array of suitable kernel standard deviations for each parameter dimension)
         """
-        trueParams = np.loadtxt("Data/" + self.modelName + "Params.csv", delimiter=",")
+        trueParams = np.loadtxt(
+            "Data/" + self.modelName + "Params.csv", delimiter=","
+        )
 
         if len(trueParams.shape) == 1:
             trueParams = trueParams.reshape((trueParams.shape[0], 1))
@@ -140,3 +126,37 @@ class ArtificialModelInterface(abc.ABC):
         paramStdevs = calcKernelWidth(trueParams)
 
         return trueParams, paramStdevs
+
+
+# TODO: Its not really an interface?
+# TODO: Inherit from Model or Interface? (See python-interface)
+class VisualizationModelInterface(abc.ABC):
+    @abc.abstractmethod
+    def getParamBounds(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def getDataBounds(self):
+        raise NotImplementedError
+
+    def generateVisualizationGrid(self, resolution):
+        # allocate storage for the parameter and data plotting grid
+        paramGrid = np.zeros((resolution, self.paramDim))
+        dataGrid = np.zeros((resolution, self.dataDim))
+        for d in range(self.dataDim):
+            dataGrid[:, d] = np.linspace(*self.dataBounds[d, :], resolution)
+        for d in range(self.paramDim):
+            dataGrid[:, d] = np.linspace(*self.paramBounds[d, :], resolution)
+
+        # store both grids as csv files into the model-specific plot directory
+        np.savetxt(
+            "Applications/" + self.modelName + "/Plots/dataGrid.csv",
+            dataGrid,
+            delimiter=",",
+        )
+        np.savetxt(
+            "Applications/" + self.modelName + "/Plots/paramGrid.csv",
+            paramGrid,
+            delimiter=",",
+        )
+        return dataGrid, paramGrid

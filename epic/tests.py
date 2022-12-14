@@ -2,17 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epic.functions import evalKDECauchy, evalKDEGauss, evalLogTransformedDensity
-from epic.models import (
-    calcKernelWidth,
-    generateArtificialCoronaData,
-    generateArtificialStockData,
-    generateArtificialTemperatureData,
-    generateLinearData,
-    generateLinearODEData,
-    generateStockData,
-    modelLoader,
-)
+from epic.functions import evalLogTransformedDensity
+from epic.kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
+from epic.models.example_models.simple import Exponential, Linear, LinearODE
 from epic.plots import plotTest
 from epic.sampling import concatenateEmceeSamplingResults, runEmceeSampling
 
@@ -120,7 +112,7 @@ def KDETest3DataPoints():
 
 
 def transformationTestLinear():
-    modelName = "Linear"
+    model = Linear()
 
     # create approx. 1000 data points that are perfectly uniformly distributed over a grid
     # the range of data points is the 2D interval [0,10]x[-2,-4]
@@ -164,9 +156,6 @@ def transformationTestLinear():
     )
     plt.show()
 
-    # load the linear test model and its algorithmic differentiation
-    model, modelJac = modelLoader(modelName)
-
     paramResolution = 15
     paramxGrid = np.linspace(-0.2, 1.2, paramResolution)
     paramyGrid = np.linspace(-0.2, 1.2, paramResolution)
@@ -179,7 +168,7 @@ def transformationTestLinear():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evalLogTransformedDensity(
-                paramPoint, modelName, data, dataStdevs
+                paramPoint, model, data, dataStdevs
             )
 
     paramEvals = np.exp(paramEvals)
@@ -199,10 +188,7 @@ def transformationTestLinear():
 
 
 def transformationTestExponential():
-    modelName = "Exponential"
-
-    # load the exponential test model and its algorithmic differentiation
-    model, modelJac = modelLoader(modelName)
+    model = Exponential()
 
     # create true parameter points that are drawn uniformly from [0,1]^2
 
@@ -258,7 +244,7 @@ def transformationTestExponential():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evalLogTransformedDensity(
-                paramPoint, modelName, data, dataStdevs
+                paramPoint, model, data, dataStdevs
             )
 
     paramEvals = np.exp(paramEvals)
@@ -287,10 +273,10 @@ def transformationTestODELinear():
     """
 
     # define the model
-    modelName = "LinearODE"
+    model = LinearODE()
 
     # generate artificial data
-    generateLinearODEData()
+    model.generateArtificialData()
 
     # choose the number of subsequent runs
     # after each sub-run, chains are saved
@@ -306,10 +292,10 @@ def transformationTestODELinear():
     numSteps = 2500
 
     # run MCMC sampling for EPI
-    runEmceeSampling(modelName, numRuns, numWalkers, numSteps, numProcesses)
+    runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
 
     # combine all intermediate saves to create one large sample chain
-    concatenateEmceeSamplingResults(modelName)
+    concatenateEmceeSamplingResults(model)
 
     # plot the results
-    plotTest(modelName)
+    plotTest(model)
