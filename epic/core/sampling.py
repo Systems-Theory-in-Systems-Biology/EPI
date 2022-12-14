@@ -4,8 +4,8 @@ from os import path
 import emcee
 import numpy as np
 
-from epic.functions import evalLogTransformedDensity
-from epic.models.model import Model
+from epic.core.functions import evalLogTransformedDensity
+from epic.core.model import Model
 
 
 def countEmceeSubRuns(model: Model):
@@ -61,7 +61,7 @@ def runEmceeSampling(
     ]
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = countEmceeSubRuns(model.getModelName())
+    numExistingFiles = countEmceeSubRuns(model)
     print(numExistingFiles, " existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.

@@ -1,7 +1,7 @@
 import numpy as np
 
-from epic.kernel_density_estimation import evalKDEGauss
-from epic.models.model import Model
+from epic.core.kernel_density_estimation import evalKDEGauss
+from epic.core.model import Model
 
 
 def evalLogTransformedDensity(param, model: Model, data, dataStdevs):

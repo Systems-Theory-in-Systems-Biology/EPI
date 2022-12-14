@@ -15,7 +15,7 @@ config.update("jax_enable_x64", True)
 class Model(abc.ABC):
     def __init__(self) -> None:
         # self.modelName = ""
-
+        self.jacrev_jacobian = None
         # self.centralParam : np.array = None
 
         # self.paramBounds : np.array = None #[[lower, upper], ...]
@@ -28,6 +28,9 @@ class Model(abc.ABC):
         # self.paramsLowerLimits = None
         # self.paramsUpperLimits = None
         pass
+
+    def __call__(self, param):
+        return self.forward(param)
 
     # Define model-specific lower and upper borders for sampling
     # to avoid parameter regions where the simulation can only be evaluated instably.
@@ -42,9 +45,11 @@ class Model(abc.ABC):
         raise NotImplementedError
 
     def dataLoader(self):
-        paramDim = self.centralParam.shape[0]
+        paramDim = self.getCentralParam().shape[0]
 
-        data = np.loadtxt("Data/" + self.modelName + "Data.csv", delimiter=",")
+        data = np.loadtxt(
+            "Data/" + self.getModelName() + "Data.csv", delimiter=","
+        )
         if len(data.shape) == 1:
             data = data.reshape((data.shape[0], 1))
 
@@ -55,7 +60,7 @@ class Model(abc.ABC):
             paramDim,
             dataDim,
             numDataPoints,
-            self.centralParam,
+            self.getCentralParam(),
             data,
             dataStdevs,
         )
@@ -72,6 +77,8 @@ class Model(abc.ABC):
         pass
 
     def jacobian(self, param):
+        if self.jacrev_jacobian is None:
+            self.jacrev_jacobian = jacrev(self.forward)
         return self.jacrev_jacobian(param)
 
     def correction(self, param):
@@ -117,7 +124,7 @@ class ArtificialModelInterface(abc.ABC):
                     paramStdevs (array of suitable kernel standard deviations for each parameter dimension)
         """
         trueParams = np.loadtxt(
-            "Data/" + self.modelName + "Params.csv", delimiter=","
+            "Data/" + self.getModelName() + "Params.csv", delimiter=","
         )
 
         if len(trueParams.shape) == 1:
@@ -150,12 +157,12 @@ class VisualizationModelInterface(abc.ABC):
 
         # store both grids as csv files into the model-specific plot directory
         np.savetxt(
-            "Applications/" + self.modelName + "/Plots/dataGrid.csv",
+            "Applications/" + self.getModelName() + "/Plots/dataGrid.csv",
             dataGrid,
             delimiter=",",
         )
         np.savetxt(
-            "Applications/" + self.modelName + "/Plots/paramGrid.csv",
+            "Applications/" + self.getModelName() + "/Plots/paramGrid.csv",
             paramGrid,
             delimiter=",",
         )

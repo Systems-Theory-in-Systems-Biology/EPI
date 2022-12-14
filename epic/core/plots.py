@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epic.functions import evalLogTransformedDensity
-from epic.kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
-from epic.models.model import ArtificialModelInterface, Model
+from epic.core.functions import evalLogTransformedDensity
+from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epic.core.model import ArtificialModelInterface, Model
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0

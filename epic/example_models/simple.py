@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 import numpy as np
 
-from epic.models.model import ArtificialModelInterface, Model
+from epic.core.model import ArtificialModelInterface, Model
 
 
 class Linear(Model, ArtificialModelInterface):

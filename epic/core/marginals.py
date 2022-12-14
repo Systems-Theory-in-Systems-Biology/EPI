@@ -1,7 +1,7 @@
 import numpy as np
-from epic.kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
 
-from epic.models.model import ArtificialModelInterface, Model
+from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epic.core.model import ArtificialModelInterface, Model
 
 
 # TODO: defaults to [DefaultParamVal], resolution=100?

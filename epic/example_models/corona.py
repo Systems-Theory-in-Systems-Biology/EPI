@@ -2,7 +2,7 @@ import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
 
-from epic.models.model import (
+from epic.core.model import (
     ArtificialModelInterface,
     Model,
     VisualizationModelInterface,
