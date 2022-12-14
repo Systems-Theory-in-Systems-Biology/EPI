@@ -3,16 +3,9 @@ import numpy as np
 from matplotlib import cm
 
 from epic.core.functions import evalLogTransformedDensity
-from epic.core.kernel_density_estimation import (
-    calcKernelWidth,
-    evalKDECauchy,
-    evalKDEGauss,
-)
+from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
 from epic.core.plots import plotTest
-from epic.core.sampling import (
-    concatenateEmceeSamplingResults,
-    runEmceeSampling,
-)
+from epic.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
 from epic.example_models.simple import Exponential, Linear, LinearODE
 
 

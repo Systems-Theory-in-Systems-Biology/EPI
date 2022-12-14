@@ -5,7 +5,7 @@ import numpy as np
 from jax import jacrev
 from jax.config import config
 
-from epic.kernel_density_estimation import calcKernelWidth
+from epic.core.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 

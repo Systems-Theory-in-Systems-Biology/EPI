@@ -2,11 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
 
-from epic.core.model import (
-    ArtificialModelInterface,
-    Model,
-    VisualizationModelInterface,
-)
+from epic.core.model import ArtificialModelInterface, Model, VisualizationModelInterface
 
 
 class Stock(Model, VisualizationModelInterface):

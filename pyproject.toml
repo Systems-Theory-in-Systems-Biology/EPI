@@ -55,7 +55,7 @@ profile = "black"
 float_to_top = "true"
 
 [tool.flake8]
-extend-ignore = ["E501", "E203"] # Length of lines already handled by black, spacing
+extend-ignore = ["E501", "E203", "F841"] # Length of lines already handled by black, spacing, unused variables
 
 [tool.pytest.ini_options]
 testpaths = [

@@ -2,11 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epic.kernel_density_estimation import (
-    calcKernelWidth,
-    evalKDECauchy,
-    evalKDEGauss,
-)
+from epic.core.kernel_density_estimation import evalKDECauchy, evalKDEGauss
 
 
 # test both kernel density estimator by using one data point and evaluating the Kernel Density Estimation over a grid
