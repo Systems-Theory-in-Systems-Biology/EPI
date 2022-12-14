@@ -28,6 +28,14 @@ epic.kernel\_density\_estimation module
    :undoc-members:
    :show-inheritance:
 
+epic.marginals module
+---------------------
+
+.. automodule:: epic.marginals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 epic.plots module
 -----------------
 

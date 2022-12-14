@@ -940,7 +940,7 @@ def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
     return fig
 
 
-def plotTestmodel(model: Model):
+def plotTest(model: Model):
     """Visualize the results of EPI applied to a model with 2 parameters and
         2 output dimensions as surface plots.
 

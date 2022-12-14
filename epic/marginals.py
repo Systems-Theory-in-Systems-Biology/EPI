@@ -1,5 +1,5 @@
 import numpy as np
-from kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
+from epic.kernel_density_estimation import calcKernelWidth, evalKDECauchy, evalKDEGauss
 
 from epic.models.model import ArtificialModelInterface, Model
 
