@@ -13,6 +13,7 @@ Welcome to EPIC's documentation!
    :caption: Contents:
 
    MarkdownLinks/readme
+   MarkdownLinks/development
    MarkdownLinks/contributing
    MarkdownLinks/license
    MarkdownLinks/citation

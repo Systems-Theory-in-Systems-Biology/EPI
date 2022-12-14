@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="next" title="Development" href="development.html" />
     <link rel="prev" title="Welcome to EPIC’s documentation!" href="../index.html" /> 
 </head>
 
@@ -45,14 +45,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#epic">EPIC</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#about">About</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#quickstart">Quickstart</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#for-developers">For developers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-example">Run example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-library">Using the library</a></li>
 </ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
@@ -92,91 +92,43 @@
 <section id="about">
 <h3>About<a class="headerlink" href="#about" title="Permalink to this heading"></a></h3>
 <p>EPIC = Euler Parameter Inference Codebase</p>
-<p>The EPI returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.</p>
+<p>The EPI algorithm returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.</p>
 </section>
 <section id="documentation">
 <h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h3>
-<p>The documentation can be found under <a class="reference external" href="https://Systems-Theory-in-Systems-Biology.github.io/EPIC/">Go to documentation</a></p>
+<p>The full documentation to this software can be found under <a class="reference external" href="https://Systems-Theory-in-Systems-Biology.github.io/EPIC/">Go to documentation</a></p>
 </section>
-<section id="quickstart">
-<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h3>
-<p>Run
-<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git</span></code>
-or
-<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;github.com:Systems-Theory-in-Systems-Biology/EPIC.git</span></code>.
-<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">EPIC</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">poetry</span></code>
-<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">&amp;&amp;</span> <span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">pytest</span></code></p>
-<section id="for-developers">
-<h4>For developers<a class="headerlink" href="#for-developers" title="Permalink to this heading"></a></h4>
-<p>Here are some infos on how to work with sphinx, github, …</p>
-<section id="poetry">
-<h5>Poetry<a class="headerlink" href="#poetry" title="Permalink to this heading"></a></h5>
-<p>We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> before the command.</p>
-<p>You can also use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code> to activate the virtual environment and exit it with <code class="docutils literal notranslate"><span class="pre">exit</span></code>.</p>
-<p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">xxx</span></code> to add <code class="docutils literal notranslate"><span class="pre">xxx</span></code> as dependencie to your project or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">myPackage</span></code> to add <code class="docutils literal notranslate"><span class="pre">myPackage</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code>dependencies. You can have arbitrary group names.</p>
-<p>For more information read [Poetry]<a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project</a>.</p>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">epic</span></code><br />
+You can also build the library from the newest source code by following the <span class="xref myst">Development Quickstart Guide</span>.</p>
 </section>
-<section id="code-quality-checks">
-<h5>Code quality checks<a class="headerlink" href="#code-quality-checks" title="Permalink to this heading"></a></h5>
-<p>We use black and flake8 to maintain a common style and check the code. Please check your code:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit install
+<section id="run-example">
+<h3>Run example<a class="headerlink" href="#run-example" title="Permalink to this heading"></a></h3>
+<p>No examples provided yet, only tests</p>
+</section>
+<section id="using-the-library">
+<h3>Using the library<a class="headerlink" href="#using-the-library" title="Permalink to this heading"></a></h3>
+<p>Derive your model from <code class="docutils literal notranslate"><span class="pre">Model</span></code> class and implement the abstract functions. Optionally you can also implement the abstract functions from <code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code> and <code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="kn">from</span> <span class="nn">epic.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span><span class="p">],</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">101.1</span><span class="p">,</span> <span class="mf">13.4</span><span class="p">],</span><span class="o">...</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span><span class="o">...</span><span class="p">])</span>
+
+    <span class="c1"># Optional: Implement if the jacobian is know analytically</span>
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>for changed files without trying to commit</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash .git/hooks/pre-commit
-</pre></div>
-</div>
-<p>or for checking all files:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit run --all-files
-</pre></div>
-</div>
-</section>
-<section id="github-pages">
-<h5>GitHub Pages<a class="headerlink" href="#github-pages" title="Permalink to this heading"></a></h5>
-<p>To publish the documentation you have to set</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Settings -&gt; Code and automation -&gt; Pages -&gt; Build and Deployment:
-- Source: Deploy from a branch
-- Branch: gh-pages &amp;&amp; /(root)
-</pre></div>
-</div>
-</section>
-<section id="build-the-docs-manually">
-<h5>Build the docs manually<a class="headerlink" href="#build-the-docs-manually" title="Permalink to this heading"></a></h5>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir docs
-<span class="nb">cd</span> docs
-sphinx-apidoc -f -o source/ ../
-make html
-</pre></div>
-</div>
-</section>
-<section id="packaging-the-modules">
-<h5>Packaging the modules<a class="headerlink" href="#packaging-the-modules" title="Permalink to this heading"></a></h5>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m pip install --upgrade build
-python3 -m build
-</pre></div>
-</div>
-</section>
-<section id="uploading-the-package">
-<h5>Uploading the package<a class="headerlink" href="#uploading-the-package" title="Permalink to this heading"></a></h5>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m pip install --upgrade twine
-python3 -m twine upload --repository testpypi dist/*
-</pre></div>
-</div>
-<p>Remove <code class="docutils literal notranslate"><span class="pre">--repository</span></code> including the argument <code class="docutils literal notranslate"><span class="pre">testpypi</span></code> if using the real Python Packade Index PyPi.</p>
-</section>
-<section id="testing-the-upload">
-<h5>Testing the upload<a class="headerlink" href="#testing-the-upload" title="Permalink to this heading"></a></h5>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epic
-python3
-</pre></div>
-</div>
-<p>Remove <code class="docutils literal notranslate"><span class="pre">--index-url</span></code> including the argument and <code class="docutils literal notranslate"><span class="pre">--no-deps</span></code> if using the real Python Packade Index PyPi.</p>
-<!--
-``` python
-from epic import ???
-print(???)
-``` --></section>
-</section>
 </section>
 </section>
 </section>
@@ -186,7 +138,7 @@ print(???)
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to EPIC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
