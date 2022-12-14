@@ -10,7 +10,7 @@ def evalKDECauchy(data, simRes, scales):
         time is one dimension of the data point.
 
         .. math::
-            density = \\frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \\frac{1}{(\\frac{x^{eval}_d - x_{s,d}}{scales_d})^2 \; \pi \; scales_d}
+            density = \frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \frac{1}{(\frac{x_d - y_{s,d}}{scales_d})^2 \; \pi \; scales_d}
 
     Input: data (data for the model: 2D array with shape (#Samples, #MeasurementDimensions))
            simRes (evaluation coordinates array with one entry for each data dimension)
