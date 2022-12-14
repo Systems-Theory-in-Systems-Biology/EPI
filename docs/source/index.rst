@@ -5,6 +5,8 @@
 
 Welcome to EPIC's documentation!
 ================================
+.. role:: python(code)
+   :language: python
 
 .. include:: welcome.rst
 
