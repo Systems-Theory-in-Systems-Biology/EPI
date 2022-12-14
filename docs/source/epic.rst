@@ -1,6 +1,14 @@
 epic package
 ============
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   epic.models
+
 Submodules
 ----------
 
@@ -12,10 +20,10 @@ epic.functions module
    :undoc-members:
    :show-inheritance:
 
-epic.models module
-------------------
+epic.kernel\_density\_estimation module
+---------------------------------------
 
-.. automodule:: epic.models
+.. automodule:: epic.kernel_density_estimation
    :members:
    :undoc-members:
    :show-inheritance:
@@ -24,6 +32,14 @@ epic.plots module
 -----------------
 
 .. automodule:: epic.plots
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+epic.sampling module
+--------------------
+
+.. automodule:: epic.sampling
    :members:
    :undoc-members:
    :show-inheritance:

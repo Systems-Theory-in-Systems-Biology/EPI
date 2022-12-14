@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import cm
 
 from epic.functions import evalKDECauchy, evalKDEGauss, evalLogTransformedDensity
-from epic.models import calcStdevs, dataLoader, modelLoader, paramLoader
+from epic.models import calcKernelWidth, dataLoader, modelLoader, paramLoader
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0
@@ -76,7 +76,7 @@ def plotGridResults(modelName):
         trueLatitudes = np.zeros((rawTrueLatitudes.shape[0], 1))
         trueLatitudes[:, 0] = rawTrueLatitudes
 
-        trueLatitudesStdevs = calcStdevs(trueLatitudes, modelName)
+        trueLatitudesStdevs = calcKernelWidth(trueLatitudes, modelName)
 
         resolution = 1000
 
@@ -273,7 +273,7 @@ def plotGridResults(modelName):
         trueLatitudes = np.zeros((rawTrueLatitudes.shape[0], 1))
         trueLatitudes[:, 0] = rawTrueLatitudes
 
-        trueLatitudesStdevs = calcStdevs(trueLatitudes, modelName)
+        trueLatitudesStdevs = calcKernelWidth(trueLatitudes, modelName)
 
         resolution = 400
 
@@ -539,7 +539,7 @@ def plotEmceeResults(modelName, numBurnSamples, occurrence, artificialBool):
     if artificialBool == 1:
         trueParams, paramStdevs = paramLoader(modelName)
     else:
-        paramStdevs = calcStdevs(paramChain)
+        paramStdevs = calcKernelWidth(paramChain)
 
     print("Successfully loaded data!")
 
@@ -631,8 +631,6 @@ def plotEmceeResults(modelName, numBurnSamples, occurrence, artificialBool):
         plt.plot(evalGrid, dataEvaluations, c=colorY, label="data truth")
         plt.legend()
         plt.show()
-
-    return 0
 
 
 def plotDataMarginals(modelName):
@@ -990,7 +988,7 @@ def plotTest(modelName):
     )
 
     # calculate reasonable standard deviations for the KDE
-    paramChainStdevs = calcStdevs(paramChain)
+    paramChainStdevs = calcKernelWidth(paramChain)
 
     # define the number of grid points per parameter dimension
     paramPlotResolution = 25
@@ -1041,7 +1039,7 @@ def plotTest(modelName):
     )
 
     # calculate reasonable standard deviations for the KDE
-    simResultsChainStdevs = calcStdevs(simResultsChain)
+    simResultsChainStdevs = calcKernelWidth(simResultsChain)
 
     # allocate storage for the data density evaluation
     simResultsEvals = np.zeros((dataPlotResolution, dataPlotResolution))

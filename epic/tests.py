@@ -2,15 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epic.functions import (
-    concatenateEmceeSamplingResults,
-    evalKDECauchy,
-    evalKDEGauss,
-    evalLogTransformedDensity,
-    runEmceeSampling,
-)
+from epic.functions import evalKDECauchy, evalKDEGauss, evalLogTransformedDensity
 from epic.models import (
-    calcStdevs,
+    calcKernelWidth,
     generateArtificialCoronaData,
     generateArtificialStockData,
     generateArtificialTemperatureData,
@@ -20,6 +14,7 @@ from epic.models import (
     modelLoader,
 )
 from epic.plots import plotTest
+from epic.sampling import concatenateEmceeSamplingResults, runEmceeSampling
 
 # test both kernel density estimator by using one data point and evaluating the Kernel Density Estimation over a grid
 
@@ -138,7 +133,7 @@ def transformationTestLinear():
     data = np.array([xMesh.flatten(), yMesh.flatten()]).T
 
     # define standard deviations according to silverman
-    dataStdevs = calcStdevs(data)
+    dataStdevs = calcKernelWidth(data)
     print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
@@ -221,7 +216,7 @@ def transformationTestExponential():
         data[i, :] = model(trueParam[i, :])
 
     # define standard deviations according to silverman
-    dataStdevs = calcStdevs(data)
+    dataStdevs = calcKernelWidth(data)
     print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
