@@ -2,7 +2,11 @@ import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
 
-from epic.core.model import ArtificialModelInterface, Model, VisualizationModelInterface
+from epic.core.model import (
+    ArtificialModelInterface,
+    Model,
+    VisualizationModelInterface,
+)
 
 
 class Corona(Model, VisualizationModelInterface):
