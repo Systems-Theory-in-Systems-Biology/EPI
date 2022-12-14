@@ -6,101 +6,41 @@
 
 EPIC = Euler Parameter Inference Codebase
 
-The EPI returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
+The EPI algorithm returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
 
 ## Documentation
 
-The documentation can be found under [Go to documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/)
+The full documentation to this software can be found under [Go to documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/)
 
-## Quickstart
+## Installation
 
-Run
-```git clone https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git```
-or
-```git clone git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git```.
-```cd EPIC && pip install poetry```
-```poetry install && poetry run pytest```
+```pip install epic```\
+You can also build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
-### For developers
+## Run example
 
-Here are some infos on how to work with sphinx, github, ...
+No examples provided yet, only tests
 
-#### Poetry
+## Using the library
 
-We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending ```poetry run``` before the command.
+Derive your model from ```Model``` class and implement the abstract functions. Optionally you can also implement the abstract functions from ```ArtificialModelInterface``` and ```VisualizationModelInterface```.
 
-You can also use ```poetry shell``` to activate the virtual environment and exit it with ```exit```.
+```python
+import jax.numpy as jnp
 
-Run ```poetry add xxx``` to add ```xxx``` as dependencie to your project or ```poetry add --group dev myPackage``` to add ```myPackage``` to your ```dev```dependencies. You can have arbitrary group names.
+from epic.core.model import Model
 
-For more information read [Poetry]<https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project>.
+class MyModel(Model):
+    def forward(self, param):
+        return jnp.array([param[0]**2, param[1]**3],...)
 
-#### Code quality checks
+    def getParamSamplingLimits(self):
+        return np.array([[-1.,1.], [-101.1, 13.4],...])
 
-We use black and flake8 to maintain a common style and check the code. Please check your code:
+    def getCentralParam(self):
+        return np.array([0.5, -30.0,...])
 
-``` bash
-pre-commit install
+    # Optional: Implement if the jacobian is know analytically
+    def jacobian(self, param):
+        return ...
 ```
-
-for changed files without trying to commit
-
-``` bash
-bash .git/hooks/pre-commit
-```
-
-or for checking all files:
-
-``` bash
-pre-commit run --all-files
-```
-
-#### GitHub Pages
-
-To publish the documentation you have to set
-
-``` text
-Settings -> Code and automation -> Pages -> Build and Deployment:
-- Source: Deploy from a branch
-- Branch: gh-pages && /(root)
-```
-
-#### Build the docs manually
-
-``` bash
-mkdir docs
-cd docs
-sphinx-apidoc -f -o source/ ../
-make html
-```
-
-#### Packaging the modules
-
-``` bash
-python3 -m pip install --upgrade build
-python3 -m build
-```
-
-#### Uploading the package
-
-``` bash
-python3 -m pip install --upgrade twine
-python3 -m twine upload --repository testpypi dist/*
-```
-
-Remove `--repository` including the argument `testpypi` if using the real Python Packade Index PyPi.
-
-#### Testing the upload
-
-``` bash
-python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epic
-python3
-```
-
-Remove `--index-url` including the argument and `--no-deps` if using the real Python Packade Index PyPi.
-
-<!-- 
-``` python
-from epic import ???
-print(???)
-``` -->
