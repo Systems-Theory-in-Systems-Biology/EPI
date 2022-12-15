@@ -1,7 +1,7 @@
 import abc
 import math
 
-import jax.numpy as jnp
+# import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit
 from jax.config import config
@@ -233,11 +233,3 @@ class JaxModel(Model):
 
     def jacobian(self, param):
         return self._jacobian(param)
-
-
-class SBMLModel(JaxModel):
-    def __init__(self, sbml_file) -> None:
-        super().__init__()
-
-    def forward(self, param):
-        return jnp.array(param) ** 2
