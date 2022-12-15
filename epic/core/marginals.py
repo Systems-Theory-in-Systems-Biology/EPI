@@ -10,7 +10,7 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
     """Evaluate the one-dimensional marginals of the original data over equi-distant grids.
         The stored evaluations can then be used for result visualization.
 
-    :parameter model
+    :parameter model: The model which manages the data and provides the visualization grid
     :parameter resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime
     :return: None, but stores results as files
     """
@@ -61,15 +61,11 @@ def calcEmceeSimResultsMarginals(
     """Evaluate the one-dimensional marginals of the emcee sampling simulation results over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
-    Input: model
-           numBurnSamples (Number of ignored first samples of each chain)
-           occurence (step of sampling from chains)
-           resolution (defines the number of grid points for each marginal evaluation is directly proportional to the runtime)
-    Output: <none except for stored files>
-
-    Standard parameters : numBurnSamples = 20% of all samples
-                          occurence = numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
-                          resolution = 100
+    :param model:
+    :param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
+    :param occurence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
+    :param resolution: (defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
+    :return: None, except for stored files
     """
 
     # Load the emcee simulation results chain
@@ -124,15 +120,11 @@ def calcParamMarginals(
     """Evaluate the one-dimensional marginals of the emcee sampling parameters (and potentially true parameters) over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
-    Input: modelName (model ID)
-           numBurnSamples (Number of ignored first samples of each chain)
-           occurence (step of sampling from chains)
-           resolution (defines the number of grid points for each marginal evaluation is directly proportional to the runtime)
-    Output: <none except for stored files>
-
-    Standard parameters : numBurnSamples = 20% of all samples
-                          occurence = numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
-                          resolution = 100
+    :param model:(model ID)
+    :param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
+    :param occurence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
+    :param resolution: (defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
+    :return: None, except for stored files
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
