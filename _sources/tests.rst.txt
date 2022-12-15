@@ -12,6 +12,30 @@ tests.conftest module
    :undoc-members:
    :show-inheritance:
 
+tests.test\_autodiff\_model module
+----------------------------------
+
+.. automodule:: tests.test_autodiff_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_cpp\_model module
+-----------------------------
+
+.. automodule:: tests.test_cpp_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_extern\_model module
+--------------------------------
+
+.. automodule:: tests.test_extern_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tests.test\_kde module
 ----------------------
 
