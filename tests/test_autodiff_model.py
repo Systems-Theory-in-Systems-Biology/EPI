@@ -3,12 +3,14 @@ from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
-from epic.example_models.autodiff import AutodiffModel
+from epic.example_models.autodiff import AutodiffPlantModel
 
 
 def test_autodiff_model():
     # define the model
-    model = AutodiffModel()  # Behaves just like plant model and uses same data
+    model = (
+        AutodiffPlantModel()
+    )  # Behaves just like plant model and uses same data
 
     # generate artificial data
     model.generateArtificialData()

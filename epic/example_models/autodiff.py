@@ -1,19 +1,12 @@
 import jax.numpy as jnp
 import numpy as np
-from jax import jacrev, jit
 
-from epic.core.model import ArtificialModelInterface, Model
-
-
-def autodiff(cls):
-    cls.initFwAndBw()
-    return cls
+from epic.core.model import ArtificialModelInterface, JaxModel  # , Model
 
 
-@autodiff
-class AutodiffModel(Model, ArtificialModelInterface):
+class AutodiffPlantModel(JaxModel, ArtificialModelInterface):
     @classmethod
-    def my_fw(cls, param):
+    def forward(cls, param):
         return jnp.array(
             [
                 param[0] * param[1],
@@ -22,19 +15,8 @@ class AutodiffModel(Model, ArtificialModelInterface):
             ]
         )
 
-    @classmethod
-    def initFwAndBw(cls):
-        cls.fw = jit(cls.my_fw)
-        cls.bw = jit(jacrev(cls.fw))
-
     def getModelName(self) -> str:
         return "Plant"
-
-    def forward(self, param):
-        return type(self).fw(param)
-
-    def jacobian(self, param):
-        return type(self).bw(param)
 
     def getCentralParam(self) -> np.ndarray:
         return np.array([0.5, 0.5])

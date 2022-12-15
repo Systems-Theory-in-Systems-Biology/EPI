@@ -1,7 +1,9 @@
 import abc
 import math
 
+import jax.numpy as jnp
 import numpy as np
+from jax import jacrev, jit
 from jax.config import config
 
 from epic.core.kernel_density_estimation import calcKernelWidth
@@ -35,7 +37,7 @@ class Model(abc.ABC):
         # self.paramsUpperLimits = None
 
     def __call__(self, param):
-        return self.forward(param)
+        return self._forward(param)
 
     def getModelName(self) -> str:
         return self.__class__.__name__
@@ -70,6 +72,12 @@ class Model(abc.ABC):
         :rtype: _type_
         """
         raise NotImplementedError
+
+    def _forward(self, param):
+        return self.forward(param)
+
+    def _jacobian(self, param):
+        return self.jacobian(param)
 
     def correction(self, param) -> np.double:
         """Evaluate the pseudo-determinant of the simulation jacobian (that serves as a correction term) in one specific parameter point.
@@ -203,12 +211,33 @@ class VisualizationModelInterface(abc.ABC):
         return dataGrid, paramGrid
 
 
-class SBMLModel(Model):
+def autodiff(_cls):
+    _cls.initFwAndBw()
+    return _cls
+
+
+class JaxModel(Model):
+    def __init_subclass__(cls, **kwargs):
+        return autodiff(_cls=cls)
+
+    @classmethod
+    def initFwAndBw(cls):
+        cls.fw = jit(cls.forward)
+        cls.bw = jit(jacrev(cls.fw))
+
+    def _forward(self, param):
+        return type(self).fw(param)
+
+    def _jacobian(self, param):
+        return type(self).bw(param)
+
+    def jacobian(self, param):
+        return self._jacobian(param)
+
+
+class SBMLModel(JaxModel):
     def __init__(self, sbml_file) -> None:
         super().__init__()
 
-    def jacobian(self, param):
-        return
-
     def forward(self, param):
-        pass
+        return jnp.array(param) ** 2

@@ -1,11 +1,12 @@
 import jax.numpy as jnp
 import numpy as np
 
-from epic.core.model import ArtificialModelInterface, Model
+from epic.core.model import ArtificialModelInterface, JaxModel
 
 
-class Linear(Model, ArtificialModelInterface):
-    def forward(self, param):
+class Linear(JaxModel, ArtificialModelInterface):
+    @classmethod
+    def forward(cls, param):
         return jnp.array([param[0] * 10, (-2.0) * param[1] - 2.0])
 
     def getCentralParam(self):
@@ -30,13 +31,15 @@ class Linear(Model, ArtificialModelInterface):
 
 
 # TODO: Complete this class by providing getCentralParam(self)
-class Exponential(Model):
-    def forward(self, param):
+class Exponential(JaxModel):
+    @classmethod
+    def forward(cls, param):
         return jnp.array([param[0] * jnp.exp(1), jnp.exp(param[1])])
 
 
-class LinearODE(Model, ArtificialModelInterface):
-    def forward(self, param):
+class LinearODE(JaxModel, ArtificialModelInterface):
+    @classmethod
+    def forward(cls, param):
         return jnp.array(
             [
                 param[0] * jnp.exp(param[1] * 1.0),

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 from matplotlib import cm
 
 from epic.core.functions import evalLogTransformedDensity
@@ -87,6 +88,7 @@ def test_transformationLinear():
     plt.show()
 
 
+@pytest.mark.skip(reason="Exponential Model is not completely implemented")
 def test_transformationExponential():
     model = Exponential()
 
