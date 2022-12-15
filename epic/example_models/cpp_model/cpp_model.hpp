@@ -1,10 +1,11 @@
 #ifndef MY_CPP_MODEL
 #define MY_CPP_MODEL
 
+#include <cmath>
+
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <pybind11/eigen.h>
-
 
 // Returned from py::array_t<double>.request()
 // struct buffer_info {
@@ -16,52 +17,53 @@
 //     std::vector<size_t> strides;
 // };
 
-
 namespace py = pybind11;
 
-double forward(double param) {
-    return param;
-}
-
-double jacobian(double param) {
-    return 1.;
-}
-
+// Mapping from 
 py::array_t<double> forward(py::array_t<double> param) {
     py::buffer_info bufParam = param.request();
 
     // Storage for the result
-    auto res = py::array_t<double>(bufParam.size);
-    py::buffer_info bufRes = res.request();
+    py::array_t<double> result = py::array(py::buffer_info(
+        nullptr,            /* Pointer to data (nullptr -> ask NumPy to allocate!) */
+        sizeof(double),     /* Size of one item */
+        py::format_descriptor<double>::value, /* Buffer format */
+        1,          /* How many dimensions? */
+        { 3 },  /* Number of elements for each dimension */
+        { sizeof(double) }  /* Strides for each dimension */
+    ));
+    py::buffer_info bufRes = result.request();
 
+    double * ptrParam = static_cast<double *>(bufParam.ptr);
+    double * ptrRes   = static_cast<double *>(bufRes.ptr);
 
-    double* ptrRes = (double*)bufRes.ptr;
-    double* ptrParam = (double*)bufParam.ptr;
+    double water = ptrParam[0];
+    double sun   = ptrParam[1];
+    
+    double size  = water * sun;
+    double green = std::sin(M_PI * water) * std::sin(M_PI * sun);
+    double flies = std::exp(water)-0.999;
+    
+    ptrRes[0] = size;
+    ptrRes[1] = green;
+    ptrRes[2] = flies;
 
-    for (int i = 0; i < bufParam.shape[0]; i++)
-    {
-        ptrRes[i] = ptrParam[i] * i;
-    }
-
-    return result
+    return result;
 }
 
-py::array_t<double> param jacobian(py::array_t<double> param) {
-    py::buffer_info bufParam = param.request();
+// TODO: Use this class to avoid copy?
+using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
-    // Storage for the result
-    auto res = py::array_t<double>(bufParam**2.size);
-    py::buffer_info bufRes = res.request();
-
-
-    //Apply resources
-    auto res = py::array_t<double>(buf1.size);
-    //Resize to 2d array
-    result.resize({buf1.shape[0],buf1.shape[1]});
-        double* ptrRes = (double*)bufRes.ptr;
-
-
-    return 1.;
+//Jacobian for f:R^n -> R^m is Jf:R^m -> R^n = R^mxn
+Eigen::Matrix2d jacobian(Eigen::Vector2d param) {
+    auto res = Eigen::Matrix2d(3,2); 
+    res(0,0) = param(1);
+    res(0,1) = param(0);
+    res(1,0) = M_PI * std::cos(M_PI * param(0)) * std::sin(M_PI * param(1));
+    res(1,1) = std::sin(M_PI * param(0)) * M_PI * std::cos(M_PI * param(1));
+    res(2,0) = param(0) * std::exp(param(0));
+    res(2,1) = 0.0;
+    return res;
 }
 
 #endif

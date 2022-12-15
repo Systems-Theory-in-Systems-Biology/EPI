@@ -27,7 +27,6 @@ def test_transformationLinear():
 
     # define standard deviations according to silverman
     dataStdevs = calcKernelWidth(data)
-    print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -104,7 +103,6 @@ def test_transformationExponential():
 
     # define standard deviations according to silverman
     dataStdevs = calcKernelWidth(data)
-    print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25

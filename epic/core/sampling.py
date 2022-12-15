@@ -1,4 +1,6 @@
 from multiprocessing import Pool
+
+# from pathos.multiprocessing import Pool
 from os import path
 
 import emcee

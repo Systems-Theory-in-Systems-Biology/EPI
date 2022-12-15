@@ -66,3 +66,4 @@ testpaths = [
 addopts = [
     "--import-mode=importlib",
 ]
+pythonpath = ["epic"]
