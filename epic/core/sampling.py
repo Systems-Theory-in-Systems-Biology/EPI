@@ -1,4 +1,6 @@
 from multiprocessing import Pool
+
+# from pathos.multiprocessing import Pool
 from os import path
 
 import emcee
@@ -11,8 +13,8 @@ from epic.core.model import Model
 def countEmceeSubRuns(model: Model) -> int:
     """This data organization function counts how many sub runs are saved for the specified scenario.
 
-    Input: model
-    Output: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
+    :param model: The model for which the files will be counted
+    :return: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
     """
     # Initialize the number of existing files to be 0
     numExistingFiles = 0
@@ -40,12 +42,12 @@ def runEmceeSampling(
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
         Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
-    Input: model
-           numRuns (number of stored sub runs)
-           numWalkers (number of particles in the particle swarm sampler)
-           numSteps (number of samples each particle performs before storing the sub run)
-           numProcesses (number of parallel threads)
-    Output: <none except for stored files>
+    :param model: The model which will be sampled
+    :param numRuns: (number of stored sub runs)
+    :param numWalkers: (number of particles in the particle swarm sampler)
+    :param numSteps: (number of samples each particle performs before storing the sub run)
+    :param numProcesses: (number of parallel threads)
+    :return: None, except for stored files
     """
 
     # Load data, data standard deviations and model characteristics for the specified model.

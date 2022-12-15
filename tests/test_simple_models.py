@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
 from matplotlib import cm
 
 from epic.core.functions import evalLogTransformedDensity
@@ -27,7 +28,6 @@ def test_transformationLinear():
 
     # define standard deviations according to silverman
     dataStdevs = calcKernelWidth(data)
-    print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -88,6 +88,7 @@ def test_transformationLinear():
     plt.show()
 
 
+@pytest.mark.skip(reason="Exponential Model is not completely implemented")
 def test_transformationExponential():
     model = Exponential()
 
@@ -104,7 +105,6 @@ def test_transformationExponential():
 
     # define standard deviations according to silverman
     dataStdevs = calcKernelWidth(data)
-    print("Data standard deviations = ", dataStdevs)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25

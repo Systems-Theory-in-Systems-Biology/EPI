@@ -1,9 +1,9 @@
 import abc
 import math
-from typing import Callable
 
+import jax.numpy as jnp
 import numpy as np
-from jax import jacrev
+from jax import jacrev, jit
 from jax.config import config
 
 from epic.core.kernel_density_estimation import calcKernelWidth
@@ -11,6 +11,8 @@ from epic.core.kernel_density_estimation import calcKernelWidth
 config.update("jax_enable_x64", True)
 
 # TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?!
+# TODO: Discuss best solution with supervisors:
+# https://stackoverflow.com/questions/1816958/cant-pickle-type-instancemethod-when-using-multiprocessing-pool-map/41959862#41959862
 
 
 class Model(abc.ABC):
@@ -20,8 +22,8 @@ class Model(abc.ABC):
     """
 
     def __init__(self) -> None:
+        pass
         # self.modelName = ""
-        self.jacrev_jacobian = None
         # self.centralParam : np.array = None
 
         # self.paramBounds : np.array = None #[[lower, upper], ...]
@@ -33,10 +35,12 @@ class Model(abc.ABC):
         # TODO: Also need this for each model....
         # self.paramsLowerLimits = None
         # self.paramsUpperLimits = None
-        pass
 
     def __call__(self, param):
-        return self.forward(param)
+        return self._forward(param)
+
+    def getModelName(self) -> str:
+        return self.__class__.__name__
 
     # Define model-specific lower and upper borders for sampling
     # to avoid parameter regions where the simulation can only be evaluated instably.
@@ -44,43 +48,9 @@ class Model(abc.ABC):
     def getParamSamplingLimits(self) -> np.ndarray:
         raise NotImplementedError
 
-    def getModelName(self) -> str:
-        return self.__class__.__name__
-
     @abc.abstractmethod
     def getCentralParam(self) -> np.ndarray:
         raise NotImplementedError
-
-    def dataLoader(
-        self,
-    ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
-        paramDim = self.getCentralParam().shape[0]
-
-        data = np.loadtxt(
-            "Data/" + self.getModelName() + "Data.csv", delimiter=","
-        )
-        if len(data.shape) == 1:
-            data = data.reshape((data.shape[0], 1))
-
-        dataStdevs = calcKernelWidth(data)
-        numDataPoints, dataDim = data.shape
-
-        return (
-            paramDim,
-            dataDim,
-            numDataPoints,
-            self.getCentralParam(),
-            data,
-            dataStdevs,
-        )
-
-    def getForward(self) -> Callable:
-        return self.forward
-
-    # TODO: Best practice avilable for this?
-    def getJacobian(self) -> Callable:
-        self.jacrev_jacobian = jacrev(self.forward)
-        return self.jacrev_jacobian
 
     @abc.abstractmethod
     def forward(self, param):
@@ -91,6 +61,7 @@ class Model(abc.ABC):
         """
         raise NotImplementedError
 
+    @abc.abstractmethod
     def jacobian(self, param):
         """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method. If the method is not provided in the subclass
         the jacobian is calculated by  :func:`jax.jacrev`.
@@ -100,9 +71,13 @@ class Model(abc.ABC):
         :return: _description_
         :rtype: _type_
         """
-        if self.jacrev_jacobian is None:
-            self.jacrev_jacobian = jacrev(self.forward)
-        return self.jacrev_jacobian(param)
+        raise NotImplementedError
+
+    def _forward(self, param):
+        return self.forward(param)
+
+    def _jacobian(self, param):
+        return self.jacobian(param)
 
     def correction(self, param) -> np.double:
         """Evaluate the pseudo-determinant of the simulation jacobian (that serves as a correction term) in one specific parameter point.
@@ -126,6 +101,29 @@ class Model(abc.ABC):
             print("invalid value encountered for correction factor")
 
         return correction
+
+    def dataLoader(
+        self,
+    ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
+        paramDim = self.getCentralParam().shape[0]
+
+        data = np.loadtxt(
+            "Data/" + self.getModelName() + "Data.csv", delimiter=","
+        )
+        if len(data.shape) == 1:
+            data = data.reshape((data.shape[0], 1))
+
+        dataStdevs = calcKernelWidth(data)
+        numDataPoints, dataDim = data.shape
+
+        return (
+            paramDim,
+            dataDim,
+            numDataPoints,
+            self.getCentralParam(),
+            data,
+            dataStdevs,
+        )
 
 
 # TODO: Its not really an interface?
@@ -211,3 +209,35 @@ class VisualizationModelInterface(abc.ABC):
             delimiter=",",
         )
         return dataGrid, paramGrid
+
+
+def autodiff(_cls):
+    _cls.initFwAndBw()
+    return _cls
+
+
+class JaxModel(Model):
+    def __init_subclass__(cls, **kwargs):
+        return autodiff(_cls=cls)
+
+    @classmethod
+    def initFwAndBw(cls):
+        cls.fw = jit(cls.forward)
+        cls.bw = jit(jacrev(cls.fw))
+
+    def _forward(self, param):
+        return type(self).fw(param)
+
+    def _jacobian(self, param):
+        return type(self).bw(param)
+
+    def jacobian(self, param):
+        return self._jacobian(param)
+
+
+class SBMLModel(JaxModel):
+    def __init__(self, sbml_file) -> None:
+        super().__init__()
+
+    def forward(self, param):
+        return jnp.array(param) ** 2

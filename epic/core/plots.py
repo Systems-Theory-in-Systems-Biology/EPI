@@ -783,11 +783,10 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     """Draw each sample (row of the matrix) as a circle of linear interpolations of its dimensions.
     Loads all necessary data and subsequently calls the method singleWeb 3 or 4 times
 
-    Input: modelName (model ID)
-           numBurnSamples (Number of ignored first samples of each chain)
-           occurence (step of sampling from chains)
-    Output: <none>
-
+    :param model: (model ID)
+    :param numBurnSamples: (Number of ignored first samples of each chain)
+    :param occurence: (step of sampling from chains)
+    :return: None, shows a plot
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
