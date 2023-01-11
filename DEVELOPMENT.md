@@ -19,7 +19,7 @@
 - Install epic:
 
   ```bash
-  cd EPIC && pip install poetry && poetry install
+  cd EPIC && pip install poetry && poetry install --with=dev
   ```
 
 - Run the tests:
