@@ -2,22 +2,38 @@
 
 ## Quickstart
 
-- Clone the repository: \
-```git clone https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git``` or \ ```git clone git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git```.
+- Clone the repository:
 
-- Install the library: \
-```cd EPIC && pip install poetry``` \
-```poetry install```
+  ```bash
+  git clone https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git
+  ```
 
-- Run the tests: \
-```poetry run pytest```
+  ```bash
+  git clone git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git
+  ```
+
+  <details>
+  <summary>Should I choose https or ssh?</summary>
+  You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, don't use the commands below. </details>
+
+- Install epic:
+
+  ```bash
+  cd EPIC && pip install poetry && poetry install
+  ```
+
+- Run the tests:
+
+  ```bash
+  poetry run pytest
+  ```
 
 ## Maintaining the repository
 
 Here are the most important infos on how to maintain this repository.
 
 - **Dependency Management with Poetry**: \
-  We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending ```poetry run``` before the command. You can also use ```poetry shell``` to activate the virtual environment and exit it with ```exit```. Run ```poetry add xxx``` to add ```xxx``` as dependencie to your project or ```poetry add --group dev myPackage``` to add ```myPackage``` to your ```dev``` dependencies. You can have arbitrary group names.
+  We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending ```poetry run``` before the command. You can also use ```poetry shell``` to activate the virtual environment and exit it with ```exit```. Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
   
   For more information read the [Poetry Documentation](https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project).
 

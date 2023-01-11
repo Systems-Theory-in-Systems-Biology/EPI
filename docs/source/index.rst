@@ -15,13 +15,12 @@ Welcome to EPIC's documentation!
    :maxdepth: 1
    :caption: Contents:
 
+   API DOC<modules>
    Usage Examples<examples>
-   MarkdownLinks/readme
    MarkdownLinks/development
    MarkdownLinks/contributing
    MarkdownLinks/license
    MarkdownLinks/citation
-   API DOC<modules>
    MarkdownLinks/todos
 
 ..
