@@ -20,10 +20,6 @@ The package is available on pypi and can be installed with:\
 ```pip install epic```\
 You can also build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
-## Run example
-
-No examples provided yet, only tests
-
 ## Using the library
 
 Derive your model from ```Model``` class and implement the abstract functions. Optionally you can also implement the abstract functions from ```ArtificialModelInterface``` and ```VisualizationModelInterface```.
@@ -35,18 +31,20 @@ from epic.core.model import Model
 
 class MyModel(Model):
     def forward(self, param):
-        return jnp.array([param[0]**2, param[1]**3],...)
+        return jnp.array(...)
 
     def getParamSamplingLimits(self):
-        return np.array([[-1.,1.], [-101.1, 13.4],...])
+        return np.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
 
     def getCentralParam(self):
         return np.array([0.5, -30.0,...])
 
-    # Optional: Implement if the jacobian is know analytically
     def jacobian(self, param):
-        return ...
+        return jnp.array(...)
 ```
+
+To evaluate the model and interfer the parameter distribution, call ```model.interfere(my_data.csv)```.
+A detailed guide on how to use this library can be found in the documentation on our [webpage](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).
 
 ## Documentation
 

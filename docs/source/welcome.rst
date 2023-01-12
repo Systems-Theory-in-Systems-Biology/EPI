@@ -24,13 +24,16 @@ The package is available on pypi and can be installed with:
 
 You can also build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`
 
-TODO: Do we have optional dependencies? pip install epic[xxx]?
+.. warning::
+   TODO: Do we have want to tell about dependencies? pip install epic[xxx]? e. g. for pytest?
 
 ------------
 How to start
 ------------
 
-| Derive your model from :py:class:`epic.core.model.Model` and implement the abstract functions :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`. Then call :py:meth:`Model.interference` with you data file. TODO: This function does not exist yet!!!
+| Derive your model from :py:class:`epic.core.model.Model` and implement the abstract functions :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`. Then call :py:meth:`Model.interference` with you data file.
+
+.. warning:: TODO: The function inference may not exist yet!!!
 
 
 You can also derive your model from
@@ -41,7 +44,10 @@ You can also derive your model from
 
 Optionally you can also inherit, and implement the abstract functions from
 
-* :py:class:`~epic.core.model.ArtificialModelInterface`: This allows you to check if the inversion algorithm is working for your model using the function :py:meth:`~epic.core.model.Model.test`. TODO: This function does not exist yet!!!
-* :py:class:`~epic.core.model.VisualizationModelInterface`: This allows you to plot the results of the data interference using the function :py:meth:`~epic.core.model.Model.plot`. TODO: This function does not exist yet!!!
+* :py:class:`~epic.core.model.ArtificialModelInterface`: This allows you to check if the inversion algorithm is working for your model using the function :py:meth:`~epic.core.model.Model.test`.
+   .. warning:: TODO: The function test may not exist yet!!!
+* :py:class:`~epic.core.model.VisualizationModelInterface`: This allows you to plot the results of the data interference using the function :py:meth:`~epic.core.model.Model.plot`.
+   .. warning:: TODO: The function plot may not exist yet!!!
+
 
 Please read the documentation for our :doc:`Examples </examples>`.

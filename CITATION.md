@@ -2,6 +2,8 @@
 
 To cite EPIC in publications, please use:
 
+TODO: Fill in the correct paper details
+
  H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York,
  2009.
 

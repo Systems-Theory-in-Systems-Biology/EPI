@@ -21,21 +21,33 @@ Type Hints:
 
 - [ ] Fix [Development Quickstart Guide](./DEVELOPMENT.md#quickstart) link in sphinx
 - [ ] Check with supervisors:
-  - [ ] License file
-  - [ ] Contributing file
+  - [x] License file
+  - [x] Contributing file
   - [ ] Citation file
-  - [ ] README file
+  - [x] README file
   - [ ] pyproject toml project urls
-- [ ] Beautify documentation
-  - [ ] read <https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/>
-  - [ ] choose a theme? (Take a look at the template from seaborn or numpy)
-  - [ ] switch to mkdocs, pdocs, ...?
+- [x] Beautify documentation
+  - [x] read <https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/>
+  - [x] choose a theme? (Take a look at the template from seaborn or numpy) current theme looks good
+  - [x] switch to mkdocs, pdocs, ...? no
   - [ ] Add doc dependencies. E. g. myst_parser, sphinx-copybutton
 - [ ] [Dependabot badge](https://github.com/dependabot/dependabot-core/issues/1912)
+- [ ] Complete all models! and test them
+- [ ] Remove all toods
+- [ ] Run through grammarly
+
+## Deployment
+
+- [ ] Test test deployment
+- [ ] Test real deployment to pypy
 
 ## SBML
 
 - Complete sbml class using one of
   - [ ] [SymbolicSBML](https://gitlab.com/wurssb/Modelling/symbolicsbml)
-  - [ ] [RoadRunner](https://sys-bio.github.io/roadrunner/docs-build/index.html)
-  - [ ] [Sbmltodepy](https://github.com/AnabelSMRuggiero/sbmltoodepy) they dont want users to make issues/ pull requests / .. :(
+  - [ ] [RoadRunner](https://sys-bio.github.io/roadrunner/docs-build/index.html) Could be a good option
+  - [x] [Sbmltodepy](https://github.com/AnabelSMRuggiero/sbmltoodepy) they dont want users to make issues/ pull requests / .. :(
+
+## Dependencies
+
+- Add c++ / example dependencies in general and explanation on how to run c++ model?

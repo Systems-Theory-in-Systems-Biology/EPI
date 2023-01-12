@@ -1,26 +1,32 @@
-Usage Examples 
+Example Models
 ==============
 
-EPI can be used in several ways and can be applied to many different problems. This section will show the basics on how to apply EPI to problems,
-discuss problems of the algorithm and show how EPI can be combined with external C++ code. Also the application to sbml models will be shown.
-For more details on the mathematics behind the epi algorithm we refer to our published paper.
+TODO: Move most of this into the welcome page and the sphinx documentation?
+
+EPI can be used in several ways and can be applied to many different problems.
+We will show how EPI can be applied to a simple, one-dimensional problem; a high-dimensional problem;
+a sbml model; and a problem defined through external C++ code.
+For more details on the mathematics behind the epi algorithm, we refer to our published paper.
+For more details on how to use EPI, we refer to our Tutorial page.
 
 Content
 -------
 
-* :ref:`Running the 1D-Temperature model from example models<Temperature Model>`
+* :ref:`1D-Temperature model from the tutorial<Temperature Model>`
 * :ref:`High-Dimensional Stock Data<StockData Model>`
-* :ref:`Using your own simple model<Own simple model>`
 * :ref:`Creating a model using SBML<SBML Model>`
 * :ref:`External C++ Model<C++ Model>`
 
+General
+-----------------
+In all exaples we assume a given (discrete) data probability distribution :math:`y_i \sim Y`.
+The goal is to find the parameter probability distribution :math:`Q` satisfying :math:`Y = s(Q)`.
 
 Temperature Model
 -----------------
 The temperature model is contained in :code:`epic/example_models/temperature`.
 The model :math:`y_i(q_i)=60 \cos(q_i)-30=s(q_i)` describes the temperature for a place on the earth :math:`y_i` by using the latitude coordinates :math:`q_i`.
-We assume a data probability distribution :math:`y_i \sim Y`.
-The goal is to find the parameter probability distribution :math:`Q` satisfying :math:`Y = s(Q)`.
+
 
 There are two possible scenarios:
 
@@ -36,11 +42,6 @@ StockData Model
 The stock data model is contained in :code:`epic/example_models/stock`.
 Overwrite dataLoader and implements both interfaces, describe them.
 Describe how to vis the high dim data
-
-Own simple model
-----------------
-Use a really simple model with explicit jacobian
-
 
 SBML Model
 ----------

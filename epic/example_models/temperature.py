@@ -6,11 +6,23 @@ from epic.core.model import ArtificialModelInterface, Model
 
 # TODO: Does this model realyl not provide a visGrid?
 class Temperature(Model):
+    def __init__(self) -> None:
+        super().__init__()
+        self.lowT = -30.0
+        self.highT = 30.0
+
     def forward(self, param):
-        lowT = -30.0
-        highT = 30.0
-        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
-        return res
+        return jnp.array(
+            [
+                Model.lowT
+                + (self.highT - self.lowT) * jnp.cos(jnp.abs(param[0]))
+            ]
+        )
+
+    def jacobian(self, param):
+        return jnp.array(
+            [(self.highT - self.lowT) * jnp.sin(jnp.abs(param[0]))]
+        )
 
     def getCentralParam(self):
         return np.array([np.pi / 4.0])

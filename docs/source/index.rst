@@ -16,7 +16,8 @@ Welcome to EPIC's documentation!
    :caption: Contents:
 
    API DOC<modules>
-   Usage Examples<examples>
+   Tutorial<tutorial_material/tutorial>
+   Example Models<examples>
    MarkdownLinks/development
    MarkdownLinks/contributing
    MarkdownLinks/license
