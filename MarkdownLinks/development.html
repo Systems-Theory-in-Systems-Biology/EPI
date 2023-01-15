@@ -7,6 +7,8 @@
   <title>Development &mdash; EPIC  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -17,11 +19,13 @@
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contributing" href="contributing.html" />
-    <link rel="prev" title="Readme" href="readme.html" /> 
+    <link rel="next" title="Contributing to EPIC" href="contributing.html" />
+    <link rel="prev" title="Example Models" href="../examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -30,6 +34,7 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
             <a href="../index.html" class="icon icon-home"> EPIC
+            <img src="../_static/epic.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -41,20 +46,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Usage Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Readme</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#development">Development</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#quickstart">Quickstart</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#maintaining-the-repository">Maintaining the repository</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">API DOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Example Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#maintaining-the-repository">Maintaining the repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jax-with-cuda">Jax with CUDA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to EPIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="todos.html">TODOs</a></li>
 </ul>
 
@@ -84,50 +87,64 @@
              
   <section id="development">
 <h1>Development<a class="headerlink" href="#development" title="Permalink to this heading"></a></h1>
-<section id="development">
-<h2>Development<a class="headerlink" href="#development" title="Permalink to this heading"></a></h2>
 <section id="quickstart">
-<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h3>
-<ul class="simple">
-<li><p>Clone the repository: <br />
-<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git</span></code> or \ <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">git&#64;github.com:Systems-Theory-in-Systems-Biology/EPIC.git</span></code>.</p></li>
-<li><p>Install the library: <br />
-<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">EPIC</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">poetry</span></code> <br />
-<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code></p></li>
-<li><p>Run the tests: <br />
-<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">pytest</span></code></p></li>
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git
+</pre></div>
+</div>
+<details>
+<summary>Should I choose https or ssh?</summary>
+You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, not this repository. </details>
+</li>
+<li><p>Install epic:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>EPIC<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>poetry<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="o">=</span>dev
+</pre></div>
+</div>
+</li>
+<li><p>Run the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest
+</pre></div>
+</div>
+<p>You can add the <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> parameter to get a more detailed report.</p>
+</li>
 </ul>
 </section>
 <section id="maintaining-the-repository">
-<h3>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Permalink to this heading"></a></h3>
+<h2>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Permalink to this heading"></a></h2>
 <p>Here are the most important infos on how to maintain this repository.</p>
 <ul>
 <li><p><strong>Dependency Management with Poetry</strong>: <br />
-We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> before the command. You can also use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code> to activate the virtual environment and exit it with <code class="docutils literal notranslate"><span class="pre">exit</span></code>. Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">xxx</span></code> to add <code class="docutils literal notranslate"><span class="pre">xxx</span></code> as dependencie to your project or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">myPackage</span></code> to add <code class="docutils literal notranslate"><span class="pre">myPackage</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependencies. You can have arbitrary group names.</p>
+We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> before the command. You can also use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code> to activate the virtual environment and exit it with <code class="docutils literal notranslate"><span class="pre">exit</span></code>. Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">package_name</span></code> to add the library/package with the name <code class="docutils literal notranslate"><span class="pre">package_name</span></code> as dependencie to your project. Use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">package_name</span></code> to add <code class="docutils literal notranslate"><span class="pre">package_name</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependencies. You can have arbitrary group names.</p>
 <p>For more information read the <a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">Poetry Documentation</a>.</p>
 </li>
 <li><p><strong>Code quality checks</strong>: <br />
 We use black, flake8, isort to maintain a common style and check the code. Please check your code install the pre-commit hook:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
 <p>You can also check your changes manually:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit run --all-files
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
 </pre></div>
 </div>
 </li>
 <li><p><strong>Testing with pytest</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry run pytest
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest
 </pre></div>
 </div>
 </li>
 <li><p><strong>Documentation with Sphinx</strong>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir docs
-<span class="nb">cd</span> docs
-sphinx-apidoc -f -o source/ ../
-make html
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span>source/<span class="w"> </span>../
+make<span class="w"> </span>html
 </pre></div>
 </div>
+<p>All extensions of sphinx which are used to create this documentation and further settings are stored in the file <code class="docutils literal notranslate"><span class="pre">docs/source/conf.py</span></code>.
+If you add extensions to <code class="docutils literal notranslate"><span class="pre">conf.py</span></code> which are not part of sphinx, add them to the <code class="docutils literal notranslate"><span class="pre">docs/source/requirement.txt</span></code> file to allow github action <code class="docutils literal notranslate"><span class="pre">mmaraskar/sphinx-action&#64;master</span></code> to still build the documentation.</p>
 </li>
 <li><p><strong>Hosting with GitHub Pages</strong>: <br />
 To publish the documentation on github pages you probably have to change some settings in the <a class="reference external" href="https://github.com/Systems-Theory-in-Systems-Biology/EPIC">GitHub Repository</a></p>
@@ -139,36 +156,71 @@ To publish the documentation on github pages you probably have to change some se
 </li>
 <li><p><strong>Test Deployment with TestPyPi</strong>: <br />
 You have to setup testpypi once:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry config repositories.testpypi https://test.pypi.org/legacy/
-poetry config http-basic.testpypi __token__ pypi-your-api-token-here
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>repositories.testpypi<span class="w"> </span>https://test.pypi.org/legacy/
+poetry<span class="w"> </span>config<span class="w"> </span>http-basic.testpypi<span class="w"> </span>__token__<span class="w"> </span>pypi-your-api-token-here
 </pre></div>
 </div>
 <p>Build and deploy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry build
-poetry publish -r testpypi
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>build
+poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> </span>testpypi
 </pre></div>
 </div>
 <p>Test this with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epic
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--index-url<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--no-deps<span class="w"> </span>epic
 </pre></div>
 </div>
 </li>
 <li><p><strong>Deployment with PyPi</strong>: <br />
 You have to setup pypi once:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry config pypi-token.pypi pypi-your-token-here
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>pypi-token.pypi<span class="w"> </span>pypi-your-token-here
 </pre></div>
 </div>
 <p>Build and deploy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry publish --build
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>publish<span class="w"> </span>--build
 </pre></div>
 </div>
 <p>Test this with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install epic
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>epic
 </pre></div>
 </div>
 </li>
 </ul>
 </section>
+<section id="jax-with-cuda">
+<h2>Jax with CUDA<a class="headerlink" href="#jax-with-cuda" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/google/jax#pip-installation-gpu-cuda">Jax can be run with cuda on the gpu</a>. However you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)</p>
+<p>I used the following tricks to get it running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># for cuda toolkit</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CUDA_HOME</span><span class="o">=</span>/usr/local/cuda
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/local/cuda-12.0/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">&quot;/usr/local/cuda-12.0/lib64:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">&quot;/usr/local/cuda-11-fake/lib64:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Follow <a class="reference external" href="https://github.com/google/jax/issues/13637">this issue</a> to see whether you possibly need to create the cuda-11-fake folder as a copy from the 12.0 folder and “create the .so.11” libraries as symlinks using the script below.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Find all files in the current directory that match the pattern &quot;lib*.so&quot;</span>
+<span class="k">for</span><span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span>lib*.so<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="c1"># Extract the base name of the file (without the &quot;.so&quot; extension)</span>
+<span class="w">    </span><span class="nv">base_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">file</span><span class="p">%.*</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="c1"># Construct the name of the symbolic link we want to create</span>
+<span class="w">    </span><span class="nv">link_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">base_name</span><span class="si">}</span><span class="s2">.so.11&quot;</span>
+
+<span class="w">    </span><span class="c1"># Check if the link already exists</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$link_name</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># Create the symbolic link if it doesn&#39;t exist</span>
+<span class="w">        </span>ln<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$file</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$link_name</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+<p>It can happen that old code is executed due to the generated pycache. For example an old version of cuda or cudnn could be used. If you believe that this is happening:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyclean
+py3clean<span class="w"> </span>.
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -176,8 +228,8 @@ You have to setup pypi once:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="readme.html" class="btn btn-neutral float-left" title="Readme" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../examples.html" class="btn btn-neutral float-left" title="Example Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing to EPIC" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

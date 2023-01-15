@@ -4,9 +4,11 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; EPIC  documentation</title>
+  <title>EPIC - Euler Parameter Interference Codebase &mdash; EPIC  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -17,7 +19,8 @@
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -29,6 +32,7 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
             <a href="index.html" class="icon icon-home"> EPIC
+            <img src="_static/epic.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,13 +44,13 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Usage Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/readme.html">Readme</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API DOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing to EPIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/todos.html">TODOs</a></li>
 </ul>
 
@@ -64,7 +68,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">EPIC - Euler Parameter Interference Codebase</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/welcome.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,21 +78,60 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p>Welcome Sebastian and Vincent! This is the welcome page where we can write something nice about this epic project.
-Some math formulas</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\psi(r) = e^{-2r} \\
-\frac{dy}{dx} = \pi\end{split}\]</div>
-<p>an image</p>
-<a class="reference internal image-reference" href="_images/pic.png"><img alt="_images/pic.png" src="_images/pic.png" style="width: 400pt;" /></a>
-<p>or a code block</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">A cute code block</span><a class="headerlink" href="#id1" title="Permalink to this code"></a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">epic</span><span class="p">():</span>
-  <span class="k">return</span> <span class="kc">True</span>
+  <a class="reference internal image-reference" href="_images/epic.png"><img alt="_images/epic.png" src="_images/epic.png" style="width: 200pt;" /></a>
+<section id="epic-euler-parameter-interference-codebase">
+<h1>EPIC - Euler Parameter Interference Codebase<a class="headerlink" href="#epic-euler-parameter-interference-codebase" title="Permalink to this heading"></a></h1>
+<p>The Euler Parameter Inference Codebase (EPIC) is a python package for inverse parameter inference.
+The EPI algorithm takes observed data and a model as input and returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
+We support SBML ode models and user provided models.</p>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<p>The package is available on pypi and can be installed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">epic</span>
 </pre></div>
 </div>
+<p>You can also build the library from the newest source code by following the <a class="reference internal" href="MarkdownLinks/development.html"><span class="doc">Development Quickstart Guide</span></a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>TODO: Do we have want to tell about dependencies? pip install epic[xxx]? e. g. for pytest?</p>
 </div>
+</section>
+<section id="how-to-start">
+<h1>How to start<a class="headerlink" href="#how-to-start" title="Permalink to this heading"></a></h1>
+<div class="line-block">
+<div class="line">Derive your model from <code class="xref py py-class docutils literal notranslate"><span class="pre">epic.core.model.Model</span></code> and implement the abstract functions <code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code>. Then call <code class="xref py py-meth docutils literal notranslate"><span class="pre">Model.interference()</span></code> with you data file.</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>TODO: The function inference may not exist yet!!!</p>
+</div>
+<p>You can also derive your model from</p>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code>: The jacobian of your forward method is automatically calculated. Use jax.numpy instead of numpy for the forward method implementation!</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SBMLModel</span></code>: The complete model is derived from the given sbml file. You dont need to define the Model manually.</p></li>
+</ul>
+<p>Optionally you can also inherit, and implement the abstract functions from</p>
+<ul>
+<li><dl>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code>: This allows you to check if the inversion algorithm is working for your model using the function <code class="xref py py-meth docutils literal notranslate"><span class="pre">test()</span></code>.</dt><dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>TODO: The function test may not exist yet!!!</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">VisualizationModelInterface</span></code>: This allows you to plot the results of the data interference using the function <code class="xref py py-meth docutils literal notranslate"><span class="pre">plot()</span></code>.</dt><dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>TODO: The function plot may not exist yet!!!</p>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Please read the documentation for our <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a>.</p>
+</section>
 
 
            </div>

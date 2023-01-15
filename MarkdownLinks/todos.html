@@ -7,6 +7,8 @@
   <title>TODOs &mdash; EPIC  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -17,10 +19,12 @@
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="tests package" href="../tests.html" /> 
+    <link rel="prev" title="Citation" href="citation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,6 +33,7 @@
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
             <a href="../index.html" class="icon icon-home"> EPIC
+            <img src="../_static/epic.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -40,18 +45,20 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Usage Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Readme</a></li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">API DOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to EPIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">TODOs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#todos">TODOs</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#todo">TODO</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment">Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sbml">SBML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#profiling">Profiling</a></li>
 </ul>
 </li>
 </ul>
@@ -82,46 +89,81 @@
              
   <section id="todos">
 <h1>TODOs<a class="headerlink" href="#todos" title="Permalink to this heading"></a></h1>
-<section id="todos">
-<h2>TODOs<a class="headerlink" href="#todos" title="Permalink to this heading"></a></h2>
 <p>This implementation should in the end be usable with the Systems Biology Markup Language (SBML) format.
-The goal is to enable reuse, facilitated cooperation and boost visability.</p>
-<p>For the implementation it is important to follow the PEP8 guidelines and write a proper documentation for everything.</p>
-<section id="todo">
-<h3>TODO<a class="headerlink" href="#todo" title="Permalink to this heading"></a></h3>
-<p>Implementation:</p>
-<ul class="simple">
-<li><p>[ ] create module for straight forward EPI usage</p></li>
-<li><p>[ ] create and implement example usecases</p></li>
-<li><p>[ ] make the toolbox usable for SBML models</p></li>
-<li><p>[ ] Test Jax for gpu: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">&quot;jax[cuda]&quot;</span> <span class="pre">-f</span> <span class="pre">https://storage.googleapis.com/jax-releases/jax_cuda_releases.html</span></code></p></li>
+The reason for this goal is to enable reuse code, facilitate cooperation and boost visability.</p>
+<section id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"></a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create module for straight forward EPI usage, current classmethod solution is not optimal</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.interference()</span></code> that allows the user to evaluate his model on custom data</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.plot()</span></code> that allows the user to visualize his results</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.test()</span></code> that allows the user to test the inversion for his model on artificial data</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create and implement example usecases</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> make the toolbox usable for SBML models</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test Jax for gpu: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">&quot;jax[cuda]&quot;</span> <span class="pre">-f</span> <span class="pre">https://storage.googleapis.com/jax-releases/jax_cuda_releases.html</span></code></p></li>
 </ul>
 <p>Type Hints:</p>
-<ul class="simple">
-<li><p>[ ] np.double vs np.ndarray if more dimensions are passed?</p></li>
-</ul>
-<p>Documentation:</p>
-<ul class="simple">
-<li><p>[ ] Fix <span class="xref myst">Development Quickstart Guide</span> link in sphinx</p></li>
-<li><p>[ ] Check with supervisors:</p>
-<ul>
-<li><p>[ ] License file</p></li>
-<li><p>[ ] Contributing file</p></li>
-<li><p>[ ] Citation file</p></li>
-<li><p>[ ] README file</p></li>
-<li><p>[ ] pyproject toml project urls</p></li>
-</ul>
-</li>
-<li><p>[ ] Beautify documentation</p>
-<ul>
-<li><p>[ ] read <a class="reference external" href="https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/">https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/</a></p></li>
-<li><p>[ ] choose a theme? (Take a look at the template from seaborn or numpy)</p></li>
-<li><p>[ ] switch to mkdocs, pdocs, …?</p></li>
-</ul>
-</li>
-<li><p>[Dependabot badge]<a class="reference external" href="https://github.com/dependabot/dependabot-core/issues/1912">https://github.com/dependabot/dependabot-core/issues/1912</a></p></li>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> np.double vs np.ndarray if more dimensions are passed?</p></li>
 </ul>
 </section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Fix <span class="xref myst">Development Quickstart Guide</span> link in sphinx</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Check with supervisors:</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> License file</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Contributing file</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Citation file</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> README file</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> pyproject toml project urls</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Beautify documentation</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> read <a class="reference external" href="https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/">https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/</a></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> choose a theme? (Take a look at the template from seaborn or numpy) current theme looks good</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> switch to mkdocs, pdocs, …? no</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Add doc dependencies. E. g. myst_parser, sphinx-copybutton</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/dependabot/dependabot-core/issues/1912">Dependabot badge</a></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Complete all models! and test them</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Remove all toods</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Run through grammarly</p></li>
+</ul>
+</section>
+<section id="deployment">
+<h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading"></a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test test deployment</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test real deployment to pypy</p></li>
+</ul>
+</section>
+<section id="sbml">
+<h2>SBML<a class="headerlink" href="#sbml" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Complete sbml class using one of</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://gitlab.com/wurssb/Modelling/symbolicsbml">SymbolicSBML</a></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://sys-bio.github.io/roadrunner/docs-build/index.html">RoadRunner</a> Could be a good option</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/AnabelSMRuggiero/sbmltoodepy">Sbmltodepy</a> they dont want users to make issues/ pull requests / .. :(</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Add c++ / example dependencies in general and explanation on how to run c++ model?</p></li>
+</ul>
+</section>
+<section id="profiling">
+<h2>Profiling<a class="headerlink" href="#profiling" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>scalene</p></li>
+</ul>
 </section>
 </section>
 
@@ -129,7 +171,7 @@ The goal is to enable reuse, facilitated cooperation and boost visability.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../tests.html" class="btn btn-neutral float-left" title="tests package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="citation.html" class="btn btn-neutral float-left" title="Citation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
