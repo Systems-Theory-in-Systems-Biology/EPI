@@ -51,3 +51,7 @@ Type Hints:
 ## Dependencies
 
 - Add c++ / example dependencies in general and explanation on how to run c++ model?
+
+## Profiling
+
+- scalene
