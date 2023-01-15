@@ -28,6 +28,8 @@
   poetry run pytest
   ```
 
+  You can add the ```--verbose``` parameter to get a more detailed report.
+
 ## Maintaining the repository
 
 Here are the most important infos on how to maintain this repository.
@@ -113,3 +115,45 @@ Here are the most important infos on how to maintain this repository.
     ```bash
     pip install epic
     ```
+
+## Jax with CUDA
+
+[Jax can be run with cuda on the gpu](https://github.com/google/jax#pip-installation-gpu-cuda). However you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)
+
+I used the following tricks to get it running:
+
+```bash
+# for cuda toolkit
+export CUDA_HOME=/usr/local/cuda
+export PATH="/usr/local/cuda-12.0/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.0/lib64:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-11-fake/lib64:$LD_LIBRARY_PATH"
+```
+
+Follow [this issue](https://github.com/google/jax/issues/13637) to see whether you possibly need to create the cuda-11-fake folder as a copy from the 12.0 folder and "create the .so.11" libraries as symlinks using the script below.
+
+```bash
+#!/bin/bash
+
+# Find all files in the current directory that match the pattern "lib*.so"
+for file in lib*.so; do
+    # Extract the base name of the file (without the ".so" extension)
+    base_name="${file%.*}"
+
+    # Construct the name of the symbolic link we want to create
+    link_name="${base_name}.so.11"
+
+    # Check if the link already exists
+    if [ ! -e "$link_name" ]; then
+        # Create the symbolic link if it doesn't exist
+        ln -s "$file" "$link_name"
+    fi
+done
+```
+
+It can happen that old code is executed due to the generated pycache. For example an old version of cuda or cudnn could be used. If you believe that this is happening:
+
+```bash
+pip install pyclean
+py3clean .
+```
