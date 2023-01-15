@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 from matplotlib import cm
 
 from epic.core.functions import evalLogTransformedDensity
@@ -88,7 +87,6 @@ def test_transformationLinear():
     plt.show()
 
 
-@pytest.mark.skip(reason="Exponential Model is not completely implemented")
 def test_transformationExponential():
     model = Exponential()
 
@@ -179,21 +177,8 @@ def test_transformationODELinear():
     # generate artificial data
     model.generateArtificialData()
 
-    # choose the number of subsequent runs
-    # after each sub-run, chains are saved
-    numRuns = 2
-
-    # choose how many parallel processes can be used
-    numProcesses = 4
-
-    # choose how many parallel chains shall be initiated
-    numWalkers = 4
-
-    # choose how many steps each chain shall contain
-    numSteps = 2500
-
     # run MCMC sampling for EPI
-    runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
+    runEmceeSampling(model, numWalkers=4)
 
     # combine all intermediate saves to create one large sample chain
     concatenateEmceeSamplingResults(model)

@@ -1,23 +1,31 @@
+from functools import partial
+
 import jax.numpy as jnp
 import numpy as np
+from jax import jit
 
 from epic.core.model import ArtificialModelInterface, Model
 
 
-# TODO: Does this model realyl not provide a visGrid?
 class Temperature(Model):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, delete: bool = False, create: bool = True) -> None:
+        super().__init__(delete, create)
         self.lowT = -30.0
         self.highT = 30.0
 
+    # TODO: Provide a class which uses functool.partial for forward function and puts self.arg in it?
+    # Of course to use jitting. partial(jit, static_argnums=[0,2,])
+    # Maybe not the temperature model because it is used in the tutorial ...
+    @partial(jit, static_argnums=0)
     def forward(self, param):
-        return jnp.array(
-            [
-                Model.lowT
-                + (self.highT - self.lowT) * jnp.cos(jnp.abs(param[0]))
-            ]
-        )
+        return self.calc_forward(param, self.highT, self.lowT)
+
+    def calc_forward(self, param, highT, lowT):
+        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
+        return res
+
+    def __hash__(self):
+        return hash((self.lowT, self.highT))
 
     def jacobian(self, param):
         return jnp.array(
@@ -36,8 +44,7 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
         rawTrueParamSample = np.loadtxt(
             "Data/TemperatureArtificialParams.csv", delimiter=","
         )
-        trueParamSample = np.zeros((rawTrueParamSample.shape[0], 1))
-        trueParamSample[:, 0] = rawTrueParamSample
+        trueParamSample = rawTrueParamSample[..., np.newaxis]
 
         artificialData = np.zeros((trueParamSample.shape[0], 1))
 

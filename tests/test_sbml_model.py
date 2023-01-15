@@ -1,16 +1,18 @@
+import pytest
+
 # from epic.core.plots import plotTest
 from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
-from epic.example_models.autodiff import AutodiffPlantModel
+from epic.example_models.sbml.sbml_model import MySBMLModel
 
 
-def test_autodiff_model():
+# TODO
+@pytest.mark.skip(reason="Not Correctly implemented yet")
+def test_sbml_model():
     # define the model
-    model = (
-        AutodiffPlantModel()
-    )  # Behaves just like plant model and uses same data
+    model = MySBMLModel(filepath="epic/example_models/sbml/sbml_file.xml")
 
     # generate artificial data
     model.generateArtificialData()
@@ -20,6 +22,3 @@ def test_autodiff_model():
 
     # combine all intermediate saves to create one large sample chain
     concatenateEmceeSamplingResults(model)
-
-    # plot the results
-    # TODO: Write a good general plotting function

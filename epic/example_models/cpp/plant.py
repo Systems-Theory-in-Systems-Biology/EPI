@@ -1,7 +1,7 @@
 import numpy as np
 
 from epic.core.model import ArtificialModelInterface, Model
-from epic.example_models.cpp_model import cpp_model
+from epic.example_models.cpp import cpp_model
 
 
 class Plant(Model, ArtificialModelInterface):
@@ -25,8 +25,7 @@ class Plant(Model, ArtificialModelInterface):
     def getParamSamplingLimits(self) -> np.ndarray:
         return np.array([[0.0, 1.0], [0.0, 1.0]])
 
-    def generateArtificialData(self):
-        numSamples = 1000
+    def generateArtificialData(self, numSamples=1000):
         # randomly create true parameters in [0,1]x[0,1]
         trueParamSample = np.random.rand(numSamples, 2)
 

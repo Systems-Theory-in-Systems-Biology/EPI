@@ -1,23 +1,30 @@
+from multiprocessing import shared_memory
+
 import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
+from tqdm.contrib.concurrent import process_map
 
 from epic.core.model import (
     ArtificialModelInterface,
-    Model,
+    JaxModel,
     VisualizationModelInterface,
 )
 
 
-class Stock(Model, VisualizationModelInterface):
+class Stock(JaxModel, VisualizationModelInterface):
+
+    DataDim = 19
+    ParamDim = 6
+
     def getDataBounds(self):
-        return np.array([[-7.5, 7.5] * self.dataDim])
+        return np.array([[-7.5, 7.5] * self.DataDim])
 
     def getParamBounds(self):
-        return np.array([[-2.0, 2.0] * self.paramDim])
+        return np.array([[-2.0, 2.0] * self.ParamDim])
 
     def getParamSamplingLimits(self):
-        return np.array([[-10.0, 10.0] * self.paramDim])
+        return np.array([[-10.0, 10.0] * self.ParamDim])
 
     def getCentralParam(self):
         return np.array(
@@ -116,7 +123,8 @@ class Stock(Model, VisualizationModelInterface):
             self.downloadData()
         return super().dataLoader()
 
-    def forward(self, param):
+    @classmethod
+    def forward(cls, param):
         def iteration(x, param):
             return jnp.array(
                 [
@@ -182,8 +190,11 @@ class Stock(Model, VisualizationModelInterface):
 
 
 class StockArtificial(Stock, ArtificialModelInterface):
-    def generateArtificialData(self):
-        numSamples = 100000
+    def generateArtificialData(self, numSamples=1000):
+        print(
+            f"Generating {numSamples} data samples by evaluating the model. "
+            "This might take a very long time!"
+        )
 
         mean = np.array(
             [
@@ -197,23 +208,40 @@ class StockArtificial(Stock, ArtificialModelInterface):
         )
         stdevs = np.array([0.005, 0.01, 0.05, 0.005, 0.01, 0.05])
 
-        trueParamSample = np.random.randn(numSamples, 6)
+        trueParamSample = np.random.randn(numSamples, self.ParamDim)
+        trueParamSample *= stdevs
+        trueParamSample += mean
 
-        for i in range(6):
-            trueParamSample[:, i] *= stdevs[i]
+        artificialData = np.zeros((numSamples, self.DataDim))
 
-        artificialData = np.zeros((numSamples, 19))
+        shm = shared_memory.SharedMemory(
+            create=True, size=artificialData.nbytes
+        )
+        # Now create a NumPy array backed by shared memory
+        artificialData_shared = np.ndarray(
+            artificialData.shape, dtype=artificialData.dtype, buffer=shm.buf
+        )
 
-        for j in range(numSamples):
-            trueParamSample[j, :] += mean
-            artificialData[j, :] = self.forward(trueParamSample[j, :])
+        global myCalc
+
+        def myCalc(j: int):
+            artificialData_shared[j, :] = self.forward(trueParamSample[j, :])
+
+        process_map(myCalc, range(numSamples))
+        # for j in tqdm(range(numSamples)):
+        #     artificialData[j, :] = self.forward(trueParamSample[j, :])
 
         np.savetxt(
-            "Data/StockArtificialData.csv", artificialData, delimiter=","
+            "Data/StockArtificialData.csv",
+            artificialData_shared,
+            delimiter=",",
         )
+        shm.close()
+        shm.unlink()
+
         np.savetxt(
             "Data/StockArtificialParams.csv", trueParamSample, delimiter=","
         )
 
     def getParamSamplingLimits(self):
-        return np.array([[-1.0, 3.0] * self.paramDim])
+        return np.array([[-1.0, 3.0] * self.ParamDim])
