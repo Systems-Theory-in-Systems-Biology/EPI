@@ -3,7 +3,7 @@ from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
-from epic.example_models.cpp_model.plant import Plant
+from epic.example_models.cpp.plant import Plant
 
 
 def test_cpp_model():
@@ -13,21 +13,8 @@ def test_cpp_model():
     # generate artificial data
     model.generateArtificialData()
 
-    # choose the number of subsequent runs
-    # after each sub-run, chains are saved
-    numRuns = 2
-
-    # choose how many parallel processes can be used
-    numProcesses = 4
-
-    # choose how many parallel chains shall be initiated
-    numWalkers = 10
-
-    # choose how many steps each chain shall contain
-    numSteps = 2500
-
     # run MCMC sampling for EPI
-    runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
+    runEmceeSampling(model)
 
     # combine all intermediate saves to create one large sample chain
     concatenateEmceeSamplingResults(model)

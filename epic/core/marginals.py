@@ -1,7 +1,7 @@
 import numpy as np
 
 from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
-from epic.core.model import ArtificialModelInterface, Model
+from epic.core.model import Model
 
 
 # TODO: defaults to [DefaultParamVal], resolution=100?
@@ -47,9 +47,7 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
 
     # Store the marginal KDE approximation of the data
     np.savetxt(
-        "Applications/"
-        + model.getModelName()
-        + "/Plots/trueDataMarginals.csv",
+        model.getApplicationPath() + "/Plots/trueDataMarginals.csv",
         trueDataMarginals,
         delimiter=",",
     )
@@ -70,7 +68,7 @@ def calcEmceeSimResultsMarginals(
 
     # Load the emcee simulation results chain
     simResults = np.loadtxt(
-        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        model.getApplicationPath() + "/OverallSimResults.csv",
         delimiter=",",
     )[numBurnSamples::occurrence, :]
 
@@ -106,9 +104,7 @@ def calcEmceeSimResultsMarginals(
 
     # Store the marginal KDE approximation of the simulation results emcee sample
     np.savetxt(
-        "Applications/"
-        + model.getModelName()
-        + "/Plots/inferredDataMarginals.csv",
+        model.getApplicationPath() + "/Plots/inferredDataMarginals.csv",
         inferredDataMarginals,
         delimiter=",",
     )
@@ -128,11 +124,11 @@ def calcParamMarginals(
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
-    artificialBool = issubclass(model.__class__, ArtificialModelInterface)
+    artificialModel = model.isArtificial()
 
     # Load the emcee parameter chain
     paramChain = np.loadtxt(
-        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        model.getApplicationPath() + "/OverallParams.csv",
         delimiter=",",
     )[numBurnSamples::occurrence, :]
 
@@ -154,7 +150,7 @@ def calcParamMarginals(
     inferredParamMarginals = np.zeros((resolution, paramDim))
 
     # If there are true parameter values available, load them and allocate storage similar to the just-defined one.
-    if artificialBool == 1:
+    if artificialModel:
         trueParamSample, _ = model.paramLoader()
         trueParamMarginals = np.zeros((resolution, paramDim))
 
@@ -165,7 +161,7 @@ def calcParamMarginals(
         marginalParamChain[:, 0] = paramChain[:, dim]
 
         # If there is true parameter information available, we have to do the same type cast for the true parameter samples.
-        if artificialBool == 1:
+        if artificialModel:
             trueMarginalParamSample = np.zeros((trueParamSample.shape[0], 1))
             trueMarginalParamSample[:, 0] = trueParamSample[:, dim]
 
@@ -178,7 +174,7 @@ def calcParamMarginals(
             )
 
             # If true parameter information is available, evaluate a similat 1D marginal distribution based on the true parameter samples.
-            if artificialBool == 1:
+            if artificialModel:
                 trueParamMarginals[i, dim] = evalKDEGauss(
                     trueMarginalParamSample,
                     np.array([paramGrid[i, dim]]),
@@ -187,14 +183,12 @@ def calcParamMarginals(
 
     # Store the (potentially 2) marginal distribution(s) for later plotting
     np.savetxt(
-        "Applications/"
-        + model.getModelName()
-        + "/Plots/inferredParamMarginals.csv",
+        model.getApplicationPath() + "/Plots/inferredParamMarginals.csv",
         inferredParamMarginals,
         delimiter=",",
     )
 
-    if artificialBool == 1:
+    if artificialModel:
         np.savetxt(
             "Applications/"
             + model.getModelName()

@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    epic.example_models.cpp_model
+   epic.example_models.sbml_model
 
 Submodules
 ----------

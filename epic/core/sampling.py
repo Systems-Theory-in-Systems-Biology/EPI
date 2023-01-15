@@ -1,3 +1,5 @@
+# TODO: Move to plots.py. Currently here because plots.py is full at the moment. would find it there to work on it
+from enum import Enum
 from multiprocessing import Pool
 
 # from pathos.multiprocessing import Pool
@@ -21,8 +23,7 @@ def countEmceeSubRuns(model: Model) -> int:
 
     # Increase the just defined number until no corresponding file is found anymore ...
     while path.isfile(
-        "Applications/"
-        + model.getModelName()
+        model.getApplicationPath()
         + "/DensityEvals/"
         + str(numExistingFiles)
         + ".csv"
@@ -34,10 +35,10 @@ def countEmceeSubRuns(model: Model) -> int:
 
 def runEmceeSampling(
     model: Model,
-    numRuns: int,
-    numWalkers: int,
-    numSteps: int,
-    numProcesses: int,
+    numRuns: int = 2,
+    numWalkers: int = 10,
+    numSteps: int = 25,  # 00,
+    numProcesses: int = 10,
 ) -> None:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
         Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
@@ -61,10 +62,9 @@ def runEmceeSampling(
     ) = model.dataLoader()
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    walkerInitParams = [
-        centralParam + 0.002 * (np.random.rand(paramDim) - 0.5)
-        for i in range(numWalkers)
-    ]
+    walkerInitParams = centralParam + 0.002 * (
+        np.random.rand(numWalkers, paramDim) - 0.5
+    )
 
     # Count and print how many runs have already been performed for this model
     numExistingFiles = countEmceeSubRuns(model)
@@ -75,12 +75,12 @@ def runEmceeSampling(
         print("Run ", run)
 
         # If there are current walker positions defined by runs before this one, use them.
-        if path.isfile(
-            "Applications/" + model.getModelName() + "/currentPos.csv"
-        ):
+        position_path = model.getApplicationPath() + "/currentPos.csv"
+        if path.isfile(position_path):
             walkerInitParams = np.loadtxt(
-                "Applications/" + model.getModelName() + "/currentPos.csv",
+                position_path,
                 delimiter=",",
+                ndmin=2,
             )
             print("continue sampling")
 
@@ -91,8 +91,6 @@ def runEmceeSampling(
         pool = Pool(processes=numProcesses)
 
         # define a custom move policy
-        # movePolicy = [(emcee.moves.WalkMove(), 0.8), (emcee.moves.StretchMove(), 0.2)]
-        # movePolicy = [(emcee.moves.KDEMove(), 1.0)]
         movePolicy = [
             (emcee.moves.WalkMove(), 0.1),
             (emcee.moves.StretchMove(), 0.1),
@@ -124,7 +122,7 @@ def runEmceeSampling(
 
         # Save the current walker positions as initial values for the next run.
         np.savetxt(
-            "Applications/" + model.getModelName() + "/currentPos.csv",
+            position_path,
             finalPos,
             delimiter=",",
         )
@@ -198,7 +196,7 @@ def concatenateEmceeSamplingResults(model: Model):
 
     # Load one example file and use it to extract how many samples are stored per file.
     numSamplesPerFile = np.loadtxt(
-        "Applications/" + model.getModelName() + "/Params/0.csv", delimiter=","
+        model.getApplicationPath() + "/Params/0.csv", delimiter=","
     ).shape[0]
 
     # The overall number of sampled is the number of sub runs multiplied with the number of samples per file.
@@ -230,6 +228,7 @@ def concatenateEmceeSamplingResults(model: Model):
             + str(i)
             + ".csv",
             delimiter=",",
+            ndmin=2,
         )
         overallParams[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
@@ -240,21 +239,22 @@ def concatenateEmceeSamplingResults(model: Model):
             + str(i)
             + ".csv",
             delimiter=",",
+            ndmin=2,
         )
 
     # Save the three just-created files.
     np.savetxt(
-        "Applications/" + model.getModelName() + "/OverallDensityEvals.csv",
+        model.getApplicationPath() + "/OverallDensityEvals.csv",
         overallDensityEvals,
         delimiter=",",
     )
     np.savetxt(
-        "Applications/" + model.getModelName() + "/OverallSimResults.csv",
+        model.getApplicationPath() + "/OverallSimResults.csv",
         overallSimResults,
         delimiter=",",
     )
     np.savetxt(
-        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        model.getApplicationPath() + "/OverallParams.csv",
         overallParams,
         delimiter=",",
     )
@@ -273,7 +273,7 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        "Applications/" + model.getModelName() + "/OverallParams.csv",
+        model.getApplicationPath() + "/OverallParams.csv",
         delimiter=",",
     )[numBurnSamples:, :]
 
@@ -296,3 +296,38 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     acceptanceRatios = numAcceptedSteps / numSteps
 
     return acceptanceRatios
+
+
+def inference(model: Model, data_path=None):
+    if data_path is None:
+        data_path = "Data/" + model.getModelName() + "Data.csv"
+    # TODO: Do something with the data path!!!
+    runEmceeSampling(model)
+    concatenateEmceeSamplingResults(model)
+    overallSimResults = np.loadtxt(
+        model.getApplicationPath() + "/OverallSimResults.csv",
+        delimiter=",",
+    )
+    return overallSimResults
+
+
+class PlotType(Enum):
+    Spider = 0
+    D1 = 1
+    D2 = 2
+
+
+def plot(model: Model, pType: PlotType):
+    if pType == pType.Spider:
+        # TODO: spyderplot
+        pass
+    elif pType == pType.D1:
+        # TODO: 1d plot, select variable to plot!
+        pass
+    elif pType == pType.D2:
+        # TODO: 2d surf, select variables to plot!
+        pass
+    else:
+        raise ValueError(
+            f"Unexpected PlotType value encountered. The value is {pType}."
+        )

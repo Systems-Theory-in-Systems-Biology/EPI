@@ -1,15 +1,16 @@
 import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
+from jax import vmap
 
 from epic.core.model import (
     ArtificialModelInterface,
-    Model,
+    JaxModel,
     VisualizationModelInterface,
 )
 
 
-class Corona(Model, VisualizationModelInterface):
+class Corona(JaxModel, VisualizationModelInterface):
     def getDataBounds(self):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
 
@@ -22,7 +23,8 @@ class Corona(Model, VisualizationModelInterface):
     def getCentralParam(self):
         return np.array([-1.8, 0.0, 0.7])
 
-    def forward(self, logParam):
+    @classmethod
+    def forward(cls, logParam):
         param = jnp.power(10, logParam)
         xInit = jnp.array([999.0, 0.0, 1.0, 0.0])
 
@@ -62,21 +64,38 @@ class Corona(Model, VisualizationModelInterface):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    def generateArtificialData(self):
-        numSamples = 10000
-
+    def generateArtificialData(self, numSamples=1000):
         lowerBound = np.array([-1.9, -0.1, 0.6])
         upperBound = np.array([-1.7, 0.1, 0.8])
 
-        trueParamSample = np.random.rand(numSamples, 3)
+        trueParamSample = lowerBound + (
+            upperBound - lowerBound
+        ) * np.random.rand(numSamples, 3)
 
-        artificialData = np.zeros((numSamples, 4))
+        # Options to calculate the data from the param samples
+        #
+        # 1. For loop: Veeeeeery slooooooow
+        # artificialData = np.zeros((numSamples, 4))
+        # for j in tqdm(range(numSamples)):
+        #     artificialData[j, :] = self.forward(trueParamSample[j, :])
+        #
+        # 2. TODO: Vectorizing the forward call in the model class
+        # This would mean changing our conventions for the param shape.
+        # Could be done but would require more effort.
+        #
+        # 3. Parallelization using multiprocessing
+        # See the stock model.
+        # Downside: Pickling again :/. Must use global functions or other tricks to pickle...
+        #
+        # 4. Using vmap
+        # Really low effort and fast!
+        # Downside: no progressbar ;)
 
-        for j in range(numSamples):
-            trueParamSample[j, :] = (
-                lowerBound + (upperBound - lowerBound) * trueParamSample[j, :]
-            )
-            artificialData[j, :] = self.forward(trueParamSample[j, :])
+        # Using multiprocessing + batching would possibly be even faster. Depending whether using jax or numpy as backend.
+        # jax has a single core "bug": https://github.com/google/jax/issues/5022
+        # TODO: re-evaluate where to use numpy and where to use jax due to single-cpu!
+
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
             "Data/CoronaArtificialData.csv", artificialData, delimiter=","

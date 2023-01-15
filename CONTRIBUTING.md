@@ -22,6 +22,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
   - [Your First Code Contribution](#your-first-code-contribution)
   - [Improving The Documentation](#improving-the-documentation)
 - [Styleguides](#styleguides)
+  - [Code styl](#code-styl)
   - [Commit Messages](#commit-messages)
 - [Join The Project Team](#join-the-project-team)
 
@@ -43,7 +44,7 @@ We will then take care of the issue as soon as possible.
 
 > ### Legal Notice <!-- omit in toc -->
 
-> When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
+When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 ### Reporting Bugs
 
@@ -107,26 +108,32 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/System
 <!-- You might want to create an issue template for enhancement suggestions that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
 
 ### Your First Code Contribution
-<!-- TODO
-include Setup of env, IDE and typical getting started instructions?
 
--->
+Improvements on our library are always welcome. Please read the development guide from our documentation to get started.
 
 ### Improving The Documentation
-<!-- TODO
-Updating, improving and correcting the documentation
-
--->
+<!-- Updating, improving and correcting the documentation -->
+Commenting currently undocumented functions, correcting outdated comments or adding type hints is always welcome.
 
 ## Styleguides
 
-### Commit Messages
-<!-- TODO
+### Code styl
 
--->
+Please remember to run ```pre-commit install``` once during your repository setup to check and adapt your changes to our code style automatically.
+
+### Commit Messages
+
+Please use sensible, short and concise commit messages in active voice, e. g.: \
+*Add unit test for KDE*
+
+Feel free to include  types like [docs], [build], [fix], ... e. g.: \
+*[test] Add unit test for KDE*
 
 ## Join The Project Team
-<!-- TODO -->
+
+If you are interested in working on this project for a longer time, implement a larger feature or need help, feel free to contact:
+
+[Vincent Wagner](mailto:vincent.wagner@ist.uni-stuttgart.de) or [Sebastian Höpfl](mailto:sebastian.hoepfl@ist.uni-stuttgart.de)
 
 <!-- omit in toc -->
 ## Attribution
