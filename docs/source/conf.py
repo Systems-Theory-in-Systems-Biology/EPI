@@ -36,8 +36,19 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.todo",
     "sphinx.ext.autosectionlabel",
+    "sphinx.ext.coverage",
     "sphinx_copybutton",
 ]
+
+# TODO: Switch to a nicer docstyle like numpy or google and also maybe change the theme
+#     'sphinxcontrib.napoleon',
+#     'numpydoc',
+# ]
+# Depending on what is chosen:
+#  html_theme = "pydata_sphinx_theme"
+# poetry add pydata-sphinx-theme --group=dev
+# poetry add sphinxcontrib-napoleon --group=dev
+# poetry add numpydoc --group=dev
 
 myst_enable_extensions = [
     "tasklist",
