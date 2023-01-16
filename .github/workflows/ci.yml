@@ -56,7 +56,7 @@ jobs:
       - name: Install library
         run: poetry install --no-interaction
       - name: Prepare cpp test
-      - run: |
+        run: |
           sudo apt install -y cmake
           source $VENV
           cd epic/example_models/cpp
