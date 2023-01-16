@@ -58,6 +58,7 @@ jobs:
       - name: Prepare cpp test
         run: |
           sudo apt install -y cmake
+          sudo apt install libeigen3-dev
           source $VENV
           cd epic/example_models/cpp
           mkdir build
