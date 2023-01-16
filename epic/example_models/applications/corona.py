@@ -3,6 +3,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import vmap
 
+from epic import logger
 from epic.core.model import (
     ArtificialModelInterface,
     JaxModel,
@@ -58,8 +59,7 @@ class Corona(JaxModel, VisualizationModelInterface):
             return odeSol.ys[1:5, 2]
 
         except Exception as e:
-            print("ODE solution not possible!")
-            print(repr(e))
+            logger.warn("ODE solution not possible!", exc_info=e)
             return np.array([-np.inf, -np.inf, -np.inf, -np.inf])
 
 

@@ -13,10 +13,6 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 - [ ] make the toolbox usable for SBML models
 - [ ] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
 
-Type Hints:
-
-- [ ] np.double vs np.ndarray if more dimensions are passed?
-
 ## Documentation
 
 - [ ] Fix [Development Quickstart Guide](./DEVELOPMENT.md#quickstart) link in sphinx
@@ -32,21 +28,24 @@ Type Hints:
   - [x] switch to mkdocs, pdocs, ...? no
   - [ ] Add doc dependencies. E. g. myst_parser, sphinx-copybutton
 - [ ] [Dependabot badge](https://github.com/dependabot/dependabot-core/issues/1912)
-- [ ] Complete all models! and test them
+- [ ] Fix stock model, stocklist and download default value and test them
 - [ ] Remove all toods
 - [ ] Run through grammarly
 
 ## Deployment
 
+- [ ] Ship example data
+- [ ] Ship tests
 - [ ] Test test deployment
-- [ ] Test real deployment to pypy
+- [ ] Test real deployment to pypi
+- [ ] Direct deployment to pypi?
 
 ## SBML
 
 - Complete sbml class using one of
   - [ ] [SymbolicSBML](https://gitlab.com/wurssb/Modelling/symbolicsbml)
   - [ ] [RoadRunner](https://sys-bio.github.io/roadrunner/docs-build/index.html) Could be a good option
-  - [x] [Sbmltodepy](https://github.com/AnabelSMRuggiero/sbmltoodepy) they dont want users to make issues/ pull requests / .. :(
+  - [ ] [Sbmltodepy](https://github.com/AnabelSMRuggiero/sbmltoodepy) they dont want users to make issues/ pull requests / .. :(
 
 ## Dependencies
 

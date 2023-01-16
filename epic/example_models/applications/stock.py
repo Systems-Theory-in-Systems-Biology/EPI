@@ -5,6 +5,7 @@ import numpy as np
 import yfinance as yf
 from tqdm.contrib.concurrent import process_map
 
+from epic import logger
 from epic.core.model import (
     ArtificialModelInterface,
     JaxModel,
@@ -89,20 +90,17 @@ class Stock(JaxModel, VisualizationModelInterface):
                     )
 
                     if np.all(np.abs(stockData[successCounter, :]) < 100.0):
-                        print("Success for ", stocks[i])
+                        logger.info(f"Successfull download for {stocks[i]}")
                         stockIDs.append(stocks[i])
                         successCounter += 1
                     else:
-                        print("Values too large for ", stocks[i])
+                        logger.info(f"Values too large for {stocks[i]}")
 
                 except Exception as e:
-                    print("Fail for ", stocks[i])
-                    print(repr(e))
-                    pass
+                    logger.warn(f"Fail for {stocks[i]}", exc_info=e)
 
             except Exception as e:
-                print("Download Failed!")
-                print(repr(e))
+                logger.warn("Download Failed!", exc_info=e)
 
         # save all time points except for the first
         np.savetxt(
@@ -191,7 +189,7 @@ class Stock(JaxModel, VisualizationModelInterface):
 
 class StockArtificial(Stock, ArtificialModelInterface):
     def generateArtificialData(self, numSamples=1000):
-        print(
+        logger.info(
             f"Generating {numSamples} data samples by evaluating the model. "
             "This might take a very long time!"
         )
@@ -222,14 +220,13 @@ class StockArtificial(Stock, ArtificialModelInterface):
             artificialData.shape, dtype=artificialData.dtype, buffer=shm.buf
         )
 
+        # TODO: Replace by vmap if not keeping it as example
         global myCalc
 
         def myCalc(j: int):
             artificialData_shared[j, :] = self.forward(trueParamSample[j, :])
 
         process_map(myCalc, range(numSamples))
-        # for j in tqdm(range(numSamples)):
-        #     artificialData[j, :] = self.forward(trueParamSample[j, :])
 
         np.savetxt(
             "Data/StockArtificialData.csv",

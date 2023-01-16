@@ -8,6 +8,7 @@ from os import path
 import emcee
 import numpy as np
 
+from epic import logger
 from epic.core.functions import evalLogTransformedDensity
 from epic.core.model import Model
 
@@ -68,11 +69,11 @@ def runEmceeSampling(
 
     # Count and print how many runs have already been performed for this model
     numExistingFiles = countEmceeSubRuns(model)
-    print(numExistingFiles, " existing files found")
+    logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
     for run in range(numExistingFiles, numExistingFiles + numRuns):
-        print("Run ", run)
+        logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
         position_path = model.getApplicationPath() + "/currentPos.csv"
@@ -82,10 +83,12 @@ def runEmceeSampling(
                 delimiter=",",
                 ndmin=2,
             )
-            print("continue sampling")
+            logger.info(
+                f"Continue sampling from saved sampler position in {position_path}"
+            )
 
         else:
-            print("start sampling")
+            logger.info("Start sampling from start")
 
         # Create a pool of worker processes.
         pool = Pool(processes=numProcesses)
@@ -163,13 +166,13 @@ def runEmceeSampling(
             delimiter=",",
         )
 
-        # Print the sampling acceptance ratio.
-        print("acceptance fractions:")
-        print(np.round(sampler.acceptance_fraction, 2))
+        logger.info(
+            f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
+        )
 
+        # TODO: Catch error with expect?
         # Print the autocorrelation time (produces a so-far untreated runtime error if chains are too short)
-        # print("autocorrelation time:")
-        # print(sampler.get_autocorr_time()[0])
+        # logger.info(f"autocorrelation time: {sampler.get_autocorr_time()[0]}")
 
 
 def concatenateEmceeSamplingResults(model: Model):
@@ -192,7 +195,7 @@ def concatenateEmceeSamplingResults(model: Model):
 
     # Count and print how many sub runs are ready to be merged.
     numExistingFiles = countEmceeSubRuns(model)
-    print(numExistingFiles, " existing files found")
+    logger.info(f"{numExistingFiles} existing files found for concatenation")
 
     # Load one example file and use it to extract how many samples are stored per file.
     numSamplesPerFile = np.loadtxt(
@@ -280,7 +283,7 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
     numSteps = int(params.shape[0] / numWalkers) - 1
-    print("Number of steps fo each walker = ", numSteps)
+    logger.info(f"Number of steps fo each walker = {numSteps}")
 
     # create storage to count the number of accepted steps for each counter
     numAcceptedSteps = np.zeros(numWalkers)

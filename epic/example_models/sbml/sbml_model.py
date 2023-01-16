@@ -16,6 +16,7 @@ import sbmltoodepy.modelclasses  # Syntax highlighting for sbmltoodepy.modelclas
 from pysces import model as PyscesModel
 from pysces.PyscesInterfaces import Core2interfaces as PyscesCore2Interface
 
+from epic import logger
 from epic.core.model import Model
 
 # from epic.example_models.sbml.sbml_file import SBMLmodel as ExternSBMLModel
@@ -121,10 +122,8 @@ class MySBMLModel(Model):
             return odeSol.ys[1:5, 2]
 
         except Exception as e:
-            print("ODE solution not possible!")
-            print(repr(e))
+            logger.warn("ODE solution not possible!", exc_info=e)
             return np.array([-np.inf, -np.inf, -np.inf, -np.inf])
-        pass
 
     # def _SolveReactions(self, y, t):
     #     self.time = t
@@ -143,8 +142,9 @@ class MySBMLModel(Model):
     #     self.time = finalTime
     #     self.AssignmentRules()
 
+    # TODO: Implement?
     def getCentralParam(self) -> np.ndarray:
-        pass
+        raise NotImplementedError("TODO in sbml model")
 
     def getParamSamplingLimits(self) -> np.ndarray:
-        pass
+        raise NotImplementedError("TODO in sbml model")

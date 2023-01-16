@@ -47,8 +47,6 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
     else:
         paramStdevs = calcKernelWidth(paramChain)
 
-    print("Successfully loaded data!")
-
     # plot sampled parameters in comparison to true ones
     for dim in range(paramDim):
         evaluations = np.zeros(resolution)
@@ -408,7 +406,6 @@ def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
 
     plt.xticks([])
     plt.yticks([])
-    print("Number of samples is ", numSamples)
     for i in range(numSamples):
         # modColor = color*(1 - 0.3*np.random.rand(3))
         plt.plot(

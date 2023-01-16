@@ -11,6 +11,7 @@ from jax import jacrev, jit
 from jax.config import config
 from seedir import FakeDir, FakeFile
 
+from epic import logger
 from epic.core.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
@@ -99,6 +100,7 @@ class Model(ABC):
             warnings.warn(
                 UserWarning("Invalid value encountered for correction factor")
             )
+            logger.warn("Invalid value encountered for correction factor")
         return correction
 
     def dataLoader(
@@ -170,17 +172,20 @@ class Model(ABC):
         return path
 
     def createApplicationFolderStructure(self) -> None:
+        """Creates the `Application` folder including subfolder where all simulation results
+        are stored for this model. No files are deleted during this action.
+        """
         indent = 4
         plot_structure = (
-            (" " * indent + "- SpiderWebs/ \n" " " * indent + "- Plots/")
+            (" " * indent + "- SpiderWebs/ \n" + " " * indent + "- Plots/")
             if self.isVisualizable()
             else ""
         )
+
+        # Nothing to do here
         artificial_structure = ""
-        # = (
-        #     " "*indent + "- Params/ \n"
-        # ) if self.isArtificial() else ""
-        # TODO: Also create Data/ at top level?
+
+        os.makedirs("Data", exist_ok=True)
         structure = (
             "Applications/ \n"
             "  - {modelName}/ \n"
@@ -189,9 +194,8 @@ class Model(ABC):
             "    - SimResults/ \n"
         )
         path = "."
+        structure = structure + plot_structure + artificial_structure
 
-        # TODO: fix error "in" line below
-        # structure = structure + plot_structure + artificial_structure
         def create(f, root):
             fpath = f.get_path()
             joined = os.path.join(root, fpath)
@@ -199,33 +203,34 @@ class Model(ABC):
                 try:
                     os.mkdir(joined)
                 except FileExistsError:
-                    print(f"Directory `{joined}` already exists")
+                    logger.info(f"Directory `{joined}` already exists")
             elif isinstance(f, FakeFile):
                 try:
                     with open(joined, "w"):
                         pass
                 except FileExistsError:
-                    print(f"File `{joined}` already exists")
+                    logger.info(f"File `{joined}` already exists")
 
         fake_structure = seedir.fakedir_fromstring(
             structure.format(modelName=self.getModelName())
         )
         fake_structure.realize = lambda path_arg: fake_structure.walk_apply(
-            create, root=path
+            create, root=path_arg
         )
-        # seedir.seedir(path)
-        # fake_structure.seedir()
         fake_structure.realize(path)
 
     def deleteApplicationFolderStructure(self):
+        """Deletes the models `Applications` subfolder"""
         try:
             shutil.rmtree(self.getApplicationPath())
         except FileNotFoundError:
-            print(
+            logger.info(
                 f"Directory `{self.getApplicationPath()}` can't be deleted, "
                 "because it does not exist."
             )
 
+    # TODO: Rethink this hidden structure. Seems to be somehow the wrong way round
+    # with the underscores.
     def __call__(self, param):
         return self._forward(param)
 
@@ -373,9 +378,11 @@ def autodiff(_cls):
 
 
 class JaxModel(Model):
-    """This model type is still in development.
+    """The JaxModel class automatically creates the jacobian method based on the forward method.
+    Additionally it jit compiles the forward and jacobian method with jax.
+    To use this class you have to implement your forward method using jax, e. g. jax.numpy.
 
-    :param Model: _description_
+    :param Model: Abstract parent class
     :type Model: _type_
     """
 
