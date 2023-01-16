@@ -58,6 +58,14 @@ Here are the most important infos on how to maintain this repository.
   poetry run pytest
   ```
 
+  You can generate a coverage report by running the following code block in your terminal. Please be aware that it might take a long time, think about lowering the number of steps in the sampling.
+
+  ```bash
+  poetry run coverage run -m pytest -v
+  coverage report
+  coverage html
+  ```
+
 - **Documentation with Sphinx**:
 
   ``` bash
