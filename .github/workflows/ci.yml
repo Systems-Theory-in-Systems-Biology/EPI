@@ -22,8 +22,8 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
-          - macOS-latest
+          # - windows-latest Reason: get it running on ubuntu-latest first
+          # - macOS-latest   Reason: get it running on ubuntu-latest first
 
     name: "Run tests"
     runs-on: ${{ matrix.os }}
