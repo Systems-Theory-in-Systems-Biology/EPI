@@ -65,7 +65,7 @@ jobs:
           mkdir build
           cd build
           cmake ..
-          make -j install
+          make -j
       - name: Run pytest
         run: |
           source $VENV
