@@ -38,7 +38,7 @@ def runEmceeSampling(
     model: Model,
     numRuns: int = 2,
     numWalkers: int = 10,
-    numSteps: int = 25,  # 00,
+    numSteps: int = 2500,
     numProcesses: int = 10,
 ) -> None:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.

@@ -6,7 +6,7 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 ## Implementation
 
 - [ ] create module for straight forward EPI usage, current classmethod solution is not optimal
-- [ ] create single function ```Model.interference()``` that allows the user to evaluate his model on custom data
+- [ ] create single function ```Model.inference()``` that allows the user to evaluate his model on custom data
 - [ ] create single function ```Model.plot()``` that allows the user to visualize his results
 - [ ] create single function ```Model.test()``` that allows the user to test the inversion for his model on artificial data
 - [ ] create and implement example usecases

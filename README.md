@@ -1,4 +1,4 @@
-<!-- # Euler Parameter Interference Codebase -->
+<!-- # Euler Parameter Inference Codebase -->
 <h1></h1>
 
 ![EPIC](epic.png "logo")
@@ -43,7 +43,7 @@ class MyModel(Model):
         return jnp.array(...)
 ```
 
-To evaluate the model and interfer the parameter distribution, call ```model.interfere(my_data.csv)```.
+To evaluate the model and infer the parameter distribution, call ```model.inference("my_data.csv")```.
 A detailed guide on how to use this library can be found in the documentation on our [webpage](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).
 
 ## Documentation

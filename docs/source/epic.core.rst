@@ -44,6 +44,14 @@ epic.core.plots module
    :undoc-members:
    :show-inheritance:
 
+epic.core.plotting module
+-------------------------
+
+.. automodule:: epic.core.plotting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 epic.core.sampling module
 -------------------------
 

@@ -2,7 +2,7 @@
    :width: 200pt
 
 --------------------------------------------
-EPIC - Euler Parameter Interference Codebase
+EPIC - Euler Parameter Inference Codebase
 --------------------------------------------
 
 
@@ -22,16 +22,13 @@ The package is available on pypi and can be installed with:
    
    pip install epic
 
-You can also build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`
-
-.. warning::
-   TODO: Do we have want to tell about dependencies? pip install epic[xxx]? e. g. for pytest?
+You can also build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
 
 ------------
 How to start
 ------------
 
-| Derive your model from :py:class:`epic.core.model.Model` and implement the abstract functions :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`. Then call :py:meth:`Model.interference` with you data file.
+| Derive your model from :py:class:`epic.core.model.Model` and implement the abstract functions :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`. Then call :py:meth:`Model.inference` with you data file.
 
 .. warning:: TODO: The function inference may not exist yet!!!
 
@@ -46,7 +43,7 @@ Optionally you can also inherit, and implement the abstract functions from
 
 * :py:class:`~epic.core.model.ArtificialModelInterface`: This allows you to check if the inversion algorithm is working for your model using the function :py:meth:`~epic.core.model.Model.test`.
    .. warning:: TODO: The function test may not exist yet!!!
-* :py:class:`~epic.core.model.VisualizationModelInterface`: This allows you to plot the results of the data interference using the function :py:meth:`~epic.core.model.Model.plot`.
+* :py:class:`~epic.core.model.VisualizationModelInterface`: This allows you to plot the results of the data inference using the function :py:meth:`~epic.core.model.Model.plot`.
    .. warning:: TODO: The function plot may not exist yet!!!
 
 
