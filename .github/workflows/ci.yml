@@ -36,7 +36,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
@@ -46,14 +45,14 @@ jobs:
           installer-parallel: true
       - name: Verify poetry installation
         run: poetry --version
-      - name: Load cached venv
-        id: cached-pip-wheels
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        run: poetry install --no-interaction --no-root --with=dev
+      # - name: Load cached venv
+      #   id: cached-pip-wheels
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.cache
+      #     key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      # - name: Install dependencies
+      #   run: poetry install --no-interaction --no-root --with=dev
       - name: Install library
         run: poetry install --no-interaction
       - name: Run pytest
