@@ -55,6 +55,15 @@ jobs:
       #   run: poetry install --no-interaction --no-root --with=dev
       - name: Install library
         run: poetry install --no-interaction
+      - name: Prepare cpp test
+      - run: |
+          sudo apt install -y cmake
+          source $VENV
+          cd epic/example_models/cpp
+          mkdir build
+          cd build
+          cmake ..
+          make -j install
       - name: Run pytest
         run: |
           source $VENV
