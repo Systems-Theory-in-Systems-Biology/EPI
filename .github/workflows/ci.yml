@@ -24,36 +24,43 @@ jobs:
           - ubuntu-latest
           # - windows-latest Reason: get it running on ubuntu-latest first
           # - macOS-latest   Reason: get it running on ubuntu-latest first
-
-    name: "Run tests"
+        python-version: ["3.10",]
+        poetry-version: ["1.2.2",]
+    name: Run tests
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
-          cache: pip
+          python-version: ${{ matrix.python-version }}
+          cache: "poetry"
       - name: Install Poetry
-        run: pip install --upgrade pip && pip install poetry
-
-      - name: Cache Poetry virtualenv
-        uses: actions/cache@v3
-        id: cache
+        uses: snok/install-poetry@v1
         with:
-          path: ~/.virtualenvs
-          key: poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            poetry-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Set Poetry config
-        run: poetry config virtualenvs.create false --local
-
-      - name: Install Dependencies
-        run: poetry install --with=dev
-        if: steps.cache.outputs.cache-hit != 'true'
-
-      - name: pytest
-        run: poetry run pytest -v -n 2
-
-      - name: coverage
-        run: poetry run coverage run -m pytest -v
+          #version: 1.2.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Verify poetry installation
+        run: poetry --version
+      - name: Load cached venv
+        id: cached-pip-wheels
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root --with=dev
+      - name: Install library
+        run: poetry install --no-interaction
+      - name: Run pytest
+        run: |
+          source $VENV
+          pytest -v
+      - name: Run coverage
+        run: |
+          source $VENV
+        # TODO: Coverage poetry run coverage run -m pytest -v
