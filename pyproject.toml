@@ -11,6 +11,10 @@ classifiers = [
 ]
 include = []
 
+[tool.poetry.urls]
+"Homepage" = "https://github.com/Systems-Theory-in-Systems-Biology/EPIC"
+"Bug Tracker" = "https://github.com/Systems-Theory-in-Systems-Biology/EPIC/issues"
+"Documentation" = "https://Systems-Theory-in-Systems-Biology.github.io/EPIC/"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
@@ -45,11 +49,6 @@ coverage = "^7.0.5"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[project.urls]
-"Homepage" = "https://github.com/Systems-Theory-in-Systems-Biology/EPIC"
-"Bug Tracker" = "https://github.com/Systems-Theory-in-Systems-Biology/EPIC/issues"
-"Documentation" = "https://Systems-Theory-in-Systems-Biology.github.io/EPIC/"
 
 [tool.black]
 line-length = 79

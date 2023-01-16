@@ -66,6 +66,16 @@ Here are the most important infos on how to maintain this repository.
   coverage html
   ```
 
+- **Working with docker**:
+  This section is a TODO.
+
+  ```bash
+  curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+  sudo service docker start
+  sudo docker run hello-world
+  sudo service docker stop
+  ```
+
 - **Documentation with Sphinx**:
 
   ``` bash
