@@ -5,7 +5,9 @@
 
 <!-- The badges we want to display -->
 [![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment)
+[![Build & Publish Documentation](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/sphinx.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/sphinx.yml)
 [![CI](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/ci.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/ci.yml)
+
 The Euler Parameter Inference Codebase (EPIC) is a python package for inverse parameter inference.
 
 ## About
