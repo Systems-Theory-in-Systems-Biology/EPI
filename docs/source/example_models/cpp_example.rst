@@ -3,12 +3,12 @@ C++ Model
 Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
 call C++ code from your python :py:class:`~epic.core.model.Model` class.
-It is primarily intened for fast implementations of the `forward` and `jacobian` method.
+It is primarily intended for fast implementations of the `forward` and `jacobian` method.
 
 Specialities
 ____________
 
-* Calling C++ Code: Calls external c++ code using Pybind11
+* Calling C++ Code: Calls external c++ code using pybind11
 * Performance Comparison: The file :file:`python_reference_plants.py` includes
   python models implementing the same mapping. You can compare the performance of the different approaches.
 
@@ -36,7 +36,7 @@ The example code is inconsistent in the following way:
 It uses a normal array for the forward method,
 but an eigen vector as input and an eigen matrix as output
 for the jacobian method. This allows to show us how to write wrapper code
-for normal arrays as well as for eigen objects. On the python side exlusively
+for normal arrays as well as for eigen objects. On the python side exclusively
 numpy 1d/2d arrays will be used.
 
 .. TODO::

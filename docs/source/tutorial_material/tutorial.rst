@@ -118,14 +118,14 @@ The jacobian is derived analytically here and implemented explicitly.
 Inference and Plotting
 ----------------------
 
-Now we can use EPI to infere the parameter distribution and plot the results.
+Now we can use EPI to infer the parameter distribution and plot the results.
 
 .. code-block:: python
 
     model = Temperature()
     model.inference(data_path = "TemperatureData.csv")
 
-Depening on the complexity of your model the sampling can take a long time.
+Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
 You can find them in the folder :file:`Applications/Temperature/`.
 
@@ -135,14 +135,14 @@ You can find them in the folder :file:`Applications/Temperature/`.
     model.plot(plot_type="standard")
 
 As last step you can plot the results using the builtin plotting functionality.
-You can choose betweeen a spyder-web representation and a standard plot.
+You can choose between a spider-web representation and a standard plot.
 The standard plot is only working for one or two-dimensional parameters and data.
 
 The final results can be found in the file :file:`Applications/Temperature/OverallSimResults.csv`.
 
 .. note::
 
-    TODO It always annoying to follow tutorials and copy all the code. We provide the tutorial also as jupyter noteboke and python file:
+    TODO It always annoying to follow tutorials and copy all the code. We provide the tutorial also as jupyter notebook and python file:
     
     * Jupyter notebook file
     * Python file

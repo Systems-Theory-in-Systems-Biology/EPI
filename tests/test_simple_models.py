@@ -33,7 +33,7 @@ def test_transformationLinear():
     # Now plot the data Gaussian KDE
     KDEresolution = 25
 
-    # the KDE Grid is 40% larger than the intervalof the data and has a different resolution
+    # the KDE Grid is 40% larger than the interval of the data and has a different resolution
     KDExGrid = np.linspace(-2.0, 12.0, KDEresolution)
     KDEyGrid = np.linspace(-4.4, -1.6, KDEresolution)
     KDExMesh, KDEyMesh = np.meshgrid(KDExGrid, KDEyGrid)
@@ -76,7 +76,7 @@ def test_transformationLinear():
     paramEvals = np.exp(paramEvals)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    plt.title("Paramter Density Estimation")
+    plt.title("Parameter Density Estimation")
     surf = ax.plot_surface(
         paramxMesh,
         paramyMesh,
@@ -151,7 +151,7 @@ def test_transformationExponential():
     paramEvals = np.exp(paramEvals)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    plt.title("Paramter Density Estimation")
+    plt.title("Parameter Density Estimation")
     surf = ax.plot_surface(
         paramxMesh,
         paramyMesh,
@@ -170,7 +170,7 @@ def test_transformationODELinear():
     We create our toy data by first defining a true parameter distribution.
     The actual data is then obtained by evaluating the model in parameters drawn from this true distribution.
     Ideally, we would be able to reconstruct the true parameter density.
-    However, we will see that this parameter inference problem posesses more than one solution and is therefore not well-posed.
+    However, we will see that this parameter inference problem possesses more than one solution and is therefore not well-posed.
     """
 
     # define the model

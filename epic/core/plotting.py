@@ -92,7 +92,7 @@ def plotDataSamples(model: Model):
             label=sim_measure_label + " (Sample)",
         )
         plt.legend()
-        # if not artificial: plot infered data samples from result param samples
+        # if not artificial: plot inferred data samples from result param samples
         # if not artificialModel:
         #     # Second, we load the emcee parameter sampling results and als visualize them
         #     simResults = model.loadSimResults(0,1)[1] # Picking simResults
@@ -101,19 +101,19 @@ def plotDataSamples(model: Model):
         #         np.zeros(simResults.shape[0]),
         #         color=colorYApprox,
         #         alpha=0.1,
-        #         label="Infered Data samples"
+        #         label="Inferred Data samples"
         #     )
     plt.show()
 
 
 def plotDataKDE(model: Model):
-    """Continous plot of data kde?
+    """Continuos plot of data kde?
 
     :param model: _description_
     :type model: Model
     """
     # plot data kde
-    # if not artificial: plot infered data kde from infered data samples
+    # if not artificial: plot inferred data kde from inferred data samples
     pass
 
 
@@ -129,7 +129,7 @@ def plotParamSamples(model: Model):
 
 
 def plotParamKDE(model: Model):
-    """Comntinous plot of param kde?
+    """Continuos plot of param kde?
 
     :param model: _description_
     :type model: Model

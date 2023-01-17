@@ -253,7 +253,7 @@ class Model(ABC):
 
 
 class ArtificialModelInterface(ABC):
-    """By inhereting from this interface you indicate that you are providing an artificial parameter dataset,
+    """By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
     and the corresponding artificial data dataset, which can be used to compare the results from epi with the ground truth.
     The comparison can be done using the plotEmceeResults.
 
@@ -340,7 +340,7 @@ class VisualizationModelInterface(ABC):
         constant number of points in each dimension. It saves the grids as csv files in the `Plots/*grid.csv`
         in your Application folder.
 
-        :param resolution: The number of gridpoints in each dimension
+        :param resolution: The number of grid points in each dimension
         :type resolution: int
         :return: The dataGrid and teh paramGrid.
         :rtype: tuple[np.ndarray, np.ndarray]

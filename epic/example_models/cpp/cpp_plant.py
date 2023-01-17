@@ -10,7 +10,7 @@ class CppPlant(Model, ArtificialModelInterface):
     Param1: Sun   [0,1]
     Data0: Size [0,2] # the more water and sun the better
     Data1: Health [0,1], to much water is not good, too much sun is not good
-    Data2: Trauerfliegen :P
+    Data2: Sciarid ;)
     """
 
     def forward(self, param):

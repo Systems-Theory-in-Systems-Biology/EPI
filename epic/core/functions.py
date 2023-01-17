@@ -23,7 +23,7 @@ def evalLogTransformedDensity(
     # Check if the tried parameter is within the just-defined bounds and return the lowest possible log density if not.
     if np.any((param < limits[:, 0]) | (param > limits[:, 1])):
         logger.info(
-            "Parameters outside of predefines range"
+            "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
         return -np.inf, np.zeros(param.shape[0] + data.shape[1] + 1)
 

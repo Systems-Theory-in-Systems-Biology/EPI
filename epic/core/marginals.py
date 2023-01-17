@@ -118,7 +118,7 @@ def calcParamMarginals(
 
     :param model:(model ID)
     :param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
-    :param occurence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
+    :param occurrence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
     :param resolution: (defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
     :return: None, except for stored files
     """
@@ -173,7 +173,7 @@ def calcParamMarginals(
                 np.array(paramStdevs[dim]),
             )
 
-            # If true parameter information is available, evaluate a similat 1D marginal distribution based on the true parameter samples.
+            # If true parameter information is available, evaluate a similar 1D marginal distribution based on the true parameter samples.
             if artificialModel:
                 trueParamMarginals[i, dim] = evalKDEGauss(
                     trueMarginalParamSample,
