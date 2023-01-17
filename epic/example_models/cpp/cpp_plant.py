@@ -4,7 +4,7 @@ from epic.core.model import ArtificialModelInterface, Model
 from epic.example_models.cpp import cpp_model
 
 
-class Plant(Model, ArtificialModelInterface):
+class CppPlant(Model, ArtificialModelInterface):
     """A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient
     Param0: Water [0,1]
     Param1: Sun   [0,1]
@@ -32,5 +32,13 @@ class Plant(Model, ArtificialModelInterface):
         artificialData = np.zeros((trueParamSample.shape[0], 3))
         for i in range(trueParamSample.shape[0]):
             artificialData[i, :] = self.forward(trueParamSample[i, :])
-        np.savetxt("Data/PlantData.csv", artificialData, delimiter=",")
-        np.savetxt("Data/PlantParams.csv", trueParamSample, delimiter=",")
+        np.savetxt(
+            f"Data/{self.getModelName()}Data.csv",
+            artificialData,
+            delimiter=",",
+        )
+        np.savetxt(
+            f"Data/{self.getModelName()}Params.csv",
+            trueParamSample,
+            delimiter=",",
+        )

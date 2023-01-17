@@ -12,10 +12,18 @@ epic.example\_models.cpp.cpp\_model module
    :undoc-members:
    :show-inheritance:
 
-epic.example\_models.cpp.plant module
--------------------------------------
+epic.example\_models.cpp.cpp\_plant module
+------------------------------------------
 
-.. automodule:: epic.example_models.cpp.plant
+.. automodule:: epic.example_models.cpp.cpp_plant
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+epic.example\_models.cpp.python\_reference\_plants module
+---------------------------------------------------------
+
+.. automodule:: epic.example_models.cpp.python_reference_plants
    :members:
    :undoc-members:
    :show-inheritance:

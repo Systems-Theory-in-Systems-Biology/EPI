@@ -51,5 +51,53 @@ You can visualize sbml files with https://sbml4humans.de/.
 
 C++ Model
 ---------
-Show how to create a C++ model for really expensive model evaluations
-We will need new category cplusplus deps: cmake, pybind11
+Many libraries in the field of scientific computing are written in C++
+to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
+call C++ code from your python :py:class:`~epic.core.model.Model` class.
+It is primarily intened for fast implementations of the `forward` and `jacobian` method.
+
+Preparation
+___________
+
+.. code-block::
+    pip install pybind11
+    sudo apt install cmake
+    sudo apt install pybind11
+    sudo apt install eigen3-dev
+    sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+
+C++ Model Definition
+____________________
+
+Include cpp model file directly.
+
+The example code is inconsistent in the following way:
+It uses a normal array for the forward method,
+but an eigen vector as input and an eigen matrix as output
+for the jacobian method. This allows to show us how to write wrapper code
+for normal arrays as well as for eigen objects. On the python side exlusively
+numpy 1d/2d arrays will be used.
+
+.. TODO::
+    What about vectorization? Jax will likely not help with speeding up.
+
+.. note::
+    PyBind11 Documentation: https://pybind11.readthedocs.io/en/stable/
+    PyBind11 Eigen: https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html
+
+
+Compilation
+___________
+
+.. code-block::
+    cd /epic/example_models/cpp/
+    mkdir build && cd build
+    cmake ..
+    make -j
+
+You can use the example model as template for your own C++ Model.
+
+Python Side Model
+_________________
+
+include python side model

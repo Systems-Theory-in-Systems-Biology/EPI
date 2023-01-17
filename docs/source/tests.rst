@@ -20,14 +20,6 @@ tests.test\_applications module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_autodiff\_model module
-----------------------------------
-
-.. automodule:: tests.test_autodiff_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 tests.test\_cpp\_model module
 -----------------------------
 
@@ -36,18 +28,10 @@ tests.test\_cpp\_model module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_extern\_model module
---------------------------------
+tests.test\_jax module
+----------------------
 
-.. automodule:: tests.test_extern_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_jax\_gpu module
----------------------------
-
-.. automodule:: tests.test_jax_gpu
+.. automodule:: tests.test_jax
    :members:
    :undoc-members:
    :show-inheritance:

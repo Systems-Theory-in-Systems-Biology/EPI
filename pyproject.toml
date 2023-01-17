@@ -32,7 +32,6 @@ seedir = "^0.4.2"
 sbmltoodepy = "^1.0.4"
 pysces = {extras = ["sbml"], version = "^1.0.3"}
 yfinance = "^0.1.87"
-pybind11 = "^2.10.3"
 
 
 [tool.poetry.group.dev.dependencies]

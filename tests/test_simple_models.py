@@ -9,7 +9,7 @@ from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
-from epic.example_models.simple import Exponential, Linear, LinearODE
+from epic.example_models.simple_models import Exponential, Linear, LinearODE
 
 
 def test_transformationLinear():

@@ -14,26 +14,10 @@ Subpackages
 Submodules
 ----------
 
-epic.example\_models.autodiff module
-------------------------------------
+epic.example\_models.simple\_models module
+------------------------------------------
 
-.. automodule:: epic.example_models.autodiff
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-epic.example\_models.extern\_model module
------------------------------------------
-
-.. automodule:: epic.example_models.extern_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-epic.example\_models.simple module
-----------------------------------
-
-.. automodule:: epic.example_models.simple
+.. automodule:: epic.example_models.simple_models
    :members:
    :undoc-members:
    :show-inheritance:

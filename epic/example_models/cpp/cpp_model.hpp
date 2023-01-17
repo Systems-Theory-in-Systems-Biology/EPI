@@ -52,11 +52,12 @@ py::array_t<double> forward(py::array_t<double> param) {
 }
 
 // TODO: Use this class to avoid copy?
-using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+//using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
+typedef Eigen::Matrix<double, 3, 2> Matrix32d;
 //Jacobian for f:R^n -> R^m is Jf:R^m -> R^n = R^mxn
-Eigen::Matrix2d jacobian(Eigen::Vector2d param) {
-    auto res = Eigen::Matrix2d(3,2); 
+Matrix32d jacobian(Eigen::Vector2d param) {
+    auto res = Matrix32d(3,2);
     res(0,0) = param(1);
     res(0,1) = param(0);
     res(1,0) = M_PI * std::cos(M_PI * param(0)) * std::sin(M_PI * param(1));
