@@ -76,4 +76,4 @@ jobs:
       - name: Run coverage
         run: |
           source $VENV
-        # TODO: Coverage poetry run coverage run -m pytest -v
+          coverage poetry run coverage run -m pytest -v

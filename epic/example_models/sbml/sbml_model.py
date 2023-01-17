@@ -63,6 +63,10 @@ class Converters(Enum):
 
 
 class MySBMLModel(Model):
+    """The SBML model allows to pass an sbml file, which defines the ODE of a biological system,
+    to generate the forward and jacobian of the model automatically.
+    """
+
     def __init__(self, filepath: str, ignore_errors=False) -> None:
         super().__init__()
         p = Path(filepath)

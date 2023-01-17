@@ -51,7 +51,7 @@ py::array_t<double> forward(py::array_t<double> param) {
     return result;
 }
 
-// TODO: Use this class to avoid copy?
+//TODO: Use this type to avoid copy? Measure runtime for larger problem.
 //using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
 typedef Eigen::Matrix<double, 3, 2> Matrix32d;

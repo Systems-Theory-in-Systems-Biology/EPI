@@ -16,6 +16,11 @@ SBML_FILE = "epic/example_models/sbml/sbml_file.xml"
 # This only takes the path, not the file itself and creates a tempdir at the path stored in the variable "datafiles"
 @pytest.mark.datafiles(SBML_FILE)
 def test_sbml_file_exists(datafiles):
+    """Test wether the given datafiles path contains the sbml file needed for the sbml model
+
+    :param datafiles: _description_
+    :type datafiles: _type_
+    """
     path = str(datafiles)
 
     sbml_file = os.path.join(path, "sbml_file.xml")
@@ -24,6 +29,11 @@ def test_sbml_file_exists(datafiles):
 
 @pytest.mark.datafiles(SBML_FILE)
 def test_model_creation(datafiles):
+    """Test wether pysces can convert the sbml to a psc file
+
+    :param datafiles: The directory containing the sbml file
+    :type datafiles: _type_
+    """
     path = str(datafiles)
 
     interface = PyscesCore2Interface()
@@ -39,6 +49,7 @@ def test_model_creation(datafiles):
 
 @pytest.mark.datafiles(SBML_FILE)
 def test_sbml_model(datafiles):
+    """Tests wether pysces can show the ODE of the model contained in the sbml file"""
     path = str(datafiles)
     interface = PyscesCore2Interface()
     interface.convertSBML2PSC(

@@ -18,6 +18,7 @@ from epic.example_models.applications.temperature import (
 
 
 def Applications():
+    """Provides the list of applications to the parametrized test"""
     for App in [
         Stock,
         StockArtificial,
@@ -31,6 +32,12 @@ def Applications():
 
 @pytest.mark.parametrize("ModelClass", Applications())
 def test_application_model(ModelClass: Type[Model]):
+    """Test wether the Model of Type ModelClass can initiate the necessary folder structure and run through the epi algorithm.
+    Plotting will maybe also be tested
+
+    :param ModelClass: The Model which will be tested
+    :type ModelClass: Type[Model]
+    """
     # define the model
     # TODO: Work in protected directory, not the one where the user probably works
     # Then we can also set delete=True for the tests

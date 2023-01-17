@@ -6,6 +6,14 @@ from epic.core.model import ArtificialModelInterface, JaxModel, Model
 
 
 class JaxPlant(JaxModel, ArtificialModelInterface):
+    """A plant model which inherits from the JaxModel to define the jacobian
+    Param0: Water [0,1]
+    Param1: Sun   [0,1]
+    Data0: Size [0,2] # the more water and sun the better
+    Data1: Health [0,1], to much water is not good, too much sun is not good
+    Data2: Trauerfliegen :P
+    """
+
     @classmethod
     def forward(cls, param):
         return jnp.array(
@@ -15,9 +23,6 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
                 jnp.exp(param[0]) - 0.999,
             ]
         )
-
-    def getModelName(self) -> str:
-        return "Plant"
 
     def getCentralParam(self) -> np.ndarray:
         return np.array([0.5, 0.5])
@@ -64,7 +69,7 @@ def bw(param):
 
 
 class ExternalPlant(Model, ArtificialModelInterface):
-    """A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient
+    """A plant model which uses functions defined outside the class to evaluate the forward pass and the jacobian
     Param0: Water [0,1]
     Param1: Sun   [0,1]
     Data0: Size [0,2] # the more water and sun the better

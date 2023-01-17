@@ -1,3 +1,7 @@
+"""Test the cpp model and its equivalent python implementation. Can be used to compare the performance during the sampling."""
+
+import glob
+import os
 from typing import Type
 
 import pytest
@@ -9,8 +13,6 @@ from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
-
-# TODO: Find better naming or structure for example_models and tests
 from epic.example_models.cpp.cpp_plant import CppPlant
 from epic.example_models.cpp.python_reference_plants import (
     ExternalPlant,
@@ -18,10 +20,28 @@ from epic.example_models.cpp.python_reference_plants import (
 )
 
 
+# TODO: The import of CppPlant can already fail. How to do this elegantly?
 # These three models all implement the same "physical model". Therefore i grouped them together. Can be used to compare speed of different approaches
 def PlantModels():
     for ModelClass in [CppPlant, JaxPlant, ExternalPlant]:
-        yield ModelClass
+        if ModelClass == CppPlant:
+            yield pytest.param(
+                ModelClass,
+                marks=pytest.mark.xfail(
+                    True, reason="Cpp Library probably not compiled yet"
+                ),
+            )
+        else:
+            yield ModelClass
+
+
+@pytest.mark.xfail(True, reason="Cpp Library probably not compiled yet")
+def test_cpp_lib_exists():
+    cpp_lib_pattern = "epic/example_models/cpp/cpp_model*.so*"
+    file_exists = (
+        len([n for n in glob.glob(cpp_lib_pattern) if os.path.isfile(n)]) > 0
+    )
+    assert file_exists
 
 
 @pytest.mark.parametrize("ModelClass", PlantModels())

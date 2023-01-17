@@ -1,7 +1,6 @@
 import math
 import os
 import shutil
-import warnings
 from abc import ABC, abstractmethod
 
 # import jax.numpy as jnp
@@ -16,8 +15,8 @@ from epic.core.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 
-# TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?!
-# TODO: Discuss best solution with supervisors:
+# TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?! Discuss best solution with supervisors:
+# It seems like the class method is working and i can even add the fixed params from the model. I should just rework the underscore thingy!
 # https://stackoverflow.com/questions/1816958/cant-pickle-type-instancemethod-when-using-multiprocessing-pool-map/41959862#41959862
 
 
@@ -96,10 +95,6 @@ class Model(ABC):
         # If the correction factor is not a number or infinite, return 0 instead to not affect the sampling.
         if math.isnan(correction) or math.isinf(correction):
             correction = 0.0
-            # TODO: Warning not counted in pytest?!!!
-            warnings.warn(
-                UserWarning("Invalid value encountered for correction factor")
-            )
             logger.warn("Invalid value encountered for correction factor")
         return correction
 

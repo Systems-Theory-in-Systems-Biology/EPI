@@ -9,9 +9,9 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 - [ ] create single function ```Model.inference()``` that allows the user to evaluate his model on custom data
 - [ ] create single function ```Model.plot()``` that allows the user to visualize his results
 - [ ] create single function ```Model.test()``` that allows the user to test the inversion for his model on artificial data
-- [ ] create and implement example usecases
+- [ ] Use them in tutorial / provide tutorial.py
 - [ ] make the toolbox usable for SBML models
-- [ ] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
+- [x] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
 
 ## Documentation
 
@@ -26,7 +26,7 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
   - [x] read <https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/>
   - [x] choose a theme? (Take a look at the template from seaborn or numpy) current theme looks good
   - [x] switch to mkdocs, pdocs, ...? no
-  - [ ] Add doc dependencies. E. g. myst_parser, sphinx-copybutton
+  - [x] Add doc dependencies. E. g. myst_parser, sphinx-copybutton. Added them to dev dependencies.
 - [ ] [Dependabot badge](https://github.com/dependabot/dependabot-core/issues/1912)
 - [ ] Fix stock model, stocklist and download default value and test them
 - [ ] Remove all toods
@@ -36,7 +36,7 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 
 - [ ] Ship example data
 - [ ] Ship tests
-- [ ] Test test deployment
+- [x] Test test deployment
 - [ ] Test real deployment to pypi
 - [ ] Direct deployment to pypi?
 
@@ -49,7 +49,7 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 
 ## Dependencies
 
-- Add c++ / example dependencies in general and explanation on how to run c++ model?
+- [x] Add c++ / example dependencies in general and explanation on how to run c++ model?
 
 ## Profiling
 
