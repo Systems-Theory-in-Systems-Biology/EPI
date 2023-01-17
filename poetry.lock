@@ -845,7 +845,7 @@ emoji = ["emoji"]
 
 [[package]]
 name = "setuptools"
-version = "65.7.0"
+version = "66.0.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "main"
 optional = false
@@ -936,6 +936,23 @@ sphinx = ">=1.8"
 [package.extras]
 code-style = ["pre-commit (==2.12.1)"]
 rtd = ["ipython", "myst-nb", "sphinx", "sphinx-book-theme", "sphinx-examples"]
+
+[[package]]
+name = "sphinx-togglebutton"
+version = "0.3.2"
+description = "Toggle page content and collapse admonitions in Sphinx."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+docutils = "*"
+setuptools = "*"
+sphinx = "*"
+wheel = "*"
+
+[package.extras]
+sphinx = ["matplotlib", "myst-nb", "numpy", "sphinx-book-theme", "sphinx-design", "sphinx-examples"]
 
 [[package]]
 name = "sphinxcontrib-applehelp"
@@ -1084,6 +1101,17 @@ docs = ["proselint (>=0.13)", "sphinx (>=5.3)", "sphinx-argparse (>=0.3.2)", "sp
 testing = ["coverage (>=6.2)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=21.3)", "pytest (>=7.0.1)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.2)", "pytest-mock (>=3.6.1)", "pytest-randomly (>=3.10.3)", "pytest-timeout (>=2.1)"]
 
 [[package]]
+name = "wheel"
+version = "0.38.4"
+description = "A built-package format for Python"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+test = ["pytest (>=3.0.0)"]
+
+[[package]]
 name = "yfinance"
 version = "0.1.96"
 description = "Download market data from Yahoo! Finance API"
@@ -1115,7 +1143,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "83e6e3aae7c9133a18e7c176bbd160f15da34b9cfb1d3b155a7f583386e353ed"
+content-hash = "1f70cb2760ddb70c933840fecd52cc1bb9d328569331012c2a904dffdbd59e16"
 
 [metadata.files]
 alabaster = [
@@ -2144,8 +2172,8 @@ seedir = [
     {file = "seedir-0.4.2.tar.gz", hash = "sha256:a549896f37fb31243cf9c8f44405821d9176b2b0c91804f87b7018ea0a738d2b"},
 ]
 setuptools = [
-    {file = "setuptools-65.7.0-py3-none-any.whl", hash = "sha256:8ab4f1dbf2b4a65f7eec5ad0c620e84c34111a68d3349833494b9088212214dd"},
-    {file = "setuptools-65.7.0.tar.gz", hash = "sha256:4d3c92fac8f1118bb77a22181355e29c239cabfe2b9effdaa665c66b711136d7"},
+    {file = "setuptools-66.0.0-py3-none-any.whl", hash = "sha256:a78d01d1e2c175c474884671dde039962c9d74c7223db7369771fcf6e29ceeab"},
+    {file = "setuptools-66.0.0.tar.gz", hash = "sha256:bd6eb2d6722568de6d14b87c44a96fac54b2a45ff5e940e639979a3d1792adb6"},
 ]
 setuptools-scm = [
     {file = "setuptools_scm-7.1.0-py3-none-any.whl", hash = "sha256:73988b6d848709e2af142aa48c986ea29592bbcfca5375678064708205253d8e"},
@@ -2166,6 +2194,10 @@ sphinx = [
 sphinx-copybutton = [
     {file = "sphinx-copybutton-0.5.1.tar.gz", hash = "sha256:366251e28a6f6041514bfb5439425210418d6c750e98d3a695b73e56866a677a"},
     {file = "sphinx_copybutton-0.5.1-py3-none-any.whl", hash = "sha256:0842851b5955087a7ec7fc870b622cb168618ad408dee42692e9a5c97d071da8"},
+]
+sphinx-togglebutton = [
+    {file = "sphinx-togglebutton-0.3.2.tar.gz", hash = "sha256:ab0c8b366427b01e4c89802d5d078472c427fa6e9d12d521c34fa0442559dc7a"},
+    {file = "sphinx_togglebutton-0.3.2-py3-none-any.whl", hash = "sha256:9647ba7874b7d1e2d43413d8497153a85edc6ac95a3fea9a75ef9c1e08aaae2b"},
 ]
 sphinxcontrib-applehelp = [
     {file = "sphinxcontrib.applehelp-1.0.3-py3-none-any.whl", hash = "sha256:ba0f2a22e6eeada8da6428d0d520215ee8864253f32facf958cca81e426f661d"},
@@ -2214,6 +2246,10 @@ urllib3 = [
 virtualenv = [
     {file = "virtualenv-20.17.1-py3-none-any.whl", hash = "sha256:ce3b1684d6e1a20a3e5ed36795a97dfc6af29bc3970ca8dab93e11ac6094b3c4"},
     {file = "virtualenv-20.17.1.tar.gz", hash = "sha256:f8b927684efc6f1cc206c9db297a570ab9ad0e51c16fa9e45487d36d1905c058"},
+]
+wheel = [
+    {file = "wheel-0.38.4-py3-none-any.whl", hash = "sha256:b60533f3f5d530e971d6737ca6d58681ee434818fab630c83a734bb10c083ce8"},
+    {file = "wheel-0.38.4.tar.gz", hash = "sha256:965f5259b566725405b05e7cf774052044b1ed30119b5d586b2703aafe8719ac"},
 ]
 yfinance = [
     {file = "yfinance-0.1.96-py2.py3-none-any.whl", hash = "sha256:5fd928297c9ed052f76e657694f6f1ac50ab9e154edcad80f3c262704ac81bcd"},

@@ -9,16 +9,17 @@ The tutorial is divided in four sections:
 2. :ref:`Define your model`
 3. :ref:`Inference and Plotting`
 
-.. note::
-    The tutorial is based on the :py:class:`epic.example_models.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
-    Everything needed will be provided in the tutorial.
+.. .. note::
+..     The tutorial is based on the :py:class:`epic.example_models.applications.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
+..     Everything needed will be provided in the tutorial.
 
 Let's start!
 
 Introduction
 ------------
+EPI is an algorithm to infere a parameter distribution :math:`Q` satisfying :math:`Y = s(Q)` given a (discrete) data probability distribution :math:`y_i \sim Y`
+and a model implementing the mapping :math:`s: Q \to Y`. The (forward) model describes the mapping from the parameter points :math:`q_i` to the data points :math:`y_i`.
 
-EPI is an algorithm to infere a parameter distribution given a data distribution and a model. The (forward) model describes the mapping from parameter points to data points.
 In the following we will look at temperature data over the globe and a model for the dependence of the temperature :math:`y_i` on the latitude :math:`q_i`.
 
 |Fig1|
@@ -68,14 +69,14 @@ Your data needs to be stored in a :file:`.csv` file in the following format:
 Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPIC.
 
 In the following we will use the example data :file:`TemperatureData.csv`. You can download it here: :download:`Download Temperature Data<TemperatureData.csv>`.
-It has 455 datapoints with two dimensions each. Nonuniform data are not supported in EPIC.
+It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPIC.
 
 Define your model
 -----------------
 
 Next you need to define your model. The most basic way is to derive from the :py:class:`epic.core.model.Model` base class.
 
-.. literalinclude:: ../../../epic/example_models/temperature.py
+.. literalinclude:: ../../../epic/example_models/applications/temperature.py
   :language: python
   :pyobject: Temperature
 

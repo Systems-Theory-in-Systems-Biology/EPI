@@ -43,9 +43,12 @@ class MyModel(Model):
         return jnp.array(...)
 ```
 
-To evaluate the model and infer the parameter distribution, call ```model.inference("my_data.csv")```.
-A detailed guide on how to use this library can be found in the documentation on our [webpage](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).
+To evaluate the model and infer the parameter distribution, call:
+
+```python
+model.inference("my_data.csv")
+```
 
 ## Documentation
 
-The full documentation to this software can be found under [Go to documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/)
+The full documentation to this software, including a detailed tutorial on how to use EPI, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).

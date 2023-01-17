@@ -18,7 +18,7 @@ Installation
 
 The package is available on pypi and can be installed with:
 
-.. code-block::
+.. code-block:: bash
    
    pip install epic
 
@@ -46,5 +46,6 @@ Optionally you can also inherit, and implement the abstract functions from
 * :py:class:`~epic.core.model.VisualizationModelInterface`: This allows you to plot the results of the data inference using the function :py:meth:`~epic.core.model.Model.plot`.
    .. warning:: TODO: The function plot may not exist yet!!!
 
-
-Please read the documentation for our :doc:`Examples </examples>`.
+.. note::
+   
+   Please read the documentation for our :doc:`Examples </examples>`.
