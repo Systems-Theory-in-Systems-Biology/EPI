@@ -29,7 +29,7 @@ class Model(ABC):
         elif create:
             self.createApplicationFolderStructure()
 
-        self.data_path = (
+        self.setDataPath(
             "Data/" + self.getModelName() + "Data.csv"
         )  # Set default data path
 
@@ -98,15 +98,26 @@ class Model(ABC):
             logger.warn("Invalid value encountered for correction factor")
         return correction
 
+    def setDataPath(self, path: str) -> None:
+        """Set the path to the data file which shall be used from now on.
+
+        :param path: The path to the data file.
+        :type path: str
+        """
+        self.data_path = path
+
     def dataLoader(
-        self, data_path=None
+        self,
     ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
+        """Load the data from the data file found under the models current data path and calculate several properties of the data.
+
+        :return: The dimension of the parameter space, the dimension of the data space, the number of data points, the central parameter point, the data and the estimated optimal kernel width for each dimension of the data.
+        """
         paramDim = self.getCentralParam().shape[0]
         centralParam = self.getCentralParam()
 
-        data = np.loadtxt(
-            "Data/" + self.getModelName() + "Data.csv", delimiter=","
-        )
+        data = np.loadtxt(self.data_path, delimiter=",")
+
         if len(data.shape) == 1:
             data = data.reshape((data.shape[0], 1))
 

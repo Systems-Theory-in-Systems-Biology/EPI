@@ -311,7 +311,7 @@ def inference(
     numProcesses: int = NUM_PROCESSES,
 ):
     if data_path is not None:
-        model.data_path = data_path
+        model.setDataPath(data_path)
 
     runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
     concatenateEmceeSamplingResults(model)

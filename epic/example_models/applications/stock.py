@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
@@ -10,11 +13,46 @@ from epic.core.model import (
     VisualizationModelInterface,
 )
 
+# Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
+TICKERS = [
+    "ETF",
+    "Index1",
+    "Index2",
+    "Mutual",
+    "Stocks1",
+    "Stocks2",
+    "Stocks3",
+]
+
 
 class Stock(JaxModel, VisualizationModelInterface):
+    """Model simulating stock data."""
 
     DataDim = 19
     ParamDim = 6
+
+    def __init__(
+        self, delete: bool = False, create: bool = True, ticker="ETF"
+    ) -> None:
+        """Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.
+        Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]
+
+        :param ticker: The ticker from which the data should be used, defaults to "ETF"
+        :type ticker: str, optional
+        """
+        super().__init__(delete, create)
+        self.ticker = ticker
+
+        # Check if data for requested ticker is available
+        ticker_path = f"Data/DataOrigins/Stock/Tickers/{ticker}.csv"
+        if not os.path.isfile(ticker_path):
+            logger.warning("Ticker data not found. Downloading data...")
+            self.downloadData(ticker_path)
+        # Copy ticker data to default model data path. Replace potentially already existing data file
+        shutil.copyfile(
+            f"Data/DataOrigins/Stock/{ticker}Data.csv",
+            f"Data/{self.getModelName()}Data.csv",
+        )
 
     def getDataBounds(self):
         return np.array([[-7.5, 7.5] * self.DataDim])
@@ -37,11 +75,11 @@ class Stock(JaxModel, VisualizationModelInterface):
             ]
         )
 
-    def downloadData(self, tickerList: str):
+    def downloadData(self, tickerListPath: str):
         """Download stock data for a ticker list from yahoo finance.
 
-        :param tickerList: list of stock names
-        :type tickerList: path to the ticker list csv file
+        :param tickerListPath: path to the ticker list csv file
+        :type tickerListPath: str
         """
         start = "2022-01-31"
         end = "2022-03-01"
@@ -70,7 +108,7 @@ class Stock(JaxModel, VisualizationModelInterface):
             ]
         )
 
-        stocks = np.loadtxt(tickerList, dtype="str")
+        stocks = np.loadtxt(tickerListPath, dtype="str")
 
         stockData = np.zeros((stocks.shape[0], dates.shape[0]))
         stockIDs = []
@@ -105,7 +143,7 @@ class Stock(JaxModel, VisualizationModelInterface):
             except Exception as e:
                 logger.warn("Download Failed!", exc_info=e)
 
-        tickerListName = tickerList.split("/")[-1].split(".")[
+        tickerListName = tickerListPath.split("/")[-1].split(".")[
             0
         ]  # takes the name of the tickerList
         # save all time points except for the first
@@ -120,32 +158,6 @@ class Stock(JaxModel, VisualizationModelInterface):
             delimiter=",",
             fmt="% s",
         )
-
-    def dataLoader(self, downloadData=False):
-        """Data loader from the model class but with the option to download the stock data from yahoo finance.
-
-        Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
-
-        :param downloadData: Download the stock data from the web if true, defaults to False
-        :type downloadData: bool, optional
-        :return: Same like the dataLoader from the model class
-        """
-
-        tickerLists = [
-            "Data/DataOrigins/Stock/Tickers/ETF.csv",
-            "Data/DataOrigins/Stock/Tickers/Index1.csv",
-            "Data/DataOrigins/Stock/Tickers/Index2.csv",
-            "Data/DataOrigins/Stock/Tickers/Mutual.csv",
-            "Data/DataOrigins/Stock/Tickers/Stocks1.csv",
-            "Data/DataOrigins/Stock/Tickers/Stocks2.csv",
-            "Data/DataOrigins/Stock/Tickers/Stocks3.csv",
-        ]
-        # TODO: Allow to choose the ticker list
-        defaultTickerList = tickerLists[0]
-
-        if downloadData:
-            self.downloadData(defaultTickerList)
-        return super().dataLoader()
 
     @classmethod
     def forward(cls, param):
@@ -214,6 +226,9 @@ class Stock(JaxModel, VisualizationModelInterface):
 
 
 class StockArtificial(Stock, ArtificialModelInterface):
+    def __init__(self, *args, **kwargs):
+        super(Stock, self).__init__(*args, **kwargs)
+
     def generateArtificialData(self, numSamples=1000):
         logger.info(
             f"Generating {numSamples} data samples by evaluating the model. "
