@@ -1,5 +1,3 @@
-# TODO: Move to plots.py. Currently here because plots.py is full at the moment. would find it there to work on it
-from enum import Enum
 from multiprocessing import Pool
 
 # from pathos.multiprocessing import Pool
@@ -11,6 +9,11 @@ import numpy as np
 from epic import logger
 from epic.core.functions import evalLogTransformedDensity
 from epic.core.model import Model
+
+NUM_RUNS = 2
+NUM_WALKERS = 10
+NUM_STEPS = 2500
+NUM_PROCESSES = 10
 
 
 def countEmceeSubRuns(model: Model) -> int:
@@ -36,10 +39,10 @@ def countEmceeSubRuns(model: Model) -> int:
 
 def runEmceeSampling(
     model: Model,
-    numRuns: int = 2,
-    numWalkers: int = 10,
-    numSteps: int = 2500,
-    numProcesses: int = 10,
+    numRuns: int = NUM_PROCESSES,
+    numWalkers: int = NUM_WALKERS,
+    numSteps: int = NUM_STEPS,
+    numProcesses: int = NUM_PROCESSES,
 ) -> None:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
         Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
@@ -169,10 +172,13 @@ def runEmceeSampling(
         logger.info(
             f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
         )
-
-        # TODO: Catch error with expect?
-        # Print the autocorrelation time (produces a so-far untreated runtime error if chains are too short)
-        # logger.info(f"autocorrelation time: {sampler.get_autocorr_time()[0]}")
+        try:
+            corr_times = sampler.get_autocorr_time()
+            logger.info(f"autocorrelation time: {corr_times[0]}")
+        except emcee.autocorr.AutocorrError as e:
+            logger.warning(
+                "The autocorrelation time could not be calculate reliable"
+            )
 
 
 def concatenateEmceeSamplingResults(model: Model):
@@ -210,37 +216,32 @@ def concatenateEmceeSamplingResults(model: Model):
     overallSimResults = np.zeros((numSamples, dataDim))
     overallParams = np.zeros((numSamples, paramDim))
 
+    density_files = (
+        "Applications/" + model.getModelName() + "/DensityEvals/{}.csv"
+    )
+    sim_results_files = (
+        "Applications/" + model.getModelName() + "/SimResults/{}.csv"
+    )
+    param_files = "Applications/" + model.getModelName() + "/Params/{}.csv"
     # Loop over all sub runs, load the respective sample files and store them at their respective places in the overall containers.
     for i in range(numExistingFiles):
         overallDensityEvals[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile
         ] = np.loadtxt(
-            "Applications/"
-            + model.getModelName()
-            + "/DensityEvals/"
-            + str(i)
-            + ".csv",
+            density_files.format(i),
             delimiter=",",
         )
         overallSimResults[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            "Applications/"
-            + model.getModelName()
-            + "/SimResults/"
-            + str(i)
-            + ".csv",
+            sim_results_files.format(i),
             delimiter=",",
             ndmin=2,
         )
         overallParams[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            "Applications/"
-            + model.getModelName()
-            + "/Params/"
-            + str(i)
-            + ".csv",
+            param_files.format(i),
             delimiter=",",
             ndmin=2,
         )
@@ -265,11 +266,11 @@ def concatenateEmceeSamplingResults(model: Model):
 
 def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
-        This is especially important to find "zombie" walkers, that are never movig.
+        This is especially important to find "zombie" walkers, that are never moving.
 
     Input: model
            numBurnSamples (integer number of ignored first samples of each chain)
-           numWalkers (integer number of emcee walkers)
+           numWalkers (integer number of emcee walkers) that were used for the emcee chain which is analyzed here
 
     Output: acceptanceRatios (np.array of size numWalkers)
     """
@@ -301,36 +302,21 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     return acceptanceRatios
 
 
-def inference(model: Model, data_path=None):
-    if data_path is None:
-        data_path = "Data/" + model.getModelName() + "Data.csv"
-    # TODO: Do something with the data path!!!
-    runEmceeSampling(model)
+def inference(
+    model: Model,
+    data_path=None,
+    numRuns: int = NUM_RUNS,
+    numWalkers: int = NUM_WALKERS,
+    numSteps: int = NUM_STEPS,
+    numProcesses: int = NUM_PROCESSES,
+):
+    if data_path is not None:
+        model.data_path = data_path
+
+    runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
     concatenateEmceeSamplingResults(model)
     overallSimResults = np.loadtxt(
         model.getApplicationPath() + "/OverallSimResults.csv",
         delimiter=",",
     )
     return overallSimResults
-
-
-class PlotType(Enum):
-    Spider = 0
-    D1 = 1
-    D2 = 2
-
-
-def plot(model: Model, pType: PlotType):
-    if pType == pType.Spider:
-        # TODO: spyderplot
-        pass
-    elif pType == pType.D1:
-        # TODO: 1d plot, select variable to plot!
-        pass
-    elif pType == pType.D2:
-        # TODO: 2d surf, select variables to plot!
-        pass
-    else:
-        raise ValueError(
-            f"Unexpected PlotType value encountered. The value is {pType}."
-        )

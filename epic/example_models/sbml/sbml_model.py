@@ -95,6 +95,7 @@ class MySBMLModel(Model):
         # TODO: Wtf
         s0_sim_init = copy.copy(self.inner_model.__inspec__)
         if self.inner_model.__HAS_RATE_RULES__:
+            # TODO: Unpacking in ode evaluation to x, vtemp
             s0_sim_init = np.concatenate([s0_sim_init, self.__rrule__])
 
         print("initial s", s0_sim_init)

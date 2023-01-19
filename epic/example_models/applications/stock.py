@@ -1,9 +1,7 @@
-from multiprocessing import shared_memory
-
 import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
-from tqdm.contrib.concurrent import process_map
+from jax import vmap
 
 from epic import logger
 from epic.core.model import (
@@ -39,7 +37,12 @@ class Stock(JaxModel, VisualizationModelInterface):
             ]
         )
 
-    def downloadData(self, tickerList, tickerListName):
+    def downloadData(self, tickerList: str):
+        """Download stock data for a ticker list from yahoo finance.
+
+        :param tickerList: list of stock names
+        :type tickerList: path to the ticker list csv file
+        """
         start = "2022-01-31"
         end = "2022-03-01"
         dates = np.array(
@@ -102,6 +105,9 @@ class Stock(JaxModel, VisualizationModelInterface):
             except Exception as e:
                 logger.warn("Download Failed!", exc_info=e)
 
+        tickerListName = tickerList.split("/")[-1].split(".")[
+            0
+        ]  # takes the name of the tickerList
         # save all time points except for the first
         np.savetxt(
             "Data/DataOrigins/Stock/" + tickerListName + "Data.csv",
@@ -116,9 +122,29 @@ class Stock(JaxModel, VisualizationModelInterface):
         )
 
     def dataLoader(self, downloadData=False):
+        """Data loader from the model class but with the option to download the stock data from yahoo finance.
+
+        Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
+
+        :param downloadData: Download the stock data from the web if true, defaults to False
+        :type downloadData: bool, optional
+        :return: Same like the dataLoader from the model class
+        """
+
+        tickerLists = [
+            "Data/DataOrigins/Stock/Tickers/ETF.csv",
+            "Data/DataOrigins/Stock/Tickers/Index1.csv",
+            "Data/DataOrigins/Stock/Tickers/Index2.csv",
+            "Data/DataOrigins/Stock/Tickers/Mutual.csv",
+            "Data/DataOrigins/Stock/Tickers/Stocks1.csv",
+            "Data/DataOrigins/Stock/Tickers/Stocks2.csv",
+            "Data/DataOrigins/Stock/Tickers/Stocks3.csv",
+        ]
+        # TODO: Allow to choose the ticker list
+        defaultTickerList = tickerLists[0]
+
         if downloadData:
-            # TODO: What is/are the tickerLists and names?
-            self.downloadData()
+            self.downloadData(defaultTickerList)
         return super().dataLoader()
 
     @classmethod
@@ -210,31 +236,13 @@ class StockArtificial(Stock, ArtificialModelInterface):
         trueParamSample *= stdevs
         trueParamSample += mean
 
-        artificialData = np.zeros((numSamples, self.DataDim))
-
-        shm = shared_memory.SharedMemory(
-            create=True, size=artificialData.nbytes
-        )
-        # Now create a NumPy array backed by shared memory
-        artificialData_shared = np.ndarray(
-            artificialData.shape, dtype=artificialData.dtype, buffer=shm.buf
-        )
-
-        # TODO: Replace by vmap if not keeping it as example
-        global myCalc
-
-        def myCalc(j: int):
-            artificialData_shared[j, :] = self.forward(trueParamSample[j, :])
-
-        process_map(myCalc, range(numSamples))
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
             "Data/StockArtificialData.csv",
-            artificialData_shared,
+            artificialData,
             delimiter=",",
         )
-        shm.close()
-        shm.unlink()
 
         np.savetxt(
             "Data/StockArtificialParams.csv", trueParamSample, delimiter=","

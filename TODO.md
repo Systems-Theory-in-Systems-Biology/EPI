@@ -12,6 +12,7 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 - [ ] Use them in tutorial / provide tutorial.py
 - [ ] make the toolbox usable for SBML models
 - [x] Test Jax for gpu: ```pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html```
+- [ ] Build example for: How to deal with emcee requiring pickable but jax is not?! It seems like the class method is working and i can even add the fixed params from the model. I should just rework the underscore thingy! https://stackoverflow.com/questions/1816958/cant-pickle-type-instancemethod-when-using-multiprocessing-pool-map/41959862#41959862
 
 ## Documentation
 

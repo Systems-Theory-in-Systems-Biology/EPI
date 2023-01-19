@@ -51,8 +51,9 @@ py::array_t<double> forward(py::array_t<double> param) {
     return result;
 }
 
-//TODO: Use this type to avoid copy? Measure runtime for larger problem.
-//using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+// If using Eigen::Ref, prevent copy of data by using RowMajoger storage order which is also used in numpy
+// using RowMatrixXd = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+// https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html
 
 typedef Eigen::Matrix<double, 3, 2> Matrix32d;
 //Jacobian for f:R^n -> R^m is Jf:R^m -> R^n = R^mxn

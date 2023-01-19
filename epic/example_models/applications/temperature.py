@@ -2,7 +2,7 @@ from functools import partial
 
 import jax.numpy as jnp
 import numpy as np
-from jax import jit
+from jax import jit, vmap
 
 from epic.core.model import ArtificialModelInterface, Model
 
@@ -46,10 +46,7 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
         )
         trueParamSample = rawTrueParamSample[..., np.newaxis]
 
-        artificialData = np.zeros((trueParamSample.shape[0], 1))
-
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, 0] = self.forward(trueParamSample[i, :])
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
             "Data/TemperatureArtificialData.csv", artificialData, delimiter=","

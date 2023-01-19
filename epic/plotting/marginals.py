@@ -4,8 +4,6 @@ from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
 from epic.core.model import Model
 
 
-# TODO: defaults to [DefaultParamVal], resolution=100?
-# This should bei either set here and in the other functions or not mentioned at all
 def calcDataMarginals(model: Model, resolution: int) -> None:
     """Evaluate the one-dimensional marginals of the original data over equi-distant grids.
         The stored evaluations can then be used for result visualization.

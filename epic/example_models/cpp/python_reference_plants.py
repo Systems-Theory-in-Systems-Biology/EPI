@@ -1,6 +1,6 @@
 import jax.numpy as jnp
 import numpy as np
-from jax import jacrev, jit
+from jax import jacrev, jit, vmap
 
 from epic.core.model import ArtificialModelInterface, JaxModel, Model
 
@@ -34,9 +34,8 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
         # randomly create true parameters in [0,1]x[0,1]
         trueParamSample = np.random.rand(numSamples, 2)
 
-        artificialData = np.zeros((trueParamSample.shape[0], 3))
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
+
         np.savetxt(
             f"Data/{self.getModelName()}Data.csv",
             artificialData,
@@ -93,9 +92,8 @@ class ExternalPlant(Model, ArtificialModelInterface):
         # randomly create true parameters in [0,1]x[0,1]
         trueParamSample = np.random.rand(numSamples, 2)
 
-        artificialData = np.zeros((trueParamSample.shape[0], 3))
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
+
         np.savetxt(
             f"Data/{self.getModelName()}Data.csv",
             artificialData,

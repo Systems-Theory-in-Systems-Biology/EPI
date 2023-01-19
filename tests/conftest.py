@@ -1,3 +1,7 @@
+DISABLE_PLOTS = True
+LOGGING_LEVEL = "INFO"
+
+
 def pytest_sessionstart(session):
     """Called once at the start of a pytest session
 
@@ -5,6 +9,11 @@ def pytest_sessionstart(session):
     """
     import matplotlib
 
-    matplotlib.use(
-        "Template"
-    )  # Prevent plots from showing by changing graphics backend to null template
+    if DISABLE_PLOTS:
+        matplotlib.use(
+            "Template"
+        )  # Prevent plots from showing by changing graphics backend to null template
+
+    import logging
+
+    logging.getLogger("epic").setLevel(LOGGING_LEVEL)

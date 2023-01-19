@@ -15,10 +15,6 @@ from epic.core.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 
-# TODO: Everywhere, how to deal with emcee requiring pickable but jax is not?! Discuss best solution with supervisors:
-# It seems like the class method is working and i can even add the fixed params from the model. I should just rework the underscore thingy!
-# https://stackoverflow.com/questions/1816958/cant-pickle-type-instancemethod-when-using-multiprocessing-pool-map/41959862#41959862
-
 
 class Model(ABC):
     """The base class for all models using the EPI algorithm.
@@ -32,6 +28,10 @@ class Model(ABC):
             self.createApplicationFolderStructure()
         elif create:
             self.createApplicationFolderStructure()
+
+        self.data_path = (
+            "Data/" + self.getModelName() + "Data.csv"
+        )  # Set default data path
 
     @abstractmethod
     def getParamSamplingLimits(self) -> np.ndarray:
@@ -99,7 +99,7 @@ class Model(ABC):
         return correction
 
     def dataLoader(
-        self,
+        self, data_path=None
     ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
         paramDim = self.getCentralParam().shape[0]
         centralParam = self.getCentralParam()
@@ -150,7 +150,7 @@ class Model(ABC):
 
     def getModelName(self) -> str:
         """Returns the name of the class to which the object belongs. Overwrite it if you want to
-        give your model a custom name.
+        give your model a custom name, e. g. depending on the name of your parameters.
 
         :return: The class name of the calling object.
         :rtype: str

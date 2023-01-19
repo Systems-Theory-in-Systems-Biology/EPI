@@ -72,29 +72,6 @@ class CoronaArtificial(Corona, ArtificialModelInterface):
             upperBound - lowerBound
         ) * np.random.rand(numSamples, 3)
 
-        # Options to calculate the data from the param samples
-        #
-        # 1. For loop: Veeeeeery slooooooow
-        # artificialData = np.zeros((numSamples, 4))
-        # for j in tqdm(range(numSamples)):
-        #     artificialData[j, :] = self.forward(trueParamSample[j, :])
-        #
-        # 2. TODO: Vectorizing the forward call in the model class
-        # This would mean changing our conventions for the param shape.
-        # Could be done but would require more effort.
-        #
-        # 3. Parallelization using multiprocessing
-        # See the stock model.
-        # Downside: Pickling again :/. Must use global functions or other tricks to pickle...
-        #
-        # 4. Using vmap
-        # Really low effort and fast!
-        # Downside: no progressbar ;)
-
-        # Using multiprocessing + batching would possibly be even faster. Depending whether using jax or numpy as backend.
-        # jax has a single core "bug": https://github.com/google/jax/issues/5022
-        # TODO: re-evaluate where to use numpy and where to use jax due to single-cpu!
-
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(

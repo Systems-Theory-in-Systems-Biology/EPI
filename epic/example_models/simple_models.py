@@ -1,5 +1,6 @@
 import jax.numpy as jnp
 import numpy as np
+from jax import vmap
 
 from epic.core.model import (
     ArtificialModelInterface,
@@ -24,10 +25,7 @@ class Linear(JaxModel, ArtificialModelInterface, VisualizationModelInterface):
         # randomly create true parameters in [0,1]^2
         trueParamSample = np.random.rand(numSamples, 2)
 
-        artificialData = np.zeros((trueParamSample.shape[0], 2))
-
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt("Data/LinearData.csv", artificialData, delimiter=",")
         np.savetxt("Data/LinearParams.csv", trueParamSample, delimiter=",")
@@ -81,10 +79,7 @@ class LinearODE(JaxModel, ArtificialModelInterface):
         # randomly create true parameters in [1,2]^2
         trueParamSample = np.random.rand(numSamples, 2) + 1
 
-        artificialData = np.zeros((trueParamSample.shape[0], 2))
-
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
+        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt("Data/LinearODEData.csv", artificialData, delimiter=",")
         np.savetxt("Data/LinearODEParams.csv", trueParamSample, delimiter=",")

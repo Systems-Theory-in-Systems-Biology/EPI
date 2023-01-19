@@ -2,16 +2,17 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from jax import vmap
 from matplotlib import cm
 
 from epic.core.functions import evalLogTransformedDensity
 from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
-from epic.core.plots import plotTest
 from epic.core.sampling import (
     concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
 from epic.example_models.simple_models import Exponential, Linear, LinearODE
+from epic.plotting.plots import plotTest
 
 
 def test_transformationLinear():
@@ -97,11 +98,7 @@ def test_transformationExponential():
     numDataPoints = 10000
     trueParam = np.random.rand(numDataPoints, 2) + 1
 
-    data = np.zeros((numDataPoints, 2))
-
-    # transform the parameter points using the model
-    for i in range(numDataPoints):
-        data[i, :] = model(trueParam[i, :])
+    data = vmap(model.forward, in_axes=0)(trueParam)
 
     # define standard deviations according to silverman
     dataStdevs = calcKernelWidth(data)

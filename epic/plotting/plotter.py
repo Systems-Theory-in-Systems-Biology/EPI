@@ -1,8 +1,5 @@
 """ A module to quickly visualize your results from the EPI algorithm
 using the matplotlib plotting library.
-
-The flow of data is the following:
-
 """
 
 
