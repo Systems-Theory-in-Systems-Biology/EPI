@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epic`.
+This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epi`.
 The tutorial is divided in four sections:
 
 0. :ref:`Introduction`
@@ -10,7 +10,7 @@ The tutorial is divided in four sections:
 3. :ref:`Inference and Plotting`
 
 .. .. note::
-..     The tutorial is based on the :py:class:`epic.example_models.applications.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
+..     The tutorial is based on the :py:class:`epi.example_models.applications.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
 ..     Everything needed will be provided in the tutorial.
 
 Let's start!
@@ -49,7 +49,7 @@ From this data distribution the EPI algorithm derives the parameter distribution
     :width: 800
     :alt: The cycle described before as image.
 
-With this picture in mind, we can start to implement the temperature problem in epic.
+With this picture in mind, we can start to implement the temperature problem in epi.
 
 
 
@@ -66,17 +66,17 @@ Your data needs to be stored in a :file:`.csv` file in the following format:
     ...
     datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPIC.
+Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPI.
 
 In the following we will use the example data :file:`TemperatureData.csv`. You can download it here: :download:`Download Temperature Data<TemperatureData.csv>`.
-It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPIC.
+It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPI.
 
 Define your model
 -----------------
 
-Next you need to define your model. The most basic way is to derive from the :py:class:`epic.core.model.Model` base class.
+Next you need to define your model. The most basic way is to derive from the :py:class:`epi.core.model.Model` base class.
 
-.. literalinclude:: ../../../epic/example_models/applications/temperature.py
+.. literalinclude:: ../../../epi/example_models/applications/temperature.py
   :language: python
   :pyobject: Temperature
 
@@ -86,10 +86,10 @@ Of course, you also need the imports:
 
     import jax.numpy as jnp
     import numpy as np
-    from epic.core.model import ArtificialModelInterface, Model
+    from epi.core.model import ArtificialModelInterface, Model
 
-A model inhereting from :py:class:`~epic.core.model.Model` must implement the methods :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~epic.core.model.Model.getCentralParam` and :py:meth:`~epic.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
+In addition it must provide the methods :py:meth:`~epi.core.model.Model.getCentralParam` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
@@ -160,4 +160,4 @@ The final results can be found in the file :file:`Applications/Temperature/Overa
 
 .. .. code-block:: bash
 
-..     pip install epic
+..     pip install epi

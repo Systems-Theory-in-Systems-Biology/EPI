@@ -1,5 +1,5 @@
-import epic.plotting.plotter as plotter
-from epic.example_models.applications.temperature import TemperatureArtificial
+import epi.plotting.plotter as plotter
+from epi.example_models.applications.temperature import TemperatureArtificial
 
 
 def test_plotKDEoverGrid():

@@ -2,7 +2,7 @@ C++ Model
 ---------
 Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python :py:class:`~epic.core.model.Model` class.
+call C++ code from your python :py:class:`~epi.core.model.Model` class.
 It is primarily intended for fast implementations of the `forward` and `jacobian` method.
 
 Specialities
@@ -25,7 +25,7 @@ ___________
 C++ Model Definition
 ____________________
 
-.. literalinclude:: ../../epic/example_models/cpp/cpp_plant.py
+.. literalinclude:: ../../epi/example_models/cpp/cpp_plant.py
   :language: c++
 
 .. TODO::
@@ -55,7 +55,7 @@ ___________
 
 .. code-block:: bash
 
-    cd /epic/example_models/cpp/
+    cd /epi/example_models/cpp/
     mkdir build && cd build
     cmake ..
     make -j
@@ -63,7 +63,7 @@ ___________
 Python Side Model
 _________________
 
-.. literalinclude:: ../../epic/example_models/cpp/cpp_plant.py
+.. literalinclude:: ../../epi/example_models/cpp/cpp_plant.py
     :language: python
 
 You can use the example model as template for your own C++ Model.

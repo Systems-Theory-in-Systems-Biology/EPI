@@ -4,7 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jit, vmap
 
-from epic.core.model import ArtificialModelInterface, Model
+from epi.core.model import ArtificialModelInterface, Model
 
 
 class Temperature(Model):

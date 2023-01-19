@@ -1,5 +1,5 @@
-epic package
-============
+epi package
+===========
 
 Subpackages
 -----------
@@ -7,13 +7,14 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   epic.core
-   epic.example_models
+   epi.core
+   epi.example_models
+   epi.plotting
 
 Module contents
 ---------------
 
-.. automodule:: epic
+.. automodule:: epi
    :members:
    :undoc-members:
    :show-inheritance:

@@ -7,6 +7,6 @@ ___________
 * You can visualize sbml files with https://sbml4humans.de/.
 * It is not implemented yet :/ Sorry!
 
-.. literalinclude:: ../../epic/example_models/sbml/sbml_model.py
+.. literalinclude:: ../../epi/example_models/sbml/sbml_model.py
   :language: python
   :pyobject: MySBMLModel

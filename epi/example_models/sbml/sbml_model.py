@@ -16,10 +16,10 @@ import sbmltoodepy.modelclasses  # Syntax highlighting for sbmltoodepy.modelclas
 from pysces import model as PyscesModel
 from pysces.PyscesInterfaces import Core2interfaces as PyscesCore2Interface
 
-from epic import logger
-from epic.core.model import Model
+from epi import logger
+from epi.core.model import Model
 
-# from epic.example_models.sbml.sbml_file import SBMLmodel as ExternSBMLModel
+# from epi.example_models.sbml.sbml_file import SBMLmodel as ExternSBMLModel
 
 # sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__# unsilence command-line output
 # Use __SILENT_START__ ?
@@ -51,7 +51,7 @@ def toPysces(sbml_file: str, path: str) -> PyscesModel:
 def toOdePy(sbml_file: str, path: str) -> sbmltoodepy.modelclasses.Model:
     sbmltoodepy.ParseAndCreateModel(path + sbml_file)
     module = importlib.import_module(
-        "epic.example_models.sbml_model." + sbml_file
+        "epi.example_models.sbml_model." + sbml_file
     )
     model = module.SBMLmodel()  # todo: set this correctly
     return model

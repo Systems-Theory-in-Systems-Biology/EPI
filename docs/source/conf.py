@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-project = "EPIC"
+project = "EPI"
 copyright = "2022, Vincent Wagner, Sebastian Höpfl, Lars Kaiser"
 author = "Vincent Wagner, Sebastian Höpfl, Lars Kaiser"
 
@@ -86,7 +86,7 @@ myst_heading_anchors = 3
 #
 html_theme = "sphinx_rtd_theme"
 
-html_logo = "../../epic.png"
+html_logo = "../../epi.png"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

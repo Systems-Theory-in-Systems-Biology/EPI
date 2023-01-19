@@ -10,7 +10,7 @@ from pysces.PyscesInterfaces import Core2interfaces as PyscesCore2Interface
 # sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__# unsilence command-line output
 # Use __SILENT_START__ ?
 
-SBML_FILE = "epic/example_models/sbml/sbml_file.xml"
+SBML_FILE = "epi/example_models/sbml/sbml_file.xml"
 
 
 # This only takes the path, not the file itself and creates a tempdir at the path stored in the variable "datafiles"

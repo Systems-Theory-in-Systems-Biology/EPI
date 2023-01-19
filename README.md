@@ -1,14 +1,14 @@
-<!-- # Euler Parameter Inference Codebase -->
+<!-- # Euler Parameter Inference -->
 <h1></h1>
 
-![EPIC](epic.png "logo")
+![EPI](epi.png "logo")
 
 <!-- The badges we want to display -->
-[![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment)
-[![Build & Publish Documentation](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/sphinx.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/sphinx.yml)
-[![CI](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/ci.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/ci.yml)
+[![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment)
+[![Build & Publish Documentation](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml)
+[![CI](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml)
 
-The Euler Parameter Inference Codebase (EPIC) is a python package for inverse parameter inference.
+The Euler Parameter Inference (EPI) is a python package for inverse parameter inference.
 
 ## About
 
@@ -19,7 +19,7 @@ We support SBML ode models and user provided models.
 ## Installation
 
 The package is available on pypi and can be installed with:\
-```pip install epic```\
+```pip install epi```\
 You can also build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
@@ -29,7 +29,7 @@ Derive your model from ```Model``` class and implement the abstract functions. O
 ```python
 import jax.numpy as jnp
 
-from epic.core.model import Model
+from epi.core.model import Model
 
 class MyModel(Model):
     def forward(self, param):
@@ -53,4 +53,4 @@ model.inference("my_data.csv")
 
 ## Documentation
 
-The full documentation to this software, including a detailed tutorial on how to use EPI, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).
+The full documentation to this software, including a detailed tutorial on how to use EPI, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).

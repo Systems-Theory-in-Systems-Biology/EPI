@@ -16,4 +16,4 @@ def pytest_sessionstart(session):
 
     import logging
 
-    logging.getLogger("epic").setLevel(LOGGING_LEVEL)
+    logging.getLogger("epi").setLevel(LOGGING_LEVEL)

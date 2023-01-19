@@ -10,8 +10,8 @@ from jax import jacrev, jit
 from jax.config import config
 from seedir import FakeDir, FakeFile
 
-from epic import logger
-from epic.core.kernel_density_estimation import calcKernelWidth
+from epi import logger
+from epi.core.kernel_density_estimation import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 

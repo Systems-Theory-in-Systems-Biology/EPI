@@ -5,21 +5,21 @@
 - Clone the repository:
 
   ```bash
-  git clone https://github.com/Systems-Theory-in-Systems-Biology/EPIC.git
+  git clone https://github.com/Systems-Theory-in-Systems-Biology/EPI.git
   ```
 
   ```bash
-  git clone git@github.com:Systems-Theory-in-Systems-Biology/EPIC.git
+  git clone git@github.com:Systems-Theory-in-Systems-Biology/EPI.git
   ```
 
   <details>
   <summary>Should I choose https or ssh?</summary>
   You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, not this repository. </details>
 
-- Install epic:
+- Install epi:
 
   ```bash
-  cd EPIC && pip install poetry && poetry install --with=dev
+  cd EPI && pip install poetry && poetry install --with=dev
   ```
 
 - Run the tests:
@@ -88,7 +88,7 @@ Here are the most important infos on how to maintain this repository.
   If you add extensions to `conf.py` which are not part of sphinx, add them to the `docs/source/requirement.txt` file to allow github action `mmaraskar/sphinx-action@master` to still build the documentation.
 
 - **Hosting with GitHub Pages**: \
-  To publish the documentation on github pages you probably have to change some settings in the [GitHub Repository](https://github.com/Systems-Theory-in-Systems-Biology/EPIC)
+  To publish the documentation on github pages you probably have to change some settings in the [GitHub Repository](https://github.com/Systems-Theory-in-Systems-Biology/EPI)
 
   ``` text
   Settings -> Code and automation -> Pages -> Build and Deployment:
@@ -114,7 +114,7 @@ Here are the most important infos on how to maintain this repository.
     Test this with
 
     ```bash
-    python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epic
+    python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epi
     ```
 
 - **Deployment with PyPi**: \
@@ -133,7 +133,7 @@ Here are the most important infos on how to maintain this repository.
     Test this with
 
     ```bash
-    pip install epic
+    pip install epi
     ```
 
 ## Jax with CUDA

@@ -6,9 +6,9 @@ from os import path
 import emcee
 import numpy as np
 
-from epic import logger
-from epic.core.functions import evalLogTransformedDensity
-from epic.core.model import Model
+from epi import logger
+from epi.core.functions import evalLogTransformedDensity
+from epi.core.model import Model
 
 NUM_RUNS = 2
 NUM_WALKERS = 10
@@ -39,7 +39,7 @@ def countEmceeSubRuns(model: Model) -> int:
 
 def runEmceeSampling(
     model: Model,
-    numRuns: int = NUM_PROCESSES,
+    numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,

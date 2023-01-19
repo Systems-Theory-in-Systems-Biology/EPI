@@ -8,8 +8,8 @@ from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 
-from epic.core.kernel_density_estimation import evalKDEGauss
-from epic.core.model import Model
+from epi.core.kernel_density_estimation import evalKDEGauss
+from epi.core.model import Model
 
 # Colors
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0

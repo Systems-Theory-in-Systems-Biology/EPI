@@ -5,18 +5,15 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
-from epic.core.functions import evalLogTransformedDensity
-from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
-from epic.core.sampling import (
-    concatenateEmceeSamplingResults,
-    runEmceeSampling,
-)
-from epic.example_models.simple_models import Exponential, Linear, LinearODE
-from epic.plotting.plots import plotTest
+from epi.core.functions import evalLogTransformedDensity
+from epi.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
+from epi.example_models.simple_models import Exponential, Linear, LinearODE
+from epi.plotting.plots import plotTest
 
 
 def test_transformationLinear():
-    model = Linear()
+    model = Linear(delete=True, create=True)
 
     # create approx. 1000 data points that are perfectly uniformly distributed over a grid
     # the range of data points is the 2D interval [0,10]x[-2,-4]
@@ -91,7 +88,7 @@ def test_transformationLinear():
 
 
 def test_transformationExponential():
-    model = Exponential()
+    model = Exponential(delete=True, create=True)
 
     # create true parameter points that are drawn uniformly from [0,1]^2
 
@@ -171,7 +168,7 @@ def test_transformationODELinear():
     """
 
     # define the model
-    model = LinearODE()
+    model = LinearODE(delete=True, create=True)
 
     # generate artificial data
     model.generateArtificialData()

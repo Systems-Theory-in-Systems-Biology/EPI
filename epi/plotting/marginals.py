@@ -1,7 +1,7 @@
 import numpy as np
 
-from epic.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
-from epic.core.model import Model
+from epi.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epi.core.model import Model
 
 
 def calcDataMarginals(model: Model, resolution: int) -> None:

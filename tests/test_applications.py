@@ -2,16 +2,13 @@ from typing import Type
 
 import pytest
 
-from epic.core.model import Model
+from epi.core.model import Model
 
-# from epic.core.plots import plotTest
-from epic.core.sampling import (
-    concatenateEmceeSamplingResults,
-    runEmceeSampling,
-)
-from epic.example_models.applications.corona import Corona, CoronaArtificial
-from epic.example_models.applications.stock import Stock, StockArtificial
-from epic.example_models.applications.temperature import (
+# from epi.core.plots import plotTest
+from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
+from epi.example_models.applications.corona import Corona, CoronaArtificial
+from epi.example_models.applications.stock import Stock, StockArtificial
+from epi.example_models.applications.temperature import (
     Temperature,
     TemperatureArtificial,
 )
@@ -47,19 +44,13 @@ def test_application_model(ModelClass: Type[Model]):
     if model.isArtificial():
         model.generateArtificialData()
 
-    # warnings.simplefilter('always', UserWarning)
-    # Avoid RuntimeError: It is unadvisable to use a red-blue move with fewer walkers than twice the number of dimensions
-    if issubclass(ModelClass, Stock):
-        numWalkers = 12
-    else:
-        numWalkers = 10
-
     # run MCMC sampling for EPI
-    runEmceeSampling(model, numWalkers=numWalkers)
+    if issubclass(ModelClass, Stock):
+        # Avoid RuntimeError: It is unadvisable to use a red-blue move with fewer walkers than twice the number of dimensions
+        numWalkers = 12
+        runEmceeSampling(model, numWalkers=numWalkers)
+    else:
+        runEmceeSampling(model)
 
     # combine all intermediate saves to create one large sample chain
     concatenateEmceeSamplingResults(model)
-
-    # TODO: Write plotting routine working for all models
-    # plot the results
-    # plotTest(model)

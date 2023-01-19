@@ -1,6 +1,6 @@
 StockData Model
 ---------------
-The high-dimensional stock data model is contained in :code:`epic/example_models/applications/stock`.
+The high-dimensional stock data model is contained in :code:`epi/example_models/applications/stock`.
 
 .. TODO::
 
@@ -9,7 +9,7 @@ The high-dimensional stock data model is contained in :code:`epic/example_models
 Specialities
 ____________
 
-* External Data Source: The model shows how to use an external data source in the workflow by overwriting the method :py:meth:`epic.core.model.Model.dataLoader`.
+* External Data Source: The model shows how to use an external data source in the workflow by overwriting the method :py:meth:`epi.core.model.Model.dataLoader`.
 * High-Dimensional: The model has a high number of dimensions: DataDim = 19, ParamDim = 6
   * Number of Walkers in MCMC Sampling: Requires a large number of walkers, because TODO!!!
   * Visualization: The visualization can be done for each dimension separately, for two selected dimensions or using spider web plots.
@@ -18,6 +18,6 @@ ____________
 
     Show the visualization somewhere or implement it as standard / enum. Show code call here?
 
-.. literalinclude:: ../../epic/example_models/applications/stock.py
+.. literalinclude:: ../../epi/example_models/applications/stock.py
   :language: python
   :pyobject: Stock

@@ -6,8 +6,8 @@ import numpy as np
 import yfinance as yf
 from jax import vmap
 
-from epic import logger
-from epic.core.model import (
+from epi import logger
+from epi.core.model import (
     ArtificialModelInterface,
     JaxModel,
     VisualizationModelInterface,

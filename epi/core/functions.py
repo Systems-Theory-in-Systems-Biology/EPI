@@ -1,8 +1,8 @@
 import numpy as np
 
-from epic import logger
-from epic.core.kernel_density_estimation import evalKDEGauss
-from epic.core.model import Model
+from epi import logger
+from epi.core.kernel_density_estimation import evalKDEGauss
+from epi.core.model import Model
 
 
 def evalLogTransformedDensity(

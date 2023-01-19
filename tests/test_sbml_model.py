@@ -1,18 +1,15 @@
 import pytest
 
-# from epic.core.plots import plotTest
-from epic.core.sampling import (
-    concatenateEmceeSamplingResults,
-    runEmceeSampling,
-)
-from epic.example_models.sbml.sbml_model import MySBMLModel
+# from epi.core.plots import plotTest
+from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
+from epi.example_models.sbml.sbml_model import MySBMLModel
 
 
 # TODO
 @pytest.mark.skip(reason="Not Correctly implemented yet")
 def test_sbml_model():
     # define the model
-    model = MySBMLModel(filepath="epic/example_models/sbml/sbml_file.xml")
+    model = MySBMLModel(filepath="epi/example_models/sbml/sbml_file.xml")
 
     # generate artificial data
     model.generateArtificialData()

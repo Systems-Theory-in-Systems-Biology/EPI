@@ -2,7 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import vmap
 
-from epic.core.model import (
+from epi.core.model import (
     ArtificialModelInterface,
     JaxModel,
     VisualizationModelInterface,
