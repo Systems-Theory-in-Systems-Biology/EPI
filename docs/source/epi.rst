@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    epi.core
-   epi.example_models
    epi.plotting
 
 Module contents

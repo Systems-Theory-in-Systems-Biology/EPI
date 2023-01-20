@@ -1,5 +1,5 @@
+import importlib
 import os
-import shutil
 
 import jax.numpy as jnp
 import numpy as np
@@ -41,18 +41,15 @@ class Stock(JaxModel, VisualizationModelInterface):
         :type ticker: str, optional
         """
         super().__init__(delete, create)
-        self.ticker = ticker
+        self.data_path = f"Data/{self.getModelName()}/{ticker}Data.csv"
 
-        # Check if data for requested ticker is available
-        ticker_path = f"Data/DataOrigins/Stock/Tickers/{ticker}.csv"
-        if not os.path.isfile(ticker_path):
+        # Check if data for the given ticker exists
+        if not os.path.isfile(self.data_path):
             logger.warning("Ticker data not found. Downloading data...")
+            ticker_path = importlib.resources.path(
+                "epi.examples.stock", f"{ticker}.csv"
+            )
             self.downloadData(ticker_path)
-        # Copy ticker data to default model data path. Replace potentially already existing data file
-        shutil.copyfile(
-            f"Data/DataOrigins/Stock/{ticker}Data.csv",
-            f"Data/{self.getModelName()}Data.csv",
-        )
 
     def getDataBounds(self):
         return np.array([[-7.5, 7.5] * self.DataDim])
@@ -138,7 +135,7 @@ class Stock(JaxModel, VisualizationModelInterface):
                         logger.info(f"Values too large for {stocks[i]}")
 
                 except Exception as e:
-                    logger.warn(f"Fail for {stocks[i]}", exc_info=e)
+                    logger.warning(f"Fail for {stocks[i]}", exc_info=e)
 
             except Exception as e:
                 logger.warn("Download Failed!", exc_info=e)
@@ -148,12 +145,12 @@ class Stock(JaxModel, VisualizationModelInterface):
         ]  # takes the name of the tickerList
         # save all time points except for the first
         np.savetxt(
-            "Data/DataOrigins/Stock/" + tickerListName + "Data.csv",
+            f"Data/{self.getModelName()}/{tickerListName}Data.csv",
             stockData[0:successCounter, 1:],
             delimiter=",",
         )
         np.savetxt(
-            "Data/DataOrigins/Stock/" + tickerListName + "IDs.csv",
+            f"Data/{self.getModelName()}/{tickerListName}IDs.csv",
             stockIDs,
             delimiter=",",
             fmt="% s",
@@ -229,7 +226,9 @@ class StockArtificial(Stock, ArtificialModelInterface):
     def __init__(self, *args, **kwargs):
         super(Stock, self).__init__(*args, **kwargs)
 
-    def generateArtificialData(self, numSamples=1000):
+    def generateArtificialData(
+        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    ):
         logger.info(
             f"Generating {numSamples} data samples by evaluating the model. "
             "This might take a very long time!"
@@ -254,13 +253,15 @@ class StockArtificial(Stock, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            "Data/StockArtificialData.csv",
+            f"Data/{self.getModelName()}Data.csv",
             artificialData,
             delimiter=",",
         )
 
         np.savetxt(
-            "Data/StockArtificialParams.csv", trueParamSample, delimiter=","
+            f"Data/{self.getModelName()}Params.csv",
+            trueParamSample,
+            delimiter=",",
         )
 
     def getParamSamplingLimits(self):

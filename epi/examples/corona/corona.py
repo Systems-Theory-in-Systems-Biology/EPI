@@ -1,3 +1,5 @@
+import importlib.resources
+
 import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
@@ -12,6 +14,12 @@ from epi.core.model import (
 
 
 class Corona(JaxModel, VisualizationModelInterface):
+    def __init__(self, delete=False, create=False):
+        super().__init__(delete, create)
+        self.data_path = importlib.resources.path(
+            "epi.examples.corona", "CoronaData.csv"
+        )
+
     def getDataBounds(self):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
 
@@ -64,7 +72,9 @@ class Corona(JaxModel, VisualizationModelInterface):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    def generateArtificialData(self, numSamples=1000):
+    def generateArtificialData(
+        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    ):
         lowerBound = np.array([-1.9, -0.1, 0.6])
         upperBound = np.array([-1.7, 0.1, 0.8])
 
@@ -75,10 +85,14 @@ class CoronaArtificial(Corona, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            "Data/CoronaArtificialData.csv", artificialData, delimiter=","
+            f"Data/{self.getModelName()}Data.csv",
+            artificialData,
+            delimiter=",",
         )
         np.savetxt(
-            "Data/CoronaArtificialParams.csv", trueParamSample, delimiter=","
+            f"Data/{self.getModelName()}Params.csv",
+            trueParamSample,
+            delimiter=",",
         )
 
     def getParamSamplingLimits(self):

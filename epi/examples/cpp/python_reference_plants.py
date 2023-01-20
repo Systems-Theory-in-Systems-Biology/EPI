@@ -88,7 +88,9 @@ class ExternalPlant(Model, ArtificialModelInterface):
     def getParamSamplingLimits(self) -> np.ndarray:
         return np.array([[0.0, 1.0], [0.0, 1.0]])
 
-    def generateArtificialData(self, numSamples=1000):
+    def generateArtificialData(
+        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    ):
         # randomly create true parameters in [0,1]x[0,1]
         trueParamSample = np.random.rand(numSamples, 2)
 

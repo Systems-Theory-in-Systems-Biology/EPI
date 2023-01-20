@@ -24,7 +24,7 @@ You can also build the library from the newest source code by following the [Dev
 
 ## Using the library
 
-Derive your model from ```Model``` class and implement the abstract functions. Optionally you can also implement the abstract functions from ```ArtificialModelInterface``` and ```VisualizationModelInterface```.
+Derive your model from ```Model``` class and implement the abstract functions.
 
 ```python
 import jax.numpy as jnp
@@ -48,8 +48,22 @@ class MyModel(Model):
 To evaluate the model and infer the parameter distribution, call:
 
 ```python
-model.inference("my_data.csv")
+from my_model import MyModel
+model = MyModel()
+inference(model=model, data_path="my_data.csv")
 ```
+
+The file `my_data.csv` has to contain the data in csv format with `seperator=,` in the format
+
+```text
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+...
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+```
+
+which corresponds to a matrix with the shape `nSamples x dataDim`.
 
 ## Documentation
 

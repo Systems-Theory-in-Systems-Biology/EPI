@@ -1,6 +1,6 @@
 Temperature Model
 -----------------
-The temperature model is contained in :code:`epi/example_models/applications/temperature`.
+The temperature model is contained in :file:`epi/examples/temperature/temperature.py`.
 The model :math:`y_i(q_i)=60 \cos(q_i)-30=s(q_i)` describes the temperature for a place on the earth :math:`y_i` by using the latitude coordinates :math:`q_i`.
 The jacobian :math:`{\frac{dy}{dq}]_i(q_i)=-30 \sin(q_i)` can be calculated analytically.
 
@@ -16,6 +16,6 @@ ____________
 
     Fix _forward, call, ... and maybe adapt this documentation part then
 
-.. literalinclude:: ../../epi/example_models/applications/temperature.py
+.. literalinclude:: ../../../epi/examples/temperature/temperature.py
   :language: python
   :pyobject: Temperature

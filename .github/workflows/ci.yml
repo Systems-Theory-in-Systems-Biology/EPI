@@ -64,7 +64,7 @@ jobs:
           sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
           sudo apt install -y pybind11-dev
           source $VENV
-          cd epi/example_models/cpp
+          cd epi/examples/cpp
           mkdir build
           cd build
           cmake ..

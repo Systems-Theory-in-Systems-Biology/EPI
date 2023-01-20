@@ -11,7 +11,7 @@ logger.setLevel(logging.ERROR)
 
 # defines the stream handler
 _ch = logging.StreamHandler()  # creates the handler
-_ch.setLevel(logging.INFO)  # sets the handler info
+_ch.setLevel(logging.WARN)  # sets the handler info
 _ch.setFormatter(
     logging.Formatter(DEBUGFORMATTER)
 )  # sets the handler formatting

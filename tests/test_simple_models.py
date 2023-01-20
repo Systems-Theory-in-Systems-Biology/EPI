@@ -8,7 +8,7 @@ from matplotlib import cm
 from epi.core.functions import evalLogTransformedDensity
 from epi.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
 from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
-from epi.example_models.simple_models import Exponential, Linear, LinearODE
+from epi.examples.simple_models import Exponential, Linear, LinearODE
 from epi.plotting.plots import plotTest
 
 

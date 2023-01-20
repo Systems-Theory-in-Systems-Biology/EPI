@@ -1,6 +1,6 @@
 StockData Model
 ---------------
-The high-dimensional stock data model is contained in :code:`epi/example_models/applications/stock`.
+The high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
 
 .. TODO::
 
@@ -18,6 +18,6 @@ ____________
 
     Show the visualization somewhere or implement it as standard / enum. Show code call here?
 
-.. literalinclude:: ../../epi/example_models/applications/stock.py
+.. literalinclude:: ../../../epi/examples/stock/stock.py
   :language: python
   :pyobject: Stock

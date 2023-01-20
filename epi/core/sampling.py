@@ -136,9 +136,13 @@ def runEmceeSampling(
         # Create a large container for all sampling results (sampled parameters, corresponding simulation results and parameter densities) and fill it using the emcee blob option.
         allRes = np.zeros((numWalkers * numSteps, paramDim + dataDim + 1))
 
+        sampler_blob = (
+            sampler.get_blobs()
+        )  # Should have shape (numSteps, numWalkers)
+
         for i in range(numSteps):
             for j in range(numWalkers):
-                allRes[i * numWalkers + j, :] = sampler.blobs[i][j]
+                allRes[i * numWalkers + j, :] = sampler_blob[i][j]
 
         # Save all sampling results in .csv files.
         np.savetxt(
@@ -304,19 +308,36 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
 
 def inference(
     model: Model,
-    data_path=None,
+    data_path: str = None,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
 ):
+    """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
+
+
+    :param model: The model describing the mapping from parameters to data.
+    :type model: Model
+    :param data_path: path to the data relative to the current working directory.
+                      If None, the default path defined in the Model class initializer is used, defaults to None
+    :type data_path: str, optional
+    :param numRuns: Number of independent runs, defaults to NUM_RUNS
+    :type numRuns: int, optional
+    :param numWalkers: Number of walkers for each run, influencing each other, defaults to NUM_WALKERS
+    :type numWalkers: int, optional
+    :param numSteps: Number of steps each walker does in each run, defaults to NUM_STEPS
+    :type numSteps: int, optional
+    :param numProcesses: number of processes to use, defaults to NUM_PROCESSES
+    :type numProcesses: int, optional
+    """
+
     if data_path is not None:
         model.setDataPath(data_path)
+    else:
+        logger.warning(
+            f"No data path provided for this inference call. Using the data path of the model: {model.data_path}"
+        )
 
     runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
     concatenateEmceeSamplingResults(model)
-    overallSimResults = np.loadtxt(
-        model.getApplicationPath() + "/OverallSimResults.csv",
-        delimiter=",",
-    )
-    return overallSimResults

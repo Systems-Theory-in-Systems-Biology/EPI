@@ -1,10 +1,13 @@
-from functools import partial
+import importlib
 
 import jax.numpy as jnp
 import numpy as np
-from jax import jit, vmap
+from jax import vmap
 
 from epi.core.model import ArtificialModelInterface, Model
+
+# from functools import partial
+# from jax import jit
 
 
 class Temperature(Model):
@@ -13,10 +16,14 @@ class Temperature(Model):
         self.lowT = -30.0
         self.highT = 30.0
 
+        self.data_path = importlib.resources.path(
+            "epi.examples.temperature", "TemperatureData.csv"
+        )
+
     # TODO: Provide a class which uses functool.partial for forward function and puts self.arg in it?
     # Of course to use jitting. partial(jit, static_argnums=[0,2,])
     # Maybe not the temperature model because it is used in the tutorial ...
-    @partial(jit, static_argnums=0)
+    # @partial(jit, static_argnums=0) # this slows down the code?!
     def forward(self, param):
         return self.calc_forward(param, self.highT, self.lowT)
 
@@ -41,13 +48,16 @@ class Temperature(Model):
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
     def generateArtificialData(self):
-        rawTrueParamSample = np.loadtxt(
-            "Data/TemperatureArtificialParams.csv", delimiter=","
+        paramPath = importlib.resources.path(
+            "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )
+        rawTrueParamSample = np.loadtxt(paramPath, delimiter=",")
         trueParamSample = rawTrueParamSample[..., np.newaxis]
 
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            "Data/TemperatureArtificialData.csv", artificialData, delimiter=","
+            f"Data/{self.getModelName()}Data.csv",
+            artificialData,
+            delimiter=",",
         )

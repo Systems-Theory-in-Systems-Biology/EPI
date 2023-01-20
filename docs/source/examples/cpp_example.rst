@@ -25,7 +25,7 @@ ___________
 C++ Model Definition
 ____________________
 
-.. literalinclude:: ../../epi/example_models/cpp/cpp_plant.py
+.. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
   :language: c++
 
 .. TODO::
@@ -55,7 +55,7 @@ ___________
 
 .. code-block:: bash
 
-    cd /epi/example_models/cpp/
+    cd /epi/examples/cpp/
     mkdir build && cd build
     cmake ..
     make -j
@@ -63,7 +63,7 @@ ___________
 Python Side Model
 _________________
 
-.. literalinclude:: ../../epi/example_models/cpp/cpp_plant.py
+.. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
     :language: python
 
 You can use the example model as template for your own C++ Model.

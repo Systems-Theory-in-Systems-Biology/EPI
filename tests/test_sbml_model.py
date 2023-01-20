@@ -2,14 +2,14 @@ import pytest
 
 # from epi.core.plots import plotTest
 from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
-from epi.example_models.sbml.sbml_model import MySBMLModel
+from epi.examples.sbml import MySBMLModel
 
 
 # TODO
 @pytest.mark.skip(reason="Not Correctly implemented yet")
 def test_sbml_model():
     # define the model
-    model = MySBMLModel(filepath="epi/example_models/sbml/sbml_file.xml")
+    model = MySBMLModel(filepath="epi/examples/sbml/sbml_file.xml")
 
     # generate artificial data
     model.generateArtificialData()

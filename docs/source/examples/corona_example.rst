@@ -1,6 +1,6 @@
 Corona ODE Model
 ----------------
-The corona ode model is contained in :code:`epi/example_models/applications/corona`. 
+The corona ode model is contained in :file:`epi/examples/corona/corona.py`. 
 
 .. TODO::
 
@@ -20,6 +20,6 @@ ____________
 
     artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
-.. literalinclude:: ../../epi/example_models/applications/corona.py
+.. literalinclude:: ../../../epi/examples/corona/corona.py
   :language: python
   :pyobject: Corona

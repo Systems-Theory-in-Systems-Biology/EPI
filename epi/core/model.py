@@ -271,8 +271,12 @@ class ArtificialModelInterface(ABC):
     :raises NotImplementedError: Implement the generateArtificialData function to implement this interface.
     """
 
+    NUM_ARTIFICIAL_SAMPLES = 1000
+
     @abstractmethod
-    def generateArtificialData(self, numSamples: int = 1000) -> None:
+    def generateArtificialData(
+        self, numSamples: int = NUM_ARTIFICIAL_SAMPLES
+    ) -> None:
         """
         .. note::
 

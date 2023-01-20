@@ -1,5 +1,5 @@
-EPIC
-====
+EPI
+===
 
 .. toctree::
    :maxdepth: 4

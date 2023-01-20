@@ -19,10 +19,12 @@ from pysces.PyscesInterfaces import Core2interfaces as PyscesCore2Interface
 from epi import logger
 from epi.core.model import Model
 
-# from epi.example_models.sbml.sbml_file import SBMLmodel as ExternSBMLModel
+# from epi.examples.sbml.sbml_file import SBMLmodel as ExternSBMLModel
 
 # sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__# unsilence command-line output
 # Use __SILENT_START__ ?
+
+# TODO: use importlib like inimportlib.resources.path("epi.examples.corona", "CoronaData.csv")
 
 
 def check_sbml(filepath: str):
@@ -50,9 +52,7 @@ def toPysces(sbml_file: str, path: str) -> PyscesModel:
 # file is only file, path is dir
 def toOdePy(sbml_file: str, path: str) -> sbmltoodepy.modelclasses.Model:
     sbmltoodepy.ParseAndCreateModel(path + sbml_file)
-    module = importlib.import_module(
-        "epi.example_models.sbml_model." + sbml_file
-    )
+    module = importlib.import_module("epi.examples.sbml_model." + sbml_file)
     model = module.SBMLmodel()  # todo: set this correctly
     return model
 

@@ -10,7 +10,7 @@ The tutorial is divided in four sections:
 3. :ref:`Inference and Plotting`
 
 .. .. note::
-..     The tutorial is based on the :py:class:`epi.example_models.applications.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
+..     The tutorial is based on the :py:class:`epi.examples.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
 ..     Everything needed will be provided in the tutorial.
 
 Let's start!
@@ -76,7 +76,7 @@ Define your model
 
 Next you need to define your model. The most basic way is to derive from the :py:class:`epi.core.model.Model` base class.
 
-.. literalinclude:: ../../../epi/example_models/applications/temperature.py
+.. literalinclude:: ../../../epi/examples/temperature/temperature.py
   :language: python
   :pyobject: Temperature
 

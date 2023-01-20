@@ -20,15 +20,25 @@ class Linear(JaxModel, ArtificialModelInterface, VisualizationModelInterface):
     def getParamSamplingLimits(self):
         return np.array([[-10.0, 11.0], [-10.0, 11.0]])
 
-    def generateArtificialData(self, numSamples=1000):
+    def generateArtificialData(
+        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    ):
 
         # randomly create true parameters in [0,1]^2
         trueParamSample = np.random.rand(numSamples, 2)
 
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
-        np.savetxt("Data/LinearData.csv", artificialData, delimiter=",")
-        np.savetxt("Data/LinearParams.csv", trueParamSample, delimiter=",")
+        np.savetxt(
+            f"Data/{self.getModelName()}Data.csv",
+            artificialData,
+            delimiter=",",
+        )
+        np.savetxt(
+            f"Data/{self.getModelName()}Params.csv",
+            trueParamSample,
+            delimiter=",",
+        )
 
     def getParamBounds(self, scale=1.0) -> np.ndarray:
         return np.array([[-0.2, 1.2], [-0.2, 1.2]])
@@ -81,5 +91,13 @@ class LinearODE(JaxModel, ArtificialModelInterface):
 
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
-        np.savetxt("Data/LinearODEData.csv", artificialData, delimiter=",")
-        np.savetxt("Data/LinearODEParams.csv", trueParamSample, delimiter=",")
+        np.savetxt(
+            f"Data/{self.getModelName()}Data.csv",
+            artificialData,
+            delimiter=",",
+        )
+        np.savetxt(
+            f"Data/{self.getModelName()}Params.csv",
+            trueParamSample,
+            delimiter=",",
+        )
