@@ -138,7 +138,7 @@ class Stock(JaxModel, VisualizationModelInterface):
                     logger.warning(f"Fail for {stocks[i]}", exc_info=e)
 
             except Exception as e:
-                logger.warn("Download Failed!", exc_info=e)
+                logger.warning("Download Failed!", exc_info=e)
 
         tickerListName = tickerListPath.split("/")[-1].split(".")[
             0

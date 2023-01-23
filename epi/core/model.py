@@ -95,7 +95,7 @@ class Model(ABC):
         # If the correction factor is not a number or infinite, return 0 instead to not affect the sampling.
         if math.isnan(correction) or math.isinf(correction):
             correction = 0.0
-            logger.warn("Invalid value encountered for correction factor")
+            logger.warning("Invalid value encountered for correction factor")
         return correction
 
     def setDataPath(self, path: str) -> None:

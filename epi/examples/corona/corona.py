@@ -67,7 +67,7 @@ class Corona(JaxModel, VisualizationModelInterface):
             return odeSol.ys[1:5, 2]
 
         except Exception as e:
-            logger.warn("ODE solution not possible!", exc_info=e)
+            logger.warning("ODE solution not possible!", exc_info=e)
             return np.array([-np.inf, -np.inf, -np.inf, -np.inf])
 
 
