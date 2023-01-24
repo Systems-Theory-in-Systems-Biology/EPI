@@ -4,11 +4,7 @@ import numpy as np
 import pytest
 from matplotlib import cm
 
-from epi.core.kernel_density_estimation import (
-    calcKernelWidth,
-    evalKDECauchy,
-    evalKDEGauss,
-)
+from epi.core.kde import calcKernelWidth, evalKDECauchy, evalKDEGauss
 
 
 def kernel_estimators():

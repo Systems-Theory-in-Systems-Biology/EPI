@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import cm
 
 from epi.core.functions import evalLogTransformedDensity
-from epi.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epi.core.kde import calcKernelWidth, evalKDEGauss
 from epi.core.model import Model
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0

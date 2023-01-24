@@ -8,7 +8,7 @@ from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 
-from epi.core.kernel_density_estimation import evalKDEGauss
+from epi.core.kde import evalKDEGauss
 from epi.core.model import Model
 
 # Colors

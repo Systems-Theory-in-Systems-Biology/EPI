@@ -1,6 +1,6 @@
 import numpy as np
 
-from epi.core.kernel_density_estimation import calcKernelWidth, evalKDEGauss
+from epi.core.kde import calcKernelWidth, evalKDEGauss
 from epi.core.model import Model
 
 

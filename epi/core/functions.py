@@ -1,7 +1,7 @@
 import numpy as np
 
 from epi import logger
-from epi.core.kernel_density_estimation import evalKDEGauss
+from epi.core.kde import evalKDEGauss
 from epi.core.model import Model
 
 

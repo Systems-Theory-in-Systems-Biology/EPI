@@ -11,7 +11,7 @@ from jax.config import config
 from seedir import FakeDir, FakeFile
 
 from epi import logger
-from epi.core.kernel_density_estimation import calcKernelWidth
+from epi.core.kde import calcKernelWidth
 
 config.update("jax_enable_x64", True)
 
