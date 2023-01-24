@@ -142,12 +142,7 @@ You can find them in the folder :file:`Applications/Temperature/`. The final res
 
 .. note::
 
-    TODO It always annoying to follow tutorials and copy all the code. We provide the tutorial also as jupyter notebook and python file:
-    
-    * Jupyter notebook file
-    * Python file
-
-
+    This tutorial is also available as a jupyter notebook: :download:`Download Temperature Tutorial<temperature.ipynb>`.
 
 .. Preparation
 .. -----------
