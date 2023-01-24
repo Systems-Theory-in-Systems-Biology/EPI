@@ -31,6 +31,7 @@ How to start
 | Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
 
 .. code-block:: python
+   
    # my_model.py
 
    import jax.numpy as jnp
@@ -57,11 +58,12 @@ To evaluate the model and infer the parameter distribution, call:
    from my_model import MyModel
 
    model = MyModel()
-   inference(model=model, data_path="my_data.csv")
+   inference(model=model, dataPath="my_data.csv")
 
 The file :file:`my_data.csv` has to contain the data in csv format with :code:`seperator=,` in the format
 
 .. code-block:: text
+   
    # my_data.csv
 
    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN

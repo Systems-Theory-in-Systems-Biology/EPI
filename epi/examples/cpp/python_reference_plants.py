@@ -59,12 +59,12 @@ def fw(param):
     )
 
 
-fw_jac = jit(jacrev(fw))
+fwJac = jit(jacrev(fw))
 
 
 @jit
 def bw(param):
-    return fw_jac(param)
+    return fwJac(param)
 
 
 class ExternalPlant(Model, ArtificialModelInterface):

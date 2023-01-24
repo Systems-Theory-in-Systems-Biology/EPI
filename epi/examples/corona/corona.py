@@ -16,7 +16,7 @@ from epi.core.model import (
 class Corona(JaxModel, VisualizationModelInterface):
     def __init__(self, delete=False, create=False):
         super().__init__(delete, create)
-        self.data_path = importlib.resources.path(
+        self.dataPath = importlib.resources.path(
             "epi.examples.corona", "CoronaData.csv"
         )
 

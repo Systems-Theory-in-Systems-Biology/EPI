@@ -12,10 +12,10 @@ epi.core.functions module
    :undoc-members:
    :show-inheritance:
 
-epi.core.kernel\_density\_estimation module
--------------------------------------------
+epi.core.kde module
+-------------------
 
-.. automodule:: epi.core.kernel_density_estimation
+.. automodule:: epi.core.kde
    :members:
    :undoc-members:
    :show-inheritance:

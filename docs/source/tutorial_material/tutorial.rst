@@ -7,7 +7,7 @@ The tutorial is divided in four sections:
 0. :ref:`Introduction`
 1. :ref:`Define your data`
 2. :ref:`Define your model`
-3. :ref:`Inference and Plotting`
+3. :ref:`Inference`
 
 .. .. note::
 ..     The tutorial is based on the :py:class:`epi.examples.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
@@ -115,30 +115,30 @@ The jacobian is derived analytically here and implemented explicitly.
 
 
 
-Inference and Plotting
-----------------------
+Inference
+---------
 
-Now we can use EPI to infer the parameter distribution and plot the results.
+Now we can now use EPI to infer the parameter distribution from the data.
 
 .. code-block:: python
 
+    from epic.sampling import inference
+
     model = Temperature()
-    model.inference(data_path = "TemperatureData.csv")
+    inference(model, dataPath = "TemperatureData.csv")
 
 Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
-You can find them in the folder :file:`Applications/Temperature/`.
+You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/OverallSimResults.csv`.
 
-.. code-block:: python
+.. .. code-block:: python
 
-    model.plot(plot_type="spyder")
-    model.plot(plot_type="standard")
+..     model.plot(plot_type="spyder")
+..     model.plot(plot_type="standard")
 
-As last step you can plot the results using the builtin plotting functionality.
-You can choose between a spider-web representation and a standard plot.
-The standard plot is only working for one or two-dimensional parameters and data.
-
-The final results can be found in the file :file:`Applications/Temperature/OverallSimResults.csv`.
+.. As last step you can plot the results using the builtin plotting functionality.
+.. You can choose between a spider-web representation and a standard plot.
+.. The standard plot is only working for one or two-dimensional parameters and data.
 
 .. note::
 

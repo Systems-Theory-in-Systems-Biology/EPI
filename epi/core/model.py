@@ -69,9 +69,9 @@ class Model(ABC):
         the jacobian is calculated by  :func:`jax.jacrev`.
 
         :param param: The parameter(set) for which the jacobian of your model should be evaluated.
-        :type param: _type_
-        :return: _description_
-        :rtype: _type_
+        :type param: np.ndarray
+        :return: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
+        :rtype: np.ndarray
         """
         raise NotImplementedError
 
@@ -104,7 +104,7 @@ class Model(ABC):
         :param path: The path to the data file.
         :type path: str
         """
-        self.data_path = path
+        self.dataPath = path
 
     def dataLoader(
         self,
@@ -116,7 +116,7 @@ class Model(ABC):
         paramDim = self.getCentralParam().shape[0]
         centralParam = self.getCentralParam()
 
-        data = np.loadtxt(self.data_path, delimiter=",")
+        data = np.loadtxt(self.dataPath, delimiter=",")
 
         if len(data.shape) == 1:
             data = data.reshape((data.shape[0], 1))
@@ -182,17 +182,14 @@ class Model(ABC):
         are stored for this model. No files are deleted during this action.
         """
         indent = 4
-        plot_structure = (
+        plotFolderTree = (
             (" " * indent + "- SpiderWebs/ \n" + " " * indent + "- Plots/")
             if self.isVisualizable()
             else ""
         )
 
-        # Nothing to do here
-        artificial_structure = ""
-
         os.makedirs("Data", exist_ok=True)
-        structure = (
+        applicationFolderStructure = (
             "Applications/ \n"
             "  - {modelName}/ \n"
             "    - DensityEvals/ \n"
@@ -200,7 +197,7 @@ class Model(ABC):
             "    - SimResults/ \n"
         )
         path = "."
-        structure = structure + plot_structure + artificial_structure
+        structure = applicationFolderStructure + plotFolderTree
 
         def create(f, root):
             fpath = f.get_path()
@@ -217,13 +214,13 @@ class Model(ABC):
                 except FileExistsError:
                     logger.info(f"File `{joined}` already exists")
 
-        fake_structure = seedir.fakedir_fromstring(
+        fakeStructure = seedir.fakedir_fromstring(
             structure.format(modelName=self.getModelName())
         )
-        fake_structure.realize = lambda path_arg: fake_structure.walk_apply(
+        fakeStructure.realize = lambda path_arg: fakeStructure.walk_apply(
             create, root=path_arg
         )
-        fake_structure.realize(path)
+        fakeStructure.realize(path)
 
     def deleteApplicationFolderStructure(self):
         """Deletes the models `Applications` subfolder"""
@@ -293,14 +290,14 @@ class ArtificialModelInterface(ABC):
 
             To create the true data from the true params, you can simply call your model.
 
-        :raises NotImplementedError: _description_
+        :raises NotImplementedError: Generating the artificial data is up to the user
         """
         raise NotImplementedError
 
     def paramLoader(self) -> tuple[np.ndarray, np.ndarray]:
         """Load and return all parameters for artificial set ups
 
-        :return: _description_
+        :return: Loaded parameters and the optimal kernel width for each parameter
         :rtype: tuple[np.ndarray, np.ndarray]
         """
         trueParams = np.loadtxt(

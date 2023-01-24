@@ -52,22 +52,6 @@ tests.test\_plotting module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_pysces module
--------------------------
-
-.. automodule:: tests.test_pysces
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_sbml\_model module
-------------------------------
-
-.. automodule:: tests.test_sbml_model
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 tests.test\_simple\_models module
 ---------------------------------
 

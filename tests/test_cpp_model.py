@@ -7,8 +7,6 @@ from typing import Type
 import pytest
 
 from epi.core.model import Model
-
-# from epi.core.plots import plotTest
 from epi.core.sampling import inference
 from epi.examples.cpp import CppPlant, ExternalPlant, JaxPlant
 

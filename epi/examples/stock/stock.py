@@ -41,15 +41,15 @@ class Stock(JaxModel, VisualizationModelInterface):
         :type ticker: str, optional
         """
         super().__init__(delete, create)
-        self.data_path = f"Data/{self.getModelName()}/{ticker}Data.csv"
+        self.dataPath = f"Data/{self.getModelName()}/{ticker}Data.csv"
 
         # Check if data for the given ticker exists
-        if not os.path.isfile(self.data_path):
+        if not os.path.isfile(self.dataPath):
             logger.warning("Ticker data not found. Downloading data...")
-            ticker_path = importlib.resources.path(
+            tickerPath = importlib.resources.path(
                 "epi.examples.stock", f"{ticker}.csv"
             )
-            self.downloadData(ticker_path)
+            self.downloadData(tickerPath)
 
     def getDataBounds(self):
         return np.array([[-7.5, 7.5] * self.DataDim])

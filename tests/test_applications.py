@@ -3,8 +3,6 @@ from typing import Type
 import pytest
 
 from epi.core.model import Model
-
-# from epi.core.plots import plotTest
 from epi.core.sampling import inference
 from epi.examples.corona import Corona, CoronaArtificial
 from epi.examples.stock import Stock, StockArtificial

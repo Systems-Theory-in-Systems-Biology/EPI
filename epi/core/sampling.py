@@ -79,15 +79,15 @@ def runEmceeSampling(
         logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        position_path = model.getApplicationPath() + "/currentPos.csv"
-        if path.isfile(position_path):
+        positionPath = model.getApplicationPath() + "/currentPos.csv"
+        if path.isfile(positionPath):
             walkerInitParams = np.loadtxt(
-                position_path,
+                positionPath,
                 delimiter=",",
                 ndmin=2,
             )
             logger.info(
-                f"Continue sampling from saved sampler position in {position_path}"
+                f"Continue sampling from saved sampler position in {positionPath}"
             )
 
         else:
@@ -128,7 +128,7 @@ def runEmceeSampling(
 
         # Save the current walker positions as initial values for the next run.
         np.savetxt(
-            position_path,
+            positionPath,
             finalPos,
             delimiter=",",
         )
@@ -136,13 +136,13 @@ def runEmceeSampling(
         # Create a large container for all sampling results (sampled parameters, corresponding simulation results and parameter densities) and fill it using the emcee blob option.
         allRes = np.zeros((numWalkers * numSteps, paramDim + dataDim + 1))
 
-        sampler_blob = (
+        samplerBlob = (
             sampler.get_blobs()
-        )  # Should have shape (numSteps, numWalkers)
+        )  # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
 
         for i in range(numSteps):
             for j in range(numWalkers):
-                allRes[i * numWalkers + j, :] = sampler_blob[i][j]
+                allRes[i * numWalkers + j, :] = samplerBlob[i][j]
 
         # Save all sampling results in .csv files.
         np.savetxt(
@@ -177,8 +177,8 @@ def runEmceeSampling(
             f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
         )
         try:
-            corr_times = sampler.get_autocorr_time()
-            logger.info(f"autocorrelation time: {corr_times[0]}")
+            corrTimes = sampler.get_autocorr_time()
+            logger.info(f"autocorrelation time: {corrTimes[0]}")
         except emcee.autocorr.AutocorrError as e:
             logger.warning(
                 "The autocorrelation time could not be calculate reliable"
@@ -220,32 +220,32 @@ def concatenateEmceeSamplingResults(model: Model):
     overallSimResults = np.zeros((numSamples, dataDim))
     overallParams = np.zeros((numSamples, paramDim))
 
-    density_files = (
+    densityFiles = (
         "Applications/" + model.getModelName() + "/DensityEvals/{}.csv"
     )
-    sim_results_files = (
+    simResultsFiles = (
         "Applications/" + model.getModelName() + "/SimResults/{}.csv"
     )
-    param_files = "Applications/" + model.getModelName() + "/Params/{}.csv"
+    paramFiles = "Applications/" + model.getModelName() + "/Params/{}.csv"
     # Loop over all sub runs, load the respective sample files and store them at their respective places in the overall containers.
     for i in range(numExistingFiles):
         overallDensityEvals[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile
         ] = np.loadtxt(
-            density_files.format(i),
+            densityFiles.format(i),
             delimiter=",",
         )
         overallSimResults[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            sim_results_files.format(i),
+            simResultsFiles.format(i),
             delimiter=",",
             ndmin=2,
         )
         overallParams[
             i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
         ] = np.loadtxt(
-            param_files.format(i),
+            paramFiles.format(i),
             delimiter=",",
             ndmin=2,
         )
@@ -308,7 +308,7 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
 
 def inference(
     model: Model,
-    data_path: str = None,
+    dataPath: str = None,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
@@ -319,9 +319,9 @@ def inference(
 
     :param model: The model describing the mapping from parameters to data.
     :type model: Model
-    :param data_path: path to the data relative to the current working directory.
+    :param dataPath: path to the data relative to the current working directory.
                       If None, the default path defined in the Model class initializer is used, defaults to None
-    :type data_path: str, optional
+    :type dataPath: str, optional
     :param numRuns: Number of independent runs, defaults to NUM_RUNS
     :type numRuns: int, optional
     :param numWalkers: Number of walkers for each run, influencing each other, defaults to NUM_WALKERS
@@ -332,11 +332,11 @@ def inference(
     :type numProcesses: int, optional
     """
 
-    if data_path is not None:
-        model.setDataPath(data_path)
+    if dataPath is not None:
+        model.setDataPath(dataPath)
     else:
         logger.warning(
-            f"No data path provided for this inference call. Using the data path of the model: {model.data_path}"
+            f"No data path provided for this inference call. Using the data path of the model: {model.dataPath}"
         )
 
     runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)

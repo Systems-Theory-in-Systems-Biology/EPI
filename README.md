@@ -48,9 +48,12 @@ class MyModel(Model):
 To evaluate the model and infer the parameter distribution, call:
 
 ```python
+from epi.sampling import inference
+
 from my_model import MyModel
+
 model = MyModel()
-inference(model=model, data_path="my_data.csv")
+inference(model=model, dataPath="my_data.csv")
 ```
 
 The file `my_data.csv` has to contain the data in csv format with `seperator=,` in the format
