@@ -83,10 +83,10 @@ Next you need to define your model. The most basic way is to derive from the :py
 Of course, you also need the imports:
 
 .. code-block:: python
-
+    import importlib
     import jax.numpy as jnp
     import numpy as np
-    from epi.core.model import ArtificialModelInterface, Model
+    from epi.core.model import Model
 
 A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
 In addition it must provide the methods :py:meth:`~epi.core.model.Model.getCentralParam` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
