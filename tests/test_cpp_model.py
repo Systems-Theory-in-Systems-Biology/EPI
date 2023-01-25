@@ -21,14 +21,18 @@ def PlantModels():
             yield pytest.param(
                 ModelClass,
                 marks=pytest.mark.xfail(
-                    True, reason="Cpp Library probably not compiled yet"
+                    True,
+                    reason="XFAIL means that the Cpp Library for the plant model ist not compiled yet",
                 ),
             )
         else:
             yield ModelClass
 
 
-@pytest.mark.xfail(True, reason="Cpp Library probably not compiled yet")
+@pytest.mark.xfail(
+    True,
+    reason="XFAIL means that the Cpp Library for the plant model ist not compiled yet",
+)
 def test_cpp_lib_exists():
     cpp_lib_pattern = "epi/examples/cpp/cpp_model*.so*"
     file_exists = (

@@ -1,8 +1,8 @@
 from epi.core.model import Model
 from epi.core.sampling import inference
-from epi.examples.corona import Corona
+from epi.examples.corona import CoronaArtificial
 
-model: Model = Corona(delete=True, create=True)
+model: Model = CoronaArtificial()
 
 # generate artificial data
 if model.isArtificial():

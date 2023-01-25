@@ -1,7 +1,7 @@
-import math
 import os
 import shutil
 from abc import ABC, abstractmethod
+from functools import partial
 
 import numpy as np
 import seedir
@@ -10,6 +10,7 @@ from seedir import FakeDir, FakeFile
 
 from epi import logger
 from epi.core.kde import calcKernelWidth
+from epi.jax_extension import value_and_jacrev
 
 
 class Model(ABC):
@@ -52,7 +53,7 @@ class Model(ABC):
 
     @abstractmethod
     def forward(self, param: np.ndarray):
-        """Executed the forward pass of the model to obtain data from a parameter. Do not call the forward method! Instead do :code:`model(param)`.
+        """Executed the forward pass of the model to obtain data from a parameter. You can also do equivalently :code:`model(param)`.
 
         :param param: The parameter(set) for which the model should be evaluated.
         :raises NotImplementedError: Implement this method to make you model callable.
@@ -61,8 +62,7 @@ class Model(ABC):
 
     @abstractmethod
     def jacobian(self, param: np.ndarray):
-        """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method. If the method is not provided in the subclass
-        the jacobian is calculated by  :func:`jax.jacrev`.
+        """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method.
 
         :param param: The parameter(set) for which the jacobian of your model should be evaluated.
         :type param: np.ndarray
@@ -71,28 +71,15 @@ class Model(ABC):
         """
         raise NotImplementedError
 
-    def correction(self, param: np.ndarray) -> np.double:
-        """Evaluate the pseudo-determinant of the simulation jacobian (that serves as a correction term) in one specific parameter point.
+    def valjac(self, param: np.ndarray):
+        """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
+        it simply calls :func:`~epic.core.model.Model.forward` and :func:`~epic.core.model.Model.jacobian`.
 
-        :parameter param: parameter at which the simulation model is evaluated
-        :return: correction correction factor for density transformation)
+        :param param: The parameter(set) for which the model and the jacobian should be evaluated.
+        :type param: np.ndarray
         """
 
-        # Evaluate the algorithmic differentiation object in the parameter
-        jac = self.jacobian(param)
-        jac = np.atleast_2d(jac)
-        jacT = np.transpose(jac)
-
-        # The pseudo-determinant is calculated as the square root of the determinant of the matrix-product of the Jacobian and its transpose.
-        # For numerical reasons, one can regularize the matrix product by adding a diagonal matrix of ones before calculating the determinant.
-        # correction = np.sqrt(np.linalg.det(np.matmul(jacT,jac) + np.eye(param.shape[0])))
-        correction = np.sqrt(np.linalg.det(np.matmul(jacT, jac)))
-
-        # If the correction factor is not a number or infinite, return 0 instead to not affect the sampling.
-        if math.isnan(correction) or math.isinf(correction):
-            correction = 0.0
-            logger.warning("Invalid value encountered for correction factor")
-        return correction
+        return self.forward(param), self.jacobian(param)
 
     def setDataPath(self, path: str) -> None:
         """Set the path to the data file which shall be used from now on.
@@ -228,16 +215,8 @@ class Model(ABC):
                 "because it does not exist."
             )
 
-    # TODO: Rethink this hidden structure. Seems to be somehow the wrong way round
-    # with the underscores.
     def __call__(self, param):
-        return self._forward(param)
-
-    def _forward(self, param):
         return self.forward(param)
-
-    def _jacobian(self, param):
-        return self.jacobian(param)
 
     def isArtificial(self) -> bool:
         """Determines whether the model provides artificial data
@@ -384,24 +363,36 @@ class JaxModel(Model):
     """The JaxModel class automatically creates the jacobian method based on the forward method.
     Additionally it jit compiles the forward and jacobian method with jax.
     To use this class you have to implement your forward method using jax, e. g. jax.numpy.
+    Dont overwrite the __init__ method of JaxModel without calling the super constructor.
+    Else your forward method wont be jitted.
 
     :param Model: Abstract parent class
-    :type Model: _type_
+    :type Model: Model
     """
+
+    def __init__(self, delete: bool = False, create: bool = True) -> None:
+        super().__init__(delete, create)
+        # TODO: Check performance implications of not setting this at the class level but for each instance.
+        type(self).forward = partial(JaxModel.forward_method, self)
 
     def __init_subclass__(cls, **kwargs):
         return autodiff(_cls=cls)
 
     @classmethod
     def initFwAndBw(cls):
+        # Calculate jitted methods for the subclass(es)
+        # It is an unintended sideeffect that this happens for all intermediate classes also.
+        # E.g. for: class CoronaArtificial(Corona)
         cls.fw = jit(cls.forward)
-        cls.bw = jit(jacrev(cls.fw))
+        cls.bw = jit(jacrev(cls.forward))
+        cls.vj = jit(value_and_jacrev(cls.forward))
 
-    def _forward(self, param):
+    @staticmethod
+    def forward_method(self, param):
         return type(self).fw(param)
 
-    def _jacobian(self, param):
+    def jacobian(self, param):
         return type(self).bw(param)
 
-    def jacobian(self, param):
-        return self._jacobian(param)
+    def valjac(self, param):
+        return type(self).vj(param)

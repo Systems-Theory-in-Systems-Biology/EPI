@@ -13,7 +13,7 @@ def test_jax_cpu():
 @pytest.mark.xfail(
     jax.default_backend()
     == "cpu",  # Jax uses gpu per default if available. So when can check wether gpu is available by checking for the default
-    reason="GPU not available, maybe jax[cuda] or cuda + cudnn not installed",
+    reason="XFAIL means that no GPU was visible to jax or the matrix multiplication failed, maybe jax[cuda] or cuda + cudnn not installed",
 )
 def test_jax_gpu():
     """Test wether jax can run on the gpu by executing some jax code.
