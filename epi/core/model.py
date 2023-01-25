@@ -3,17 +3,13 @@ import os
 import shutil
 from abc import ABC, abstractmethod
 
-# import jax.numpy as jnp
 import numpy as np
 import seedir
 from jax import jacrev, jit
-from jax.config import config
 from seedir import FakeDir, FakeFile
 
 from epi import logger
 from epi.core.kde import calcKernelWidth
-
-config.update("jax_enable_x64", True)
 
 
 class Model(ABC):

@@ -13,7 +13,7 @@ from epi.core.model import Model
 NUM_RUNS = 2
 NUM_WALKERS = 10
 NUM_STEPS = 2500
-NUM_PROCESSES = 10
+NUM_PROCESSES = 4
 
 
 def countEmceeSubRuns(model: Model) -> int:
