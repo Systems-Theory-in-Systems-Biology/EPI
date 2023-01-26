@@ -58,5 +58,5 @@ def test_examples(example):
         model.generateArtificialData()
 
     inference(
-        model=model, numWalkers=numWalkers
+        model=model, numWalkers=numWalkers, numSteps=1000
     )  # using default dataPath of the model

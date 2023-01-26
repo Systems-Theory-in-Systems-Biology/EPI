@@ -3,6 +3,7 @@ import os
 
 import jax.numpy as jnp
 import numpy as np
+import pandas as pd
 import yfinance as yf
 from jax import vmap
 
@@ -22,6 +23,7 @@ TICKERS = [
     "Stocks1",
     "Stocks2",
     "Stocks3",
+    "ETF50",  # First 50 tickers from ETF. Just for testing
 ]
 
 
@@ -32,7 +34,7 @@ class Stock(JaxModel, VisualizationModelInterface):
     ParamDim = 6
 
     def __init__(
-        self, delete: bool = False, create: bool = True, ticker="ETF"
+        self, delete: bool = False, create: bool = True, ticker="ETF50"
     ) -> None:
         """Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.
         Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]
@@ -78,6 +80,7 @@ class Stock(JaxModel, VisualizationModelInterface):
         :param tickerListPath: path to the ticker list csv file
         :type tickerListPath: str
         """
+        logger.info("Downloading stock data...")
         start = "2022-01-31"
         end = "2022-03-01"
         dates = np.array(
@@ -107,46 +110,47 @@ class Stock(JaxModel, VisualizationModelInterface):
 
         stocks = np.loadtxt(tickerListPath, dtype="str")
 
-        stockData = np.zeros((stocks.shape[0], dates.shape[0]))
-        stockIDs = []
+        try:
+            df: pd.DataFrame = yf.download(
+                stocks.tolist(), start, end, interval="1d", repair=True
+            )
+        except Exception as e:
+            logger.warning("Download Failed!", exc_info=e)
 
-        successCounter = 0
+        # drop all columns except for the open price
+        df.drop(
+            df.columns[df.columns.get_level_values(0) != "Open"],
+            axis=1,
+            inplace=True,
+        )
 
-        for i in range(stocks.shape[0]):
-            try:
-                df = yf.download(stocks[i], start, end, interval="1d")
+        # remove columns with missing data
+        missing = list(yf.shared._ERRORS.keys())
+        df = df.loc[:, ~df.columns.get_level_values(1).isin(missing)]
 
-                try:
-                    for j in range(dates.shape[0]):
-                        # extract the opening value (indicated by "[0]") of stock i at day j
-                        stockData[successCounter, j] = df.loc[str(dates[j])][0]
+        # subtract initial value of complete timeline, its simply subtracting the first row from the whole dataframe
+        df = df.subtract(df.iloc[0], axis=1)
 
-                    # subtract initial value of complete timeline
-                    stockData[successCounter, :] = (
-                        stockData[successCounter, :]
-                        - stockData[successCounter, 0]
-                    )
+        # remove columns with extreme values
+        df = df.loc[:, (df.abs() > 100).any() is False]
 
-                    if np.all(np.abs(stockData[successCounter, :]) < 100.0):
-                        logger.info(f"Successfull download for {stocks[i]}")
-                        stockIDs.append(stocks[i])
-                        successCounter += 1
-                    else:
-                        logger.info(f"Values too large for {stocks[i]}")
+        # Drop the row of the first day
+        df = df.iloc[1:, :]
 
-                except Exception as e:
-                    logger.warning(f"Fail for {stocks[i]}", exc_info=e)
+        # get the remaining stockIDs and create a numpy array from the dataframe
+        stockIDs = df.columns.get_level_values(1)  # .unique()
+        stockData = df.to_numpy()
 
-            except Exception as e:
-                logger.warning("Download Failed!", exc_info=e)
+        # get the name of the tickerList
+        if type(tickerListPath) != str:
+            tickerListName = tickerListPath.name.split(".")[0]
+        else:
+            tickerListName = tickerListPath.split("/")[-1].split(".")[0]
 
-        tickerListName = tickerListPath.split("/")[-1].split(".")[
-            0
-        ]  # takes the name of the tickerList
         # save all time points except for the first
         np.savetxt(
             f"Data/{self.getModelName()}/{tickerListName}Data.csv",
-            stockData[0:successCounter, 1:],
+            stockData.T,
             delimiter=",",
         )
         np.savetxt(

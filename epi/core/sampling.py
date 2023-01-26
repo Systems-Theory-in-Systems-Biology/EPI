@@ -133,16 +133,11 @@ def runEmceeSampling(
             delimiter=",",
         )
 
+        # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
+        samplerBlob = sampler.get_blobs()
+
         # Create a large container for all sampling results (sampled parameters, corresponding simulation results and parameter densities) and fill it using the emcee blob option.
-        allRes = np.zeros((numWalkers * numSteps, paramDim + dataDim + 1))
-
-        samplerBlob = (
-            sampler.get_blobs()
-        )  # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
-
-        for i in range(numSteps):
-            for j in range(numWalkers):
-                allRes[i * numWalkers + j, :] = samplerBlob[i][j]
+        allRes = samplerBlob.reshape(numWalkers * numSteps, -1)
 
         # Save all sampling results in .csv files.
         np.savetxt(
