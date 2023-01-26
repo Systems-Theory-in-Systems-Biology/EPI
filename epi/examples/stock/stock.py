@@ -132,7 +132,7 @@ class Stock(JaxModel, VisualizationModelInterface):
         df = df.subtract(df.iloc[0], axis=1)
 
         # remove columns with extreme values
-        df = df.loc[:, (df.abs() > 100).any() is False]
+        df = df.loc[:, ~(df.abs() > 100).any()]
 
         # Drop the row of the first day
         df = df.iloc[1:, :]
