@@ -12,18 +12,26 @@ tests.conftest module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_applications module
--------------------------------
+tests.profiling module
+----------------------
 
-.. automodule:: tests.test_applications
+.. automodule:: tests.profiling
    :members:
    :undoc-members:
    :show-inheritance:
 
-tests.test\_cpp\_model module
------------------------------
+tests.test\_cpp module
+----------------------
 
-.. automodule:: tests.test_cpp_model
+.. automodule:: tests.test_cpp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tests.test\_examples module
+---------------------------
+
+.. automodule:: tests.test_examples
    :members:
    :undoc-members:
    :show-inheritance:

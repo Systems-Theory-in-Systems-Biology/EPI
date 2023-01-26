@@ -42,10 +42,10 @@ How to start
          return jnp.array(...)
 
       def getParamSamplingLimits(self):
-         return np.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
+         return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
 
       def getCentralParam(self):
-         return np.array([0.5, -30.0,...])
+         return jnp.array([0.5, -30.0,...])
 
       def jacobian(self, param):
          return jnp.array(...)
