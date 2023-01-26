@@ -1,24 +1,25 @@
 Tutorial
 ========
 
-This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epic`.
+This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epi`.
 The tutorial is divided in four sections:
 
 0. :ref:`Introduction`
 1. :ref:`Define your data`
 2. :ref:`Define your model`
-3. :ref:`Inference and Plotting`
+3. :ref:`Inference`
 
-.. note::
-    The tutorial is based on the :py:class:`epic.example_models.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
-    Everything needed will be provided in the tutorial.
+.. .. note::
+..     The tutorial is based on the :py:class:`epi.examples.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
+..     Everything needed will be provided in the tutorial.
 
 Let's start!
 
 Introduction
 ------------
+EPI is an algorithm to infere a parameter distribution :math:`Q` satisfying :math:`Y = s(Q)` given a (discrete) data probability distribution :math:`y_i \sim Y`
+and a model implementing the mapping :math:`s: Q \to Y`. The (forward) model describes the mapping from the parameter points :math:`q_i` to the data points :math:`y_i`.
 
-EPI is an algorithm to infere a parameter distribution given a data distribution and a model. The (forward) model describes the mapping from parameter points to data points.
 In the following we will look at temperature data over the globe and a model for the dependence of the temperature :math:`y_i` on the latitude :math:`q_i`.
 
 |Fig1|
@@ -48,7 +49,7 @@ From this data distribution the EPI algorithm derives the parameter distribution
     :width: 800
     :alt: The cycle described before as image.
 
-With this picture in mind, we can start to implement the temperature problem in epic.
+With this picture in mind, we can start to implement the temperature problem in epi.
 
 
 
@@ -65,30 +66,30 @@ Your data needs to be stored in a :file:`.csv` file in the following format:
     ...
     datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPIC.
+Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPI.
 
 In the following we will use the example data :file:`TemperatureData.csv`. You can download it here: :download:`Download Temperature Data<TemperatureData.csv>`.
-It has 455 datapoints with two dimensions each. Nonuniform data are not supported in EPIC.
+It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPI.
 
 Define your model
 -----------------
 
-Next you need to define your model. The most basic way is to derive from the :py:class:`epic.core.model.Model` base class.
+Next you need to define your model. The most basic way is to derive from the :py:class:`epi.core.model.Model` base class.
 
-.. literalinclude:: ../../../epic/example_models/temperature.py
+.. literalinclude:: ../../../epi/examples/temperature/temperature.py
   :language: python
   :pyobject: Temperature
 
 Of course, you also need the imports:
 
 .. code-block:: python
-
+    import importlib
     import jax.numpy as jnp
     import numpy as np
-    from epic.core.model import ArtificialModelInterface, Model
+    from epi.core.model import Model
 
-A model inhereting from :py:class:`~epic.core.model.Model` must implement the methods :py:meth:`~epic.core.model.Model.forward` and :py:meth:`~epic.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~epic.core.model.Model.getCentralParam` and :py:meth:`~epic.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
+In addition it must provide the methods :py:meth:`~epi.core.model.Model.getCentralParam` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
@@ -114,39 +115,34 @@ The jacobian is derived analytically here and implemented explicitly.
 
 
 
-Inference and Plotting
-----------------------
+Inference
+---------
 
-Now we can use EPI to infere the parameter distribution and plot the results.
+Now we can now use EPI to infer the parameter distribution from the data.
 
 .. code-block:: python
+
+    from epic.sampling import inference
 
     model = Temperature()
-    model.inference(data_path = "TemperatureData.csv")
+    inference(model, dataPath = "TemperatureData.csv")
 
-Depening on the complexity of your model the sampling can take a long time.
+Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
-You can find them in the folder :file:`Applications/Temperature/`.
+You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/OverallSimResults.csv`.
 
-.. code-block:: python
+.. .. code-block:: python
 
-    model.plot(plot_type="spyder")
-    model.plot(plot_type="standard")
+..     model.plot(plot_type="spyder")
+..     model.plot(plot_type="standard")
 
-As last step you can plot the results using the builtin plotting functionality.
-You can choose betweeen a spyder-web representation and a standard plot.
-The standard plot is only working for one or two-dimensional parameters and data.
-
-The final results can be found in the file :file:`Applications/Temperature/OverallSimResults.csv`.
+.. As last step you can plot the results using the builtin plotting functionality.
+.. You can choose between a spider-web representation and a standard plot.
+.. The standard plot is only working for one or two-dimensional parameters and data.
 
 .. note::
 
-    TODO It always annoying to follow tutorials and copy all the code. We provide the tutorial also as jupyter noteboke and python file:
-    
-    * Jupyter notebook file
-    * Python file
-
-
+    This tutorial is also available as a jupyter notebook: :download:`Download Temperature Tutorial<temperature.ipynb>`.
 
 .. Preparation
 .. -----------
@@ -159,4 +155,4 @@ The final results can be found in the file :file:`Applications/Temperature/Overa
 
 .. .. code-block:: bash
 
-..     pip install epic
+..     pip install epi

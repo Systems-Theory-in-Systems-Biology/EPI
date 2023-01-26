@@ -1,3 +1,25 @@
 button.copybtn {
     opacity: 1;
- }
+}
+
+.toggle .header {
+    display: block;
+    clear: both;
+}
+
+.toggle .header {display: inline;}
+
+.toggle .header p:after {
+    content: " ▶";
+}
+
+.toggle .header.open p:after {
+    content: " ▼";
+}
+
+/*Toggle from: https://stackoverflow.com/questions/2454577/sphinx-restructuredtext-show-hide-code-snippets */
+/* .. container:: toggle
+
+    .. container:: header
+
+    .. whatever you want to collapse */

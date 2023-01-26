@@ -1,55 +1,31 @@
 Example Models
 ==============
 
-TODO: Move most of this into the welcome page and the sphinx documentation?
-
-EPI can be used in several ways and can be applied to many different problems.
-We will show how EPI can be applied to a simple, one-dimensional problem; a high-dimensional problem;
+EPI library can be used in several ways and can be applied to many different problems.
+The example models show the application of EPI to a simple, one-dimensional problem; a high-dimensional problem; an ODE problem;
 a sbml model; and a problem defined through external C++ code.
-For more details on the mathematics behind the epi algorithm, we refer to our published paper.
-For more details on how to use EPI, we refer to our Tutorial page.
 
-Content
--------
+.. toctree::
+   :maxdepth: 1
+   
+   1D-Temperature Model <examples/temperature_example>
+   High-Dimensional Stock Data <examples/stock_example>
+   Corona ODE Model <examples/corona_example>
+   SBML Model <examples/sbml_example>
+   External C++ Model <examples/cpp_example>
 
-* :ref:`1D-Temperature model from the tutorial<Temperature Model>`
-* :ref:`High-Dimensional Stock Data<StockData Model>`
-* :ref:`Creating a model using SBML<SBML Model>`
-* :ref:`External C++ Model<C++ Model>`
+.. * :ref:`1D-Temperature model from the tutorial<Temperature Model>`
+.. * :ref:`High-Dimensional Stock Data<StockData Model>`
+.. * :ref:`Corona ODE Model<Corona ODE Model>`
+.. * :ref:`SBML Model<SBML Model>`
+.. * :ref:`External C++ Model<C++ Model>`
 
-General
------------------
-In all exaples we assume a given (discrete) data probability distribution :math:`y_i \sim Y`.
-The goal is to find the parameter probability distribution :math:`Q` satisfying :math:`Y = s(Q)`.
+.. .. include:: examples/temperature_example.rst
 
-Temperature Model
------------------
-The temperature model is contained in :code:`epic/example_models/temperature`.
-The model :math:`y_i(q_i)=60 \cos(q_i)-30=s(q_i)` describes the temperature for a place on the earth :math:`y_i` by using the latitude coordinates :math:`q_i`.
+.. .. include:: examples/stock_example.rst
 
+.. .. include:: examples/corona_example.rst
 
-There are two possible scenarios:
+.. .. include:: examples/sbml_example.rst
 
-* Artificial Data:
-* Real Data
-
-Now describe the simplest way to run epi on it and then the simples way to visualize results.
-Describe where results are stored.
-
-
-StockData Model
----------------
-The stock data model is contained in :code:`epic/example_models/stock`.
-Overwrite dataLoader and implements both interfaces, describe them.
-Describe how to vis the high dim data
-
-SBML Model
-----------
-Show how to create a model from an sbml file with sbmllib
-You can visualize sbml files with https://sbml4humans.de/.
-
-
-C++ Model
----------
-Show how to create a C++ model for really expensive model evaluations
-We will need new category cplusplus deps: cmake, pybind11
+.. .. include:: examples/cpp_example.rst

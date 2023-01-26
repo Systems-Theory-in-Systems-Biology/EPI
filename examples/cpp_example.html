@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Model &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Development" href="../MarkdownLinks/development.html" />
+    <link rel="prev" title="SBML Model" href="sbml_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> EPI
+            <img src="../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API DOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Example Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="temperature_example.html">1D-Temperature Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stock_example.html">High-Dimensional Stock Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="corona_example.html">Corona ODE Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sbml_example.html">SBML Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">External C++ Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#specialities">Specialities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preparation">Preparation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-model-definition">C++ Model Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-side-model">Python Side Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/todos.html">TODOs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../examples.html">Example Models</a></li>
+      <li class="breadcrumb-item active">C++ Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/cpp_example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-model">
+<h1>C++ Model<a class="headerlink" href="#c-model" title="Permalink to this heading"></a></h1>
+<p>Many libraries in the field of scientific computing are written in C++
+to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
+call C++ code from your python <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> class.
+It is primarily intended for fast implementations of the <cite>forward</cite> and <cite>jacobian</cite> method.</p>
+<section id="specialities">
+<h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Calling C++ Code: Calls external c++ code using pybind11</p></li>
+<li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">python_reference_plants.py</span></code> includes
+python models implementing the same mapping. You can compare the performance of the different approaches.</p></li>
+</ul>
+</section>
+<section id="preparation">
+<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>cmake
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>pybind11
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>eigen3-dev
+sudo<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>/usr/include/eigen3/Eigen<span class="w"> </span>/usr/include/Eigen
+</pre></div>
+</div>
+</section>
+<section id="c-model-definition">
+<h2>C++ Model Definition<a class="headerlink" href="#c-model-definition" title="Permalink to this heading"></a></h2>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>import numpy as np
+
+from epi.core.model import ArtificialModelInterface, Model
+from epi.examples.cpp import cpp_model
+
+
+class CppPlant(Model, ArtificialModelInterface):
+    &quot;&quot;&quot;A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient
+    Param0: Water [0,1]
+    Param1: Sun   [0,1]
+    Data0: Size [0,2] # the more water and sun the better
+    Data1: Health [0,1], to much water is not good, too much sun is not good
+    Data2: Sciarid ;)
+    &quot;&quot;&quot;
+
+    def forward(self, param):
+        return cpp_model.forward(param)
+
+    def jacobian(self, param):
+        return cpp_model.jacobian(param)
+
+    def getCentralParam(self) -&gt; np.ndarray:
+        return np.array([0.5, 0.5])
+
+    def getParamSamplingLimits(self) -&gt; np.ndarray:
+        return np.array([[0.0, 1.0], [0.0, 1.0]])
+
+    def generateArtificialData(
+        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    ):
+        # randomly create true parameters in [0,1]x[0,1]
+        trueParamSample = np.random.rand(numSamples, 2)
+
+        artificialData = np.zeros((trueParamSample.shape[0], 3))
+        for i in range(trueParamSample.shape[0]):
+            artificialData[i, :] = self.forward(trueParamSample[i, :])
+        np.savetxt(
+            f&quot;Data/{self.getModelName()}Data.csv&quot;,
+            artificialData,
+            delimiter=&quot;,&quot;,
+        )
+        np.savetxt(
+            f&quot;Data/{self.getModelName()}Params.csv&quot;,
+            trueParamSample,
+            delimiter=&quot;,&quot;,
+        )
+</pre></div>
+</div>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Why is pygments not parsing the c++ code?</p>
+</div>
+<p>The example code is inconsistent in the following way:
+It uses a normal array for the forward method,
+but an eigen vector as input and an eigen matrix as output
+for the jacobian method. This allows to show us how to write wrapper code
+for normal arrays as well as for eigen objects. On the python side exclusively
+numpy 1d/2d arrays will be used.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>What about vectorization? Jax will likely not help with speeding up.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on how to use pybind11 see:
+PyBind11 Documentation: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">https://pybind11.readthedocs.io/en/stable/</a>
+PyBind11 Eigen Notes: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html">https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html</a></p>
+</div>
+</section>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/epi/examples/cpp/
+mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..
+make<span class="w"> </span>-j
+</pre></div>
+</div>
+</section>
+<section id="python-side-model">
+<h2>Python Side Model<a class="headerlink" href="#python-side-model" title="Permalink to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">epi.examples.cpp</span> <span class="kn">import</span> <span class="n">cpp_model</span>
+
+
+<span class="k">class</span> <span class="nc">CppPlant</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient</span>
+<span class="sd">    Param0: Water [0,1]</span>
+<span class="sd">    Param1: Sun   [0,1]</span>
+<span class="sd">    Data0: Size [0,2] # the more water and sun the better</span>
+<span class="sd">    Data1: Health [0,1], to much water is not good, too much sun is not good</span>
+<span class="sd">    Data2: Sciarid ;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+
+    <span class="k">def</span> <span class="nf">generateArtificialData</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">numSamples</span><span class="o">=</span><span class="n">ArtificialModelInterface</span><span class="o">.</span><span class="n">NUM_ARTIFICIAL_SAMPLES</span>
+    <span class="p">):</span>
+        <span class="c1"># randomly create true parameters in [0,1]x[0,1]</span>
+        <span class="n">trueParamSample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">numSamples</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">artificialData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">trueParamSample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trueParamSample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">artificialData</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">trueParamSample</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">Data.csv&quot;</span><span class="p">,</span>
+            <span class="n">artificialData</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">Params.csv&quot;</span><span class="p">,</span>
+            <span class="n">trueParamSample</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>You can use the example model as template for your own C++ Model.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sbml_example.html" class="btn btn-neutral float-left" title="SBML Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../MarkdownLinks/development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

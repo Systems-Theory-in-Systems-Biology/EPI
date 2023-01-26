@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TODOs &mdash; EPIC  documentation</title>
+  <title>TODOs &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
@@ -32,8 +32,8 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> EPIC
-            <img src="../_static/epic.png" class="logo" alt="Logo"/>
+            <a href="../index.html" class="icon icon-home"> EPI
+            <img src="../_static/epi.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -49,16 +49,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Example Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to EPIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">TODOs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pickling-and-jax">Pickling and jax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deployment">Deployment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sbml">SBML</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#profiling">Profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#postponed">Postponed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outlook">Outlook</a></li>
 </ul>
 </li>
 </ul>
@@ -69,7 +69,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">EPIC</a>
+          <a href="../index.html">EPI</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,56 +89,27 @@
              
   <section id="todos">
 <h1>TODOs<a class="headerlink" href="#todos" title="Permalink to this heading"></a></h1>
-<p>This implementation should in the end be usable with the Systems Biology Markup Language (SBML) format.
-The reason for this goal is to enable reuse code, facilitate cooperation and boost visability.</p>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"></a></h2>
+<section id="pickling-and-jax">
+<h2>Pickling and jax<a class="headerlink" href="#pickling-and-jax" title="Permalink to this heading"></a></h2>
 <ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create module for straight forward EPI usage, current classmethod solution is not optimal</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.interference()</span></code> that allows the user to evaluate his model on custom data</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.plot()</span></code> that allows the user to visualize his results</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.test()</span></code> that allows the user to test the inversion for his model on artificial data</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create and implement example usecases</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> make the toolbox usable for SBML models</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test Jax for gpu: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">&quot;jax[cuda]&quot;</span> <span class="pre">-f</span> <span class="pre">https://storage.googleapis.com/jax-releases/jax_cuda_releases.html</span></code></p></li>
-</ul>
-<p>Type Hints:</p>
-<ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> np.double vs np.ndarray if more dimensions are passed?</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Document classmethod solution for pickling function, how to use fixed params</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> But also investigate why jitting the temperature model generates super slow code while super fast for e. g. corona. jitted should be not slower than standard.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Use them in tutorial / provide tutorial.py</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Build example for: How to deal with emcee requiring pickable but jax is not?! It seems like the class method is working and i can even add the fixed params from the model. I should just rework the underscore thingy! https://stackoverflow.com/questions/1816958/cant-pickle-type-instancemethod-when-using-multiprocessing-pool-map/41959862#41959862</p></li>
 </ul>
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
 <ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Fix <span class="xref myst">Development Quickstart Guide</span> link in sphinx</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Check with supervisors:</p>
-<ul class="contains-task-list">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> License file</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Contributing file</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Citation file</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> README file</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> pyproject toml project urls</p></li>
-</ul>
-</li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Beautify documentation</p>
-<ul class="contains-task-list">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> read <a class="reference external" href="https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/">https://www.reddit.com/r/Python/comments/5gqxyk/learning_resources_for_sphinx/</a></p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> choose a theme? (Take a look at the template from seaborn or numpy) current theme looks good</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> switch to mkdocs, pdocs, …? no</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Add doc dependencies. E. g. myst_parser, sphinx-copybutton</p></li>
-</ul>
-</li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/dependabot/dependabot-core/issues/1912">Dependabot badge</a></p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Complete all models! and test them</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Remove all toods</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Run through grammarly</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Deactivate todos in conf.py</p></li>
 </ul>
 </section>
 <section id="deployment">
 <h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading"></a></h2>
 <ul class="contains-task-list simple">
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test test deployment</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Test real deployment to pypy</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Deployment to pypi</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Check pyproject toml project urls</p></li>
 </ul>
 </section>
 <section id="sbml">
@@ -148,21 +119,26 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
 <ul class="contains-task-list">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://gitlab.com/wurssb/Modelling/symbolicsbml">SymbolicSBML</a></p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://sys-bio.github.io/roadrunner/docs-build/index.html">RoadRunner</a> Could be a good option</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/AnabelSMRuggiero/sbmltoodepy">Sbmltodepy</a> they dont want users to make issues/ pull requests / .. :(</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/AnabelSMRuggiero/sbmltoodepy">Sbmltodepy</a> they dont want users to make issues/ pull requests / .. :(</p></li>
 </ul>
 </li>
 </ul>
 </section>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p>Add c++ / example dependencies in general and explanation on how to run c++ model?</p></li>
+<section id="postponed">
+<h2>Postponed<a class="headerlink" href="#postponed" title="Permalink to this heading"></a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Fix <span class="xref myst">Development Quickstart Guide</span> link in sphinx</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.plot()</span></code> that allows the user to visualize his results</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.test()</span></code> that allows the user to test the inversion for his model on artificial data</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Use save, load from numpy and not savetxt, loadtxt</p></li>
 </ul>
 </section>
-<section id="profiling">
-<h2>Profiling<a class="headerlink" href="#profiling" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p>scalene</p></li>
+<section id="outlook">
+<h2>Outlook<a class="headerlink" href="#outlook" title="Permalink to this heading"></a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Testing on other systems than linux on github: Replace apt install and then also test on windows and mac machine using github test matrix.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Allow to use the library with own data flow without writing and loading all the files. Return everything we save to files at the moment. So give more control to the user and rely less on the file system and default paths.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> More / Systematic profiling with scalene</p></li>
 </ul>
 </section>
 </section>
@@ -194,7 +170,18 @@ The reason for this goal is to enable reuse code, facilitate cooperation and boo
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
 
 </body>
 </html>

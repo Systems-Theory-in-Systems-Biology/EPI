@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; EPIC  documentation</title>
+  <title>Tutorial &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
@@ -34,8 +34,8 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> EPIC
-            <img src="../_static/epic.png" class="logo" alt="Logo"/>
+            <a href="../index.html" class="icon icon-home"> EPI
+            <img src="../_static/epi.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -52,12 +52,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#define-your-data">Define your data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#define-your-model">Define your model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#inference-and-plotting">Inference and Plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inference">Inference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Example Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/todos.html">TODOs</a></li>
@@ -69,7 +69,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">EPIC</a>
+          <a href="../index.html">EPI</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,24 +89,20 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
-<p>This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">epic</span></code>.
+<p>This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">epi</span></code>.
 The tutorial is divided in four sections:</p>
 <ol class="arabic simple" start="0">
 <li><p><a class="reference internal" href="#introduction"><span class="std std-ref">Introduction</span></a></p></li>
 <li><p><a class="reference internal" href="#define-your-data"><span class="std std-ref">Define your data</span></a></p></li>
 <li><p><a class="reference internal" href="#define-your-model"><span class="std std-ref">Define your model</span></a></p></li>
-<li><p><a class="reference internal" href="#inference-and-plotting"><span class="std std-ref">Inference and Plotting</span></a></p></li>
+<li><p><a class="reference internal" href="#inference"><span class="std std-ref">Inference</span></a></p></li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The tutorial is based on the <code class="xref py py-class docutils literal notranslate"><span class="pre">epic.example_models.temperature.Temperature</span></code> example model and uses the data in <code class="file docutils literal notranslate"><span class="pre">Data/TemperatureData.csv</span></code>.
-Everything needed will be provided in the tutorial.</p>
-</div>
 <p>Let’s start!</p>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
-<p>EPI is an algorithm to infere a parameter distribution given a data distribution and a model. The (forward) model describes the mapping from parameter points to data points.
-In the following we will look at temperature data over the globe and a model for the dependence of the temperature <span class="math notranslate nohighlight">\(y_i\)</span> on the latitude <span class="math notranslate nohighlight">\(q_i\)</span>.</p>
+<p>EPI is an algorithm to infere a parameter distribution <span class="math notranslate nohighlight">\(Q\)</span> satisfying <span class="math notranslate nohighlight">\(Y = s(Q)\)</span> given a (discrete) data probability distribution <span class="math notranslate nohighlight">\(y_i \sim Y\)</span>
+and a model implementing the mapping <span class="math notranslate nohighlight">\(s: Q \to Y\)</span>. The (forward) model describes the mapping from the parameter points <span class="math notranslate nohighlight">\(q_i\)</span> to the data points <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
+<p>In the following we will look at temperature data over the globe and a model for the dependence of the temperature <span class="math notranslate nohighlight">\(y_i\)</span> on the latitude <span class="math notranslate nohighlight">\(q_i\)</span>.</p>
 <p><a class="reference internal" href="../_images/EarthTemperature.png"><img alt="The model mapping the latitude :math:`q_i` to the temperature :math:`y_i`" src="../_images/EarthTemperature.png" style="width: 450px;" /></a></p>
 <p>The goal is to derive the parameter distribution <span class="math notranslate nohighlight">\(\Phi_Q\)</span> from the data distribution <span class="math notranslate nohighlight">\(\Phi_Y\)</span>. This is the inverse of what our (forward) model is providing.
 To solve the inverse problem, EPI uses the multi-dimension transformation formula:</p>
@@ -115,7 +111,7 @@ To solve the inverse problem, EPI uses the multi-dimension transformation formul
 EPI start with discrete data points as input and derives a continous distribution using Kernel Density Estimation (KDE) techniques.
 From this data distribution the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.</p>
 <a class="reference internal image-reference" href="../_images/real_data.png"><img alt="The cycle described before as image." src="../_images/real_data.png" style="width: 800px;" /></a>
-<p>With this picture in mind, we can start to implement the temperature problem in epic.</p>
+<p>With this picture in mind, we can start to implement the temperature problem in epi.</p>
 </section>
 <section id="define-your-data">
 <h2>Define your data<a class="headerlink" href="#define-your-data" title="Permalink to this heading"></a></h2>
@@ -127,19 +123,38 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 </pre></div>
 </div>
-<p>Each of the lines defines a N dimensional datapoint. The <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file will be loaded into an <span class="math notranslate nohighlight">\(\mathrm{R}^{M \times N}\)</span> numpy matrix in EPIC.</p>
+<p>Each of the lines defines a N dimensional datapoint. The <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file will be loaded into an <span class="math notranslate nohighlight">\(\mathrm{R}^{M \times N}\)</span> numpy matrix in EPI.</p>
 <p>In the following we will use the example data <code class="file docutils literal notranslate"><span class="pre">TemperatureData.csv</span></code>. You can download it here: <a class="reference download internal" download="" href="../_downloads/090dff47c31e511d0522cc9cc0cdb502/TemperatureData.csv"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Temperature</span> <span class="pre">Data</span></code></a>.
-It has 455 datapoints with two dimensions each. Nonuniform data are not supported in EPIC.</p>
+It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPI.</p>
 </section>
 <section id="define-your-model">
 <h2>Define your model<a class="headerlink" href="#define-your-model" title="Permalink to this heading"></a></h2>
-<p>Next you need to define your model. The most basic way is to derive from the <code class="xref py py-class docutils literal notranslate"><span class="pre">epic.core.model.Model</span></code> base class.</p>
-<p>Of course, you also need the imports:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">epic.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
+<p>Next you need to define your model. The most basic way is to derive from the <code class="xref py py-class docutils literal notranslate"><span class="pre">epi.core.model.Model</span></code> base class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+            <span class="s2">&quot;epi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="n">lowT</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span>
+        <span class="n">highT</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lowT</span> <span class="o">+</span> <span class="p">(</span><span class="n">highT</span> <span class="o">-</span> <span class="n">lowT</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">60.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
+
+    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]])</span>
 </pre></div>
 </div>
+<p>Of course, you also need the imports:</p>
 <p>A model inhereting from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> must implement the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code>.
 In addition it must provide the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">getCentralParam()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code> to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.</p>
@@ -162,31 +177,21 @@ Additionally, JaxModel will use the jit compiler to speed up the calculation of 
 <p>For more possibilities on how to define your model, e.g. using external c++ code, see the <a class="reference internal" href="../examples.html#example-models"><span class="std std-ref">example section</span></a></p>
 </div>
 </section>
-<section id="inference-and-plotting">
-<h2>Inference and Plotting<a class="headerlink" href="#inference-and-plotting" title="Permalink to this heading"></a></h2>
-<p>Now we can use EPI to infere the parameter distribution and plot the results.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Temperature</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">inference</span><span class="p">(</span><span class="n">data_path</span> <span class="o">=</span> <span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">)</span>
+<section id="inference">
+<h2>Inference<a class="headerlink" href="#inference" title="Permalink to this heading"></a></h2>
+<p>Now we can now use EPI to infer the parameter distribution from the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">epic.sampling</span> <span class="kn">import</span> <span class="n">inference</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Temperature</span><span class="p">()</span>
+<span class="n">inference</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataPath</span> <span class="o">=</span> <span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Depening on the complexity of your model the sampling can take a long time.
+<p>Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
-You can find them in the folder <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;spyder&quot;</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>As last step you can plot the results using the builtin plotting functionality.
-You can choose betweeen a spyder-web representation and a standard plot.
-The standard plot is only working for one or two-dimensional parameters and data.</p>
-<p>The final results can be found in the file <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/OverallSimResults.csv</span></code>.</p>
+You can find them in the folder <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/</span></code>. The final results are stored in the file <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/OverallSimResults.csv</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>TODO It always annoying to follow tutorials and copy all the code. We provide the tutorial also as jupyter noteboke and python file:</p>
-<ul class="simple">
-<li><p>Jupyter notebook file</p></li>
-<li><p>Python file</p></li>
-</ul>
+<p>This tutorial is also available as a jupyter notebook: <code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Temperature</span> <span class="pre">Tutorial</span></code>.</p>
 </div>
 </section>
 </section>
@@ -219,7 +224,18 @@ The standard plot is only working for one or two-dimensional parameters and data
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
 
 </body>
 </html>
