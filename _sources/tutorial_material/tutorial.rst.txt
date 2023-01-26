@@ -83,6 +83,7 @@ Next you need to define your model. The most basic way is to derive from the :py
 Of course, you also need the imports:
 
 .. code-block:: python
+
     import importlib
     import jax.numpy as jnp
     import numpy as np
@@ -140,9 +141,11 @@ You can find them in the folder :file:`Applications/Temperature/`. The final res
 .. You can choose between a spider-web representation and a standard plot.
 .. The standard plot is only working for one or two-dimensional parameters and data.
 
-.. note::
+.. only:: builder_html or readthedocs
 
-    This tutorial is also available as a jupyter notebook: :download:`Download Temperature Tutorial<temperature.ipynb>`.
+    .. note::
+
+        This tutorial is also available as a jupyter notebook: :download:`Download Temperature Tutorial<tutorial.ipynb>`.
 
 .. Preparation
 .. -----------
