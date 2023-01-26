@@ -1,8 +1,8 @@
-EPIC
-====
+EPI
+===
 
 .. toctree::
    :maxdepth: 4
 
-   epic
+   epi
    tests

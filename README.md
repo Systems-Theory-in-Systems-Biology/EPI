@@ -1,12 +1,14 @@
-<!-- # Euler Parameter Interference Codebase -->
+<!-- # Euler Parameter Inference -->
 <h1></h1>
 
-![EPIC](epic.png "logo")
+![EPI](epi.png "logo")
 
 <!-- The badges we want to display -->
-[![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPIC/actions/workflows/pages/pages-build-deployment)
+[![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment)
+[![Build & Publish Documentation](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml)
+[![CI](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml)
 
-The Euler Parameter Inference Codebase (EPIC) is a python package for inverse parameter inference.
+The Euler Parameter Inference (EPI) is a python package for inverse parameter inference.
 
 ## About
 
@@ -17,17 +19,17 @@ We support SBML ode models and user provided models.
 ## Installation
 
 The package is available on pypi and can be installed with:\
-```pip install epic```\
+```pip install epi```\
 You can also build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
 
-Derive your model from ```Model``` class and implement the abstract functions. Optionally you can also implement the abstract functions from ```ArtificialModelInterface``` and ```VisualizationModelInterface```.
+Derive your model from ```Model``` class and implement the abstract functions.
 
 ```python
 import jax.numpy as jnp
 
-from epic.core.model import Model
+from epi.core.model import Model
 
 class MyModel(Model):
     def forward(self, param):
@@ -43,9 +45,29 @@ class MyModel(Model):
         return jnp.array(...)
 ```
 
-To evaluate the model and interfer the parameter distribution, call ```model.interfere(my_data.csv)```.
-A detailed guide on how to use this library can be found in the documentation on our [webpage](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/).
+To evaluate the model and infer the parameter distribution, call:
+
+```python
+from epi.sampling import inference
+
+from my_model import MyModel
+
+model = MyModel()
+inference(model=model, dataPath="my_data.csv")
+```
+
+The file `my_data.csv` has to contain the data in csv format with `seperator=,` in the format
+
+```text
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+...
+datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+```
+
+which corresponds to a matrix with the shape `nSamples x dataDim`.
 
 ## Documentation
 
-The full documentation to this software can be found under [Go to documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPIC/)
+The full documentation to this software, including a detailed tutorial on how to use EPI, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).

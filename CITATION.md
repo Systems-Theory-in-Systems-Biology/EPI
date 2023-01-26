@@ -1,19 +1,14 @@
 # Citation
 
-To cite EPIC in publications, please use:
+To cite EPI in publications, please use:
 
-TODO: Fill in the correct paper details
-
- H. Wickham. ggplot2: elegant graphics for data analysis. Springer New York,
- 2009.
+V. Wagner et al. An inverse transformation algorithm to infer parameter distributions from population snapshot data. IFAC FOSBE 2022, accepted and presented.
 
 A BibTeX entry for LaTeX users is
 
-@Book{,
-   author = {Hadley Wickham},
-   title = {ggplot2: elegant graphics for data analysis},
-   publisher = {Springer New York},
-   year = {2009},
-   isbn = {978-0-387-98140-6},
-   url = {http://had.co.nz/ggplot2/book},
+@InProceedings{
+   author = {Wagner, Vincent and Höpfl, Sebastian and Klingel, Viviane and Pop, Maria C. and Radde, Nicole E.},
+   title = {An inverse transformation algorithm to infer parameter distributions from population snapshot data},
+   booktitle = {Proc. 9th IFAC Foundations of Systems Biology in Engineering},
+   year = {2022},
  }
