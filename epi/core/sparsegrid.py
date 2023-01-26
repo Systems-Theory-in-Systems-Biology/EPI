@@ -50,3 +50,27 @@ def basisnD(
         basisEval *= basis1D(points[:, d], centre[d], levels[d])
 
     return basisEval
+
+
+def meshgrid2Matrix(meshgrid: list) -> np.ndarray:
+    """Convert a np.meshgrid into a np.2darray of grid points.
+    The function is mainly used when assigning grid points to Smolnyak-Subspaces.
+
+    Input: meshgrid (list of np.arrays returned by np.meshgrid)
+
+    Output: matrix (np.2darray of shape #Points x #Dims defining all grid points)
+    """
+
+    # calculate the shape of the matrix and initialize with 0s
+    dim = len(meshgrid)
+    nPoints = np.prod(meshgrid[0].shape)
+
+    matrix = np.zeros((nPoints, dim))
+
+    # read out the respective meshgrid entry for each matrix entry
+    for d in range(dim):
+        linearMeshSlice = np.reshape(meshgrid[d], -1)
+        for p in range(nPoints):
+            matrix[p, d] = linearMeshSlice[p]
+
+    return matrix
