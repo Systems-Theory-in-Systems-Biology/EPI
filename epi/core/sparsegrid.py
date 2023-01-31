@@ -5,7 +5,17 @@
 .. _SGs: https://en.wikipedia.org/wiki/Sparse_grid
 """
 
+from functools import partial
+from multiprocessing import Pool
+
 import numpy as np
+
+from epi import logger
+from epi.core.functions import evalLogTransformedDensity
+from epi.core.model import Model
+
+NUM_LEVELS = 5
+NUM_PROCESSES = 4
 
 
 def basis1D(
@@ -322,3 +332,112 @@ class Subspace(object):
                         )
                         * self.coeffs[p]
                     )
+
+
+def sparseGridInference(
+    model: Model,
+    dataPath: str = None,
+    numLevels: int = NUM_LEVELS,
+    numProcesses: int = NUM_PROCESSES,
+):
+    """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
+
+
+    :param model: The model describing the mapping from parameters to data.
+    :type model: Model
+    :param dataPath: path to the data relative to the current working directory.
+                      If None, the default path defined in the Model class initializer is used, defaults to None
+    :type dataPath: str, optional
+    :param numLevels: Maximum sparse grid level depth that mainly defines the number of points, defaults to NUM_LEVELS
+    :type numLevels: int, optional
+    :param numProcesses: number of processes to use, defaults to NUM_PROCESSES
+    :type numProcesses: int, optional
+    """
+
+    # check if a data path is specified
+    if dataPath is not None:
+        model.setDataPath(dataPath)
+    # default to the path defined in the model if no other indication is given.
+    else:
+        logger.warning(
+            f"No data path provided for this inference call. Using the data path of the model: {model.dataPath}"
+        )
+
+    # Load data, data standard deviations and model characteristics for the specified model.
+    (
+        paramDim,
+        dataDim,
+        numDataPoints,
+        centralParam,
+        data,
+        dataStdevs,
+    ) = model.dataLoader()
+
+    # build the sparse grid over [0,1]^paramDim
+    grid = SparseGrid(paramDim, numLevels)
+
+    # get the model's parameter limits
+    parameterLimits = model.getParamSamplingLimits()
+
+    # scale the sparse grid points from [0,1]^paramDim to the scaled parameter space
+    scaledSparseGridPoints = parameterLimits[:, 0] + grid.points * (
+        parameterLimits[:, 1] - parameterLimits[:, 0]
+    )
+
+    # allocate Memory for the parameters, their simulation evaluation and their probability density
+    allRes = np.zeros((grid.nPoints, paramDim + dataDim + 1))
+
+    # Create a pool of worker processes
+    pool = Pool(processes=numProcesses)
+
+    # evaluate the probability density transformation for all sparse grid points in parallel
+    parResults = pool.map(
+        partial(
+            evalLogTransformedDensity,
+            model=model,
+            data=data,
+            dataStdevs=dataStdevs,
+        ),
+        scaledSparseGridPoints,
+    )
+
+    # close the worker pool
+    pool.close()
+    pool.join()
+
+    # extract the parameter, simulation result and transformed density evaluation
+    for i in range(grid.nPoints):
+        allRes[i, :] = parResults[i][1]
+
+    # Save all sparse grid evaluation results in separate .csv files that also indicate the sparse grid level.
+    np.savetxt(
+        "Applications/"
+        + model.getModelName()
+        + "/Params/SG"
+        + str(numLevels)
+        + "Levels.csv",
+        allRes[:, 0:paramDim],
+        delimiter=",",
+    )
+    np.savetxt(
+        "Applications/"
+        + model.getModelName()
+        + "/SimResults/SG"
+        + str(numLevels)
+        + "Levels.csv",
+        allRes[:, paramDim : paramDim + dataDim],
+        delimiter=",",
+    )
+    np.savetxt(
+        "Applications/"
+        + model.getModelName()
+        + "/DensityEvals/SG"
+        + str(numLevels)
+        + "Levels.csv",
+        allRes[:, -1],
+        delimiter=",",
+    )
+
+
+# TODO: Use maybe only one function for storing allRes
+# TODO: Plotting for general dimension
