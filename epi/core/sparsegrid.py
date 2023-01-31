@@ -110,6 +110,9 @@ class SparseGrid(object):
         # create an ordering of subspaces where low-level subspaces come before high-level ones
         self.computeIndexList4TopDownSparseGridTraverse()
 
+        # collect all points from all subspaces
+        self.computeAllPoints()
+
     def refineSubspace(
         self, currentLevels: np.ndarray, indexRefinedLevel: int
     ) -> None:
@@ -155,6 +158,32 @@ class SparseGrid(object):
             currentSubspace = self.subspaceList[s]
             # add the number of points in the current subspace
             self.nPoints += currentSubspace.nPoints
+
+    def computeAllPoints(self):
+        """Collect all SG points in one array by iterating over all subspaces."""
+
+        # allocate enough storage for all points
+        self.points = np.zeros((self.nPoints, self.dim))
+
+        # initiate a counter for the number of already counted points
+        numIncludedPoints = 0
+
+        # loop over all subspaces of the SG
+        for i in range(self.nSubspaces):
+            # traverse the SG in a top-down manner
+            currentSubspace = self.subspaceList[
+                self.indexList4TopDownSparseGridTraverse[i]
+            ]
+
+            # copy the points from the subspace into the array of the SG
+            self.points[
+                numIncludedPoints : numIncludedPoints
+                + currentSubspace.nPoints,
+                :,
+            ] = currentSubspace.points
+
+            # increase the counter accordingly
+            numIncludedPoints += currentSubspace.nPoints
 
     def computeIndexList4TopDownSparseGridTraverse(self):
         """Create an ordering of subspaces where low-level subspaces come before high-level ones."""
