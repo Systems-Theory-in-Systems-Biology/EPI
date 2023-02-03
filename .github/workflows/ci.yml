@@ -47,16 +47,15 @@ jobs:
           installer-parallel: true
       - name: Verify poetry installation
         run: poetry --version
-      # - name: Load cached venv
-      #   id: cached-pip-wheels
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.cache
-      #     key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      # - name: Install dependencies
-      #   run: poetry install --no-interaction --no-root --with=dev
-      - name: Install library
-        run: poetry install --no-interaction
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install --no-interaction --with=dev
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Prepare cpp test
         run: |
           sudo apt install -y cmake
