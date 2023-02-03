@@ -108,10 +108,29 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tests.profiling">tests.profiling module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-cpp-module">tests.test_cpp module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-examples-module">tests.test_examples module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-jax-module">tests.test_jax module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-kde-module">tests.test_kde module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_cpp">tests.test_cpp module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_cpp.test_cpp_lib_exists"><code class="docutils literal notranslate"><span class="pre">test_cpp_lib_exists()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_examples">tests.test_examples module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.getExampleName"><code class="docutils literal notranslate"><span class="pre">getExampleName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_jax">tests.test_jax module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.do_matrix_multiplication"><code class="docutils literal notranslate"><span class="pre">do_matrix_multiplication()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.test_jax_cpu"><code class="docutils literal notranslate"><span class="pre">test_jax_cpu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.test_jax_gpu"><code class="docutils literal notranslate"><span class="pre">test_jax_gpu()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_kde">tests.test_kde module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.kde_data_test_set"><code class="docutils literal notranslate"><span class="pre">kde_data_test_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.kernel_estimators"><code class="docutils literal notranslate"><span class="pre">kernel_estimators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.test_KDE_batch"><code class="docutils literal notranslate"><span class="pre">test_KDE_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.test_KDE_data"><code class="docutils literal notranslate"><span class="pre">test_KDE_data()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tests.test_plotting">tests.test_plotting module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_plotting.test_plotKDEoverGrid"><code class="docutils literal notranslate"><span class="pre">test_plotKDEoverGrid()</span></code></a></li>
 </ul>
@@ -226,17 +245,88 @@ At the moment the simplest way to get an indication for the performance is to ru
 For profiling / identifying bottlenecks and not just observing the iterations per seconds, run this file with the following command:
 scalene tests/profiling.py from the root directory of the project.</p>
 </section>
-<section id="tests-test-cpp-module">
-<h2>tests.test_cpp module<a class="headerlink" href="#tests-test-cpp-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_cpp">
+<span id="tests-test-cpp-module"></span><h2>tests.test_cpp module<a class="headerlink" href="#module-tests.test_cpp" title="Permalink to this heading">¶</a></h2>
+<p>Test the cpp model and its equivalent python implementation. Can be used to compare the performance during the sampling.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_cpp.test_cpp_lib_exists">
+<span class="sig-prename descclassname"><span class="pre">tests.test_cpp.</span></span><span class="sig-name descname"><span class="pre">test_cpp_lib_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_cpp.test_cpp_lib_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="tests-test-examples-module">
-<h2>tests.test_examples module<a class="headerlink" href="#tests-test-examples-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_examples">
+<span id="tests-test-examples-module"></span><h2>tests.test_examples module<a class="headerlink" href="#module-tests.test_examples" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_examples.Examples">
+<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">Examples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.Examples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides the list of examples to the parametrized test</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_examples.getExampleName">
+<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">getExampleName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.getExampleName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_examples.test_examples">
+<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">test_examples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.test_examples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="tests-test-jax-module">
-<h2>tests.test_jax module<a class="headerlink" href="#tests-test-jax-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_jax">
+<span id="tests-test-jax-module"></span><h2>tests.test_jax module<a class="headerlink" href="#module-tests.test_jax" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_jax.do_matrix_multiplication">
+<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">do_matrix_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.do_matrix_multiplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do a simple matrix-matrix multiplication for two random matrices generated by numpy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – number of entries per dimension, defaults to 5000</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_jax.test_jax_cpu">
+<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">test_jax_cpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.test_jax_cpu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test wether jax can run on the cpu by executing some jax code</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_jax.test_jax_gpu">
+<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">test_jax_gpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.test_jax_gpu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test wether jax can run on the gpu by executing some jax code.
+The jax gpu test may fail if no nvidia gpu is available or the cuda and cudnn libraries are not installed.</p>
+</dd></dl>
+
 </section>
-<section id="tests-test-kde-module">
-<h2>tests.test_kde module<a class="headerlink" href="#tests-test-kde-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_kde">
+<span id="tests-test-kde-module"></span><h2>tests.test_kde module<a class="headerlink" href="#module-tests.test_kde" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_kde.kde_data_test_set">
+<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">kde_data_test_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.kde_data_test_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields test data for the KDE data tests</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_kde.kernel_estimators">
+<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">kernel_estimators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.kernel_estimators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the kernel density estimators</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_kde.test_KDE_batch">
+<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">test_KDE_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evalKDE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.test_KDE_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_kde.test_KDE_data">
+<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">test_KDE_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evalKDE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdevs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">33</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.test_KDE_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid</p>
+</dd></dl>
+
 </section>
 <section id="module-tests.test_plotting">
 <span id="tests-test-plotting-module"></span><h2>tests.test_plotting module<a class="headerlink" href="#module-tests.test_plotting" title="Permalink to this heading">¶</a></h2>
