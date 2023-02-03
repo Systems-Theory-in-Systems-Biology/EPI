@@ -238,12 +238,24 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="epi.jax_extension.value_and_jacfwd">
 <span class="sig-prename descclassname"><span class="pre">epi.jax_extension.</span></span><span class="sig-name descname"><span class="pre">value_and_jacfwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#epi.jax_extension.value_and_jacfwd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a function that computes the value and the jacobian of the passed function using forward mode AD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fun</strong> (<em>Callable</em><em>[</em><em>[</em><em>jnp.ndarray</em><em>]</em><em>, </em><em>jnp.ndarray</em><em>]</em>) – The function to supplement with the jacobian</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="epi.jax_extension.value_and_jacrev">
 <span class="sig-prename descclassname"><span class="pre">epi.jax_extension.</span></span><span class="sig-name descname"><span class="pre">value_and_jacrev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#epi.jax_extension.value_and_jacrev" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a function that computes the value and the jacobian of the passed function using reverse mode AD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fun</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>jnp.ndarray</em><em>]</em>) – The function to supplement with the jacobian</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-epi">
