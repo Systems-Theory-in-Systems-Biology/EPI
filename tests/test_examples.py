@@ -1,3 +1,7 @@
+"""
+Test the instantiation, data loading / data generation and the inference for the example models in the examples folder.
+"""
+
 import importlib
 
 import pytest
@@ -38,7 +42,12 @@ def getExampleName(example):
 
 @pytest.mark.parametrize("example", Examples(), ids=getExampleName)
 def test_examples(example):
-    # extract example parameters
+    """
+
+    :param example: The example which should be tested. The tuple contains the module location, the class name and the number of walkers.
+    :type example: Tuple[str, str, int]
+    """
+    # extract example parameters from tuple
     try:
         module_location, className, numWalkers = example
     except ValueError:

@@ -1,3 +1,7 @@
+"""
+Test some jax functionality
+"""
+
 import jax
 import jax.numpy as jnp
 import pytest

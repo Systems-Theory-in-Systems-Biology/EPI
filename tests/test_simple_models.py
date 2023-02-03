@@ -1,4 +1,6 @@
-"""Contains grid based evaluations and plotting of models, which implement simple transformations: Linear, Exponential, LinearODE"""
+"""
+Contains grid based evaluations and plotting of models, which implement simple transformations: Linear, Exponential, LinearODE
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np

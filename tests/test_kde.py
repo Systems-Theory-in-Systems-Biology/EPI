@@ -1,3 +1,5 @@
+"""Tests for the Kernel Density Estimation module"""
+
 import jax
 import matplotlib.pyplot as plt
 import numpy as np
