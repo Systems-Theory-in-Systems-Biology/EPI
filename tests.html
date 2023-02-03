@@ -251,11 +251,13 @@ scalene tests/profiling.py from the root directory of the project.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_cpp.test_cpp_lib_exists">
 <span class="sig-prename descclassname"><span class="pre">tests.test_cpp.</span></span><span class="sig-name descname"><span class="pre">test_cpp_lib_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_cpp.test_cpp_lib_exists" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Test if the cpp library for the plant model exists.</p>
+</dd></dl>
 
 </section>
 <section id="module-tests.test_examples">
 <span id="tests-test-examples-module"></span><h2>tests.test_examples module<a class="headerlink" href="#module-tests.test_examples" title="Permalink to this heading">¶</a></h2>
+<p>Test the instantiation, data loading / data generation and the inference for the example models in the examples folder.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_examples.Examples">
 <span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">Examples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.Examples" title="Permalink to this definition">¶</a></dt>
@@ -271,11 +273,17 @@ scalene tests/profiling.py from the root directory of the project.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_examples.test_examples">
 <span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">test_examples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.test_examples" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>example</strong> (<em>Tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em>) – The example which should be tested. The tuple contains the module location, the class name and the number of walkers.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-tests.test_jax">
 <span id="tests-test-jax-module"></span><h2>tests.test_jax module<a class="headerlink" href="#module-tests.test_jax" title="Permalink to this heading">¶</a></h2>
+<p>Test some jax functionality</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_jax.do_matrix_multiplication">
 <span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">do_matrix_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.do_matrix_multiplication" title="Permalink to this definition">¶</a></dt>
@@ -303,6 +311,7 @@ The jax gpu test may fail if no nvidia gpu is available or the cuda and cudnn li
 </section>
 <section id="module-tests.test_kde">
 <span id="tests-test-kde-module"></span><h2>tests.test_kde module<a class="headerlink" href="#module-tests.test_kde" title="Permalink to this heading">¶</a></h2>
+<p>Tests for the Kernel Density Estimation module</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_kde.kde_data_test_set">
 <span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">kde_data_test_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.kde_data_test_set" title="Permalink to this definition">¶</a></dt>
@@ -330,10 +339,12 @@ The jax gpu test may fail if no nvidia gpu is available or the cuda and cudnn li
 </section>
 <section id="module-tests.test_plotting">
 <span id="tests-test-plotting-module"></span><h2>tests.test_plotting module<a class="headerlink" href="#module-tests.test_plotting" title="Permalink to this heading">¶</a></h2>
+<p>Test plotting functions from the plotter module</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_plotting.test_plotKDEoverGrid">
 <span class="sig-prename descclassname"><span class="pre">tests.test_plotting.</span></span><span class="sig-name descname"><span class="pre">test_plotKDEoverGrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_plotting.test_plotKDEoverGrid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Test plotting a KDE over a grid.</p>
+</dd></dl>
 
 </section>
 <section id="module-tests.test_simple_models">
