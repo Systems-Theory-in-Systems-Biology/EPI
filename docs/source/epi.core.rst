@@ -36,6 +36,14 @@ epi.core.sampling module
    :undoc-members:
    :show-inheritance:
 
+epi.core.sparsegrid module
+--------------------------
+
+.. automodule:: epi.core.sparsegrid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
