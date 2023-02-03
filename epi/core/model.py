@@ -2,6 +2,7 @@ import os
 import shutil
 from abc import ABC, abstractmethod
 from functools import partial
+from typing import Tuple
 
 import numpy as np
 import seedir
@@ -91,7 +92,7 @@ class Model(ABC):
 
     def dataLoader(
         self,
-    ) -> tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
         """Load the data from the data file found under the models current data path and calculate several properties of the data.
 
         :return: The dimension of the parameter space, the dimension of the data space, the number of data points, the central parameter point, the data and the estimated optimal kernel width for each dimension of the data.
@@ -269,11 +270,11 @@ class ArtificialModelInterface(ABC):
         """
         raise NotImplementedError
 
-    def paramLoader(self) -> tuple[np.ndarray, np.ndarray]:
+    def paramLoader(self) -> Tuple[np.ndarray, np.ndarray]:
         """Load and return all parameters for artificial set ups
 
         :return: Loaded parameters and the optimal kernel width for each parameter
-        :rtype: tuple[np.ndarray, np.ndarray]
+        :rtype: Tuple[np.ndarray, np.ndarray]
         """
         trueParams = np.loadtxt(
             "Data/" + self.getModelName() + "Params.csv", delimiter=","
@@ -322,7 +323,7 @@ class VisualizationModelInterface(ABC):
 
     def generateVisualizationGrid(
         self, resolution: int
-    ) -> tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """This function creates a grid for the data as well as the parameters with a
         constant number of points in each dimension. It saves the grids as csv files in the `Plots/*grid.csv`
         in your Application folder.
@@ -330,7 +331,7 @@ class VisualizationModelInterface(ABC):
         :param resolution: The number of grid points in each dimension
         :type resolution: int
         :return: The dataGrid and teh paramGrid.
-        :rtype: tuple[np.ndarray, np.ndarray]
+        :rtype: Tuple[np.ndarray, np.ndarray]
         """
         # allocate storage for the parameter and data plotting grid
         paramGrid = np.zeros((resolution, self.paramDim))
