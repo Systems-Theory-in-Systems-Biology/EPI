@@ -2,3 +2,4 @@ myst-parser>=0.18
 sphinx_rtd_theme
 docutils>= 0.18
 sphinx_copybutton
+-e .
