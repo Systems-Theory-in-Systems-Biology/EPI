@@ -148,6 +148,7 @@ class Stock(JaxModel, VisualizationModelInterface):
             tickerListName = tickerListPath.split("/")[-1].split(".")[0]
 
         # save all time points except for the first
+        os.makedirs(f"Data/{self.getModelName()}", exist_ok=True)
         np.savetxt(
             f"Data/{self.getModelName()}/{tickerListName}Data.csv",
             stockData.T,
