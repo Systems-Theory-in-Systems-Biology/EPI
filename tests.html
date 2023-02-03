@@ -107,13 +107,21 @@
 <li class="toctree-l4"><a class="reference internal" href="#tests.conftest.pytest_sessionstart"><code class="docutils literal notranslate"><span class="pre">pytest_sessionstart()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-profiling-module">tests.profiling module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.profiling">tests.profiling module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tests-test-cpp-module">tests.test_cpp module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tests-test-examples-module">tests.test_examples module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tests-test-jax-module">tests.test_jax module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tests-test-kde-module">tests.test_kde module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-plotting-module">tests.test_plotting module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tests-test-simple-models-module">tests.test_simple_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_plotting">tests.test_plotting module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_plotting.test_plotKDEoverGrid"><code class="docutils literal notranslate"><span class="pre">test_plotKDEoverGrid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_simple_models">tests.test_simple_models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationExponential"><code class="docutils literal notranslate"><span class="pre">test_transformationExponential()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationLinear"><code class="docutils literal notranslate"><span class="pre">test_transformationLinear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationODELinear"><code class="docutils literal notranslate"><span class="pre">test_transformationODELinear()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tests">Module contents</a></li>
 </ul>
 </li>
@@ -210,8 +218,13 @@
 </dd></dl>
 
 </section>
-<section id="tests-profiling-module">
-<h2>tests.profiling module<a class="headerlink" href="#tests-profiling-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.profiling">
+<span id="tests-profiling-module"></span><h2>tests.profiling module<a class="headerlink" href="#module-tests.profiling" title="Permalink to this heading">¶</a></h2>
+<p>The code which is executed here should contain code which represents the typical usage of the epi library.
+It could be extended to somehow measure the performance of the code for all examples in a reproducible and comparable way.
+At the moment the simplest way to get an indication for the performance is to run the tests and look at the time it takes to run the tests.
+For profiling / identifying bottlenecks and not just observing the iterations per seconds, run this file with the following command:
+scalene tests/profiling.py from the root directory of the project.</p>
 </section>
 <section id="tests-test-cpp-module">
 <h2>tests.test_cpp module<a class="headerlink" href="#tests-test-cpp-module" title="Permalink to this heading">¶</a></h2>
@@ -225,11 +238,37 @@
 <section id="tests-test-kde-module">
 <h2>tests.test_kde module<a class="headerlink" href="#tests-test-kde-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="tests-test-plotting-module">
-<h2>tests.test_plotting module<a class="headerlink" href="#tests-test-plotting-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_plotting">
+<span id="tests-test-plotting-module"></span><h2>tests.test_plotting module<a class="headerlink" href="#module-tests.test_plotting" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_plotting.test_plotKDEoverGrid">
+<span class="sig-prename descclassname"><span class="pre">tests.test_plotting.</span></span><span class="sig-name descname"><span class="pre">test_plotKDEoverGrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_plotting.test_plotKDEoverGrid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="tests-test-simple-models-module">
-<h2>tests.test_simple_models module<a class="headerlink" href="#tests-test-simple-models-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-tests.test_simple_models">
+<span id="tests-test-simple-models-module"></span><h2>tests.test_simple_models module<a class="headerlink" href="#module-tests.test_simple_models" title="Permalink to this heading">¶</a></h2>
+<p>Contains grid based evaluations and plotting of models, which implement simple transformations: Linear, Exponential, LinearODE</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationExponential">
+<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationExponential</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationExponential" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationLinear">
+<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationLinear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationLinear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationODELinear">
+<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationODELinear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationODELinear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exemplary application of Eulerian Parameter Inference a very simplistic ordinary differential equation model.
+We create our toy data by first defining a true parameter distribution.
+The actual data is then obtained by evaluating the model in parameters drawn from this true distribution.
+Ideally, we would be able to reconstruct the true parameter density.
+However, we will see that this parameter inference problem possesses more than one solution and is therefore not well-posed.</p>
+</dd></dl>
+
 </section>
 <section id="module-tests">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests" title="Permalink to this heading">¶</a></h2>

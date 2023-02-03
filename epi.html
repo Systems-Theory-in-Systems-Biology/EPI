@@ -206,24 +206,123 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="epi.core.html">epi.core package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="epi.core.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.core.html#epi-core-functions-module">epi.core.functions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core.functions">epi.core.functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.functions.calcGramDeterminant"><code class="docutils literal notranslate"><span class="pre">calcGramDeterminant()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.functions.evalLogTransformedDensity"><code class="docutils literal notranslate"><span class="pre">evalLogTransformedDensity()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core.kde">epi.core.kde module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.kde.calcKernelWidth"><code class="docutils literal notranslate"><span class="pre">calcKernelWidth()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.kde.evalKDECauchy"><code class="docutils literal notranslate"><span class="pre">evalKDECauchy()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.kde.evalKDEGauss"><code class="docutils literal notranslate"><span class="pre">evalKDEGauss()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="epi.core.html#epi-core-model-module">epi.core.model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.core.html#epi-core-sampling-module">epi.core.sampling module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.core.html#epi-core-sparsegrid-module">epi.core.sparsegrid module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core.model">epi.core.model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.model.ArtificialModelInterface"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.ArtificialModelInterface.generateArtificialData"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.generateArtificialData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.ArtificialModelInterface.paramLoader"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.paramLoader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.model.JaxModel"><code class="docutils literal notranslate"><span class="pre">JaxModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.JaxModel.forward_method"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_method()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.JaxModel.initFwAndBw"><code class="docutils literal notranslate"><span class="pre">JaxModel.initFwAndBw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.JaxModel.jacobian"><code class="docutils literal notranslate"><span class="pre">JaxModel.jacobian()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.JaxModel.valjac"><code class="docutils literal notranslate"><span class="pre">JaxModel.valjac()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.createApplicationFolderStructure"><code class="docutils literal notranslate"><span class="pre">Model.createApplicationFolderStructure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.dataLoader"><code class="docutils literal notranslate"><span class="pre">Model.dataLoader()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.deleteApplicationFolderStructure"><code class="docutils literal notranslate"><span class="pre">Model.deleteApplicationFolderStructure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.forward"><code class="docutils literal notranslate"><span class="pre">Model.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.getApplicationPath"><code class="docutils literal notranslate"><span class="pre">Model.getApplicationPath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.getCentralParam"><code class="docutils literal notranslate"><span class="pre">Model.getCentralParam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.getModelName"><code class="docutils literal notranslate"><span class="pre">Model.getModelName()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.getParamSamplingLimits"><code class="docutils literal notranslate"><span class="pre">Model.getParamSamplingLimits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.isArtificial"><code class="docutils literal notranslate"><span class="pre">Model.isArtificial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.isVisualizable"><code class="docutils literal notranslate"><span class="pre">Model.isVisualizable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.jacobian"><code class="docutils literal notranslate"><span class="pre">Model.jacobian()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.loadSimResults"><code class="docutils literal notranslate"><span class="pre">Model.loadSimResults()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.setDataPath"><code class="docutils literal notranslate"><span class="pre">Model.setDataPath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.Model.valjac"><code class="docutils literal notranslate"><span class="pre">Model.valjac()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.model.VisualizationModelInterface"><code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.VisualizationModelInterface.generateVisualizationGrid"><code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface.generateVisualizationGrid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.VisualizationModelInterface.getDataBounds"><code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface.getDataBounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.VisualizationModelInterface.getParamBounds"><code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface.getParamBounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.model.VisualizationModelInterface.scale"><code class="docutils literal notranslate"><span class="pre">VisualizationModelInterface.scale()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.model.autodiff"><code class="docutils literal notranslate"><span class="pre">autodiff()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core.sampling">epi.core.sampling module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sampling.calcWalkerAcceptance"><code class="docutils literal notranslate"><span class="pre">calcWalkerAcceptance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sampling.concatenateEmceeSamplingResults"><code class="docutils literal notranslate"><span class="pre">concatenateEmceeSamplingResults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sampling.countEmceeSubRuns"><code class="docutils literal notranslate"><span class="pre">countEmceeSubRuns()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sampling.inference"><code class="docutils literal notranslate"><span class="pre">inference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sampling.runEmceeSampling"><code class="docutils literal notranslate"><span class="pre">runEmceeSampling()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core.sparsegrid">epi.core.sparsegrid module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid"><code class="docutils literal notranslate"><span class="pre">SparseGrid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.computeAllPoints"><code class="docutils literal notranslate"><span class="pre">SparseGrid.computeAllPoints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.computeCoefficients"><code class="docutils literal notranslate"><span class="pre">SparseGrid.computeCoefficients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.computeIndexList4TopDownSparseGridTraverse"><code class="docutils literal notranslate"><span class="pre">SparseGrid.computeIndexList4TopDownSparseGridTraverse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.computeIntegral"><code class="docutils literal notranslate"><span class="pre">SparseGrid.computeIntegral()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.computeNPoints"><code class="docutils literal notranslate"><span class="pre">SparseGrid.computeNPoints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.evalFunctionSG"><code class="docutils literal notranslate"><span class="pre">SparseGrid.evalFunctionSG()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.SparseGrid.refineSubspace"><code class="docutils literal notranslate"><span class="pre">SparseGrid.refineSubspace()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.Subspace"><code class="docutils literal notranslate"><span class="pre">Subspace</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.Subspace.evalFunction"><code class="docutils literal notranslate"><span class="pre">Subspace.evalFunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.Subspace.passContributions2HigherLevels"><code class="docutils literal notranslate"><span class="pre">Subspace.passContributions2HigherLevels()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.basis1D"><code class="docutils literal notranslate"><span class="pre">basis1D()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.basisnD"><code class="docutils literal notranslate"><span class="pre">basisnD()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.meshgrid2Matrix"><code class="docutils literal notranslate"><span class="pre">meshgrid2Matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html#epi.core.sparsegrid.sparseGridInference"><code class="docutils literal notranslate"><span class="pre">sparseGridInference()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="epi.core.html#module-epi.core">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="epi.plotting.html">epi.plotting package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#epi-plotting-marginals-module">epi.plotting.marginals module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#epi-plotting-plots-module">epi.plotting.plots module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#epi-plotting-plotter-module">epi.plotting.plotter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.marginals">epi.plotting.marginals module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.marginals.calcDataMarginals"><code class="docutils literal notranslate"><span class="pre">calcDataMarginals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.marginals.calcEmceeSimResultsMarginals"><code class="docutils literal notranslate"><span class="pre">calcEmceeSimResultsMarginals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.marginals.calcParamMarginals"><code class="docutils literal notranslate"><span class="pre">calcParamMarginals()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.plots">epi.plotting.plots module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotDataMarginals"><code class="docutils literal notranslate"><span class="pre">plotDataMarginals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotEmceeResults"><code class="docutils literal notranslate"><span class="pre">plotEmceeResults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotGridResults"><code class="docutils literal notranslate"><span class="pre">plotGridResults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotMarginals"><code class="docutils literal notranslate"><span class="pre">plotMarginals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotSpiderWebs"><code class="docutils literal notranslate"><span class="pre">plotSpiderWebs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.plotTest"><code class="docutils literal notranslate"><span class="pre">plotTest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plots.singleWeb"><code class="docutils literal notranslate"><span class="pre">singleWeb()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.plotter">epi.plotting.plotter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.DataParamEnum"><code class="docutils literal notranslate"><span class="pre">DataParamEnum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.DataParamEnum.Data"><code class="docutils literal notranslate"><span class="pre">DataParamEnum.Data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.DataParamEnum.Params"><code class="docutils literal notranslate"><span class="pre">DataParamEnum.Params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.plotDataKDE"><code class="docutils literal notranslate"><span class="pre">plotDataKDE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.plotDataSamples"><code class="docutils literal notranslate"><span class="pre">plotDataSamples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.plotKDEoverGrid"><code class="docutils literal notranslate"><span class="pre">plotKDEoverGrid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.plotParamKDE"><code class="docutils literal notranslate"><span class="pre">plotParamKDE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.plotParamSamples"><code class="docutils literal notranslate"><span class="pre">plotParamSamples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html#epi.plotting.plotter.sampleFromResults"><code class="docutils literal notranslate"><span class="pre">sampleFromResults()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="epi.plotting.html#module-epi.plotting">Module contents</a></li>
 </ul>
 </li>
