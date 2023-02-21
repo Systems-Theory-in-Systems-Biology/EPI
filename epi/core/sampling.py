@@ -336,3 +336,24 @@ def inference(
 
     runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
     concatenateEmceeSamplingResults(model)
+
+
+# TODO: Benjamin mach mal!
+# Dependeny matrix definieren
+# Cis beliebig aber marginals nicht 0 -> central param als start wählen
+# Ergebnisse müssen für verschiedene Marginals gespeichert werden z.b. Q1, Q2
+
+# Defininiere param abhängig in blocken durch slices
+# E.g.: s1 = [0,1,2], s2 = [3], s4 = [4,5]
+# -> slices = [s1,s2,s3] oder als np array. einzelne slices müssen np. arrays sein für np indexierung
+# Alles was an emcee geht muss reduzierte dimension haben
+# Walker init, paramdim, ?
+# Und am wichtigsten: evalLogTransformedDensity braucht slice (+default value) parameter
+# evalLogTransformedDensity bekommt evtl. reduzierte param "version" und wir müssen vollen vektor zusammen aus centralParam
+# rekonstruieren
+
+# Inference takes slices
+# parameter sampling and sampling takes one slice
+# other functions have to be also adapted because of all the file names
+
+# TODO generell: inference: gitter vs samplingbasiert: nutzer auswählen lassen
