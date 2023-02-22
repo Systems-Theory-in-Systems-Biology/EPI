@@ -16,13 +16,14 @@ We support SBML ode models and user provided models.
 Installation
 ------------
 
-The package is available on pypi and can be installed with:
+The package is no yet available on pypi.
+..  and can be installed with: 
 
-.. code-block:: bash
+.. .. code-block:: bash
    
-   pip install epi
+..    pip install epi
 
-You can also build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
+You can build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
 
 ------------
 How to start
