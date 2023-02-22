@@ -18,13 +18,18 @@ We support SBML ode models and user provided models.
 
 ## Installation
 
-The package is available on pypi and can be installed with:
+  ---
+  **IMPORTANT**
 
-```text
-pip install epi
-```
+  The package is not yet available on pypi.
 
-You can also build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
+  <!-- ```text
+  pip install epi
+  ``` -->
+
+  ---
+
+You can build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
 
@@ -74,4 +79,4 @@ which corresponds to a matrix with the shape `nSamples x dataDim`.
 
 ## Documentation
 
-The full documentation to this software, including a detailed tutorial on how to use EPI, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
+The full documentation to this software, including a detailed tutorial on how to use EPI and the api documentation, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
