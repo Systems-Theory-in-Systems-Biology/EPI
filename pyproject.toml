@@ -76,3 +76,6 @@ addopts = [
     "--ignore=tests/test_sbml_model.py",
 ]
 pythonpath = ["epi"]
+filterwarnings = [
+    'ignore:Matplotlib is currently using template, which is a non-GUI backend, so cannot show the figure',
+]
