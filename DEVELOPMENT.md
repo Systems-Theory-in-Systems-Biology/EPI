@@ -16,10 +16,16 @@
   <summary>Should I choose https or ssh?</summary>
   You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, not this repository. </details>
 
+- Install [poetry](https://python-poetry.org/docs/):
+  
+  ```bash
+  curl -sSL https://install.python-poetry.org | python3 -
+  ```
+  
 - Install epi:
 
   ```bash
-  cd EPI && pip install poetry && poetry install --with=dev
+  poetry install --with=dev
   ```
 
 - Run the tests:
@@ -35,7 +41,16 @@
 Here are the most important infos on how to maintain this repository.
 
 - **Dependency Management with Poetry**: \
-  We use poetry as build system and for the dependency management. Most commans can be simply run in the virtual environment by prepending ```poetry run``` before the command. You can also use ```poetry shell``` to activate the virtual environment and exit it with ```exit```. Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
+  We use poetry as build system, for the dependency management and the virtual environment. During the [Quickstart](#quickstart) we installed all dependencies into the virtual environment, therefore:
+
+  ---
+  **IMPORTANT**
+
+  Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively you can run commands with `poetry run <yourcommand>`.
+
+  ---
+
+  Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
   
   For more information read the [Poetry Documentation](https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project).
 
@@ -55,26 +70,26 @@ Here are the most important infos on how to maintain this repository.
 - **Testing with pytest**:
 
   ```bash
-  poetry run pytest
+  pytest
   ```
 
   You can generate a coverage report by running the following code block in your terminal. Please be aware that it might take a long time, think about lowering the number of steps in the sampling.
 
   ```bash
-  poetry run coverage run -m pytest -v
+  coverage run -m pytest -v
   coverage report
   coverage html
   ```
 
-- **Working with docker**:
-  This section is a TODO.
+<!-- TODO: Add a docker development environment -->
+<!-- - **Working with docker**:
 
   ```bash
   curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
   sudo service docker start
   sudo docker run hello-world
   sudo service docker stop
-  ```
+  ``` -->
 
 - **Documentation with Sphinx**:
 
