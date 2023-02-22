@@ -30,6 +30,8 @@ How to start
 ------------
 
 | Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
+| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getCentralParam`.
+| The last requirement is to define the data and parameter Dimension, dataDim and paramDim.
 
 .. code-block:: python
    
@@ -39,6 +41,10 @@ How to start
    from epi.core.model import Model
 
    class MyModel(Model):
+
+      paramDim = N # The dimension of a parameter point
+      dataDim = M # The dimension of a data point
+
       def forward(self, param):
          return jnp.array(...)
 

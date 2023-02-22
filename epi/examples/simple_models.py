@@ -10,6 +10,10 @@ from epi.core.model import (
 
 
 class Linear(JaxModel, ArtificialModelInterface, VisualizationModelInterface):
+
+    paramDim = 2
+    dataDim = 2
+
     @classmethod
     def forward(cls, param):
         return jnp.array([param[0] * 10, (-2.0) * param[1] - 2.0])
@@ -48,6 +52,10 @@ class Linear(JaxModel, ArtificialModelInterface, VisualizationModelInterface):
 
 
 class Exponential(JaxModel, VisualizationModelInterface):
+
+    paramDim = 2
+    dataDim = 2
+
     @classmethod
     def forward(cls, param):
         return jnp.array([param[0] * jnp.exp(1), jnp.exp(param[1])])
@@ -70,6 +78,10 @@ class Exponential(JaxModel, VisualizationModelInterface):
 
 
 class LinearODE(JaxModel, ArtificialModelInterface):
+
+    paramDim = 2
+    dataDim = 2
+
     @classmethod
     def forward(cls, param):
         return jnp.array(
