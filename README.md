@@ -41,6 +41,10 @@ import jax.numpy as jnp
 from epi.core.model import Model
 
 class MyModel(Model):
+
+    paramDim = N # The dimension of a parameter point
+    dataDim = M # The dimension of a data point
+
     def forward(self, param):
         return jnp.array(...)
 

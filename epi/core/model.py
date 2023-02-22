@@ -1,3 +1,4 @@
+import inspect
 import os
 import shutil
 from abc import ABC, abstractmethod
@@ -19,6 +20,21 @@ class Model(ABC):
 
     It contains three abstract methods which need to be implemented by subclasses
     """
+
+    paramDim = None
+    dataDim = None
+
+    def __init_subclass__(cls, **kwargs):
+        if not inspect.isabstract(cls):
+            for required in (
+                "paramDim",
+                "dataDim",
+            ):
+                if not getattr(cls, required):
+                    raise AttributeError(
+                        f"Can't instantiate abstract class {cls.__name__} without {required} attribute defined"
+                    )
+        return cls
 
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         if delete:
@@ -377,7 +393,7 @@ class JaxModel(Model):
         type(self).forward = partial(JaxModel.forward_method, self)
 
     def __init_subclass__(cls, **kwargs):
-        return autodiff(_cls=cls)
+        return autodiff(super().__init_subclass__(**kwargs))
 
     @classmethod
     def initFwAndBw(cls):

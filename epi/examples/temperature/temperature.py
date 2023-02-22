@@ -11,6 +11,10 @@ from epi.core.model import ArtificialModelInterface, Model
 
 
 class Temperature(Model):
+
+    paramDim = 1
+    dataDim = 1
+
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         super().__init__(delete, create)
 
@@ -52,6 +56,10 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
 
 
 class TemperatureWithFixedParams(Model):
+
+    paramDim = 1
+    dataDim = 1
+
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         super().__init__(delete, create)
         self.lowT = -30.0

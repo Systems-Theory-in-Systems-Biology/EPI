@@ -13,6 +13,9 @@ class CppPlant(Model, ArtificialModelInterface):
     Data2: Sciarid ;)
     """
 
+    paramDim = 2
+    dataDim = 3
+
     def forward(self, param):
         return cpp_model.forward(param)
 
