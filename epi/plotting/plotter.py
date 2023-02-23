@@ -76,7 +76,7 @@ def plotDataSamples(model: Model):
         "Simulation data" if artificialModel else "Measured data"
     )
     # plot data samples
-    data = model.dataLoader()[4]
+    data = model.dataLoader()[3]
     for dim in data.shape[1]:
         plt.figure(figsize=(6, 1))
         plt.xlabel(r"data_dim_i")

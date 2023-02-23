@@ -365,13 +365,12 @@ def sparseGridInference(
 
     # Load data, data standard deviations and model characteristics for the specified model.
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
+
+    paramDim = model.paramDim
 
     # build the sparse grid over [0,1]^paramDim
     grid = SparseGrid(paramDim, numLevels)
@@ -385,7 +384,7 @@ def sparseGridInference(
     )
 
     # allocate Memory for the parameters, their simulation evaluation and their probability density
-    allRes = np.zeros((grid.nPoints, paramDim + dataDim + 1))
+    allRes = np.zeros((grid.nPoints, paramDim + model.dataDim + 1))
 
     # Create a pool of worker processes
     pool = Pool(processes=numProcesses)
