@@ -250,7 +250,7 @@ def concatenateEmceeSamplingResults(model: Model):
     )
 
 
-def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
+def calcWalkerAcceptance(model: Model, numWalkers: int, numBurnSamples: int):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
         This is especially important to find "zombie" walkers, that are never moving.
 
@@ -270,17 +270,17 @@ def calcWalkerAcceptance(model: Model, numBurnSamples: int, numWalkers: int):
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
     numSteps = int(params.shape[0] / numWalkers) - 1
-    logger.info(f"Number of steps fo each walker = {numSteps}")
 
-    # create storage to count the number of accepted steps for each counter
-    numAcceptedSteps = np.zeros(numWalkers)
+    # Unflatten the parameter chain and count the number of accepted steps for each walker
+    params = params.reshape(numSteps + 1, numWalkers, model.paramDim)
 
-    for i in range(numWalkers):
-        for j in range(numSteps):
-            numAcceptedSteps[i] += 1 - np.all(
-                params[i + j * numWalkers, :]
-                == params[i + (j + 1) * numWalkers, :]
-            )
+    # Build a boolean array that is true if the parameters of the current step are the same as the parameters of the next step and sum over it
+    # If the parameters are the same, the step is not accepted and we add 0 to the number of accepted steps
+    # If the parameters are different, the step is accepted and we add 1 to the number of accepted steps
+    numAcceptedSteps = np.sum(
+        np.any(params[1:, :, :] != params[:-1, :, :], axis=2),
+        axis=0,
+    )
 
     # calculate the acceptance ratio by dividing the number of accepted steps by the overall number of steps
     acceptanceRatios = numAcceptedSteps / numSteps
