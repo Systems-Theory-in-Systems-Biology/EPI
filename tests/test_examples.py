@@ -7,7 +7,7 @@ import importlib
 import pytest
 
 from epi.core.model import Model
-from epi.core.sampling import NUM_WALKERS, inference
+from epi.core.sampling import NUM_WALKERS, calcWalkerAcceptance, inference
 
 cpp_plant_example = pytest.param(
     ("epi.examples.cpp", "CppPlant"),
@@ -69,3 +69,7 @@ def test_examples(example):
     inference(
         model=model, numWalkers=numWalkers, numSteps=1000
     )  # using default dataPath of the model
+
+    # Determine walker acceptance rate
+    acceptance = calcWalkerAcceptance(model, numWalkers, numBurnSamples=0)
+    print("Acceptance rate: ", acceptance)
