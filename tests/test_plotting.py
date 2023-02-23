@@ -8,5 +8,5 @@ def test_plotKDEoverGrid():
     """Test plotting a KDE over a grid."""
     t = TemperatureArtificial()
     t.generateArtificialData()
-    pDim, dDim, numDataPoints, centralParam, data, dataStdevs = t.dataLoader()
+    dataDim, data, dataStdevs = t.dataLoader()
     plotter.plotKDEoverGrid(data, dataStdevs, resolution=100)

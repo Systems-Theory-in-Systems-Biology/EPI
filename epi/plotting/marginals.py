@@ -15,10 +15,7 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
 
     # Load data, data standard deviations and model characteristics for the specified model.
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
@@ -72,10 +69,7 @@ def calcEmceeSimResultsMarginals(
 
     # Load data, data standard deviations and model characteristics for the specified model.
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
@@ -130,15 +124,7 @@ def calcParamMarginals(
         delimiter=",",
     )[numBurnSamples::occurrence, :]
 
-    # Load data, data standard deviations and model characteristics for the specified model.
-    (
-        paramDim,
-        dataDim,
-        numDataPoints,
-        centralParam,
-        data,
-        dataStdevs,
-    ) = model.dataLoader()
+    paramDim = model.paramDim
 
     # Define the standard deviation for plotting the parameters based on the sampled parameters and not the true ones.
     paramStdevs = calcKernelWidth(paramChain)

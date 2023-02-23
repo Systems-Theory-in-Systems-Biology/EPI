@@ -57,17 +57,14 @@ def runEmceeSampling(
 
     # Load data, data standard deviations and model characteristics for the specified model.
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    walkerInitParams = centralParam + 0.002 * (
-        np.random.rand(numWalkers, paramDim) - 0.5
+    walkerInitParams = model.getCentralParam() + 0.002 * (
+        np.random.rand(numWalkers, model.paramDim) - 0.5
     )
 
     # Count and print how many runs have already been performed for this model
@@ -112,7 +109,7 @@ def runEmceeSampling(
         # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
         sampler = emcee.EnsembleSampler(
             numWalkers,
-            paramDim,
+            model.paramDim,
             evalLogTransformedDensity,
             pool=pool,
             moves=movePolicy,
@@ -146,7 +143,7 @@ def runEmceeSampling(
             + "/Params/"
             + str(run)
             + ".csv",
-            allRes[:, 0:paramDim],
+            allRes[:, 0 : model.paramDim],
             delimiter=",",
         )
         np.savetxt(
@@ -155,7 +152,7 @@ def runEmceeSampling(
             + "/SimResults/"
             + str(run)
             + ".csv",
-            allRes[:, paramDim : paramDim + dataDim],
+            allRes[:, model.paramDim : model.paramDim + dataDim],
             delimiter=",",
         )
         np.savetxt(
@@ -188,16 +185,6 @@ def concatenateEmceeSamplingResults(model: Model):
     Output: <none except for stored files>
     """
 
-    # Load data, data standard deviations and model characteristics for the specified model.
-    (
-        paramDim,
-        dataDim,
-        numDataPoints,
-        centralParam,
-        data,
-        dataStdevs,
-    ) = model.dataLoader()
-
     # Count and print how many sub runs are ready to be merged.
     numExistingFiles = countEmceeSubRuns(model)
     logger.info(f"{numExistingFiles} existing files found for concatenation")
@@ -212,8 +199,8 @@ def concatenateEmceeSamplingResults(model: Model):
 
     # Create containers large enough to store all sampling information.
     overallDensityEvals = np.zeros(numSamples)
-    overallSimResults = np.zeros((numSamples, dataDim))
-    overallParams = np.zeros((numSamples, paramDim))
+    overallSimResults = np.zeros((numSamples, model.dataDim))
+    overallParams = np.zeros((numSamples, model.paramDim))
 
     densityFiles = (
         "Applications/" + model.getModelName() + "/DensityEvals/{}.csv"

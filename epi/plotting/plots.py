@@ -30,10 +30,7 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
     artificialModel = model.isArtificial()
 
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
@@ -48,7 +45,7 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
         paramStdevs = calcKernelWidth(paramChain)
 
     # plot sampled parameters in comparison to true ones
-    for dim in range(paramDim):
+    for dim in range(model.paramDim):
         evaluations = np.zeros(resolution)
         singleParamChain = np.zeros((paramChain.shape[0], 1))
         singleParamChain[:, 0] = paramChain[:, dim]
@@ -187,15 +184,6 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         delimiter=",",
     )[numBurnSamples::occurrence, :]
 
-    (
-        paramDim,
-        dataDim,
-        numDataPoints,
-        centralParam,
-        data,
-        dataStdevs,
-    ) = model.dataLoader()
-
     paramGrid = np.loadtxt(
         model.getApplicationPath() + "/Plots/paramGrid.csv",
         delimiter=",",
@@ -227,7 +215,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         delimiter=",",
     )
 
-    for dim in range(paramDim):
+    for dim in range(model.paramDim):
         plt.figure()
         plt.plot(
             paramGrid[:, dim],
@@ -249,7 +237,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         plt.legend()
         plt.show()
 
-    for dim in range(dataDim):
+    for dim in range(model.dataDim):
         plt.figure()
         plt.plot(
             dataGrid[:, dim],
@@ -444,10 +432,7 @@ def plotTest(
     # ---------------------------------------------------------------------------
     # First, we load and visualize the underlying data
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         dataStdevs,
     ) = model.dataLoader()
@@ -581,10 +566,7 @@ def plotGridResults(model: Model) -> None:
     """
 
     (
-        paramDim,
         dataDim,
-        numDataPoints,
-        centralParam,
         data,
         stdevs,
     ) = model.dataLoader()

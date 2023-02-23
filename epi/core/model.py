@@ -108,27 +108,17 @@ class Model(ABC):
 
     def dataLoader(
         self,
-    ) -> Tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray]:
         """Load the data from the data file found under the models current data path and calculate several properties of the data.
 
-        :return: The dimension of the parameter space, the dimension of the data space, the number of data points, the central parameter point, the data and the estimated optimal kernel width for each dimension of the data.
+        :return: The dimension of the data space, the data and the estimated optimal kernel width for each dimension of the data.
         """
-        paramDim = self.getCentralParam().shape[0]
-        centralParam = self.getCentralParam()
 
-        data = np.loadtxt(self.dataPath, delimiter=",")
-
-        if len(data.shape) == 1:
-            data = data.reshape((data.shape[0], 1))
-
+        data = np.loadtxt(self.dataPath, delimiter=",", ndmin=2)
         dataStdevs = calcKernelWidth(data)
-        numDataPoints, dataDim = data.shape
 
         return (
-            paramDim,
-            dataDim,
-            numDataPoints,
-            centralParam,
+            self.dataDim,
             data,
             dataStdevs,
         )
@@ -293,12 +283,10 @@ class ArtificialModelInterface(ABC):
         :rtype: Tuple[np.ndarray, np.ndarray]
         """
         trueParams = np.loadtxt(
-            "Data/" + self.getModelName() + "Params.csv", delimiter=","
+            "Data/" + self.getModelName() + "Params.csv",
+            delimiter=",",
+            ndmin=2,
         )
-
-        if len(trueParams.shape) == 1:
-            trueParams = trueParams.reshape((trueParams.shape[0], 1))
-
         paramStdevs = calcKernelWidth(trueParams)
 
         return trueParams, paramStdevs
