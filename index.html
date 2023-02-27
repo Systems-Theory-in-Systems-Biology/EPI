@@ -145,7 +145,14 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 </pre></div>
 </div>
-<p>which corresponds to a matrix with the shape <cite>nSamples x dataDim</cite>.</p>
+<p>which corresponds to a matrix with the shape <cite>nSamples x dataDim</cite>.
+The parameter dataPath defaults to <cite>Data/&lt;ModelName&gt;/&lt;ModelName&gt;Data.csv</cite>. The other parameters <cite>numRuns</cite>, <cite>numWalkers</cite>, <cite>numSteps</cite>, <cite>numProcesses</cite> have fixed defaults. The results are written to three files:</p>
+<ul class="simple">
+<li><p><cite>./Applications/&lt;ModelName&gt;/OverallParams.csv</cite></p></li>
+<li><p><cite>./Applications/&lt;ModelName&gt;/OverallSimResults.csv</cite></p></li>
+<li><p><cite>./Applications/&lt;ModelName&gt;/OverallDensityEvals.csv</cite></p></li>
+</ul>
+<p>and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Please read the documentation for our <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a>.</p>

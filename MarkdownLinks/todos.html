@@ -86,7 +86,6 @@
 <section id="redesign">
 <h2>Redesign<a class="headerlink" href="#redesign" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Implement paramDim and dataDim attribute</p></li>
 <li><p>Change from data “file” flow to data flow?</p></li>
 </ul>
 </section>
@@ -105,8 +104,6 @@
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> <a class="reference external" href="https://github.com/dependabot/dependabot-core/issues/1912">Dependabot badge</a></p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Deactivate todos in conf.py</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Remove unfinished documentation and references to unfinished code, e.g. temperature model fixed params</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Document inference parameters</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Explain data (file) flow!</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> How to run jupyternotebook with poetry in vs code and in terminal</p></li>
 </ul>
 </section>
@@ -114,7 +111,6 @@
 <h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading"></a></h2>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Deployment to pypi</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Check pyproject toml project urls</p></li>
 </ul>
 </section>
 <section id="sbml">
@@ -136,13 +132,14 @@
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.plot()</span></code> that allows the user to visualize his results</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> create single function <code class="docutils literal notranslate"><span class="pre">Model.test()</span></code> that allows the user to test the inversion for his model on artificial data</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Use save, load from numpy and not savetxt, loadtxt</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Or maybe better: use hdf5 backend for intermediate results, and inference takes data array as input and returns the three arrays which are currently saved as files</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Allow to use the library with own data flow without writing and loading all the files. Return everything we save to files at the moment. So give more control to the user and rely less on the file system and default paths.</p></li>
 </ul>
 </section>
 <section id="outlook">
 <h2>Outlook<a class="headerlink" href="#outlook" title="Permalink to this heading"></a></h2>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Testing on other systems than linux on github: Replace apt install and then also test on windows and mac machine using github test matrix.</p></li>
-<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Allow to use the library with own data flow without writing and loading all the files. Return everything we save to files at the moment. So give more control to the user and rely less on the file system and default paths.</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> More / Systematic profiling with scalene</p></li>
 </ul>
 </section>
