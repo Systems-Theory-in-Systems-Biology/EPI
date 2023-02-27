@@ -38,12 +38,12 @@ class CppPlant(Model, ArtificialModelInterface):
         for i in range(trueParamSample.shape[0]):
             artificialData[i, :] = self.forward(trueParamSample[i, :])
         np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
+            f"Data/{self.name}Data.csv",
             artificialData,
             delimiter=",",
         )
         np.savetxt(
-            f"Data/{self.getModelName()}Params.csv",
+            f"Data/{self.name}Params.csv",
             trueParamSample,
             delimiter=",",
         )

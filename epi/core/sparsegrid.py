@@ -411,7 +411,7 @@ def sparseGridInference(
     # Save all sparse grid evaluation results in separate .csv files that also indicate the sparse grid level.
     np.savetxt(
         "Applications/"
-        + model.getModelName()
+        + model.name
         + "/Params/SG"
         + str(numLevels)
         + "Levels.csv",
@@ -420,7 +420,7 @@ def sparseGridInference(
     )
     np.savetxt(
         "Applications/"
-        + model.getModelName()
+        + model.name
         + "/SimResults/SG"
         + str(numLevels)
         + "Levels.csv",
@@ -429,7 +429,7 @@ def sparseGridInference(
     )
     np.savetxt(
         "Applications/"
-        + model.getModelName()
+        + model.name
         + "/DensityEvals/SG"
         + str(numLevels)
         + "Levels.csv",

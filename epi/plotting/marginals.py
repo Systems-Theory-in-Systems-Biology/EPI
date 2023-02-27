@@ -177,7 +177,7 @@ def calcParamMarginals(
     if artificialModel:
         np.savetxt(
             "Applications/"
-            + model.getModelName()
+            + model.name
             + "/Plots/trueParamMarginals.csv",
             trueParamMarginals,
             delimiter=",",

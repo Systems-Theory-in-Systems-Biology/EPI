@@ -48,7 +48,7 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
+            f"Data/{self.name}Data.csv",
             artificialData,
             delimiter=",",
         )

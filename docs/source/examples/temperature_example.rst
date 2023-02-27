@@ -9,7 +9,7 @@ ____________
 
 * Additional fixed parameters: The model includes fixed parameters :code:`self.lowT=30.0` and :code:`self.highT=30.0`.
   These fixed parameters are passed to the forward function separately. You can create models with different parameters by
-  creating several model objects. However you should think about overwriting the method :py:meth:`epi.core.model.Model.getModelName()`
+  creating several model objects. However you should think about overwriting the method :py:meth:`epi.core.model.Model.name`
   to include the fixed parameters of the model object. Else your results for different fixed parameter sets will be mixed.
 
 .. TODO::

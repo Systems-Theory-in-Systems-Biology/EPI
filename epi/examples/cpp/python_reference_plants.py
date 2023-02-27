@@ -40,12 +40,12 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
+            f"Data/{self.name}Data.csv",
             artificialData,
             delimiter=",",
         )
         np.savetxt(
-            f"Data/{self.getModelName()}Params.csv",
+            f"Data/{self.name}Params.csv",
             trueParamSample,
             delimiter=",",
         )
@@ -103,12 +103,12 @@ class ExternalPlant(Model, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
+            f"Data/{self.name}Data.csv",
             artificialData,
             delimiter=",",
         )
         np.savetxt(
-            f"Data/{self.getModelName()}Params.csv",
+            f"Data/{self.name}Params.csv",
             trueParamSample,
             delimiter=",",
         )

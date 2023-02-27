@@ -43,7 +43,7 @@ class Stock(JaxModel, VisualizationModelInterface):
         :type ticker: str, optional
         """
         super().__init__(delete, create)
-        self.dataPath = f"Data/{self.getModelName()}/{ticker}Data.csv"
+        self.dataPath = f"Data/{self.name}/{ticker}Data.csv"
 
         # Check if data for the given ticker exists
         if not os.path.isfile(self.dataPath):
@@ -148,14 +148,14 @@ class Stock(JaxModel, VisualizationModelInterface):
             tickerListName = tickerListPath.split("/")[-1].split(".")[0]
 
         # save all time points except for the first
-        os.makedirs(f"Data/{self.getModelName()}", exist_ok=True)
+        os.makedirs(f"Data/{self.name}", exist_ok=True)
         np.savetxt(
-            f"Data/{self.getModelName()}/{tickerListName}Data.csv",
+            f"Data/{self.name}/{tickerListName}Data.csv",
             stockData.T,
             delimiter=",",
         )
         np.savetxt(
-            f"Data/{self.getModelName()}/{tickerListName}IDs.csv",
+            f"Data/{self.name}/{tickerListName}IDs.csv",
             stockIDs,
             delimiter=",",
             fmt="% s",
@@ -258,13 +258,13 @@ class StockArtificial(Stock, ArtificialModelInterface):
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
         np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
+            f"Data/{self.name}Data.csv",
             artificialData,
             delimiter=",",
         )
 
         np.savetxt(
-            f"Data/{self.getModelName()}Params.csv",
+            f"Data/{self.name}Params.csv",
             trueParamSample,
             delimiter=",",
         )

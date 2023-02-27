@@ -199,7 +199,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         trueParams, paramStdevs = model.paramLoader()
         trueParamMarginals = np.loadtxt(
             "Applications/"
-            + model.getModelName()
+            + model.name
             + "/Plots/trueParamMarginals.csv",
             delimiter=",",
         )
@@ -285,13 +285,13 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
 
     # load underlying data
     trueData = np.loadtxt(
-        "Data/" + model.getModelName() + "Data.csv", delimiter=","
+        "Data/" + model.name + "Data.csv", delimiter=","
     )
 
     # if available, load also the true parameter values
     if artificialModel:
         trueParams = np.loadtxt(
-            "Data/" + model.getModelName() + "Params.csv", delimiter=","
+            "Data/" + model.name + "Params.csv", delimiter=","
         )
 
     # compute the upper and lower bound of each data dimension
@@ -341,7 +341,7 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
         )
         plt.savefig(
             "Applications/"
-            + model.getModelName()
+            + model.name
             + "/SpiderWebs/trueParams.png",
             dpi=dpi,
         )
@@ -598,7 +598,7 @@ def plotGridResults(model: Model) -> None:
     trueDensity = np.zeros(resolution)
     trafoDensity = np.zeros(resolution)
 
-    if model.getModelName() == "TemperatureArtificial":
+    if model.name == "TemperatureArtificial":
         simulatedTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
@@ -614,7 +614,7 @@ def plotGridResults(model: Model) -> None:
                 data, np.array([temperaturesGrid[i]]), stdevs
             )
 
-    elif model.getModelName() == "Temperature":
+    elif model.name == "Temperature":
         measuredTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
@@ -671,7 +671,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/TrueLatSample.svg",
+        "Images/" + model.name + "/TrueLatSample.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -690,7 +690,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/model.getModelName()/TrueLatKDE.svg", bbox_inches="tight"
+        "Images/model.name/TrueLatKDE.svg", bbox_inches="tight"
     )
     plt.show()
 
@@ -718,7 +718,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/" + name + "TempSample.svg",
+        "Images/" + model.name + "/" + name + "TempSample.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -737,7 +737,7 @@ def plotGridResults(model: Model) -> None:
     plt.legend()
 
     plt.savefig(
-        "Images/" + model.getModelName() + "/" + name + "TempKDE.svg",
+        "Images/" + model.name + "/" + name + "TempKDE.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -763,7 +763,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/TrueLatVsITAKDE.svg",
+        "Images/" + model.name + "/TrueLatVsITAKDE.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -825,7 +825,7 @@ def plotGridResults(model: Model) -> None:
         )
         plt.show()
 
-    if model.getModelName() == "Temperature":
+    if model.name == "Temperature":
         # plot ITA inferred latitude density alone
         plt.figure(figsize=(6, 4))
         plt.axis([-0.05, np.pi / 2.0 + 0.05, 0.0, 1.6])

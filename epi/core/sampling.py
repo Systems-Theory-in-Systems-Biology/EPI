@@ -7,8 +7,10 @@ import emcee
 import numpy as np
 
 from epi import logger
+from epi.core.kde import calcKernelWidth
 from epi.core.model import Model
 from epi.core.transformations import evalLogTransformedDensity
+from epic.core.result_manager import ResultManager
 
 NUM_RUNS = 2
 NUM_WALKERS = 10
@@ -37,16 +39,96 @@ def countEmceeSubRuns(model: Model) -> int:
     return numExistingFiles
 
 
+def runEmceeOnce(
+    model: Model,
+    dataDim: int,
+    data: np.ndarray,
+    dataStdevs: np.ndarray,
+    slice: np.ndarray,
+    walkerInitParams: np.ndarray,
+    numWalkers: int,
+    numSteps: int,
+    numProcesses: int,
+) -> np.ndarray:
+    """Run the emcee particle swarm sampler once.
+
+    :param model: The model which will be sampled
+    :param dataDim: (dimension of the data)
+    :param data: (data)
+    :param dataStdevs: (standard deviations of the data)
+    :param slice: (slice of the parameter space which will be sampled)
+    :param walkerInitParams: (initial parameter values for the walkers)
+    :param numWalkers: (number of particles in the particle swarm sampler)
+    :param numSteps: (number of samples each particle performs before storing the sub run)
+    :param numProcesses: (number of parallel threads)
+    :return: (samples from the transformed parameter density)
+    """
+    # Create a pool of worker processes.
+    pool = Pool(processes=numProcesses)
+    # define a custom move policy
+    movePolicy = [
+        (emcee.moves.WalkMove(), 0.1),
+        (emcee.moves.StretchMove(), 0.1),
+        (
+            emcee.moves.GaussianMove(
+                0.00001, mode="sequential", factor=None
+            ),
+            0.8,
+        ),
+    ]
+    # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
+    samplingDim = slice.shape[0]
+
+    # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
+    sampler = emcee.EnsembleSampler(
+        numWalkers,
+        samplingDim,
+        evalLogTransformedDensity,
+        pool=pool,
+        moves=movePolicy,
+        args=[model, data, dataStdevs, slice],
+    )
+    # Extract the final walker position and close the pool of worker processes.
+    finalPos, _, _, _ = sampler.run_mcmc(
+        walkerInitParams, numSteps, tune=True, progress=True
+    )
+    pool.close()
+    pool.join()
+
+    # TODO: Keep as 3d array?
+    # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
+    samplerBlob = sampler.get_blobs()
+    allRes = samplerBlob.reshape(numWalkers * numSteps, samplingDim + dataDim+1)
+
+    logger.info(
+        f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
+    )
+    try:
+        corrTimes = sampler.get_autocorr_time()
+        logger.info(f"autocorrelation time: {corrTimes[0]}")
+    except emcee.autocorr.AutocorrError as e:
+        logger.warning(
+            "The autocorrelation time could not be calculate reliable"
+        )
+
+    return allRes, finalPos
+
+    # Return the samples.
+    # return sampler.get_chain(discard=0, thin=1, flat=True)
+
+
 def runEmceeSampling(
     model: Model,
+    data: np.ndarray,
     slice: np.ndarray,
+    result_manager: ResultManager,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
 ) -> None:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
-        Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
+       Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
     :param model: The model which will be sampled
     :param numRuns: (number of stored sub runs)
@@ -56,16 +138,10 @@ def runEmceeSampling(
     :return: None, except for stored files
     """
 
-    # Load data, data standard deviations and model characteristics for the specified model.
-    (
-        dataDim,
-        data,
-        dataStdevs,
-    ) = model.dataLoader()
-
+    dataDim = model.dataDim
+    dataStdevs = calcKernelWidth(data)
     samplingDim = slice.shape[0]
-
-    centralParam = model.getCentralParam()
+    centralParam = model.centralParam
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
     walkerInitParams = centralParam[slice] + 0.002 * (
@@ -73,7 +149,7 @@ def runEmceeSampling(
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = countEmceeSubRuns(model)  # TODO anpassen?
+    numExistingFiles = countEmceeSubRuns(model)
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
@@ -81,9 +157,7 @@ def runEmceeSampling(
         logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = (
-            model.getApplicationPath() + "/currentPos.csv"
-        )  # TODO anpassen
+        positionPath = model.getApplicationPath() + "/currentPos.csv"
         if path.isfile(positionPath):
             walkerInitParams = np.loadtxt(
                 positionPath,
@@ -94,94 +168,20 @@ def runEmceeSampling(
                 f"Continue sampling from saved sampler position in {positionPath}"
             )
 
-        else:
-            logger.info("Start sampling from start")
-
-        # Create a pool of worker processes.
-        pool = Pool(processes=numProcesses)
-
-        # define a custom move policy
-        movePolicy = [
-            (emcee.moves.WalkMove(), 0.1),
-            (emcee.moves.StretchMove(), 0.1),
-            (
-                emcee.moves.GaussianMove(
-                    0.00001, mode="sequential", factor=None
-                ),
-                0.8,
-            ),
-        ]
-        # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
-
-        # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
-        sampler = emcee.EnsembleSampler(
+        # Run the sampler.
+        allRes, finalWalkerPos = runEmceeOnce(
+            model,
+            dataDim,
+            data,
+            dataStdevs,
+            slice,
+            walkerInitParams,
             numWalkers,
-            samplingDim,
-            evalLogTransformedDensity,
-            pool=pool,
-            moves=movePolicy,
-            args=[model, data, dataStdevs, slice],
+            numSteps,
+            numProcesses,
         )
 
-        # Extract the final walker position and close the pool of worker processes.
-        finalPos, _, _, _ = sampler.run_mcmc(
-            walkerInitParams, numSteps, tune=True, progress=True
-        )
-        pool.close()
-        pool.join()
-
-        # Save the current walker positions as initial values for the next run.
-        np.savetxt(
-            positionPath,
-            finalPos,
-            delimiter=",",
-        )
-
-        # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
-        samplerBlob = sampler.get_blobs()
-
-        # Create a large container for all sampling results (sampled parameters, corresponding simulation results and parameter densities) and fill it using the emcee blob option.
-        allRes = samplerBlob.reshape(numWalkers * numSteps, -1)
-
-        # Save all sampling results in .csv files. # TODO file names anpassen
-        np.savetxt(
-            "Applications/"
-            + model.getModelName()
-            + "/Params/"
-            + str(run)
-            + ".csv",
-            allRes[:, 0:samplingDim],
-            delimiter=",",
-        )
-        np.savetxt(
-            "Applications/"
-            + model.getModelName()
-            + "/SimResults/"
-            + str(run)
-            + ".csv",
-            allRes[:, samplingDim : samplingDim + dataDim],
-            delimiter=",",
-        )
-        np.savetxt(
-            "Applications/"
-            + model.getModelName()
-            + "/DensityEvals/"
-            + str(run)
-            + ".csv",
-            allRes[:, -1],
-            delimiter=",",
-        )
-
-        logger.info(
-            f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
-        )
-        try:
-            corrTimes = sampler.get_autocorr_time()
-            logger.info(f"autocorrelation time: {corrTimes[0]}")
-        except emcee.autocorr.AutocorrError as e:
-            logger.warning(
-                "The autocorrelation time could not be calculate reliable"
-            )
+        result_manager.save_run(allRes, finalWalkerPos)
 
 
 def concatenateEmceeSamplingResults(model: Model):
@@ -211,13 +211,9 @@ def concatenateEmceeSamplingResults(model: Model):
     overallSimResults = np.zeros((numSamples, model.dataDim))
     overallParams = np.zeros((numSamples, model.paramDim))
 
-    densityFiles = (
-        "Applications/" + model.getModelName() + "/DensityEvals/{}.csv"
-    )
-    simResultsFiles = (
-        "Applications/" + model.getModelName() + "/SimResults/{}.csv"
-    )
-    paramFiles = "Applications/" + model.getModelName() + "/Params/{}.csv"
+    densityFiles = "Applications/" + model.name + "/DensityEvals/{}.csv"
+    simResultsFiles = "Applications/" + model.name + "/SimResults/{}.csv"
+    paramFiles = "Applications/" + model.name + "/Params/{}.csv"
     # Loop over all sub runs, load the respective sample files and store them at their respective places in the overall containers.
     for i in range(numExistingFiles):
         overallDensityEvals[
@@ -258,6 +254,8 @@ def concatenateEmceeSamplingResults(model: Model):
         delimiter=",",
     )
 
+    return overallParams, overallSimResults, overallDensityEvals
+
 
 def calcWalkerAcceptance(model: Model, numWalkers: int, numBurnSamples: int):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
@@ -296,52 +294,6 @@ def calcWalkerAcceptance(model: Model, numWalkers: int, numBurnSamples: int):
     acceptanceRatios = numAcceptedSteps / numSteps
 
     return acceptanceRatios
-
-
-def inference(
-    model: Model,
-    dataPath: str = None,
-    numRuns: int = NUM_RUNS,
-    numWalkers: int = NUM_WALKERS,
-    numSteps: int = NUM_STEPS,
-    numProcesses: int = NUM_PROCESSES,
-    slices: list[np.ndarray] = None,
-):
-    """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
-
-
-    :param model: The model describing the mapping from parameters to data.
-    :type model: Model
-    :param dataPath: path to the data relative to the current working directory.
-                      If None, the default path defined in the Model class initializer is used, defaults to None
-    :type dataPath: str, optional
-    :param numRuns: Number of independent runs, defaults to NUM_RUNS
-    :type numRuns: int, optional
-    :param numWalkers: Number of walkers for each run, influencing each other, defaults to NUM_WALKERS
-    :type numWalkers: int, optional
-    :param numSteps: Number of steps each walker does in each run, defaults to NUM_STEPS
-    :type numSteps: int, optional
-    :param numProcesses: number of processes to use, defaults to NUM_PROCESSES
-    :type numProcesses: int, optional
-    """
-
-    if dataPath is not None:
-        model.setDataPath(dataPath)
-    else:
-        logger.warning(
-            f"No data path provided for this inference call. Using the data path of the model: {model.dataPath}"
-        )
-
-    # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
-    if slices is None:
-        slice = np.arange(model.getCentralParam().shape[0])
-        slices = [slice]
-
-    for slice in slices:
-        runEmceeSampling(
-            model, slice, numRuns, numWalkers, numSteps, numProcesses
-        )
-        concatenateEmceeSamplingResults(model)
 
 
 # TODO: Benjamin mach mal!
