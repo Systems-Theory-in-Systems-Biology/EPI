@@ -65,6 +65,7 @@ def calcEmceeSimResultsMarginals(
     simResults = np.loadtxt(
         model.getApplicationPath() + "/OverallSimResults.csv",
         delimiter=",",
+        ndmin=2,
     )[numBurnSamples::occurrence, :]
 
     # Load data, data standard deviations and model characteristics for the specified model.
@@ -122,6 +123,7 @@ def calcParamMarginals(
     paramChain = np.loadtxt(
         model.getApplicationPath() + "/OverallParams.csv",
         delimiter=",",
+        ndmin=2,
     )[numBurnSamples::occurrence, :]
 
     paramDim = model.paramDim

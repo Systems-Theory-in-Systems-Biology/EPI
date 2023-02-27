@@ -191,7 +191,9 @@ def concatenateEmceeSamplingResults(model: Model):
 
     # Load one example file and use it to extract how many samples are stored per file.
     numSamplesPerFile = np.loadtxt(
-        model.getApplicationPath() + "/Params/0.csv", delimiter=","
+        model.getApplicationPath() + "/Params/0.csv",
+        delimiter=",",
+        ndmin=2,
     ).shape[0]
 
     # The overall number of sampled is the number of sub runs multiplied with the number of samples per file.
@@ -265,6 +267,7 @@ def calcWalkerAcceptance(model: Model, numWalkers: int, numBurnSamples: int):
     params = np.loadtxt(
         model.getApplicationPath() + "/OverallParams.csv",
         delimiter=",",
+        ndmin=2,
     )[numBurnSamples:, :]
 
     # calculate the number of steps each walker walked

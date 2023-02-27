@@ -142,10 +142,12 @@ class Model(ABC):
         simResults = np.loadtxt(
             self.getApplicationPath() + "/OverallSimResults.csv",
             delimiter=",",
+            ndmin=2,
         )[numBurnSamples::occurrence, :]
         paramChain = np.loadtxt(
             self.getApplicationPath() + "/OverallParams.csv",
             delimiter=",",
+            ndmin=2,
         )[numBurnSamples::occurrence, :]
         return densityEvals, simResults, paramChain
 

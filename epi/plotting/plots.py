@@ -14,6 +14,8 @@ colorYApprox = np.array([132.0, 143.0, 162.0]) / 255.0
 colorExtra1 = np.array([45.0, 49.0, 66.0]) / 255.0
 colorExtra2 = np.array([255.0, 218.0, 174.0]) / 255.0
 
+# TODO: Fix np.loadtxt(..., ndmin=2) in all functions
+
 
 def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
     """Plot sampling results in comparison to true results
