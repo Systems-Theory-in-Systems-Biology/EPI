@@ -37,7 +37,7 @@ def evalLogTransformedDensity(
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
-        return -np.inf, np.zeros(fullParam.shape[0] + data.shape[1] + 1)
+        return -np.inf, np.zeros(model.paramDim + model.dataDim + 1)
 
     # If the parameter is within the valid ranges...
     else:

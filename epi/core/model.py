@@ -1,3 +1,4 @@
+import inspect
 import os
 import shutil
 from abc import ABC, abstractmethod
@@ -19,6 +20,21 @@ class Model(ABC):
 
     It contains three abstract methods which need to be implemented by subclasses
     """
+
+    paramDim = None
+    dataDim = None
+
+    def __init_subclass__(cls, **kwargs):
+        if not inspect.isabstract(cls):
+            for required in (
+                "paramDim",
+                "dataDim",
+            ):
+                if not getattr(cls, required):
+                    raise AttributeError(
+                        f"Can't instantiate abstract class {cls.__name__} without {required} attribute defined"
+                    )
+        return cls
 
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         if delete:
@@ -92,27 +108,17 @@ class Model(ABC):
 
     def dataLoader(
         self,
-    ) -> Tuple[int, int, int, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray]:
         """Load the data from the data file found under the models current data path and calculate several properties of the data.
 
-        :return: The dimension of the parameter space, the dimension of the data space, the number of data points, the central parameter point, the data and the estimated optimal kernel width for each dimension of the data.
+        :return: The dimension of the data space, the data and the estimated optimal kernel width for each dimension of the data.
         """
-        paramDim = self.getCentralParam().shape[0]
-        centralParam = self.getCentralParam()
 
-        data = np.loadtxt(self.dataPath, delimiter=",")
-
-        if len(data.shape) == 1:
-            data = data.reshape((data.shape[0], 1))
-
+        data = np.loadtxt(self.dataPath, delimiter=",", ndmin=2)
         dataStdevs = calcKernelWidth(data)
-        numDataPoints, dataDim = data.shape
 
         return (
-            paramDim,
-            dataDim,
-            numDataPoints,
-            centralParam,
+            self.dataDim,
             data,
             dataStdevs,
         )
@@ -136,10 +142,12 @@ class Model(ABC):
         simResults = np.loadtxt(
             self.getApplicationPath() + "/OverallSimResults.csv",
             delimiter=",",
+            ndmin=2,
         )[numBurnSamples::occurrence, :]
         paramChain = np.loadtxt(
             self.getApplicationPath() + "/OverallParams.csv",
             delimiter=",",
+            ndmin=2,
         )[numBurnSamples::occurrence, :]
         return densityEvals, simResults, paramChain
 
@@ -277,12 +285,10 @@ class ArtificialModelInterface(ABC):
         :rtype: Tuple[np.ndarray, np.ndarray]
         """
         trueParams = np.loadtxt(
-            "Data/" + self.getModelName() + "Params.csv", delimiter=","
+            "Data/" + self.getModelName() + "Params.csv",
+            delimiter=",",
+            ndmin=2,
         )
-
-        if len(trueParams.shape) == 1:
-            trueParams = trueParams.reshape((trueParams.shape[0], 1))
-
         paramStdevs = calcKernelWidth(trueParams)
 
         return trueParams, paramStdevs
@@ -377,7 +383,7 @@ class JaxModel(Model):
         type(self).forward = partial(JaxModel.forward_method, self)
 
     def __init_subclass__(cls, **kwargs):
-        return autodiff(_cls=cls)
+        return autodiff(super().__init_subclass__(**kwargs))
 
     @classmethod
     def initFwAndBw(cls):

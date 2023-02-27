@@ -14,6 +14,9 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
     Data2: Sciarid :P
     """
 
+    paramDim = 2
+    dataDim = 3
+
     @classmethod
     def forward(cls, param):
         return jnp.array(
@@ -75,6 +78,9 @@ class ExternalPlant(Model, ArtificialModelInterface):
     Data1: Health [0,1], to much water is not good, too much sun is not good
     Data2: Trauerfliegen :P
     """
+
+    paramDim = 2
+    dataDim = 3
 
     def forward(self, param):
         return fw(param)

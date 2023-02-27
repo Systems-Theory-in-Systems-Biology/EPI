@@ -16,19 +16,22 @@ We support SBML ode models and user provided models.
 Installation
 ------------
 
-The package is available on pypi and can be installed with:
+The package is no yet available on pypi.
+..  and can be installed with: 
 
-.. code-block:: bash
+.. .. code-block:: bash
    
-   pip install epi
+..    pip install epi
 
-You can also build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
+You can build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
 
 ------------
 How to start
 ------------
 
 | Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
+| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getCentralParam`.
+| The last requirement is to define the data and parameter Dimension, dataDim and paramDim.
 
 .. code-block:: python
    
@@ -38,6 +41,10 @@ How to start
    from epi.core.model import Model
 
    class MyModel(Model):
+
+      paramDim = N # The dimension of a parameter point
+      dataDim = M # The dimension of a data point
+
       def forward(self, param):
          return jnp.array(...)
 
@@ -73,6 +80,13 @@ The file :file:`my_data.csv` has to contain the data in csv format with :code:`s
    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
 which corresponds to a matrix with the shape `nSamples x dataDim`.
+The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+
+* `./Applications/<ModelName>/OverallParams.csv`
+* `./Applications/<ModelName>/OverallSimResults.csv`
+* `./Applications/<ModelName>/OverallDensityEvals.csv`
+
+and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
 
 .. note::
    

@@ -11,6 +11,10 @@ from epi.core.model import ArtificialModelInterface, Model
 
 
 class Temperature(Model):
+
+    paramDim = 1
+    dataDim = 1
+
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         super().__init__(delete, create)
 
@@ -39,8 +43,7 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
         paramPath = importlib.resources.path(
             "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )
-        rawTrueParamSample = np.loadtxt(paramPath, delimiter=",")
-        trueParamSample = rawTrueParamSample[..., np.newaxis]
+        trueParamSample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
 
         artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
 
@@ -51,20 +54,12 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
         )
 
 
-class TemperatureWithFixedParams(Model):
+class TemperatureWithFixedParams(Temperature):
     def __init__(self, delete: bool = False, create: bool = True) -> None:
         super().__init__(delete, create)
         self.lowT = -30.0
         self.highT = 30.0
 
-        self.dataPath = importlib.resources.path(
-            "epi.examples.temperature", "TemperatureData.csv"
-        )
-
-    # TODO: Provide a class which uses functool.partial for forward function and puts self.arg in it?
-    # Of course to use jitting. partial(jit, static_argnums=[0,2,])
-    # Maybe not the temperature model because it is used in the tutorial ...
-    # @partial(jit, static_argnums=0) # this slows down the code?!
     def forward(self, param):
         return self.calcForward(param, self.highT, self.lowT)
 
@@ -72,16 +67,7 @@ class TemperatureWithFixedParams(Model):
         res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
         return res
 
-    def __hash__(self):
-        return hash((self.lowT, self.highT))
-
     def jacobian(self, param):
         return jnp.array(
             [(self.highT - self.lowT) * jnp.sin(jnp.abs(param[0]))]
         )
-
-    def getCentralParam(self):
-        return np.array([np.pi / 4.0])
-
-    def getParamSamplingLimits(self):
-        return np.array([[0, np.pi / 2]])

@@ -43,7 +43,9 @@ pytest = "^7.2.0"
 pytest-datafiles = "^2.0.1"
 pyproject-flake8 = "^6.0.0"
 sphinx-copybutton = "^0.5.1"
-sphinx = "^6.1.3"
+sphinx = "^5"
+sphinx-rtd-theme = "^1.2.0"
+myst-parser = "^0.18.1"
 coverage = "^7.0.5"
 sphinx-togglebutton = "^0.3.2"
 ipykernel = "^6.21.2"
@@ -75,3 +77,6 @@ addopts = [
     "--ignore=tests/test_sbml_model.py",
 ]
 pythonpath = ["epi"]
+filterwarnings = [
+    'ignore:Matplotlib is currently using template, which is a non-GUI backend, so cannot show the figure',
+]

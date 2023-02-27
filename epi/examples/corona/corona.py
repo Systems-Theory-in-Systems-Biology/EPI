@@ -14,6 +14,10 @@ from epi.core.model import (
 
 
 class Corona(JaxModel, VisualizationModelInterface):
+
+    paramDim = 3
+    dataDim = 4
+
     def __init__(self, delete=False, create=False):
         super().__init__(delete, create)
         self.dataPath = importlib.resources.path(

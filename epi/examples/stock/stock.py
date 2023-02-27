@@ -30,8 +30,8 @@ TICKERS = [
 class Stock(JaxModel, VisualizationModelInterface):
     """Model simulating stock data."""
 
-    DataDim = 19
-    ParamDim = 6
+    dataDim = 19
+    paramDim = 6
 
     def __init__(
         self, delete: bool = False, create: bool = True, ticker="ETF50"
@@ -54,13 +54,13 @@ class Stock(JaxModel, VisualizationModelInterface):
             self.downloadData(tickerPath)
 
     def getDataBounds(self):
-        return np.array([[-7.5, 7.5] * self.DataDim])
+        return np.array([[-7.5, 7.5] * self.dataDim])
 
     def getParamBounds(self):
-        return np.array([[-2.0, 2.0] * self.ParamDim])
+        return np.array([[-2.0, 2.0] * self.paramDim])
 
     def getParamSamplingLimits(self):
-        return np.array([[-10.0, 10.0] * self.ParamDim])
+        return np.array([[-10.0, 10.0] * self.paramDim])
 
     def getCentralParam(self):
         return np.array(
@@ -251,7 +251,7 @@ class StockArtificial(Stock, ArtificialModelInterface):
         )
         stdevs = np.array([0.005, 0.01, 0.05, 0.005, 0.01, 0.05])
 
-        trueParamSample = np.random.randn(numSamples, self.ParamDim)
+        trueParamSample = np.random.randn(numSamples, self.paramDim)
         trueParamSample *= stdevs
         trueParamSample += mean
 
@@ -270,4 +270,4 @@ class StockArtificial(Stock, ArtificialModelInterface):
         )
 
     def getParamSamplingLimits(self):
-        return np.array([[-1.0, 3.0] * self.ParamDim])
+        return np.array([[-1.0, 3.0] * self.paramDim])
