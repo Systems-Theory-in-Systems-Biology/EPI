@@ -10,7 +10,11 @@ from epi.core.model import Model
 
 
 def evalLogTransformedDensity(
-    param: np.ndarray, model: Model, data: np.ndarray, dataStdevs: np.ndarray
+    param: np.ndarray,
+    model: Model,
+    data: np.ndarray,
+    dataStdevs: np.ndarray,
+    slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.
         This function is intended to be used with the emcee sampler and can be implemented more efficiently at some points.
@@ -24,8 +28,12 @@ def evalLogTransformedDensity(
     """
     limits = model.getParamSamplingLimits()
 
+    # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
+    fullParam = model.getCentralParam()
+    fullParam[slice] = param
+
     # Check if the tried parameter is within the just-defined bounds and return the lowest possible log density if not.
-    if np.any((param < limits[:, 0]) | (param > limits[:, 1])):
+    if np.any((param < limits[slice, 0]) | (param > limits[slice, 1])):
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
@@ -34,7 +42,7 @@ def evalLogTransformedDensity(
     # If the parameter is within the valid ranges...
     else:
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        simRes, jac = model.valjac(param)
+        simRes, jac = model.valjac(fullParam)
 
         # Evaluate the data density in the simulation result.
         densityEvaluation = evalKDEGauss(data, simRes, dataStdevs)

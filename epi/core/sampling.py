@@ -39,6 +39,7 @@ def countEmceeSubRuns(model: Model) -> int:
 
 def runEmceeSampling(
     model: Model,
+    slice: np.ndarray,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
@@ -62,13 +63,15 @@ def runEmceeSampling(
         dataStdevs,
     ) = model.dataLoader()
 
+    samplingDim = slice.shape[0]
+
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    walkerInitParams = model.getCentralParam() + 0.002 * (
-        np.random.rand(numWalkers, model.paramDim) - 0.5
+    walkerInitParams = centralParam[slice] + 0.002 * (
+        np.random.rand(numWalkers, samplingDim) - 0.5
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = countEmceeSubRuns(model)
+    numExistingFiles = countEmceeSubRuns(model)  # TODO anpassen?
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
@@ -76,7 +79,9 @@ def runEmceeSampling(
         logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = model.getApplicationPath() + "/currentPos.csv"
+        positionPath = (
+            model.getApplicationPath() + "/currentPos.csv"
+        )  # TODO anpassen
         if path.isfile(positionPath):
             walkerInitParams = np.loadtxt(
                 positionPath,
@@ -109,11 +114,11 @@ def runEmceeSampling(
         # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
         sampler = emcee.EnsembleSampler(
             numWalkers,
-            model.paramDim,
+            samplingDim,
             evalLogTransformedDensity,
             pool=pool,
             moves=movePolicy,
-            args=[model, data, dataStdevs],
+            args=[model, data, dataStdevs, slice],
         )
 
         # Extract the final walker position and close the pool of worker processes.
@@ -136,14 +141,14 @@ def runEmceeSampling(
         # Create a large container for all sampling results (sampled parameters, corresponding simulation results and parameter densities) and fill it using the emcee blob option.
         allRes = samplerBlob.reshape(numWalkers * numSteps, -1)
 
-        # Save all sampling results in .csv files.
+        # Save all sampling results in .csv files. # TODO file names anpassen
         np.savetxt(
             "Applications/"
             + model.getModelName()
             + "/Params/"
             + str(run)
             + ".csv",
-            allRes[:, 0 : model.paramDim],
+            allRes[:, 0:samplingDim],
             delimiter=",",
         )
         np.savetxt(
@@ -152,7 +157,7 @@ def runEmceeSampling(
             + "/SimResults/"
             + str(run)
             + ".csv",
-            allRes[:, model.paramDim : model.paramDim + dataDim],
+            allRes[:, samplingDim : samplingDim + dataDim],
             delimiter=",",
         )
         np.savetxt(
@@ -298,6 +303,7 @@ def inference(
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
+    slices: list[np.ndarray] = None,
 ):
     """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
@@ -324,5 +330,34 @@ def inference(
             f"No data path provided for this inference call. Using the data path of the model: {model.dataPath}"
         )
 
-    runEmceeSampling(model, numRuns, numWalkers, numSteps, numProcesses)
-    concatenateEmceeSamplingResults(model)
+    # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
+    if slices is None:
+        slice = np.arange(model.getCentralParam().shape[0])
+        slices = [slice]
+
+    for slice in slices:
+        runEmceeSampling(
+            model, slice, numRuns, numWalkers, numSteps, numProcesses
+        )
+        concatenateEmceeSamplingResults(model)
+
+
+# TODO: Benjamin mach mal!
+# Dependeny matrix definieren
+# Cis beliebig aber marginals nicht 0 -> central param als start wählen
+# Ergebnisse müssen für verschiedene Marginals gespeichert werden z.b. Q1, Q2
+
+# Defininiere param abhängig in blocken durch slices
+# E.g.: s1 = [0,1,2], s2 = [3], s4 = [4,5]
+# -> slices = [s1,s2,s3] oder als np array. einzelne slices müssen np. arrays sein für np indexierung
+# Alles was an emcee geht muss reduzierte dimension haben
+# Walker init, paramdim, ?
+# Und am wichtigsten: evalLogTransformedDensity braucht slice (+default value) parameter
+# evalLogTransformedDensity bekommt evtl. reduzierte param "version" und wir müssen vollen vektor zusammen aus centralParam
+# rekonstruieren
+
+# Inference takes slices
+# parameter sampling and sampling takes one slice
+# other functions have to be also adapted because of all the file names
+
+# TODO generell: inference: gitter vs samplingbasiert: nutzer auswählen lassen
