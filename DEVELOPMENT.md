@@ -81,6 +81,13 @@ Here are the most important infos on how to maintain this repository.
   coverage html
   ```
 
+<!--  TODO:
+- **Profiling with scalene**:
+
+  You can profile epi with scalene (or gprofile) using the commands
+
+   -->
+
 <!-- TODO: Add a docker development environment -->
 <!-- - **Working with docker**:
 

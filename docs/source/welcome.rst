@@ -80,6 +80,13 @@ The file :file:`my_data.csv` has to contain the data in csv format with :code:`s
    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
 which corresponds to a matrix with the shape `nSamples x dataDim`.
+The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+
+* `./Applications/<ModelName>/OverallParams.csv`
+* `./Applications/<ModelName>/OverallSimResults.csv`
+* `./Applications/<ModelName>/OverallDensityEvals.csv`
+
+and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
 
 .. note::
    
