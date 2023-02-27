@@ -327,13 +327,18 @@ it simply calls <code class="xref py py-func docutils literal notranslate"><span
 are stored for this model. No files are deleted during this action.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="epi.core.model.Model.dataDim">
+<span class="sig-name descname"><span class="pre">dataDim</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#epi.core.model.Model.dataDim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="epi.core.model.Model.dataLoader">
-<span class="sig-name descname"><span class="pre">dataLoader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#epi.core.model.Model.dataLoader" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dataLoader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#epi.core.model.Model.dataLoader" title="Permalink to this definition"></a></dt>
 <dd><p>Load the data from the data file found under the models current data path and calculate several properties of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The dimension of the parameter space, the dimension of the data space, the number of data points, the central parameter point, the data and the estimated optimal kernel width for each dimension of the data.</p>
+<dd class="field-odd"><p>The dimension of the data space, the data and the estimated optimal kernel width for each dimension of the data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -488,6 +493,11 @@ to avoid parameter regions where the evaluation of the model is instable.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="epi.core.model.Model.paramDim">
+<span class="sig-name descname"><span class="pre">paramDim</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#epi.core.model.Model.paramDim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="epi.core.model.Model.setDataPath">
 <span class="sig-name descname"><span class="pre">setDataPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#epi.core.model.Model.setDataPath" title="Permalink to this definition"></a></dt>
@@ -579,7 +589,7 @@ in your Application folder.</p>
 <span id="epi-core-sampling-module"></span><h2>epi.core.sampling module<a class="headerlink" href="#module-epi.core.sampling" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="epi.core.sampling.calcWalkerAcceptance">
-<span class="sig-prename descclassname"><span class="pre">epi.core.sampling.</span></span><span class="sig-name descname"><span class="pre">calcWalkerAcceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">numBurnSamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWalkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#epi.core.sampling.calcWalkerAcceptance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">epi.core.sampling.</span></span><span class="sig-name descname"><span class="pre">calcWalkerAcceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWalkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numBurnSamples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#epi.core.sampling.calcWalkerAcceptance" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Calculate the acceptance ratio for each individual walker of the emcee chain.</dt><dd><p>This is especially important to find “zombie” walkers, that are never moving.</p>
 </dd>

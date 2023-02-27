@@ -113,6 +113,10 @@ to include the fixed parameters of the model object. Else your results for diffe
 <p>Fix _forward, call, … and maybe adapt this documentation part then</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">1</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
 

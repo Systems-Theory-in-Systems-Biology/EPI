@@ -138,6 +138,9 @@ class CppPlant(Model, ArtificialModelInterface):
     Data2: Sciarid ;)
     &quot;&quot;&quot;
 
+    paramDim = 2
+    dataDim = 3
+
     def forward(self, param):
         return cpp_model.forward(param)
 
@@ -217,6 +220,9 @@ make<span class="w"> </span>-j
 <span class="sd">    Data1: Health [0,1], to much water is not good, too much sun is not good</span>
 <span class="sd">    Data2: Sciarid ;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">3</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>

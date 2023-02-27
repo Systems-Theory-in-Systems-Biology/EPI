@@ -134,6 +134,10 @@ It has 455 datapoints with two dimensions each. Nonuniform data is not supported
 <h2>Define your model<a class="headerlink" href="#define-your-model" title="Permalink to this heading"></a></h2>
 <p>Next you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../epi.core.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">epi.core.model.Model</span></code></a> base class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">1</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
 

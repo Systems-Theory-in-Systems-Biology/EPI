@@ -101,6 +101,8 @@ We support SBML ode models and user provided models.</p>
 <h2>How to start<a class="headerlink" href="#how-to-start" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line">Derive your model from <a class="reference internal" href="epi.core.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">epi.core.model.Model</span></code></a> and implement the abstract functions <a class="reference internal" href="epi.core.html#epi.core.model.Model.forward" title="epi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="epi.core.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</div>
+<div class="line">You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions <a class="reference internal" href="epi.core.html#epi.core.model.Model.getParamSamplingLimits" title="epi.core.model.Model.getParamSamplingLimits"><code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code></a> and <a class="reference internal" href="epi.core.html#epi.core.model.Model.getCentralParam" title="epi.core.model.Model.getCentralParam"><code class="xref py py-meth docutils literal notranslate"><span class="pre">getCentralParam()</span></code></a>.</div>
+<div class="line">The last requirement is to define the data and parameter Dimension, dataDim and paramDim.</div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># my_model.py</span>
 
@@ -108,6 +110,10 @@ We support SBML ode models and user provided models.</p>
 <span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
 
 <span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+   <span class="n">paramDim</span> <span class="o">=</span> <span class="n">N</span> <span class="c1"># The dimension of a parameter point</span>
+   <span class="n">dataDim</span> <span class="o">=</span> <span class="n">M</span> <span class="c1"># The dimension of a data point</span>
+
    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
