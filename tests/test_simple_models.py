@@ -15,7 +15,7 @@ from epi.plotting.plots import plotTest
 
 
 def test_transformationLinear():
-    model = Linear(delete=True, create=True)
+    model = Linear()
 
     # create approx. 1000 data points that are perfectly uniformly distributed over a grid
     # the range of data points is the 2D interval [0,10]x[-2,-4]
@@ -90,7 +90,7 @@ def test_transformationLinear():
 
 
 def test_transformationExponential():
-    model = Exponential(delete=True, create=True)
+    model = Exponential()
 
     # create true parameter points that are drawn uniformly from [0,1]^2
 
@@ -170,7 +170,7 @@ def test_transformationODELinear():
     """
 
     # define the model
-    model = LinearODE(delete=True, create=True)
+    model = LinearODE()
 
     # generate artificial data
     model.generateArtificialData()

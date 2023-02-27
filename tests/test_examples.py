@@ -7,7 +7,8 @@ import importlib
 import pytest
 
 from epi.core.model import Model
-from epi.core.sampling import NUM_WALKERS, calcWalkerAcceptance, inference
+from epi.core.sampling import NUM_WALKERS, calcWalkerAcceptance
+from epi.core.inference import inference
 
 cpp_plant_example = pytest.param(
     ("epi.examples.cpp", "CppPlant"),
@@ -58,9 +59,8 @@ def test_examples(example):
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
 
-    model: Model = ModelClass(
-        delete=True, create=True
-    )  # Delete old results and recreate folder structure
+    model: Model = ModelClass()
+    # TODO: Delete old results and recreate folder structure
 
     # generate artificial data if necessary
     if model.isArtificial():

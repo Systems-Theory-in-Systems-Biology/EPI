@@ -10,7 +10,7 @@ from epi.core.sampling import inference
 from epi.examples.corona import CoronaArtificial
 
 if __name__ == "__main__":
-    model: Model = CoronaArtificial(delete=True, create=True)
+    model: Model = CoronaArtificial()
 
     # generate artificial data
     if model.isArtificial():

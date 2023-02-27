@@ -19,6 +19,9 @@ class Model(ABC):
     paramDim = None
     dataDim = None
 
+    defaultParamSamplingLimits = None
+    defaultCentralParam = None
+
     def __init_subclass__(cls, **kwargs):
         if not inspect.isabstract(cls):
             for required in (
@@ -32,7 +35,7 @@ class Model(ABC):
         return cls
 
     def __init__(
-        self, centralParam: np.ndarray, paramLimits: np.ndarray, name: None) -> None:
+        self, centralParam: np.ndarray = None, paramLimits: np.ndarray = None, name: str = None) -> None:
         # Define model-specific lower and upper limits for the sampling
         # to avoid parameter regions where the evaluation of the model is instable.
         # The limits in the format np.array([lower_dim1, upper_dim1], [lower_dim2, upper_dim2], ...)
@@ -45,8 +48,12 @@ class Model(ABC):
 
         # :return: The class name of the calling object.
 
-        self.centralParam = centralParam
-        self.paramLimits = paramLimits
+        assert(centralParam is not None or self.defaultCentralParam is not None)
+        assert(paramLimits is not None or self.defaultParamSamplingLimits is not None)
+
+        self.centralParam = centralParam if centralParam else self.defaultCentralParam
+        self.paramLimits = paramLimits if paramLimits else self.defaultParamSamplingLimits
+
         if name is None:
             self.name = self.__class__.__name__
         else:
@@ -82,6 +89,32 @@ class Model(ABC):
 
         return self.forward(param), self.jacobian(param)
 
+
+    def isArtificial(self) -> bool:
+        """Determines whether the model provides artificial data
+
+        :return: True if the model inherits from the ArtificialModelInterface
+        :rtype: bool
+        """
+        return issubclass(self.__class__, ArtificialModelInterface)
+
+
+class ArtificialModelInterface(ABC):
+    """By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
+    and the corresponding artificial data dataset, which can be used to compare the results from epi with the ground truth.
+    The comparison can be done using the plotEmceeResults.
+
+    :raises NotImplementedError: Implement the generateArtificialData function to implement this interface.
+    """
+
+    @abstractmethod
+    def generateArtificialParams(self, numSamples:int):
+        """This method must be overwritten an return an numpy array of numSamples parameters.
+
+        :raises NotImplementedError: _description_
+        """
+        raise NotImplementedError
+
     def generateArtificialData(
         self,
         params: typing.Union[os.PathLike, str, np.ndarray],
@@ -113,7 +146,6 @@ class Model(ABC):
                 artificialData[i, :] = self.forward(params[i, :])
 
         return artificialData
-            
 
 def autodiff(_cls):
     _cls.initFwAndBw()
@@ -131,8 +163,8 @@ class JaxModel(Model):
     :type Model: Model
     """
 
-    def __init__(self, delete: bool = False, create: bool = True) -> None:
-        super().__init__(delete, create)
+    def __init__(self, name: str = None) -> None:
+        super().__init__(name=name)
         # TODO: Check performance implications of not setting this at the class level but for each instance.
         type(self).forward = partial(JaxModel.forward_method, self)
 

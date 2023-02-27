@@ -10,7 +10,7 @@ from epi import logger
 from epi.core.kde import calcKernelWidth
 from epi.core.model import Model
 from epi.core.transformations import evalLogTransformedDensity
-from epic.core.result_manager import ResultManager
+from epi.core.result_manager import ResultManager
 
 NUM_RUNS = 2
 NUM_WALKERS = 10

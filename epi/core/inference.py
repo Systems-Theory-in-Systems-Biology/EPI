@@ -2,9 +2,9 @@ from epi import logger
 from epi.core.model import Model
 from epi.core.sampling import NUM_PROCESSES, NUM_RUNS, NUM_STEPS, NUM_WALKERS
 import numpy as np
-from enum import StrEnum, auto
 import typing
 import os
+from enum import Enum
 
 from epi.core.sampling import (
     concatenateEmceeSamplingResults,
@@ -12,15 +12,15 @@ from epi.core.sampling import (
 )
 
 # Define an enum for the inference types: DenseGrid, MCMC
-class InferenceType(StrEnum):
-    DENSE_GRID = auto()
-    MCMC = auto()
+class InferenceType(Enum):
+    DENSE_GRID = 0
+    MCMC = 1
 
 
 def inference(
     model: Model,
     data: typing.Union[str, os.PathLike, np.ndarray],
-    inference_type: InferenceType,
+    inference_type: InferenceType = InferenceType.MCMC,
     results_manager = None,
     slices: list[np.ndarray] = None,
     **kwargs,

@@ -7,11 +7,11 @@ scalene tests/profiling.py from the root directory of the project.
 """
 import numpy as np
 from epi.core.model import Model
-from epi.core.sampling import inference
+from epi.core.inference import inference
 from epi.examples.corona import CoronaArtificial
 
 def test_slices():
-    model: Model = CoronaArtificial(delete=True, create=True)
+    model: Model = CoronaArtificial()
 
     # generate artificial data
     if model.isArtificial():

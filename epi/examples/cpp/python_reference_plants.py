@@ -33,22 +33,8 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
     def getParamSamplingLimits(self) -> np.ndarray:
         return np.array([[0.0, 1.0], [0.0, 1.0]])
 
-    def generateArtificialData(self, numSamples=1000):
-        # randomly create true parameters in [0,1]x[0,1]
-        trueParamSample = np.random.rand(numSamples, 2)
-
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.name}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.name}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
+    def generateArtificialParams(self, numSamples: int):
+        return np.random.rand(numSamples, 2)
 
 
 @jit
@@ -82,33 +68,14 @@ class ExternalPlant(Model, ArtificialModelInterface):
     paramDim = 2
     dataDim = 3
 
+    defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
+    defaultCentralParam = np.array([0.5, 0.5])
+
     def forward(self, param):
         return fw(param)
 
     def jacobian(self, param):
         return bw(param)
 
-    def getCentralParam(self) -> np.ndarray:
-        return np.array([0.5, 0.5])
-
-    def getParamSamplingLimits(self) -> np.ndarray:
-        return np.array([[0.0, 1.0], [0.0, 1.0]])
-
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
-    ):
-        # randomly create true parameters in [0,1]x[0,1]
-        trueParamSample = np.random.rand(numSamples, 2)
-
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.name}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.name}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
+    def generateArtificialParams(self, numSamples: int):
+        return np.random.rand(numSamples, 2)

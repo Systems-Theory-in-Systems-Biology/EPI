@@ -9,17 +9,21 @@ from epi import logger
 from epi.core.model import (
     ArtificialModelInterface,
     JaxModel,
-    VisualizationModelInterface,
 )
 
 
-class Corona(JaxModel, VisualizationModelInterface):
+class Corona(JaxModel):
 
     paramDim = 3
     dataDim = 4
 
-    def __init__(self, delete=False, create=False):
-        super().__init__(delete, create)
+    defaultParamSamplingLimits = np.array(
+        [[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]]
+    )
+    defaultCentralParam = np.array([-1.8, 0.0, 0.7])
+
+    def __init__(self, name:str = None):
+        super().__init__(name=name)
         self.dataPath = importlib.resources.path(
             "epi.examples.corona", "CoronaData.csv"
         )
@@ -29,12 +33,6 @@ class Corona(JaxModel, VisualizationModelInterface):
 
     def getParamBounds(self):
         return np.array([[-4.0, 0.0], [-2.0, 2.0], [-1.0, 3.0]])
-
-    def getParamSamplingLimits(self):
-        return np.array([[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]])
-
-    def getCentralParam(self):
-        return np.array([-1.8, 0.0, 0.7])
 
     @classmethod
     def forward(cls, logParam):
@@ -76,8 +74,8 @@ class Corona(JaxModel, VisualizationModelInterface):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    def generateArtificialParams(
+        self, numSamples
     ):
         lowerBound = np.array([-1.9, -0.1, 0.6])
         upperBound = np.array([-1.7, 0.1, 0.8])
@@ -86,18 +84,7 @@ class CoronaArtificial(Corona, ArtificialModelInterface):
             upperBound - lowerBound
         ) * np.random.rand(numSamples, 3)
 
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.name}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.name}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
+        return trueParamSample
 
     def getParamSamplingLimits(self):
         return np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])

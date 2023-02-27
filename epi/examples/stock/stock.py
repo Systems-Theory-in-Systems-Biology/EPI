@@ -11,7 +11,6 @@ from epi import logger
 from epi.core.model import (
     ArtificialModelInterface,
     JaxModel,
-    VisualizationModelInterface,
 )
 
 # Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
@@ -27,14 +26,26 @@ TICKERS = [
 ]
 
 
-class Stock(JaxModel, VisualizationModelInterface):
+class Stock(JaxModel):
     """Model simulating stock data."""
 
     dataDim = 19
     paramDim = 6
 
+    defaultParamSamplingLimits = np.array([[-10.0, 10.0] * paramDim])
+    defaultCentralParam = np.array(
+        [
+            0.41406223,
+            1.04680993,
+            1.21173553,
+            0.8078955,
+            1.07772437,
+            0.64869251,
+        ]
+    )
+
     def __init__(
-        self, delete: bool = False, create: bool = True, ticker="ETF50"
+        self, name:str = None, ticker="ETF50"
     ) -> None:
         """Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.
         Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]
@@ -42,7 +53,7 @@ class Stock(JaxModel, VisualizationModelInterface):
         :param ticker: The ticker from which the data should be used, defaults to "ETF"
         :type ticker: str, optional
         """
-        super().__init__(delete, create)
+        super().__init__(name=name)
         self.dataPath = f"Data/{self.name}/{ticker}Data.csv"
 
         # Check if data for the given ticker exists
@@ -58,21 +69,6 @@ class Stock(JaxModel, VisualizationModelInterface):
 
     def getParamBounds(self):
         return np.array([[-2.0, 2.0] * self.paramDim])
-
-    def getParamSamplingLimits(self):
-        return np.array([[-10.0, 10.0] * self.paramDim])
-
-    def getCentralParam(self):
-        return np.array(
-            [
-                0.41406223,
-                1.04680993,
-                1.21173553,
-                0.8078955,
-                1.07772437,
-                0.64869251,
-            ]
-        )
 
     def downloadData(self, tickerListPath: str):
         """Download stock data for a ticker list from yahoo finance.
@@ -231,8 +227,8 @@ class StockArtificial(Stock, ArtificialModelInterface):
     def __init__(self, *args, **kwargs):
         super(Stock, self).__init__(*args, **kwargs)
 
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
+    def generateArtificialParams(
+        self, numSamples
     ):
         logger.info(
             f"Generating {numSamples} data samples by evaluating the model. "
@@ -255,19 +251,7 @@ class StockArtificial(Stock, ArtificialModelInterface):
         trueParamSample *= stdevs
         trueParamSample += mean
 
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.name}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-
-        np.savetxt(
-            f"Data/{self.name}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
+        return trueParamSample
 
     def getParamSamplingLimits(self):
         return np.array([[-1.0, 3.0] * self.paramDim])
