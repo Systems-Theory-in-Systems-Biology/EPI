@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epi.core.functions import evalLogTransformedDensity
 from epi.core.kde import calcKernelWidth, evalKDEGauss
 from epi.core.model import Model
+from epi.core.transformations import evalLogTransformedDensity
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0

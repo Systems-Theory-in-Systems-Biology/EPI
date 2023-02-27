@@ -11,8 +11,8 @@ from multiprocessing import Pool
 import numpy as np
 
 from epi import logger
-from epi.core.functions import evalLogTransformedDensity
 from epi.core.model import Model
+from epi.core.transformations import evalLogTransformedDensity
 
 NUM_LEVELS = 5
 NUM_PROCESSES = 4

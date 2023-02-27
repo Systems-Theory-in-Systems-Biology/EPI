@@ -7,9 +7,9 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
-from epi.core.functions import evalLogTransformedDensity
 from epi.core.kde import calcKernelWidth, evalKDEGauss
 from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
+from epi.core.transformations import evalLogTransformedDensity
 from epi.examples.simple_models import Exponential, Linear, LinearODE
 from epi.plotting.plots import plotTest
 

@@ -7,8 +7,8 @@ import emcee
 import numpy as np
 
 from epi import logger
-from epi.core.functions import evalLogTransformedDensity
 from epi.core.model import Model
+from epi.core.transformations import evalLogTransformedDensity
 
 NUM_RUNS = 2
 NUM_WALKERS = 10
@@ -64,6 +64,8 @@ def runEmceeSampling(
     ) = model.dataLoader()
 
     samplingDim = slice.shape[0]
+
+    centralParam = model.getCentralParam()
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
     walkerInitParams = centralParam[slice] + 0.002 * (
