@@ -6,18 +6,24 @@ For profiling / identifying bottlenecks and not just observing the iterations pe
 scalene tests/profiling.py from the root directory of the project.
 """
 import numpy as np
+
+from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
-from epi.core.inference import inference
 from epi.examples.corona import CoronaArtificial
+
 
 def test_slices():
     model: Model = CoronaArtificial()
 
     # generate artificial data
     if model.isArtificial():
-        model.generateArtificialData()
+        nDataPoints = 1000
+        params = model.generateArtificialParams(nDataPoints)
+        data = model.generateArtificialData(params)
+    else:
+        raise Exception("This test is only for artificial data")
 
     # run MCMC sampling for EPI
     slice1 = np.array([0])
     slice2 = np.array([1, 2])
-    inference(model=model, slices=[slice1, slice2])
+    inference(model, data, InferenceType.MCMC, slices=[slice1, slice2])

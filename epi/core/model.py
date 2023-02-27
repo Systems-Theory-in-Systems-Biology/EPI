@@ -1,9 +1,10 @@
 import inspect
 import os
+import typing
 from abc import ABC, abstractmethod
 from functools import partial
-import typing
 
+import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit, vmap
 
@@ -35,7 +36,11 @@ class Model(ABC):
         return cls
 
     def __init__(
-        self, centralParam: np.ndarray = None, paramLimits: np.ndarray = None, name: str = None) -> None:
+        self,
+        centralParam: np.ndarray = None,
+        paramLimits: np.ndarray = None,
+        name: str = None,
+    ) -> None:
         # Define model-specific lower and upper limits for the sampling
         # to avoid parameter regions where the evaluation of the model is instable.
         # The limits in the format np.array([lower_dim1, upper_dim1], [lower_dim2, upper_dim2], ...)
@@ -48,11 +53,18 @@ class Model(ABC):
 
         # :return: The class name of the calling object.
 
-        assert(centralParam is not None or self.defaultCentralParam is not None)
-        assert(paramLimits is not None or self.defaultParamSamplingLimits is not None)
+        assert centralParam is not None or self.defaultCentralParam is not None
+        assert (
+            paramLimits is not None
+            or self.defaultParamSamplingLimits is not None
+        )
 
-        self.centralParam = centralParam if centralParam else self.defaultCentralParam
-        self.paramLimits = paramLimits if paramLimits else self.defaultParamSamplingLimits
+        self.centralParam = (
+            centralParam if centralParam else self.defaultCentralParam
+        )
+        self.paramLimits = (
+            paramLimits if paramLimits else self.defaultParamSamplingLimits
+        )
 
         if name is None:
             self.name = self.__class__.__name__
@@ -89,7 +101,6 @@ class Model(ABC):
 
         return self.forward(param), self.jacobian(param)
 
-
     def isArtificial(self) -> bool:
         """Determines whether the model provides artificial data
 
@@ -108,7 +119,7 @@ class ArtificialModelInterface(ABC):
     """
 
     @abstractmethod
-    def generateArtificialParams(self, numSamples:int):
+    def generateArtificialParams(self, numSamples: int):
         """This method must be overwritten an return an numpy array of numSamples parameters.
 
         :raises NotImplementedError: _description_
@@ -118,7 +129,6 @@ class ArtificialModelInterface(ABC):
     def generateArtificialData(
         self,
         params: typing.Union[os.PathLike, str, np.ndarray],
-        numSamples: int,
     ) -> None:
         """This method is called when the user wants to generate artificial data from the model.
         :param numSamples: The number of samples to generate.
@@ -128,24 +138,25 @@ class ArtificialModelInterface(ABC):
         """
         if isinstance(params, str) or isinstance(params, os.PathLike):
             params = np.loadtxt(params, delimiter=",", ndmin=2)
-        elif isinstance(params, np.ndarray):
+        elif isinstance(params, np.ndarray) or isinstance(params, jnp.ndarray):
             pass
         else:
             raise TypeError(
                 f"The params argument has to be either a path to a file or a numpy array. The passed argument was of type {type(params)}"
             )
-        
+
         # try to use jax vmap to perform the forward pass on multiple parameters at once
         try:
             artificialData = vmap(self.forward, in_axes=0)(params)
-        except:
+        except Exception:
             # use standard numpy vectorization if forward is not implemented with jax
-            #data = np.vectorize(self.forward)(params)
+            # data = np.vectorize(self.forward)(params)
             artificialData = np.zeros((params.shape[0], 3))
             for i in range(params.shape[0]):
                 artificialData[i, :] = self.forward(params[i, :])
 
         return artificialData
+
 
 def autodiff(_cls):
     _cls.initFwAndBw()

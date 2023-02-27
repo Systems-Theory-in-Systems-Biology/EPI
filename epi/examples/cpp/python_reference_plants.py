@@ -1,6 +1,6 @@
 import jax.numpy as jnp
 import numpy as np
-from jax import jacrev, jit, vmap
+from jax import jacrev, jit
 
 from epi.core.model import ArtificialModelInterface, JaxModel, Model
 
@@ -17,6 +17,9 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
     paramDim = 2
     dataDim = 3
 
+    defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
+    defaultCentralParam = np.array([0.5, 0.5])
+
     @classmethod
     def forward(cls, param):
         return jnp.array(
@@ -26,12 +29,6 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
                 jnp.exp(param[0]) - 0.999,
             ]
         )
-
-    def getCentralParam(self) -> np.ndarray:
-        return np.array([0.5, 0.5])
-
-    def getParamSamplingLimits(self) -> np.ndarray:
-        return np.array([[0.0, 1.0], [0.0, 1.0]])
 
     def generateArtificialParams(self, numSamples: int):
         return np.random.rand(numSamples, 2)

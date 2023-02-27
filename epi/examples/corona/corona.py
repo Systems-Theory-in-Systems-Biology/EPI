@@ -1,15 +1,9 @@
-import importlib.resources
-
 import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
-from jax import vmap
 
 from epi import logger
-from epi.core.model import (
-    ArtificialModelInterface,
-    JaxModel,
-)
+from epi.core.model import ArtificialModelInterface, JaxModel
 
 
 class Corona(JaxModel):
@@ -21,12 +15,6 @@ class Corona(JaxModel):
         [[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]]
     )
     defaultCentralParam = np.array([-1.8, 0.0, 0.7])
-
-    def __init__(self, name:str = None):
-        super().__init__(name=name)
-        self.dataPath = importlib.resources.path(
-            "epi.examples.corona", "CoronaData.csv"
-        )
 
     def getDataBounds(self):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
@@ -74,9 +62,7 @@ class Corona(JaxModel):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    def generateArtificialParams(
-        self, numSamples
-    ):
+    def generateArtificialParams(self, numSamples):
         lowerBound = np.array([-1.9, -0.1, 0.6])
         upperBound = np.array([-1.7, 0.1, 0.8])
 

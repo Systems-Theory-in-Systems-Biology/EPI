@@ -9,8 +9,8 @@ import numpy as np
 from epi import logger
 from epi.core.kde import calcKernelWidth
 from epi.core.model import Model
-from epi.core.transformations import evalLogTransformedDensity
 from epi.core.result_manager import ResultManager
+from epi.core.transformations import evalLogTransformedDensity
 
 NUM_RUNS = 2
 NUM_WALKERS = 10
@@ -18,7 +18,7 @@ NUM_STEPS = 2500
 NUM_PROCESSES = 4
 
 
-def countEmceeSubRuns(model: Model) -> int:
+def countEmceeSubRuns(model: Model, result_manager: ResultManager) -> int:
     """This data organization function counts how many sub runs are saved for the specified scenario.
 
     :param model: The model for which the files will be counted
@@ -29,7 +29,7 @@ def countEmceeSubRuns(model: Model) -> int:
 
     # Increase the just defined number until no corresponding file is found anymore ...
     while path.isfile(
-        model.getApplicationPath()
+        result_manager.getApplicationPath(model)
         + "/DensityEvals/"
         + str(numExistingFiles)
         + ".csv"
@@ -70,9 +70,7 @@ def runEmceeOnce(
         (emcee.moves.WalkMove(), 0.1),
         (emcee.moves.StretchMove(), 0.1),
         (
-            emcee.moves.GaussianMove(
-                0.00001, mode="sequential", factor=None
-            ),
+            emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
             0.8,
         ),
     ]
@@ -98,7 +96,9 @@ def runEmceeOnce(
     # TODO: Keep as 3d array?
     # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
     samplerBlob = sampler.get_blobs()
-    allRes = samplerBlob.reshape(numWalkers * numSteps, samplingDim + dataDim+1)
+    allRes = samplerBlob.reshape(
+        numWalkers * numSteps, samplingDim + dataDim + 1
+    )
 
     logger.info(
         f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
@@ -149,7 +149,7 @@ def runEmceeSampling(
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = countEmceeSubRuns(model)
+    numExistingFiles = countEmceeSubRuns(model, result_manager)
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
@@ -157,7 +157,9 @@ def runEmceeSampling(
         logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = model.getApplicationPath() + "/currentPos.csv"
+        positionPath = (
+            result_manager.getApplicationPath(model) + "/currentPos.csv"
+        )
         if path.isfile(positionPath):
             walkerInitParams = np.loadtxt(
                 positionPath,
@@ -184,7 +186,9 @@ def runEmceeSampling(
         result_manager.save_run(allRes, finalWalkerPos)
 
 
-def concatenateEmceeSamplingResults(model: Model):
+def concatenateEmceeSamplingResults(
+    model: Model, result_manager: ResultManager
+):
     """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
         These files are later used for result visualization.
 
@@ -198,7 +202,7 @@ def concatenateEmceeSamplingResults(model: Model):
 
     # Load one example file and use it to extract how many samples are stored per file.
     numSamplesPerFile = np.loadtxt(
-        model.getApplicationPath() + "/Params/0.csv",
+        result_manager.getApplicationPath(model) + "/Params/0.csv",
         delimiter=",",
         ndmin=2,
     ).shape[0]

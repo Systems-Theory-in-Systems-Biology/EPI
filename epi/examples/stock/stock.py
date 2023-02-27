@@ -1,17 +1,10 @@
-import importlib
-import os
-
 import jax.numpy as jnp
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from jax import vmap
 
 from epi import logger
-from epi.core.model import (
-    ArtificialModelInterface,
-    JaxModel,
-)
+from epi.core.model import ArtificialModelInterface, JaxModel
 
 # Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
 TICKERS = [
@@ -44,26 +37,6 @@ class Stock(JaxModel):
         ]
     )
 
-    def __init__(
-        self, name:str = None, ticker="ETF50"
-    ) -> None:
-        """Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.
-        Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]
-
-        :param ticker: The ticker from which the data should be used, defaults to "ETF"
-        :type ticker: str, optional
-        """
-        super().__init__(name=name)
-        self.dataPath = f"Data/{self.name}/{ticker}Data.csv"
-
-        # Check if data for the given ticker exists
-        if not os.path.isfile(self.dataPath):
-            logger.warning("Ticker data not found. Downloading data...")
-            tickerPath = importlib.resources.path(
-                "epi.examples.stock", f"{ticker}.csv"
-            )
-            self.downloadData(tickerPath)
-
     def getDataBounds(self):
         return np.array([[-7.5, 7.5] * self.dataDim])
 
@@ -79,30 +52,6 @@ class Stock(JaxModel):
         logger.info("Downloading stock data...")
         start = "2022-01-31"
         end = "2022-03-01"
-        dates = np.array(
-            [
-                "2022-01-31",
-                "2022-02-01",
-                "2022-02-02",
-                "2022-02-03",
-                "2022-02-04",
-                "2022-02-07",
-                "2022-02-08",
-                "2022-02-09",
-                "2022-02-10",
-                "2022-02-11",
-                "2022-02-14",
-                "2022-02-15",
-                "2022-02-16",
-                "2022-02-17",
-                "2022-02-18",
-                "2022-02-22",
-                "2022-02-23",
-                "2022-02-24",
-                "2022-02-25",
-                "2022-02-28",
-            ]
-        )
 
         stocks = np.loadtxt(tickerListPath, dtype="str")
 
@@ -143,19 +92,20 @@ class Stock(JaxModel):
         else:
             tickerListName = tickerListPath.split("/")[-1].split(".")[0]
 
-        # save all time points except for the first
-        os.makedirs(f"Data/{self.name}", exist_ok=True)
-        np.savetxt(
-            f"Data/{self.name}/{tickerListName}Data.csv",
-            stockData.T,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.name}/{tickerListName}IDs.csv",
-            stockIDs,
-            delimiter=",",
-            fmt="% s",
-        )
+        return stockData.T, stockIDs, tickerListName
+        # # save all time points except for the first
+        # os.makedirs(f"Data/{self.name}", exist_ok=True)
+        # np.savetxt(
+        #     f"Data/{self.name}/{tickerListName}Data.csv",
+        #     stockData.T,
+        #     delimiter=",",
+        # )
+        # np.savetxt(
+        #     f"Data/{self.name}/{tickerListName}IDs.csv",
+        #     stockIDs,
+        #     delimiter=",",
+        #     fmt="% s",
+        # )
 
     @classmethod
     def forward(cls, param):
@@ -227,9 +177,7 @@ class StockArtificial(Stock, ArtificialModelInterface):
     def __init__(self, *args, **kwargs):
         super(Stock, self).__init__(*args, **kwargs)
 
-    def generateArtificialParams(
-        self, numSamples
-    ):
+    def generateArtificialParams(self, numSamples):
         logger.info(
             f"Generating {numSamples} data samples by evaluating the model. "
             "This might take a very long time!"

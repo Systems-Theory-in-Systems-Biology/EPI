@@ -7,8 +7,8 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
+from epi.core.inference import InferenceType, inference
 from epi.core.kde import calcKernelWidth, evalKDEGauss
-from epi.core.sampling import concatenateEmceeSamplingResults, runEmceeSampling
 from epi.core.transformations import evalLogTransformedDensity
 from epi.examples.simple_models import Exponential, Linear, LinearODE
 from epi.plotting.plots import plotTest
@@ -173,13 +173,12 @@ def test_transformationODELinear():
     model = LinearODE()
 
     # generate artificial data
-    model.generateArtificialData()
+    nDataPoints = 10000
+    params = model.generateArtificialParams(nDataPoints)
+    data = model.generateArtificialData(params)
 
     # run MCMC sampling for EPI
-    runEmceeSampling(model, numWalkers=4)
-
-    # combine all intermediate saves to create one large sample chain
-    concatenateEmceeSamplingResults(model)
+    inference(model, data, InferenceType.MCMC)
 
     # plot the results
     plotTest(model)

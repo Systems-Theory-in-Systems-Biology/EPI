@@ -29,7 +29,7 @@ def evalLogTransformedDensity(
     limits = model.getParamSamplingLimits()
 
     # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
-    fullParam = model.getCentralParam()
+    fullParam = model.centralParam
     fullParam[slice] = param
 
     # Check if the tried parameter is within the just-defined bounds and return the lowest possible log density if not.

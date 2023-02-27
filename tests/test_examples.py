@@ -6,9 +6,9 @@ import importlib
 
 import pytest
 
+from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
-from epi.core.sampling import NUM_WALKERS, calcWalkerAcceptance
-from epi.core.inference import inference
+from epi.core.sampling import calcWalkerAcceptance
 
 cpp_plant_example = pytest.param(
     ("epi.examples.cpp", "CppPlant"),
@@ -22,13 +22,17 @@ cpp_plant_example = pytest.param(
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        ("epi.examples.stock", "Stock", 12),
-        ("epi.examples.stock", "StockArtificial", 12),
-        # ("epi.examples.corona", "Corona"),
+        ("epi.examples.stock", "Stock", "ETF50.csv"),
+        ("epi.examples.stock", "StockArtificial"),
+        # ("epi.examples.corona", "Corona", "CoronaData.csv"),
         ("epi.examples.corona", "CoronaArtificial"),
-        ("epi.examples.temperature", "Temperature"),
+        ("epi.examples.temperature", "Temperature", "TemperatureData.csv"),
         ("epi.examples.temperature", "TemperatureArtificial"),
-        ("epi.examples.temperature", "TemperatureWithFixedParams"),
+        (
+            "epi.examples.temperature",
+            "TemperatureWithFixedParams",
+            "TemperatureData.csv",
+        ),
         cpp_plant_example,
         ("epi.examples.cpp", "ExternalPlant"),
         ("epi.examples.cpp", "JaxPlant"),
@@ -50,26 +54,44 @@ def test_examples(example):
     """
     # extract example parameters from tuple
     try:
-        module_location, className, numWalkers = example
+        module_location, className, dataFileName = example
     except ValueError:
         module_location, className = example
-        numWalkers = NUM_WALKERS
+        dataFileName = None
 
     # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
-
     model: Model = ModelClass()
     # TODO: Delete old results and recreate folder structure
 
     # generate artificial data if necessary
     if model.isArtificial():
-        model.generateArtificialData()
+        nDataPoints = 1000
+        params = model.generateArtificialParams(nDataPoints)
+        data = model.generateArtificialData(params)
+    else:
+        assert dataFileName is not None
+        data = importlib.resources.path(module_location, dataFileName)
 
+        if (
+            className == "Stock"
+        ):  # We check using string comparison because we dont want to statically import the Corona class
+            data, _, _ = model.downloadData(
+                data
+            )  # Download the actual stock data from the ticker list data from the internet
+
+    # Run inference
+    nSteps = 1000
+    nWalkers = 12  # We choose 12 because then we have enough walkers for all examples. The higher the dimensionality of the model, the more walkers are needed.
     inference(
-        model=model, numWalkers=numWalkers, numSteps=1000
-    )  # using default dataPath of the model
+        model,
+        data,
+        inference_type=InferenceType.MCMC,
+        numWalkers=nWalkers,
+        numSteps=nSteps,
+    )
 
     # Determine walker acceptance rate
-    acceptance = calcWalkerAcceptance(model, numWalkers, numBurnSamples=0)
+    acceptance = calcWalkerAcceptance(model, nWalkers, numBurnSamples=0)
     print("Acceptance rate: ", acceptance)
