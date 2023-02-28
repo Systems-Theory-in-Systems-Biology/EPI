@@ -17,35 +17,21 @@ NUM_WALKERS = 10
 NUM_STEPS = 2500
 NUM_PROCESSES = 4
 
-
-def countEmceeSubRuns(model: Model, result_manager: ResultManager) -> int:
-    """This data organization function counts how many sub runs are saved for the specified scenario.
-
-    :param model: The model for which the files will be counted
-    :return: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
-    """
-    # Initialize the number of existing files to be 0
-    numExistingFiles = 0
-
-    # Increase the just defined number until no corresponding file is found anymore ...
-    while path.isfile(
-        result_manager.getApplicationPath(model)
-        + "/DensityEvals/"
-        + str(numExistingFiles)
-        + ".csv"
-    ):
-        numExistingFiles += 1
-
-    return numExistingFiles
+# TODO: This works on the blob
+# Return the samples.
+# return sampler.get_chain(discard=0, thin=1, flat=True)
+# TODO: This stores the sample as 2d array in the format walker1_step1, walker2_step1, walker3_step1, walker1_step2, walker2_step2, walker3_step2, ...
+# samplerResults = samplerBlob.reshape(
+#     numWalkers * numSteps, samplingDim + dataDim + 1
+# )
 
 
 def runEmceeOnce(
     model: Model,
-    dataDim: int,
     data: np.ndarray,
     dataStdevs: np.ndarray,
     slice: np.ndarray,
-    walkerInitParams: np.ndarray,
+    initialWalkerPositions: np.ndarray,
     numWalkers: int,
     numSteps: int,
     numProcesses: int,
@@ -57,7 +43,7 @@ def runEmceeOnce(
     :param data: (data)
     :param dataStdevs: (standard deviations of the data)
     :param slice: (slice of the parameter space which will be sampled)
-    :param walkerInitParams: (initial parameter values for the walkers)
+    :param initialWalkerPositions: (initial parameter values for the walkers)
     :param numWalkers: (number of particles in the particle swarm sampler)
     :param numSteps: (number of samples each particle performs before storing the sub run)
     :param numProcesses: (number of parallel threads)
@@ -87,18 +73,15 @@ def runEmceeOnce(
         args=[model, data, dataStdevs, slice],
     )
     # Extract the final walker position and close the pool of worker processes.
-    finalPos, _, _, _ = sampler.run_mcmc(
-        walkerInitParams, numSteps, tune=True, progress=True
+    finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
+        initialWalkerPositions, numSteps, tune=True, progress=True
     )
     pool.close()
     pool.join()
 
     # TODO: Keep as 3d array?
     # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
-    samplerBlob = sampler.get_blobs()
-    allRes = samplerBlob.reshape(
-        numWalkers * numSteps, samplingDim + dataDim + 1
-    )
+    samplerResults = sampler.get_blobs()
 
     logger.info(
         f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
@@ -111,10 +94,7 @@ def runEmceeOnce(
             "The autocorrelation time could not be calculate reliable"
         )
 
-    return allRes, finalPos
-
-    # Return the samples.
-    # return sampler.get_chain(discard=0, thin=1, flat=True)
+    return samplerResults, finalWalkerPositionsitions
 
 
 def runEmceeSampling(
@@ -138,18 +118,17 @@ def runEmceeSampling(
     :return: None, except for stored files
     """
 
-    dataDim = model.dataDim
     dataStdevs = calcKernelWidth(data)
     samplingDim = slice.shape[0]
     centralParam = model.centralParam
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    walkerInitParams = centralParam[slice] + 0.002 * (
+    initialWalkerPositions = centralParam[slice] + 0.002 * (
         np.random.rand(numWalkers, samplingDim) - 0.5
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = countEmceeSubRuns(model, result_manager)
+    numExistingFiles = result_manager.countEmceeSubRuns(model)
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
@@ -161,7 +140,7 @@ def runEmceeSampling(
             result_manager.getApplicationPath(model) + "/currentPos.csv"
         )
         if path.isfile(positionPath):
-            walkerInitParams = np.loadtxt(
+            initialWalkerPositions = np.loadtxt(
                 positionPath,
                 delimiter=",",
                 ndmin=2,
@@ -171,19 +150,30 @@ def runEmceeSampling(
             )
 
         # Run the sampler.
-        allRes, finalWalkerPos = runEmceeOnce(
+        samplerResults, finalWalkerPositions = runEmceeOnce(
             model,
-            dataDim,
             data,
             dataStdevs,
             slice,
-            walkerInitParams,
+            initialWalkerPositions,
             numWalkers,
             numSteps,
             numProcesses,
         )
 
-        result_manager.save_run(allRes, finalWalkerPos)
+        result_manager.save_run(
+            model, slice, run, samplerResults, finalWalkerPositions
+        )
+
+    (
+        overallParams,
+        overallSimResults,
+        overallDensityEvals,
+    ) = concatenateEmceeSamplingResults(model, slice, result_manager)
+    result_manager.save_overall(
+        model, slice, overallParams, overallSimResults, overallDensityEvals
+    )
+    return overallParams, overallSimResults, overallDensityEvals
 
 
 def concatenateEmceeSamplingResults(
@@ -197,65 +187,24 @@ def concatenateEmceeSamplingResults(
     """
 
     # Count and print how many sub runs are ready to be merged.
-    numExistingFiles = countEmceeSubRuns(model)
+    numExistingFiles = result_manager.countEmceeSubRuns(model)
     logger.info(f"{numExistingFiles} existing files found for concatenation")
-
-    # Load one example file and use it to extract how many samples are stored per file.
-    numSamplesPerFile = np.loadtxt(
-        result_manager.getApplicationPath(model) + "/Params/0.csv",
-        delimiter=",",
-        ndmin=2,
-    ).shape[0]
-
-    # The overall number of sampled is the number of sub runs multiplied with the number of samples per file.
-    numSamples = numExistingFiles * numSamplesPerFile
-
-    # Create containers large enough to store all sampling information.
-    overallDensityEvals = np.zeros(numSamples)
-    overallSimResults = np.zeros((numSamples, model.dataDim))
-    overallParams = np.zeros((numSamples, model.paramDim))
 
     densityFiles = "Applications/" + model.name + "/DensityEvals/{}.csv"
     simResultsFiles = "Applications/" + model.name + "/SimResults/{}.csv"
     paramFiles = "Applications/" + model.name + "/Params/{}.csv"
-    # Loop over all sub runs, load the respective sample files and store them at their respective places in the overall containers.
-    for i in range(numExistingFiles):
-        overallDensityEvals[
-            i * numSamplesPerFile : (i + 1) * numSamplesPerFile
-        ] = np.loadtxt(
-            densityFiles.format(i),
-            delimiter=",",
-        )
-        overallSimResults[
-            i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
-        ] = np.loadtxt(
-            simResultsFiles.format(i),
-            delimiter=",",
-            ndmin=2,
-        )
-        overallParams[
-            i * numSamplesPerFile : (i + 1) * numSamplesPerFile, :
-        ] = np.loadtxt(
-            paramFiles.format(i),
-            delimiter=",",
-            ndmin=2,
-        )
 
-    # Save the three just-created files.
-    np.savetxt(
-        model.getApplicationPath() + "/OverallDensityEvals.csv",
-        overallDensityEvals,
-        delimiter=",",
+    overallParams = np.vstack(
+        [np.loadtxt(paramFiles.format(i)) for i in range(numExistingFiles)]
     )
-    np.savetxt(
-        model.getApplicationPath() + "/OverallSimResults.csv",
-        overallSimResults,
-        delimiter=",",
+    overallSimResults = np.vstack(
+        [
+            np.loadtxt(simResultsFiles.format(i))
+            for i in range(numExistingFiles)
+        ]
     )
-    np.savetxt(
-        model.getApplicationPath() + "/OverallParams.csv",
-        overallParams,
-        delimiter=",",
+    overallDensityEvals = np.hstack(
+        [np.loadtxt(densityFiles.format(i)) for i in range(numExistingFiles)]
     )
 
     return overallParams, overallSimResults, overallDensityEvals

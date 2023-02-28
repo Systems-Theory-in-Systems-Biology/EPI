@@ -1,4 +1,5 @@
 import os
+import pathlib
 import typing
 from enum import Enum
 
@@ -12,7 +13,6 @@ from epi.core.sampling import (
     NUM_RUNS,
     NUM_STEPS,
     NUM_WALKERS,
-    concatenateEmceeSamplingResults,
     runEmceeSampling,
 )
 
@@ -27,7 +27,7 @@ def inference(
     model: Model,
     data: typing.Union[str, os.PathLike, np.ndarray],
     inference_type: InferenceType = InferenceType.MCMC,
-    results_manager=None,
+    result_manager=None,
     slices: list[np.ndarray] = None,
     **kwargs,
 ):
@@ -52,40 +52,47 @@ def inference(
 
     # Load data from file if necessary
     assert data is not None
-    if isinstance(data, str) or isinstance(data, os.PathLike):
-        params = np.loadtxt(data, delimiter=",", ndmin=2)
+    if (
+        isinstance(data, str)
+        or isinstance(data, os.PathLike)
+        or isinstance(pathlib.Path)
+    ):
+        data = np.loadtxt(data, delimiter=",", ndmin=2)
     elif isinstance(data, np.ndarray) or isinstance(data, jnp.ndarray):
         pass
     else:
         raise TypeError(
             f"The params argument has to be either a path to a file or a numpy array. The passed argument was of type {type(data)}"
         )
-    # If no results_manager is given, create one with default paths
-    if results_manager is None:
-        results_manager = ResultManager()
     # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
     if slices is None:
         slice = np.arange(model.paramDim)
         slices = [slice]
 
+    # If no result_manager is given, create one with default paths
+    if result_manager is None:
+        result_manager = ResultManager()
+    # TODO: Option to delete old results
+    result_manager.createApplicationFolderStructure(model, slices)
+
     if inference_type == InferenceType.DENSE_GRID:
-        inference_dense_grid(model, data, results_manager, slices, **kwargs)
+        inference_dense_grid(model, data, result_manager, slices, **kwargs)
     elif inference_type == InferenceType.MCMC:
-        inference_mcmc(model, data, results_manager, slices, **kwargs)
+        inference_mcmc(model, data, result_manager, slices, **kwargs)
     else:
         raise NotImplementedError(
             f"The inference type {inference_type} is not implemented yet."
         )
 
 
-def inference_dense_grid(model, data, results_manager=None, slices=None):
+def inference_dense_grid(model, data, result_manager=None, slices=None):
     raise NotImplementedError("Dense grid inference is not implemented yet.")
 
 
 def inference_mcmc(
     model,
     data,
-    results_manager=None,
+    result_manager=None,
     slices=None,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
@@ -98,10 +105,9 @@ def inference_mcmc(
             model,
             data,
             slice,
-            results_manager,
+            result_manager,
             numRuns,
             numWalkers,
             numSteps,
             numProcesses,
         )
-    return concatenateEmceeSamplingResults(results_manager, model)

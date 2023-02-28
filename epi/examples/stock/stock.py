@@ -174,15 +174,13 @@ class Stock(JaxModel):
 
 
 class StockArtificial(Stock, ArtificialModelInterface):
+
+    paramLimits = np.array([[-1.0, 3.0] * Stock.paramDim])
+
     def __init__(self, *args, **kwargs):
         super(Stock, self).__init__(*args, **kwargs)
 
     def generateArtificialParams(self, numSamples):
-        logger.info(
-            f"Generating {numSamples} data samples by evaluating the model. "
-            "This might take a very long time!"
-        )
-
         mean = np.array(
             [
                 0.41406223,
@@ -200,6 +198,3 @@ class StockArtificial(Stock, ArtificialModelInterface):
         trueParamSample += mean
 
         return trueParamSample
-
-    def getParamSamplingLimits(self):
-        return np.array([[-1.0, 3.0] * self.paramDim])

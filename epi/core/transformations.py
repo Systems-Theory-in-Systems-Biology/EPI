@@ -24,9 +24,9 @@ def evalLogTransformedDensity(
            data (data for the model: 2D array with shape (#numDataPoints, #dataDim))
            dataStdevs (array of suitable kernel standard deviations for each data dimension)
     Output: logTransformedDensity (natural log of parameter density at the point param)
-          : allRes (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
+          : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
     """
-    limits = model.getParamSamplingLimits()
+    limits = model.paramLimits
 
     # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
     fullParam = model.centralParam
@@ -57,11 +57,11 @@ def evalLogTransformedDensity(
         logTransformedDensity = np.log(trafoDensityEvaluation)
 
         # Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.
-        allRes = np.concatenate(
+        samplerResults = np.concatenate(
             (param, simRes, np.array([trafoDensityEvaluation]))
         )
 
-        return logTransformedDensity, allRes
+        return logTransformedDensity, samplerResults
 
 
 def calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:

@@ -376,7 +376,7 @@ def sparseGridInference(
     grid = SparseGrid(paramDim, numLevels)
 
     # get the model's parameter limits
-    parameterLimits = model.getParamSamplingLimits()
+    parameterLimits = model.paramLimits
 
     # scale the sparse grid points from [0,1]^paramDim to the scaled parameter space
     scaledSparseGridPoints = parameterLimits[:, 0] + grid.points * (
@@ -384,7 +384,7 @@ def sparseGridInference(
     )
 
     # allocate Memory for the parameters, their simulation evaluation and their probability density
-    allRes = np.zeros((grid.nPoints, paramDim + model.dataDim + 1))
+    samplerResults = np.zeros((grid.nPoints, paramDim + model.dataDim + 1))
 
     # Create a pool of worker processes
     pool = Pool(processes=numProcesses)
@@ -406,7 +406,7 @@ def sparseGridInference(
 
     # extract the parameter, simulation result and transformed density evaluation
     for i in range(grid.nPoints):
-        allRes[i, :] = parResults[i][1]
+        samplerResults[i, :] = parResults[i][1]
 
     # Save all sparse grid evaluation results in separate .csv files that also indicate the sparse grid level.
     np.savetxt(
@@ -415,7 +415,7 @@ def sparseGridInference(
         + "/Params/SG"
         + str(numLevels)
         + "Levels.csv",
-        allRes[:, 0:paramDim],
+        samplerResults[:, 0:paramDim],
         delimiter=",",
     )
     np.savetxt(
@@ -424,7 +424,7 @@ def sparseGridInference(
         + "/SimResults/SG"
         + str(numLevels)
         + "Levels.csv",
-        allRes[:, paramDim : paramDim + dataDim],
+        samplerResults[:, paramDim : paramDim + dataDim],
         delimiter=",",
     )
     np.savetxt(
@@ -433,10 +433,10 @@ def sparseGridInference(
         + "/DensityEvals/SG"
         + str(numLevels)
         + "Levels.csv",
-        allRes[:, -1],
+        samplerResults[:, -1],
         delimiter=",",
     )
 
 
-# TODO: Use maybe only one function for storing allRes
+# TODO: Use maybe only one function for storing samplerResults
 # TODO: Plotting for general dimension

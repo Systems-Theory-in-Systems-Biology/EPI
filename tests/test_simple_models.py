@@ -70,7 +70,11 @@ def test_transformationLinear():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evalLogTransformedDensity(
-                paramPoint, model, data, dataStdevs
+                paramPoint,
+                model,
+                data,
+                dataStdevs,
+                slice=np.arange(model.paramDim),
             )
 
     paramEvals = np.exp(paramEvals)
@@ -141,7 +145,7 @@ def test_transformationExponential():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evalLogTransformedDensity(
-                paramPoint, model, data, dataStdevs
+                paramPoint, model, data, dataStdevs, model.paramDim
             )
 
     paramEvals = np.exp(paramEvals)

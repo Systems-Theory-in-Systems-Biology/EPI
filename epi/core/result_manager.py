@@ -1,13 +1,36 @@
-    
-from seedir import FakeDir, FakeFile
-import seedir
-import shutil
-from epi import logger
 # TODO: Import Path from pathlib?
 import os
-import numpy as np
+import shutil
+from os import path
 
-class ResultManager():
+import numpy as np
+import seedir
+from seedir import FakeDir, FakeFile
+
+from epi import logger
+
+
+class ResultManager:
+    @staticmethod
+    def countEmceeSubRuns(model) -> int:
+        """This data organization function counts how many sub runs are saved for the specified scenario.
+
+        :param model: The model for which the files will be counted
+        :return: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
+        """
+        # Initialize the number of existing files to be 0
+        numExistingFiles = 0
+
+        # Increase the just defined number until no corresponding file is found anymore ...
+        while path.isfile(
+            ResultManager.getApplicationPath(model)
+            + "/DensityEvals/"
+            + str(numExistingFiles)
+            + ".csv"
+        ):
+            numExistingFiles += 1
+
+        return numExistingFiles
 
     @staticmethod
     def getSliceName(slice: np.ndarray) -> str:
@@ -19,11 +42,13 @@ class ResultManager():
         return os.path.join("Applications", self.name, sliceName)
 
     @staticmethod
-    def createApplicationFolderStructure(model, slices: list[np.ndarray]=None) -> None:
+    def createApplicationFolderStructure(
+        model, slices: list[np.ndarray] = None
+    ) -> None:
         """Creates the `Application` folder including subfolder where all simulation results
         are stored for this model. No files are deleted during this action.
         """
-        
+
         if slices is None:
             slices = [np.arange(model.paramDim)]
         for slice in slices:
@@ -56,7 +81,7 @@ class ResultManager():
                         pass
                 except FileExistsError:
                     logger.info(f"File `{joined}` already exists")
-        
+
         sliceName = ResultManager.getSliceName(slice)
         fakeStructure = seedir.fakedir_fromstring(
             structure.format(modelName=model.name, sliceName=sliceName)
@@ -73,13 +98,14 @@ class ResultManager():
             try:
                 ResultManager.deleteSliceFolderStructure(model, slice)
             except FileNotFoundError:
-                logger.info(f"Folder structure for slice {slice} does not exist")
+                logger.info(
+                    f"Folder structure for slice {slice} does not exist"
+                )
 
     @staticmethod
     def deleteSliceFolderStructure(model, slice: np.ndarray) -> None:
         path = ResultManager.getSlicePath(model, slice)
         shutil.rmtree(path)
-
 
     @staticmethod
     def getApplicationPath(model) -> str:
@@ -90,6 +116,65 @@ class ResultManager():
         """
         path = "Applications/" + model.name
         return path
+
+    @staticmethod
+    def save_run(model, slice, run, samplerResults, finalWalkerPositions):
+        """samplerResults has the shape (numWalkers * numSteps, samplingDim + dataDim + 1)
+        we save them as seperate files in the folders 'Params' and'SimResults' and 'densityEvals'
+        """
+
+        samplingDim = finalWalkerPositions.shape[1]
+
+        results_path = ResultManager.getApplicationPath(model)
+
+        # Save the parameters
+        np.savetxt(
+            results_path + "/Params/params_" + str(run) + ".csv",
+            samplerResults[:, :samplingDim],
+            delimiter=",",
+        )
+
+        # Save the density evaluations
+        np.savetxt(
+            results_path + "/DensityEvals/densityEvals_" + str(run) + ".csv",
+            samplerResults[:, -1],
+            delimiter=",",
+        )
+
+        # Save the simulation results
+        np.savetxt(
+            results_path + "/SimResults/simResults_" + str(run) + ".csv",
+            samplerResults[:, samplingDim : model.paramDim + model.dataDim],
+            delimiter=",",
+        )
+
+        # Save the final walker positions
+        np.savetxt(
+            results_path + "/finalWalkerPositions_" + str(run) + ".csv",
+            finalWalkerPositions,
+            delimiter=",",
+        )
+
+    @staticmethod
+    def save_overall(
+        model, slice, overallParams, overallSimResults, overallDensityEvals
+    ):
+        # Save the three just-created files.
+        np.savetxt(
+            model.getApplicationPath() + "/OverallDensityEvals.csv",
+            overallDensityEvals,
+            delimiter=",",
+        )
+        np.savetxt(
+            model.getApplicationPath() + "/OverallSimResults.csv",
+            overallSimResults,
+            delimiter=",",
+        )
+        np.savetxt(
+            model.getApplicationPath() + "/OverallParams.csv",
+            overallParams,
+            delimiter=",",
+        )
 
     @staticmethod
     def loadSimResults(model, numBurnSamples: int, occurrence: int):

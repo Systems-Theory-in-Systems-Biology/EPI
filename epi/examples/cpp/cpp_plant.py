@@ -25,22 +25,5 @@ class CppPlant(Model, ArtificialModelInterface):
     def jacobian(self, param):
         return cpp_model.jacobian(param)
 
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
-    ):
-        # randomly create true parameters in [0,1]x[0,1]
-        trueParamSample = np.random.rand(numSamples, 2)
-
-        artificialData = np.zeros((trueParamSample.shape[0], 3))
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
-        np.savetxt(
-            f"Data/{self.name}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.name}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
+    def generateArtificialParams(self, numSamples: int):
+        return np.random.rand(numSamples, 2)
