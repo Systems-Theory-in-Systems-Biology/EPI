@@ -6,6 +6,7 @@ from enum import Enum
 import jax.numpy as jnp
 import numpy as np
 
+from epi.core.dense_grid import NUM_GRID_POINTS, runDenseGridEvaluation
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
 from epi.core.sampling import (
@@ -85,8 +86,39 @@ def inference(
         )
 
 
-def inference_dense_grid(model, data, result_manager=None, slices=None):
-    raise NotImplementedError("Dense grid inference is not implemented yet.")
+def inference_dense_grid(
+    model,
+    data,
+    result_manager: ResultManager = None,
+    slices: np.ndarray = None,
+    allNumsGridPoints: typing.Union[int, list[np.ndarray]] = NUM_GRID_POINTS,
+    numProcesses: int = NUM_PROCESSES,
+):
+    """This function runs a dense grid evaluation for the given model and data. # TODO document properly"""
+
+    # If the number of grid points is given as an int, it is assumed to be the same for all parameters
+    if isinstance(allNumsGridPoints, int):
+        homogenousNumGridPoints = allNumsGridPoints
+        numGridPoints = []
+        for slice in slices:
+            allNumsGridPoints.append(
+                homogenousNumGridPoints * np.ones(slices[slice].shape[0])
+            )
+    elif isinstance(allNumsGridPoints, list[np.ndarray]):
+        pass
+    else:
+        raise TypeError(
+            f"The numGridPoints argument has to be either an int or a list of arrays. The passed argument was of type {type(numGridPoints)}"
+        )
+    for slice, numGridPoints in zip(slices, allNumsGridPoints):
+        runDenseGridEvaluation(
+            model,
+            data,
+            slice,
+            result_manager,
+            numGridPoints,
+            numProcesses,
+        )
 
 
 def inference_mcmc(
