@@ -123,6 +123,7 @@ def runEmceeSampling(
     centralParam = model.centralParam
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
+    # TODO Make random variation of initial walker positions dependent on sampling limits?
     initialWalkerPositions = centralParam[slice] + 0.002 * (
         np.random.rand(numWalkers, samplingDim) - 0.5
     )
@@ -137,7 +138,7 @@ def runEmceeSampling(
 
         # If there are current walker positions defined by runs before this one, use them.
         positionPath = (
-            result_manager.getApplicationPath(model) + "/currentPos.csv"
+            result_manager.getSlicePath(model, slice) + "/currentPos.csv"
         )
         if path.isfile(positionPath):
             initialWalkerPositions = np.loadtxt(
@@ -210,20 +211,27 @@ def concatenateEmceeSamplingResults(
     return overallParams, overallSimResults, overallDensityEvals
 
 
-def calcWalkerAcceptance(model: Model, numWalkers: int, numBurnSamples: int):
+def calcWalkerAcceptance(
+    model: Model,
+    slice: np.ndarray,
+    numWalkers: int,
+    numBurnSamples: int,
+    result_manager: ResultManager,
+):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
         This is especially important to find "zombie" walkers, that are never moving.
 
     Input: model
            numBurnSamples (integer number of ignored first samples of each chain)
            numWalkers (integer number of emcee walkers) that were used for the emcee chain which is analyzed here
+           result_manager (ResultManager object) that manages the data from the emcee chain which is analyzed here
 
     Output: acceptanceRatios (np.array of size numWalkers)
     """
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        model.getApplicationPath() + "/OverallParams.csv",
+        result_manager.getSlicePath(model, slice) + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
     )[numBurnSamples:, :]
