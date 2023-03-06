@@ -9,7 +9,7 @@ from matplotlib import cm
 
 from epi.core.inference import InferenceType, inference
 from epi.core.kde import calcKernelWidth, evalKDEGauss
-from epi.core.transformations import evalLogTransformedDensity
+from epi.core.transformations import evaluateDensity
 from epi.examples.simple_models import Exponential, Linear, LinearODE
 from epi.plotting.plots import plotTest
 
@@ -66,18 +66,18 @@ def test_transformationLinear():
 
     paramEvals = np.zeros((paramResolution, paramResolution))
 
+    # TODO: Use dense grid evaluation function, but pay attention to the changed limits above. Then todo below can also be removed
+    # TODO: Evaluate Density is missing the slice argument here
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evalLogTransformedDensity(
+            paramEvals[i, j], _ = evaluateDensity(
                 paramPoint,
                 model,
                 data,
                 dataStdevs,
                 slice=np.arange(model.paramDim),
             )
-
-    paramEvals = np.exp(paramEvals)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Parameter Density Estimation")
@@ -144,11 +144,9 @@ def test_transformationExponential():
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evalLogTransformedDensity(
+            paramEvals[i, j], _ = evaluateDensity(
                 paramPoint, model, data, dataStdevs, model.paramDim
             )
-
-    paramEvals = np.exp(paramEvals)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Parameter Density Estimation")

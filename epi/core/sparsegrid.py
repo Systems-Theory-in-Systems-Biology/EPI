@@ -10,7 +10,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from epi import logger
+from epi.core.kde import calcKernelWidth
 from epi.core.model import Model
 from epi.core.transformations import evalLogTransformedDensity
 
@@ -334,9 +334,10 @@ class Subspace(object):
                     )
 
 
+# TODO: Move to inference? And include slices and correct result paths with result_manager
 def sparseGridInference(
     model: Model,
-    dataPath: str = None,
+    data: np.ndarray,
     numLevels: int = NUM_LEVELS,
     numProcesses: int = NUM_PROCESSES,
 ):
@@ -345,31 +346,17 @@ def sparseGridInference(
 
     :param model: The model describing the mapping from parameters to data.
     :type model: Model
-    :param dataPath: path to the data relative to the current working directory.
-                      If None, the default path defined in the Model class initializer is used, defaults to None
-    :type dataPath: str, optional
+    :param data: The data to be used for inference
+    :type dataPath: np.ndarray
     :param numLevels: Maximum sparse grid level depth that mainly defines the number of points, defaults to NUM_LEVELS
     :type numLevels: int, optional
     :param numProcesses: number of processes to use, defaults to NUM_PROCESSES
     :type numProcesses: int, optional
     """
 
-    # check if a data path is specified
-    if dataPath is not None:
-        model.setDataPath(dataPath)
-    # default to the path defined in the model if no other indication is given.
-    else:
-        logger.warning(
-            f"No data path provided for this inference call. Using the data path of the model: {model.dataPath}"
-        )
-
     # Load data, data standard deviations and model characteristics for the specified model.
-    (
-        dataDim,
-        data,
-        dataStdevs,
-    ) = model.dataLoader()
-
+    dataDim = model.dataDim
+    dataStdevs = calcKernelWidth(data)
     paramDim = model.paramDim
 
     # build the sparse grid over [0,1]^paramDim
