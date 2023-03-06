@@ -29,7 +29,8 @@ class ResultManager:
         # Increase the just defined number until no corresponding file is found anymore ...
         while path.isfile(
             self.getSlicePath(slice)
-            + "/DensityEvals/"
+            + "/SimResults/"
+            + "simResults_"
             + str(numExistingFiles)
             + ".csv"
         ):

@@ -177,7 +177,7 @@ def runEmceeSampling(
         overallDensityEvals,
     ) = concatenateEmceeSamplingResults(model, result_manager, slice)
     result_manager.save_overall(
-        model, slice, overallParams, overallSimResults, overallDensityEvals
+        slice, overallParams, overallSimResults, overallDensityEvals
     )
     return overallParams, overallSimResults, overallDensityEvals
 
@@ -196,21 +196,32 @@ def concatenateEmceeSamplingResults(
     numExistingFiles = result_manager.countEmceeSubRuns(slice)
     logger.info(f"{numExistingFiles} existing files found for concatenation")
 
-    densityFiles = result_manager.getSlicePath(slice) + "/DensityEvals/{}.csv"
-    simResultsFiles = result_manager.getSlicePath(slice) + "/SimResults/{}.csv"
-    paramFiles = result_manager.getSlicePath(slice) + "/Params/{}.csv"
+    densityFiles = (
+        result_manager.getSlicePath(slice)
+        + "/DensityEvals/densityEvals_{}.csv"
+    )
+    simResultsFiles = (
+        result_manager.getSlicePath(slice) + "/SimResults/simResults_{}.csv"
+    )
+    paramFiles = result_manager.getSlicePath(slice) + "/Params/params_{}.csv"
 
     overallParams = np.vstack(
-        [np.loadtxt(paramFiles.format(i)) for i in range(numExistingFiles)]
+        [
+            np.loadtxt(paramFiles.format(i), delimiter=",", ndmin=2)
+            for i in range(numExistingFiles)
+        ]
     )
     overallSimResults = np.vstack(
         [
-            np.loadtxt(simResultsFiles.format(i))
+            np.loadtxt(simResultsFiles.format(i), delimiter=",", ndmin=2)
             for i in range(numExistingFiles)
         ]
     )
     overallDensityEvals = np.hstack(
-        [np.loadtxt(densityFiles.format(i)) for i in range(numExistingFiles)]
+        [
+            np.loadtxt(densityFiles.format(i), delimiter=",")
+            for i in range(numExistingFiles)
+        ]
     )
 
     return overallParams, overallSimResults, overallDensityEvals

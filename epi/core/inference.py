@@ -6,6 +6,7 @@ from enum import Enum
 import jax.numpy as jnp
 import numpy as np
 
+from epi import logger
 from epi.core.dense_grid import NUM_GRID_POINTS, runDenseGridEvaluation
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
@@ -14,6 +15,7 @@ from epi.core.sampling import (
     NUM_RUNS,
     NUM_STEPS,
     NUM_WALKERS,
+    calcWalkerAcceptance,
     runEmceeSampling,
 )
 
@@ -135,6 +137,7 @@ def inference_mcmc(
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
+    calcWalkerAcceptanceB: bool = False,
 ):
 
     for slice in slices:
@@ -148,3 +151,8 @@ def inference_mcmc(
             numSteps,
             numProcesses,
         )
+        if calcWalkerAcceptanceB:
+            acceptance = calcWalkerAcceptance(
+                model, result_manager, numWalkers, numBurnSamples=0
+            )
+            logger.info(f"Acceptance rate for slice {slice}: {acceptance}")

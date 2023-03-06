@@ -8,7 +8,6 @@ import pytest
 
 from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
-from epi.core.sampling import calcWalkerAcceptance
 
 cpp_plant_example = pytest.param(
     ("epi.examples.cpp", "CppPlant"),
@@ -91,7 +90,3 @@ def test_examples(example):
         numWalkers=nWalkers,
         numSteps=nSteps,
     )
-
-    # Determine walker acceptance rate
-    acceptance = calcWalkerAcceptance(model, nWalkers, numBurnSamples=0)
-    print("Acceptance rate: ", acceptance)
