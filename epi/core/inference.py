@@ -27,9 +27,11 @@ class InferenceType(Enum):
 def inference(
     model: Model,
     data: typing.Union[str, os.PathLike, np.ndarray],
-    inference_type: InferenceType = InferenceType.MCMC,
-    result_manager=None,
     slices: list[np.ndarray] = None,
+    inference_type: InferenceType = InferenceType.MCMC,
+    run_name: str = "default_run",
+    result_manager=None,
+    continue_sampling: bool = False,
     **kwargs,
 ):
     """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
@@ -72,8 +74,11 @@ def inference(
 
     # If no result_manager is given, create one with default paths
     if result_manager is None:
-        result_manager = ResultManager()
-    # TODO: Option to delete old results
+        result_manager = ResultManager(model.name, run_name)
+
+    if not continue_sampling:
+        result_manager.deleteApplicationFolderStructure(model, slices)
+
     result_manager.createApplicationFolderStructure(model, slices)
 
     if inference_type == InferenceType.DENSE_GRID:
