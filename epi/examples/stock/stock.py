@@ -25,7 +25,9 @@ class Stock(JaxModel):
     dataDim = 19
     paramDim = 6
 
-    defaultParamSamplingLimits = np.array([[-10.0, 10.0] * paramDim])
+    defaultParamSamplingLimits = np.array(
+        [[-10.0, 10.0] for _ in range(paramDim)]
+    )
     defaultCentralParam = np.array(
         [
             0.41406223,
@@ -38,10 +40,10 @@ class Stock(JaxModel):
     )
 
     def getDataBounds(self):
-        return np.array([[-7.5, 7.5] * self.dataDim])
+        return np.array([[-7.5, 7.5] for _ in range(self.dataDim)])
 
     def getParamBounds(self):
-        return np.array([[-2.0, 2.0] * self.paramDim])
+        return np.array([[-2.0, 2.0] for _ in range(self.paramDim)])
 
     def downloadData(self, tickerListPath: str):
         """Download stock data for a ticker list from yahoo finance.
