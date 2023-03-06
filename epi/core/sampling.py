@@ -82,6 +82,13 @@ def runEmceeOnce(
     # TODO: Keep as 3d array?
     # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
     samplerResults = sampler.get_blobs()
+    dataDim = data.shape[1]
+    samplerResults = samplerResults.reshape(
+        numSteps * numWalkers, samplingDim + dataDim + 1
+    )
+    samplerResults = samplerResults.reshape(
+        numWalkers * numSteps, samplingDim + dataDim + 1
+    )
 
     logger.info(
         f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
@@ -129,7 +136,7 @@ def runEmceeSampling(
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = result_manager.countEmceeSubRuns(model)
+    numExistingFiles = result_manager.countEmceeSubRuns(slice)
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
@@ -137,9 +144,7 @@ def runEmceeSampling(
         logger.info(f"Run {run} of {numRuns}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = (
-            result_manager.getSlicePath(model, slice) + "/currentPos.csv"
-        )
+        positionPath = result_manager.getSlicePath(slice) + "/currentPos.csv"
         if path.isfile(positionPath):
             initialWalkerPositions = np.loadtxt(
                 positionPath,
@@ -170,7 +175,7 @@ def runEmceeSampling(
         overallParams,
         overallSimResults,
         overallDensityEvals,
-    ) = concatenateEmceeSamplingResults(model, slice, result_manager)
+    ) = concatenateEmceeSamplingResults(model, result_manager, slice)
     result_manager.save_overall(
         model, slice, overallParams, overallSimResults, overallDensityEvals
     )
@@ -178,7 +183,7 @@ def runEmceeSampling(
 
 
 def concatenateEmceeSamplingResults(
-    model: Model, result_manager: ResultManager
+    model: Model, result_manager: ResultManager, slice: np.ndarray
 ):
     """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
         These files are later used for result visualization.
@@ -188,12 +193,12 @@ def concatenateEmceeSamplingResults(
     """
 
     # Count and print how many sub runs are ready to be merged.
-    numExistingFiles = result_manager.countEmceeSubRuns(model)
+    numExistingFiles = result_manager.countEmceeSubRuns(slice)
     logger.info(f"{numExistingFiles} existing files found for concatenation")
 
-    densityFiles = "Applications/" + model.name + "/DensityEvals/{}.csv"
-    simResultsFiles = "Applications/" + model.name + "/SimResults/{}.csv"
-    paramFiles = "Applications/" + model.name + "/Params/{}.csv"
+    densityFiles = result_manager.getSlicePath(slice) + "/DensityEvals/{}.csv"
+    simResultsFiles = result_manager.getSlicePath(slice) + "/SimResults/{}.csv"
+    paramFiles = result_manager.getSlicePath(slice) + "/Params/{}.csv"
 
     overallParams = np.vstack(
         [np.loadtxt(paramFiles.format(i)) for i in range(numExistingFiles)]
@@ -231,7 +236,7 @@ def calcWalkerAcceptance(
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        result_manager.getSlicePath(model, slice) + "/OverallParams.csv",
+        result_manager.getSlicePath(slice) + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
     )[numBurnSamples:, :]

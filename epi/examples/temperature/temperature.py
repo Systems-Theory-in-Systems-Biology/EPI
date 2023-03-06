@@ -35,7 +35,7 @@ class Temperature(Model):
 
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
-    def generateArtificialParams(self):
+    def generateArtificialParams(self, nDataPoints: int):
         paramPath = importlib.resources.path(
             "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )

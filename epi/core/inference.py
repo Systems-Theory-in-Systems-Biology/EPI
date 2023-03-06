@@ -27,8 +27,8 @@ class InferenceType(Enum):
 def inference(
     model: Model,
     data: typing.Union[str, os.PathLike, np.ndarray],
-    slices: list[np.ndarray] = None,
     inference_type: InferenceType = InferenceType.MCMC,
+    slices: list[np.ndarray] = None,
     run_name: str = "default_run",
     result_manager=None,
     continue_sampling: bool = False,
@@ -58,7 +58,7 @@ def inference(
     if (
         isinstance(data, str)
         or isinstance(data, os.PathLike)
-        or isinstance(pathlib.Path)
+        or isinstance(data, pathlib.Path)
     ):
         data = np.loadtxt(data, delimiter=",", ndmin=2)
     elif isinstance(data, np.ndarray) or isinstance(data, jnp.ndarray):
