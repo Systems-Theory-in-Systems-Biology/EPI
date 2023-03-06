@@ -20,7 +20,7 @@ class Corona(JaxModel):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
 
     def getParamBounds(self):
-        return np.array([[-4.0, 0.0], [-2.0, 2.0], [-1.0, 3.0]])
+        return np.array([[-3.5, -0.5], [-1.0, 2.0], [-1.0, 2.0]])
 
     @classmethod
     def forward(cls, logParam):
