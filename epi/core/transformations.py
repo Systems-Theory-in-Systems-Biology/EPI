@@ -9,6 +9,58 @@ from epi.core.kde import evalKDEGauss
 from epi.core.model import Model
 
 
+def evaluateDensity(
+    param: np.ndarray,
+    model: Model,
+    data: np.ndarray,
+    dataStdevs: np.ndarray,
+    slice: np.ndarray,
+) -> Tuple[np.double, np.ndarray]:
+    """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
+
+    Input: param (parameter for which the transformed density shall be evaluated)
+           model
+           data (data for the model: 2D array with shape (#numDataPoints, #dataDim))
+           dataStdevs (array of suitable kernel standard deviations for each data dimension)
+    Output: logTransformedDensity (natural log of parameter density at the point param)
+          : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
+    """
+
+    limits = model.paramLimits
+
+    # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
+    fullParam = model.centralParam
+    fullParam[slice] = param
+
+    # Check if the tried parameter is within the just-defined bounds and return the lowest possible density if not.
+    if np.any((param < limits[slice, 0]) | (param > limits[slice, 1])):
+        logger.info(
+            "Parameters outside of predefined range"
+        )  # Slows down the sampling to much? -> Change logger level to warning or even error
+        return 0, np.zeros(model.paramDim + model.dataDim + 1)
+
+    # If the parameter is within the valid ranges...
+    else:
+        # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
+        simRes, jac = model.valjac(fullParam)
+
+        # Evaluate the data density in the simulation result.
+        densityEvaluation = evalKDEGauss(data, simRes, dataStdevs)
+
+        # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
+        correction = calcGramDeterminant(jac)
+
+        # Multiply data density and correction factor.
+        trafoDensityEvaluation = densityEvaluation * correction
+
+        # Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.
+        evaluationResults = np.concatenate(
+            (param, simRes, np.array([trafoDensityEvaluation]))
+        )
+
+        return trafoDensityEvaluation, evaluationResults
+
+
 def evalLogTransformedDensity(
     param: np.ndarray,
     model: Model,
@@ -26,42 +78,12 @@ def evalLogTransformedDensity(
     Output: logTransformedDensity (natural log of parameter density at the point param)
           : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
     """
-    limits = model.paramLimits
-
-    # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
-    fullParam = model.centralParam
-    fullParam[slice] = param
-
-    # Check if the tried parameter is within the just-defined bounds and return the lowest possible log density if not.
-    if np.any((param < limits[slice, 0]) | (param > limits[slice, 1])):
-        logger.info(
-            "Parameters outside of predefined range"
-        )  # Slows down the sampling to much? -> Change logger level to warning or even error
-        return -np.inf, np.zeros(model.paramDim + model.dataDim + 1)
-
-    # If the parameter is within the valid ranges...
-    else:
-        # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        simRes, jac = model.valjac(fullParam)
-
-        # Evaluate the data density in the simulation result.
-        densityEvaluation = evalKDEGauss(data, simRes, dataStdevs)
-
-        # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
-        correction = calcGramDeterminant(jac)
-
-        # Multiply data density and correction factor.
-        trafoDensityEvaluation = densityEvaluation * correction
-
-        # Use the log of the transformed density because emcee requires this.
-        logTransformedDensity = np.log(trafoDensityEvaluation)
-
-        # Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.
-        samplerResults = np.concatenate(
-            (param, simRes, np.array([trafoDensityEvaluation]))
-        )
-
-        return logTransformedDensity, samplerResults
+    trafoDensityEvaluation, evaluationResults = evaluateDensity(
+        param, model, data, dataStdevs, slice
+    )
+    if trafoDensityEvaluation == 0:
+        return -np.inf, evaluationResults
+    return np.log(trafoDensityEvaluation), evaluationResults
 
 
 def calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:
