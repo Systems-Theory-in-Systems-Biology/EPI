@@ -5,6 +5,7 @@
 .. _SGs: https://en.wikipedia.org/wiki/Sparse_grid
 """
 
+import typing
 from functools import partial
 from multiprocessing import Pool
 
@@ -23,20 +24,15 @@ def basis1D(
 ) -> np.ndarray:
 
     """Evaluate a 1D hat function in an array of doubles. The hat is centered around centre1D
-       and the hat's level defines its support. The support shrinks exponentially with growing level and a level of 0 is equivalent with full support on [0,1].
-
-    Input: points1D (np.1darray of 1D evaluation coordinate doubles)
-           centre1D (np.double indicating the centre of the hat within the interval [0,1])
-           level (int specifying the size/extend/support of the hat function)
-
-    Output: (np.1darray (size equivalent to size of points1D) of hat function evaluations)
+    and the hat's level defines its support. The support shrinks exponentially with growing level and a level of 0 is equivalent with full support on [0,1].
 
     Args:
-      points1D: np.ndarray:
-      centre1D: np.double:
-      level: int:
+        points1D(np.ndarray): The points at which the hat function should be evaluated.
+        centre1D(np.double): The centre of the hat function.
+        level(int): The level of the hat function. The level defines the support of the hat function.
 
     Returns:
+        np.ndarray: The hat function evaluated at the given points.
 
     """
 
@@ -51,18 +47,13 @@ def basisnD(
 
     """Use a tensor product to generalise the 1D basis function to arbitrarily high dimensions.
 
-    Input: points (np.2darray of shape #Points x #Dims indicating the basis evaluation coordinates in nD)
-           centre (np.1darray of shape #Dims defining the nD centre of an nD basis function)
-           levels (np.1darray of type int and shape #Dims defining one basis function level per dimension)
-
-    Output: basisEval (np.1darray of shape #Points returning one nD basis evaluation per specified evaluation point)
-
     Args:
-      points: np.ndarray:
-      centre: np.ndarray:
-      levels: np.ndarray:
+        points(np.ndarray): The points at which the basis function should be evaluated. Shape: (numPoints, numDims)
+        centre(np.ndarray): The centre of the basis function. Shape: (numDims,)
+        levels(np.ndarray): The levels of the basis function. Shape: (numDims,)
 
     Returns:
+        np.ndarray: The basis function evaluated at the given points. Shape: (numPoints,)
 
     """
 
@@ -81,14 +72,11 @@ def meshgrid2Matrix(meshgrid: list) -> np.ndarray:
     """Convert a np.meshgrid into a np.2darray of grid points.
     The function is mainly used when assigning grid points to Smolnyak-Subspaces.
 
-    Input: meshgrid (list of np.arrays returned by np.meshgrid)
-
-    Output: matrix (np.2darray of shape #Points x #Dims defining all grid points)
-
     Args:
-      meshgrid: list:
+        meshgrid(list): A list of np.arrays returned by np.meshgrid
 
     Returns:
+        np.ndarray: A matrix of shape #Points x #Dims defining all grid points
 
     """
 
@@ -112,9 +100,15 @@ class SparseGrid(object):
     In this implementation, a sparse grid is a list of Smolnyak-subspaces.
     Each subspace is in principle a regular grid of a certain grid width but every second grid point is negelcted.
 
-    Args:
-
-    Returns:
+    Attributes:
+        dim (int): The dimension of the sparse grid. This is the same as the dimension of the parameter space.
+        maxLevelSum (int): The maximum sum of all levels of the subspaces. This is the same as the maximum level of the sparse grid.
+        subspaceList (list): A list of all subspaces that are part of the sparse grid.
+        levels2index (dict): A dictionary that maps the level combination of a subspace to its index in the subspaceList.
+        nSubspaces (int): The number of subspaces in the sparse grid.
+        nPoints (int): The number of grid points in the sparse grid.
+        indexList4TopDownSparseGridTraverse (list): A list of indices that defines an ordering of subspaces where low-level subspaces come before high-level ones.
+        allPoints (np.ndarray): A matrix of shape #Points x #Dims defining all grid points in the sparse grid.
 
     """
 
@@ -125,8 +119,10 @@ class SparseGrid(object):
         The position of a certain subspace within the list of subspaces can be tracked using the levels2index dictionary.
         As we only limit the sum of all levels, the sparse grids implemented here are not refined in a dimension-dependent way.
 
-        Input: dim (int specifying the (parameter) dimension)
-               maxLevelSum (int specifying how refined the sparse grid shall be)
+        Args:
+            dim (int): The dimension of the sparse grid. This is the same as the dimension of the parameter space.
+            maxLevelSum (int): The maximum sum of all levels of the subspaces. This is the same as the maximum level of the sparse grid.
+
         """
 
         self.dim = dim
@@ -156,14 +152,9 @@ class SparseGrid(object):
         It returns the list itself together with a dictionary that maps the level-combination of each subspace onto its index inside the list.
         This function only lists each subspace once.
 
-        Input: currentLevels (np.1darray of type int and shape #Dims that specifies the subspace we are currently considering)
-               indexRefinedLevel (int that stores the index that got altered to form the current subspace)
-
         Args:
-          currentLevels: np.ndarray:
-          indexRefinedLevel: int:
-
-        Returns:
+            currentLevels (np.ndarray): The level combination of the subspace that is currently being refined. Shape (dim,)
+            indexRefinedLevel (int): The index of the level that was refined to form the current subspace.
 
         """
 
@@ -230,6 +221,7 @@ class SparseGrid(object):
 
     def computeIndexList4TopDownSparseGridTraverse(self):
         """Create an ordering of subspaces where low-level subspaces come before high-level ones."""
+
         # allocate storage to count the sum of levels of each subspace
         levelSums = np.zeros(self.nSubspaces, dtype="int")
 
@@ -240,16 +232,12 @@ class SparseGrid(object):
         # argument sort by the just-calculated level-sum
         self.indexList4TopDownSparseGridTraverse = np.argsort(levelSums)
 
-    def evalFunctionSG(self, function):
+    # TODO: Shouldn't an eval function return something?
+    def evalFunctionSG(self, function: typing.Callable):
         """Evaluate the provided function for all subspaces of a sparse grid by using Subspace.evalFunction
 
-        Input: function (python function that can be evaluated in one sparse grid point)
-
         Args:
-          function:
-
-        Returns:
-
+            function (typing.Callable): The function that is to be evaluated. It must be possible to evaluate the function in a single sparse grid point.
         """
 
         # loop over all subspaces
@@ -306,8 +294,10 @@ class Subspace(object):
     def __init__(self, levels: np.ndarray, SG: SparseGrid) -> None:
         """Initialize the subspace by assigning a level, dimension, number of points and the actual points themselves.
 
-        Input: levels (np.1darray of type int and shape #Dims that specifies the refinement of the current subspace in each dimension)
-               SG: (SparseGrid of which the current subspace is a part)
+        Args:
+            levels (np.ndarray): The level of the subspace in each dimension. Shape: (#Dims, )
+            SG (SparseGrid): The sparse grid of which the current subspace is a part.
+
         """
 
         # fill all known information into the class variables
@@ -342,16 +332,12 @@ class Subspace(object):
         # convert the numpy meshgrid to a matrix of all points with shape (nPoints,dim)
         self.points = meshgrid2Matrix(meshgrid)
 
-    def evalFunction(self, function):
+    def evalFunction(self, function: typing.Callable):
         """Evaluate a function in all points of the respective subspace.
         This function is typically called by SparseGrid.evalFunctionSG.
 
-        Input: function (python function that can be evaluated in one sparse grid point)
-
         Args:
-          function:
-
-        Returns:
+            function (typing.Callable): The function that is to be evaluated. It must be possible to evaluate the function in a single sparse grid point.
 
         """
         # create an empty array of size #Points
@@ -395,15 +381,9 @@ def sparseGridInference(
 
     Args:
       model(Model): The model describing the mapping from parameters to data.
-      data: The data to be used for inference
-      numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points, defaults to NUM_LEVELS
-      numProcesses(int, optional): number of processes to use, defaults to NUM_PROCESSES
-      model: Model:
-      data: np.ndarray:
-      numLevels: int:  (Default value = NUM_LEVELS)
-      numProcesses: int:  (Default value = NUM_PROCESSES)
-
-    Returns:
+      data(np.ndarray): The data to be used for inference.
+      numLevels(int): Maximum sparse grid level depth that mainly defines the number of points. Defaults to NUM_LEVELS.
+      numProcesses(int): number of processes to use for parallel evaluation of the model. Defaults to NUM_PROCESSES.
 
     """
 

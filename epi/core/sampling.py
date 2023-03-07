@@ -1,3 +1,18 @@
+"""Sampling methods for the EPI package.
+
+This module provides functions to handle the sampling in EPI. It is based on the emcee package.
+
+.. _emcee: https://emcee.readthedocs.io/en/stable/
+
+Attributes:
+    NUM_RUNS (int): Default number of runs of the emcee sampler.
+    NUM_WALKERS (int): Default number of walkers in the emcee sampler.
+    NUM_STEPS (int): Default number of steps each walker performs before storing the sub run.
+    NUM_PROCESSES (int): Default number of parallel threads.
+
+"""
+
+import typing
 from multiprocessing import Pool
 
 # from pathos.multiprocessing import Pool
@@ -39,26 +54,17 @@ def runEmceeOnce(
     """Run the emcee particle swarm sampler once.
 
     Args:
-      model: The model which will be sampled
-      dataDim: dimension of the data)
-      data: data)
-      dataStdevs: standard deviations of the data)
-      slice: slice of the parameter space which will be sampled)
-      initialWalkerPositions: initial parameter values for the walkers)
-      numWalkers: number of particles in the particle swarm sampler)
-      numSteps: number of samples each particle performs before storing the sub run)
-      numProcesses: number of parallel threads)
-      model: Model:
-      data: np.ndarray:
-      dataStdevs: np.ndarray:
-      slice: np.ndarray:
-      initialWalkerPositions: np.ndarray:
-      numWalkers: int:
-      numSteps: int:
-      numProcesses: int:
+        model (Model): The model which will be sampled
+        data (np.ndarray): data
+        dataStdevs (np.ndarray): kernel width for the data
+        slice (np.ndarray): slice of the parameter space which will be sampled
+        initialWalkerPositions (np.ndarray): initial parameter values for the walkers
+        numWalkers (int): number of particles in the particle swarm sampler
+        numSteps (int): number of samples each particle performs before storing the sub run
+        numProcesses (int): number of parallel threads
 
     Returns:
-      samples from the transformed parameter density)
+        np.ndarray: samples from the transformed parameter density
 
     """
     # Create a pool of worker processes.
@@ -125,27 +131,22 @@ def runEmceeSampling(
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
-) -> None:
+) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
        Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
     Args:
-      model: The model which will be sampled
-      numRuns: number of stored sub runs)
-      numWalkers: number of particles in the particle swarm sampler)
-      numSteps: number of samples each particle performs before storing the sub run)
-      numProcesses: number of parallel threads)
-      model: Model:
-      data: np.ndarray:
-      slice: np.ndarray:
-      result_manager: ResultManager:
-      numRuns: int:  (Default value = NUM_RUNS)
-      numWalkers: int:  (Default value = NUM_WALKERS)
-      numSteps: int:  (Default value = NUM_STEPS)
-      numProcesses: int:  (Default value = NUM_PROCESSES)
+        model (Model): The model which will be sampled
+        data (np.ndarray): data
+        slice (np.ndarray): slice of the parameter space which will be sampled
+        result_manager (ResultManager): ResultManager which will store the results
+        numRuns (int, optional): number of stored sub runs. Defaults to NUM_RUNS.
+        numWalkers (int, optional): number of particles in the particle swarm sampler. Defaults to NUM_WALKERS.
+        numSteps (int, optional): number of samples each particle performs before storing the sub run. Defaults to NUM_STEPS.
+        numProcesses (int, optional): number of parallel threads. Defaults to NUM_PROCESSES.
 
     Returns:
-      None, except for stored files
+        typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
 
     """
 
@@ -208,19 +209,17 @@ def runEmceeSampling(
 
 def concatenateEmceeSamplingResults(
     model: Model, result_manager: ResultManager, slice: np.ndarray
-):
+) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
         These files are later used for result visualization.
 
-    Input: model
-    Output: <none except for stored files>
-
     Args:
-      model: Model:
-      result_manager: ResultManager:
-      slice: np.ndarray:
+        model (Model): The model for which the results should be concatenated
+        result_manager (ResultManager): ResultManager to load the results from
+        slice (np.ndarray): slice for which the results should be concatenated
 
     Returns:
+        typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
 
     """
 
@@ -267,23 +266,17 @@ def calcWalkerAcceptance(
     result_manager: ResultManager,
 ):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
-        This is especially important to find "zombie" walkers, that are never moving.
-
-    Input: model
-           numBurnSamples (integer number of ignored first samples of each chain)
-           numWalkers (integer number of emcee walkers) that were used for the emcee chain which is analyzed here
-           result_manager (ResultManager object) that manages the data from the emcee chain which is analyzed here
-
-    Output: acceptanceRatios (np.array of size numWalkers)
+    This is especially important to find "zombie" walkers, that are never moving.
 
     Args:
-      model: Model:
-      slice: np.ndarray:
-      numWalkers: int:
-      numBurnSamples: int:
-      result_manager: ResultManager:
+        model (Model): The model for which the acceptance ratio should be calculated
+        slice (np.ndarray): slice for which the acceptance ratio should be calculated
+        numWalkers (int): number of walkers in the emcee chain
+        numBurnSamples (int): number of samples that were ignored at the beginning of each chain
+        result_manager (ResultManager): ResultManager to load the results from
 
     Returns:
+        np.ndarray: Array with the acceptance ratio for each walker
 
     """
 

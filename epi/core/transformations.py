@@ -18,21 +18,17 @@ def evaluateDensity(
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
 
-    Input: param (parameter for which the transformed density shall be evaluated)
-           model
-           data (data for the model: 2D array with shape (#numDataPoints, #dataDim))
-           dataStdevs (array of suitable kernel standard deviations for each data dimension)
-    Output: logTransformedDensity (natural log of parameter density at the point param)
-          : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
-
     Args:
-      param: np.ndarray:
-      model: Model:
-      data: np.ndarray:
-      dataStdevs: np.ndarray:
-      slice: np.ndarray:
+        param (np.ndarray): parameter for which the transformed density shall be evaluated
+        model (Model): model to be evaluated
+        data (np.ndarray): data for the model. 2D array with shape (#numDataPoints, #dataDim)
+        dataStdevs (np.ndarray): array of suitable kernel width for each data dimension
+        slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
     Returns:
+        Tuple[np.double, np.ndarray]:
+            : parameter density at the point param
+            : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
 
@@ -81,21 +77,17 @@ def evalLogTransformedDensity(
     """Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.
         This function is intended to be used with the emcee sampler and can be implemented more efficiently at some points.
 
-    Input: param (parameter for which the transformed density shall be evaluated)
-           model
-           data (data for the model: 2D array with shape (#numDataPoints, #dataDim))
-           dataStdevs (array of suitable kernel standard deviations for each data dimension)
-    Output: logTransformedDensity (natural log of parameter density at the point param)
-          : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
-
     Args:
-      param: np.ndarray:
-      model: Model:
-      data: np.ndarray:
-      dataStdevs: np.ndarray:
-      slice: np.ndarray:
+        param (np.ndarray): parameter for which the transformed density shall be evaluated
+        model (Model): model to be evaluated
+        data (np.ndarray): data for the model. 2D array with shape (#numDataPoints, #dataDim)
+        dataStdevs (np.ndarray): array of suitable kernel width for each data dimension
+        slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
     Returns:
+        Tuple[np.double, np.ndarray]:
+            : natural log of the parameter density at the point param
+            : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
     trafoDensityEvaluation, evaluationResults = evaluateDensity(
@@ -112,9 +104,9 @@ def calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:
 
     Args:
       jac(jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
-      jac: jnp.ndarray:
 
     Returns:
+        jnp.double: The pseudo-determinant of the jacobian
 
     """
     correction = _calcGramDeterminant(jac)
@@ -133,9 +125,10 @@ def _calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:
     Not much faster than a similar numpy version. However it can run on gpu and is maybe a bit faster because we can jit compile the sequence of operations.
 
     Args:
-      jac: jnp.ndarray:
+        jac (jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
 
     Returns:
+        jnp.double: The pseudo-determinant of the jacobian
 
     """
 

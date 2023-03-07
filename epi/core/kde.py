@@ -4,6 +4,8 @@
 .. _KDE: https://en.wikipedia.org/wiki/Kernel_density_estimation
 """
 
+import typing
+
 import jax.numpy as jnp
 from jax import jit
 from jax.scipy.stats import cauchy, norm
@@ -12,7 +14,7 @@ from jax.scipy.stats import cauchy, norm
 @jit
 def evalKDECauchy(
     data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
-) -> jnp.double:
+) -> typing.Union[jnp.double, jnp.ndarray]:
     r"""Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
         Assumes that each data point is a potentially high-dimensional sample
         from a joint data distribution.
@@ -27,12 +29,10 @@ def evalKDECauchy(
       data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
       simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
       scales(jnp.ndarray): one scale for each dimension
-      data: jnp.ndarray:
-      simRes: jnp.ndarray:
-      scales: jnp.ndarray:
 
     Returns:
-      jnp.double: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
+        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
+
     """
 
     return (
@@ -50,7 +50,7 @@ def evalKDECauchy(
 @jit
 def evalKDEGauss(
     data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
-) -> jnp.double:
+) -> typing.Union[jnp.double, jnp.ndarray]:
     """Evaluates a Gaussian Kernel Density estimator in one or severalsimulation result.
     Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
     This is for example given for time-series data, where each evaluation time is one dimension of the data point.
@@ -60,13 +60,9 @@ def evalKDEGauss(
       data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
       simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
       scales(jnp.ndarray): one scale for each dimension
-      data: jnp.ndarray:
-      simRes: jnp.ndarray:
-      scales: jnp.ndarray:
 
     Returns:
-      jnp.double: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
-
+        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
     """
 
     return (
@@ -82,17 +78,14 @@ def evalKDEGauss(
 
 
 @jit
-def calcKernelWidth(data: jnp.ndarray) -> jnp.double:
+def calcKernelWidth(data: jnp.ndarray) -> jnp.ndarray:
     """Sets the width of the kernels used for density estimation of the data according to the Silverman rule
 
-    Input: data: 2d array with shape (#Samples, #MeasurementDimensions): data for the model
-
-    Output: stdevs: array with shape (#MeasurementDimensions): suitable kernel standard deviations for each measurement dimension
-
     Args:
-      data: jnp.ndarray:
+        data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
 
     Returns:
+        jnp.ndarray: kernel width for each data dimension, shape: (#MeasurementDimensions,)
 
     """
     numDataPoints, dataDim = data.shape

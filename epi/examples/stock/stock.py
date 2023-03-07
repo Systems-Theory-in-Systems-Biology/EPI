@@ -40,11 +40,9 @@ class Stock(JaxModel):
     )
 
     def getDataBounds(self):
-        """ """
         return np.array([[-7.5, 7.5] for _ in range(self.dataDim)])
 
     def getParamBounds(self):
-        """ """
         return np.array([[-2.0, 2.0] for _ in range(self.paramDim)])
 
     def downloadData(self, tickerListPath: str):
@@ -52,9 +50,9 @@ class Stock(JaxModel):
 
         Args:
           tickerListPath(str): path to the ticker list csv file
-          tickerListPath: str:
 
         Returns:
+            stockData, stockIDs and the name of the tickerList
 
         """
         logger.info("Downloading stock data...")
@@ -117,25 +115,7 @@ class Stock(JaxModel):
 
     @classmethod
     def forward(cls, param):
-        """
-
-        Args:
-          param:
-
-        Returns:
-
-        """
-
         def iteration(x, param):
-            """
-
-            Args:
-              x:
-              param:
-
-            Returns:
-
-            """
             return jnp.array(
                 [
                     param[0] / (1 + jnp.power(x[0], 2))
@@ -146,16 +126,6 @@ class Stock(JaxModel):
             )
 
         def repetition(x, param, numRepetitions):
-            """
-
-            Args:
-              x:
-              param:
-              numRepetitions:
-
-            Returns:
-
-            """
             for i in range(numRepetitions):
                 x = iteration(x, param)
 
@@ -218,14 +188,6 @@ class StockArtificial(Stock, ArtificialModelInterface):
         super(Stock, self).__init__(*args, **kwargs)
 
     def generateArtificialParams(self, numSamples):
-        """
-
-        Args:
-          numSamples:
-
-        Returns:
-
-        """
         mean = np.array(
             [
                 0.41406223,

@@ -14,11 +14,12 @@ def generate_grid(numGridPoints: np.ndarray, limits: np.ndarray, flat=False):
     """Generate a grid with the given number of grid points for each dimension.
 
     Args:
-      numGridPoints: np.ndarray:
-      limits: np.ndarray:
-      flat:  (Default value = False)
+        numGridPoints(np.ndarray): The number of grid points for each dimension.
+        limits(np.ndarray): The limits for each dimension.
+        flat(bool): If True, the grid is returned as a flat array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
 
     Returns:
+        np.ndarray: The grid containing the grid points.
 
     """
     ndim = numGridPoints.size
@@ -43,17 +44,18 @@ def runDenseGridEvaluation(
     numGridPoints: np.ndarray,
     numProcesses=NUM_PROCESSES,
 ) -> None:
-    """This function runs a dense grid evaluation for the given model and data. # TODO document properly
+    """This function runs a dense grid evaluation for the given model and data.
 
     Args:
-      model: Model:
-      data: np.ndarray:
-      slice: np.ndarray:
-      result_manager: ResultManager:
-      numGridPoints: np.ndarray:
-      numProcesses:  (Default value = NUM_PROCESSES)
+        model(Model): The model for which the evaluation should be performed.
+        data(np.ndarray): The data for which the evaluation should be performed.
+        slice(np.ndarray): The slice for which the evaluation should be performed.
+        result_manager(ResultManager): The result manager that should be used to save the results.
+        numGridPoints(np.ndarray): The number of grid points for each dimension.
+        numProcesses(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
 
-    Returns:
+    Raises:
+        ValueError: If the dimension of the numbers of grid points does not match the number of parameters in the slice.
 
     """
 

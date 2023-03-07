@@ -5,25 +5,29 @@ import jax
 import jax.numpy as jnp
 
 
-def value_and_jacfwd(fun: Callable[[jnp.ndarray], jnp.ndarray]):
+def value_and_jacfwd(
+    fun: Callable[[jnp.ndarray], jnp.ndarray]
+) -> Callable[[jnp.ndarray], Callable[[jnp.ndarray], jnp.ndarray]]:
     """Returns a function that computes the value and the jacobian of the passed function using forward mode AD.
 
     Args:
       fun(Callable[[jnp.ndarray], jnp.ndarray]): The function to supplement with the jacobian
-      fun: Callable[[jnp.ndarray]:
-      jnp.ndarray]:
 
     Returns:
+      typing.Callable[[jnp.ndarray], typing.Tuple[jnp.ndarray, jnp.ndarray]]: A function that computes the value and the jacobian of the passed function using forward mode AD.
 
     """
 
-    def value_and_jacfwd_fun(x: jnp.ndarray):
+    def value_and_jacfwd_fun(
+        x: jnp.ndarray,
+    ) -> Callable[[jnp.ndarray], jnp.ndarray]:
         """
 
         Args:
-          x: jnp.ndarray:
+          x(jnp.ndarray): The input to the function
 
         Returns:
+          typing.Tuple[jnp.ndarray, jnp.ndarray]: The value and the jacobian of the passed function using forward mode AD.
 
         """
         pushfwd = partial(jax.jvp, fun, (x,))
@@ -35,15 +39,16 @@ def value_and_jacfwd(fun: Callable[[jnp.ndarray], jnp.ndarray]):
     return value_and_jacfwd_fun
 
 
-def value_and_jacrev(fun: Callable[..., jnp.ndarray]):
+def value_and_jacrev(
+    fun: Callable[..., jnp.ndarray]
+) -> Callable[[jnp.ndarray], Callable[[jnp.ndarray], jnp.ndarray]]:
     """Returns a function that computes the value and the jacobian of the passed function using reverse mode AD.
 
     Args:
       fun(Callable[..., jnp.ndarray]): The function to supplement with the jacobian
-      fun: Callable[...:
-      jnp.ndarray]:
 
     Returns:
+      typing.Callable[[jnp.ndarray], typing.Tuple[jnp.ndarray, jnp.ndarray]]: A function that computes the value and the jacobian of the passed function using reverse mode AD.
 
     """
 
@@ -51,9 +56,10 @@ def value_and_jacrev(fun: Callable[..., jnp.ndarray]):
         """
 
         Args:
-          x:
+          x(jnp.ndarray): The input to the function
 
         Returns:
+          typing.Tuple[jnp.ndarray, jnp.ndarray]: The value and the jacobian of the passed function using reverse mode AD.
 
         """
         y, pullback = jax.vjp(fun, x)

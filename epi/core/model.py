@@ -12,7 +12,20 @@ from epi.jax_extension import value_and_jacrev
 
 
 class Model(ABC):
-    """The base class for all models using the EPI algorithm."""
+    """The base class for all models using the EPI algorithm.
+
+    Attributes:
+        paramDim(int): The dimension of the parameter space.
+        dataDim(int): The dimension of the data space.
+
+        defaultParamSamplingLimits(np.ndarray): The default limits for the parameters. The limits are given as a 2D array with shape (paramDim, 2).
+        defaultCentralParam(np.ndarray): The default central parameter for the model.
+
+        centralParam(np.ndarray): The central parameter for the model.
+        paramLimits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (paramDim, 2).
+        name(str): The name of the model.
+
+    """
 
     paramDim = None
     dataDim = None

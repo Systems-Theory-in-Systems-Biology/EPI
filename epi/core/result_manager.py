@@ -1,6 +1,7 @@
 # TODO: Import Path from pathlib?
 import os
 import shutil
+import typing
 from os import path
 
 import numpy as np
@@ -23,11 +24,10 @@ class ResultManager:
         """This data organization function counts how many sub runs are saved for the specified scenario.
 
         Args:
-          slice: the slice for which the files will be counted
-          slice: np.ndarray:
+            slice(np.ndarray): The slice for which the number of sub runs should be counted.
 
         Returns:
-          numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
+          int: numExistingFiles, the number of completed sub runs of the emcee particle swarm sampler.
 
         """
         # Initialize the number of existing files to be 0
@@ -49,11 +49,10 @@ class ResultManager:
         """This organization function returns the name of the folder for the current slice.
 
         Args:
-          slice: The slice for which the name will be returned
-          slice: np.ndarray:
+            slice(np.ndarray): The slice for which the name of the folder will be returned.
 
         Returns:
-          The name of the folder for the current slice.
+            str: The name of the folder for the current slice.
 
         """
 
@@ -63,11 +62,10 @@ class ResultManager:
         """Returns the path to the folder where the results for the given slice are stored.
 
         Args:
-          slice: The slice for which the path will be returned
-          slice: np.ndarray:
+            slice(np.ndarray): The slice for which the path will be returned.
 
         Returns:
-          The path to the folder where the results for the given slice are stored.
+            str: The path to the folder where the results for the given slice are stored.
 
         """
         sliceName = self.getSliceName(slice)
@@ -82,12 +80,8 @@ class ResultManager:
         are stored for this model. No files are deleted during this action.
 
         Args:
-          model: The model for which the folder structure will be created
-          slices: The slices for which the folder structure will be created
-          model: Model:
-          slices: list[np.ndarray]:  (Default value = None)
-
-        Returns:
+            model(Model): The model for which the folder structure will be created
+            slices(list[np.ndarray]): The slices for which the folder structure will be created
 
         """
 
@@ -101,11 +95,7 @@ class ResultManager:
         are stored for this model and slice. No files are deleted during this action.
 
         Args:
-          model: The model for which the folder structure will be created
-          slice: The slice for which the folder structure will be created
-          slice: np.ndarray:
-
-        Returns:
+            slice(np.ndarray): The slice for which the folder structure will be created
 
         """
         applicationFolderStructure = (
@@ -161,10 +151,7 @@ class ResultManager:
         """Deletes the `Applications` subfolder
 
         Args:
-          slices: The slices for which the folder structure will be deleted
-          model:
-
-        Returns:
+            slices(list[np.ndarray]): The slices for which the folder structure will be deleted
 
         """
         for slice in slices:
@@ -179,22 +166,17 @@ class ResultManager:
         """Deletes the `Applications/[slice]` subfolder
 
         Args:
-          slice: The slice for which the folder structure will be deleted
-          slice: np.ndarray:
-
-        Returns:
+            slice(np.ndarray): The slice for which the folder structure will be deleted
 
         """
         path = self.getSlicePath(slice)
         shutil.rmtree(path)
 
     def getApplicationPath(self) -> str:
-        """Returns the path to the simulation results folder, containing also intermediate results
-
-        Args:
+        """Returns the path to the simulation results folder, containing also intermediate results.
 
         Returns:
-          str: path as string to the simulation folder
+            str: The path to the simulation results folder, containing also intermediate results.
 
         """
         path = "Applications/" + self.model_name
@@ -207,23 +189,17 @@ class ResultManager:
         run,
         samplerResults: np.ndarray,
         finalWalkerPositions: np.ndarray,
-    ):
+    ) -> None:
         """Saves the results of a single run of the emcee particle swarm sampler.
         SamplerResults has the shape (numWalkers * numSteps, samplingDim + dataDim + 1), we save them
         as seperate files in the folders 'Params' and'SimResults' and 'densityEvals'.
 
         Args:
-          model: The model for which the results will be saved
-          slice: The slice for which the results will be saved
-          run: The run for which the results will be saved
-          samplerResults: The results of the sampler, expects an np.array with shape (numWalkers * numSteps, samplingDim + dataDim + 1)
-          finalWalkerPositions: The final positions of the walkers, expects an np.array with shape (numWalkers, samplingDim)
-          model: Model:
-          slice: np.ndarray:
-          samplerResults: np.ndarray:
-          finalWalkerPositions: np.ndarray:
-
-        Returns:
+            model(Model): The model for which the results will be saved
+            slice(np.ndarray): The slice for which the results will be saved
+            run(int): The run for which the results will be saved
+            samplerResults(np.ndarray): The results of the sampler, expects an np.array with shape (numWalkers * numSteps, samplingDim + dataDim + 1)
+            finalWalkerPositions(np.ndarray): The final positions of the walkers, expects an np.array with shape (numWalkers, samplingDim)
 
         """
 
@@ -265,12 +241,10 @@ class ResultManager:
         """Saves the results of all runs of the emcee particle swarm sampler for the given slice.
 
         Args:
-          slice: The slice for which the results will be saved # TODO document dimensions of overallParams, overallSimResults, overallDensityEvals
-          overallParams:
-          overallSimResults:
-          overallDensityEvals:
-
-        Returns:
+            slice(np.ndarray): The slice for which the results will be saved. TODO document dimensions of overallParams, overallSimResults, overallDensityEvals
+            overallParams(np.ndarray): The results of the sampler.
+            overallSimResults(np.ndarray): The results of the sampler.
+            overallDensityEvals(np.ndarray): The results of the sampler.
 
         """
         # Save the three just-created files.
@@ -290,18 +264,18 @@ class ResultManager:
             delimiter=",",
         )
 
-    def loadSimResults(self, slice, numBurnSamples: int, occurrence: int):
+    def loadSimResults(
+        self, slice: np.ndarray, numBurnSamples: int, occurrence: int
+    ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Load the files generated by the EPI algorithm through sampling
 
         Args:
-          slice: Slice for which the results will be loaded
-          numBurnSamples(int): Ignore the first samples of each chain
-          occurrence(int): step of sampling from chains
-          numBurnSamples: int:
-          occurrence: int:
+            slice(np.ndarray): Slice for which the results will be loaded
+            numBurnSamples(int): Ignore the first samples of each chain
+            occurrence(int): step of sampling from chains
 
         Returns:
-          _type_: _description_
+            typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The density evaluations, the simulation results and the parameter chain
 
         """
         results_path = self.getSlicePath(slice)

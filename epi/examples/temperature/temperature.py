@@ -26,43 +26,17 @@ class Temperature(Model):
         )
 
     def forward(self, param):
-        """
-
-        Args:
-          param:
-
-        Returns:
-
-        """
         lowT = -30.0
         highT = 30.0
         res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
         return res
 
     def jacobian(self, param):
-        """
-
-        Args:
-          param:
-
-        Returns:
-
-        """
         return jnp.array([60.0 * jnp.sin(jnp.abs(param[0]))])
 
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
-    """ """
-
     def generateArtificialParams(self, nDataPoints: int = -1):
-        """
-
-        Args:
-          nDataPoints: int:  (Default value = -1)
-
-        Returns:
-
-        """
         paramPath = importlib.resources.path(
             "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )
@@ -71,47 +45,19 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
 
 
 class TemperatureWithFixedParams(Temperature):
-    """ """
-
     def __init__(self, name: str = None) -> None:
         super().__init__(name=name)
         self.lowT = -30.0
         self.highT = 30.0
 
     def forward(self, param):
-        """
-
-        Args:
-          param:
-
-        Returns:
-
-        """
         return self.calcForward(param, self.highT, self.lowT)
 
     def calcForward(self, param, highT, lowT):
-        """
-
-        Args:
-          param:
-          highT:
-          lowT:
-
-        Returns:
-
-        """
         res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
         return res
 
     def jacobian(self, param):
-        """
-
-        Args:
-          param:
-
-        Returns:
-
-        """
         return jnp.array(
             [(self.highT - self.lowT) * jnp.sin(jnp.abs(param[0]))]
         )
