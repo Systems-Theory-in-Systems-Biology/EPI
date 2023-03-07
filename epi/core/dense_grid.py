@@ -10,6 +10,22 @@ from epi.core.transformations import evaluateDensity
 NUM_GRID_POINTS = 10
 
 
+def generate_grid(numGridPoints: np.ndarray, limits: np.ndarray, flat=False):
+    """Generate a grid with the given number of grid points for each dimension."""
+    ndim = numGridPoints.size
+    axes = [
+        np.linspace(limits[i][0], limits[i][1], num=numGridPoints[i])
+        for i in range(ndim)
+    ]
+    mesh = np.meshgrid(*axes, indexing="ij")
+    if flat:
+        # TODO: Check if this is equivalent to the old code:  grid = grid.T.reshape(-1, slice.shape[0])
+        # TODO: Can this code be simplified?
+        return np.array(mesh).reshape(ndim, -1).T
+    else:
+        return mesh
+
+
 def runDenseGridEvaluation(
     model: Model,
     data: np.ndarray,
@@ -27,14 +43,9 @@ def runDenseGridEvaluation(
     limits = model.paramLimits
     dataStdevs = calcKernelWidth(data)
 
-    grid = np.array(
-        np.meshgrid(
-            *[
-                np.linspace(limits[i, 0], limits[i, 1], numGridPoints[i])
-                for i in range(slice.shape[0])
-            ]
-        )
-    ).T.reshape(-1, slice.shape[0])
+    grid = generate_grid(numGridPoints, limits, flat=True)
+
+    # TODO: Do not spawn a process for each grid point, but spawn a process for each core and let it evaluate multiple grid points
     pool = Pool(processes=numProcesses)
     results = []
     for result in pool.imap_unordered(
