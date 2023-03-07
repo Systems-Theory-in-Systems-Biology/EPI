@@ -11,7 +11,6 @@ from epi.core.inference import InferenceType, inference
 from epi.core.kde import calcKernelWidth, evalKDEGauss
 from epi.core.transformations import evaluateDensity
 from epi.examples.simple_models import Exponential, Linear, LinearODE
-from epi.plotting.plots import plotTest
 
 
 def test_transformationLinear():
@@ -140,12 +139,13 @@ def test_transformationExponential():
     paramxMesh, paramyMesh = np.meshgrid(paramxGrid, paramyGrid)
 
     paramEvals = np.zeros((paramResolution, paramResolution))
+    fullSlice = np.arange(model.paramDim)
 
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evaluateDensity(
-                paramPoint, model, data, dataStdevs, model.paramDim
+                paramPoint, model, data, dataStdevs, slice=fullSlice
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -181,6 +181,3 @@ def test_transformationODELinear():
 
     # run MCMC sampling for EPI
     inference(model, data, InferenceType.MCMC)
-
-    # plot the results
-    plotTest(model)
