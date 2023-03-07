@@ -12,6 +12,8 @@ from epi.core.model import Model
 
 
 class ResultManager:
+    """ """
+
     def __init__(self, model_name, run_name) -> None:
         # TODO comment
         self.model_name = model_name
@@ -20,8 +22,13 @@ class ResultManager:
     def countEmceeSubRuns(self, slice: np.ndarray) -> int:
         """This data organization function counts how many sub runs are saved for the specified scenario.
 
-        :param slice: the slice for which the files will be counted
-        :return: numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
+        Args:
+          slice: the slice for which the files will be counted
+          slice: np.ndarray:
+
+        Returns:
+          numExistingFiles (number of completed sub runs of the emcee particle swarm sampler)
+
         """
         # Initialize the number of existing files to be 0
         numExistingFiles = 0
@@ -41,8 +48,13 @@ class ResultManager:
     def getSliceName(self, slice: np.ndarray) -> str:
         """This organization function returns the name of the folder for the current slice.
 
-        :param slice: The slice for which the name will be returned
-        :return: The name of the folder for the current slice.
+        Args:
+          slice: The slice for which the name will be returned
+          slice: np.ndarray:
+
+        Returns:
+          The name of the folder for the current slice.
+
         """
 
         return "Slice_" + "Q".join([str(i) for i in slice])
@@ -50,8 +62,13 @@ class ResultManager:
     def getSlicePath(self, slice: np.ndarray) -> str:
         """Returns the path to the folder where the results for the given slice are stored.
 
-        :param slice: The slice for which the path will be returned
-        :return: The path to the folder where the results for the given slice are stored.
+        Args:
+          slice: The slice for which the path will be returned
+          slice: np.ndarray:
+
+        Returns:
+          The path to the folder where the results for the given slice are stored.
+
         """
         sliceName = self.getSliceName(slice)
         return os.path.join(
@@ -64,8 +81,14 @@ class ResultManager:
         """Creates the `Application` folder including subfolder where all simulation results
         are stored for this model. No files are deleted during this action.
 
-        :param model: The model for which the folder structure will be created
-        :param slices: The slices for which the folder structure will be created
+        Args:
+          model: The model for which the folder structure will be created
+          slices: The slices for which the folder structure will be created
+          model: Model:
+          slices: list[np.ndarray]:  (Default value = None)
+
+        Returns:
+
         """
 
         if slices is None:
@@ -77,8 +100,13 @@ class ResultManager:
         """Creates the subfolders in `Aplication` for the given slice where all simulation results
         are stored for this model and slice. No files are deleted during this action.
 
-        :param model: The model for which the folder structure will be created
-        :param slice: The slice for which the folder structure will be created
+        Args:
+          model: The model for which the folder structure will be created
+          slice: The slice for which the folder structure will be created
+          slice: np.ndarray:
+
+        Returns:
+
         """
         applicationFolderStructure = (
             "Applications/ \n"
@@ -93,6 +121,15 @@ class ResultManager:
         structure = applicationFolderStructure
 
         def create(f, root):
+            """
+
+            Args:
+              f:
+              root:
+
+            Returns:
+
+            """
             fpath = f.get_path()
             joined = os.path.join(root, fpath)
             if isinstance(f, FakeDir):
@@ -123,7 +160,12 @@ class ResultManager:
     def deleteApplicationFolderStructure(self, model, slices) -> None:
         """Deletes the `Applications` subfolder
 
-        :param slices: The slices for which the folder structure will be deleted
+        Args:
+          slices: The slices for which the folder structure will be deleted
+          model:
+
+        Returns:
+
         """
         for slice in slices:
             try:
@@ -136,7 +178,12 @@ class ResultManager:
     def deleteSliceFolderStructure(self, slice: np.ndarray) -> None:
         """Deletes the `Applications/[slice]` subfolder
 
-        :param slice: The slice for which the folder structure will be deleted
+        Args:
+          slice: The slice for which the folder structure will be deleted
+          slice: np.ndarray:
+
+        Returns:
+
         """
         path = self.getSlicePath(slice)
         shutil.rmtree(path)
@@ -144,8 +191,11 @@ class ResultManager:
     def getApplicationPath(self) -> str:
         """Returns the path to the simulation results folder, containing also intermediate results
 
-        :return: path as string to the simulation folder
-        :rtype: str
+        Args:
+
+        Returns:
+          str: path as string to the simulation folder
+
         """
         path = "Applications/" + self.model_name
         return path
@@ -162,11 +212,19 @@ class ResultManager:
         SamplerResults has the shape (numWalkers * numSteps, samplingDim + dataDim + 1), we save them
         as seperate files in the folders 'Params' and'SimResults' and 'densityEvals'.
 
-        :param model: The model for which the results will be saved
-        :param slice: The slice for which the results will be saved
-        :param run: The run for which the results will be saved
-        :param samplerResults: The results of the sampler, expects an np.array with shape (numWalkers * numSteps, samplingDim + dataDim + 1)
-        :param finalWalkerPositions: The final positions of the walkers, expects an np.array with shape (numWalkers, samplingDim)
+        Args:
+          model: The model for which the results will be saved
+          slice: The slice for which the results will be saved
+          run: The run for which the results will be saved
+          samplerResults: The results of the sampler, expects an np.array with shape (numWalkers * numSteps, samplingDim + dataDim + 1)
+          finalWalkerPositions: The final positions of the walkers, expects an np.array with shape (numWalkers, samplingDim)
+          model: Model:
+          slice: np.ndarray:
+          samplerResults: np.ndarray:
+          finalWalkerPositions: np.ndarray:
+
+        Returns:
+
         """
 
         samplingDim = finalWalkerPositions.shape[1]
@@ -206,7 +264,14 @@ class ResultManager:
     ):
         """Saves the results of all runs of the emcee particle swarm sampler for the given slice.
 
-        :param slice: The slice for which the results will be saved # TODO document dimensions of overallParams, overallSimResults, overallDensityEvals
+        Args:
+          slice: The slice for which the results will be saved # TODO document dimensions of overallParams, overallSimResults, overallDensityEvals
+          overallParams:
+          overallSimResults:
+          overallDensityEvals:
+
+        Returns:
+
         """
         # Save the three just-created files.
         np.savetxt(
@@ -228,13 +293,16 @@ class ResultManager:
     def loadSimResults(self, slice, numBurnSamples: int, occurrence: int):
         """Load the files generated by the EPI algorithm through sampling
 
-        :param slice: Slice for which the results will be loaded
-        :param numBurnSamples: Ignore the first samples of each chain
-        :type numBurnSamples: int
-        :param occurrence: step of sampling from chains
-        :type occurrence: int
-        :return: _description_
-        :rtype: _type_
+        Args:
+          slice: Slice for which the results will be loaded
+          numBurnSamples(int): Ignore the first samples of each chain
+          occurrence(int): step of sampling from chains
+          numBurnSamples: int:
+          occurrence: int:
+
+        Returns:
+          _type_: _description_
+
         """
         results_path = self.getSlicePath(slice)
 

@@ -38,16 +38,28 @@ def runEmceeOnce(
 ) -> np.ndarray:
     """Run the emcee particle swarm sampler once.
 
-    :param model: The model which will be sampled
-    :param dataDim: (dimension of the data)
-    :param data: (data)
-    :param dataStdevs: (standard deviations of the data)
-    :param slice: (slice of the parameter space which will be sampled)
-    :param initialWalkerPositions: (initial parameter values for the walkers)
-    :param numWalkers: (number of particles in the particle swarm sampler)
-    :param numSteps: (number of samples each particle performs before storing the sub run)
-    :param numProcesses: (number of parallel threads)
-    :return: (samples from the transformed parameter density)
+    Args:
+      model: The model which will be sampled
+      dataDim: dimension of the data)
+      data: data)
+      dataStdevs: standard deviations of the data)
+      slice: slice of the parameter space which will be sampled)
+      initialWalkerPositions: initial parameter values for the walkers)
+      numWalkers: number of particles in the particle swarm sampler)
+      numSteps: number of samples each particle performs before storing the sub run)
+      numProcesses: number of parallel threads)
+      model: Model:
+      data: np.ndarray:
+      dataStdevs: np.ndarray:
+      slice: np.ndarray:
+      initialWalkerPositions: np.ndarray:
+      numWalkers: int:
+      numSteps: int:
+      numProcesses: int:
+
+    Returns:
+      samples from the transformed parameter density)
+
     """
     # Create a pool of worker processes.
     pool = Pool(processes=numProcesses)
@@ -117,12 +129,24 @@ def runEmceeSampling(
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
        Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
 
-    :param model: The model which will be sampled
-    :param numRuns: (number of stored sub runs)
-    :param numWalkers: (number of particles in the particle swarm sampler)
-    :param numSteps: (number of samples each particle performs before storing the sub run)
-    :param numProcesses: (number of parallel threads)
-    :return: None, except for stored files
+    Args:
+      model: The model which will be sampled
+      numRuns: number of stored sub runs)
+      numWalkers: number of particles in the particle swarm sampler)
+      numSteps: number of samples each particle performs before storing the sub run)
+      numProcesses: number of parallel threads)
+      model: Model:
+      data: np.ndarray:
+      slice: np.ndarray:
+      result_manager: ResultManager:
+      numRuns: int:  (Default value = NUM_RUNS)
+      numWalkers: int:  (Default value = NUM_WALKERS)
+      numSteps: int:  (Default value = NUM_STEPS)
+      numProcesses: int:  (Default value = NUM_PROCESSES)
+
+    Returns:
+      None, except for stored files
+
     """
 
     dataStdevs = calcKernelWidth(data)
@@ -190,6 +214,14 @@ def concatenateEmceeSamplingResults(
 
     Input: model
     Output: <none except for stored files>
+
+    Args:
+      model: Model:
+      result_manager: ResultManager:
+      slice: np.ndarray:
+
+    Returns:
+
     """
 
     # Count and print how many sub runs are ready to be merged.
@@ -243,6 +275,16 @@ def calcWalkerAcceptance(
            result_manager (ResultManager object) that manages the data from the emcee chain which is analyzed here
 
     Output: acceptanceRatios (np.array of size numWalkers)
+
+    Args:
+      model: Model:
+      slice: np.ndarray:
+      numWalkers: int:
+      numBurnSamples: int:
+      result_manager: ResultManager:
+
+    Returns:
+
     """
 
     # load the emcee parameter chain

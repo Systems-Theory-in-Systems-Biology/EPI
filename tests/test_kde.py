@@ -30,7 +30,15 @@ def kde_data_test_set():
 @pytest.mark.parametrize("evalKDE", kernel_estimators())
 @pytest.mark.parametrize("batch", [False, True])
 def test_KDE_batch(batch, evalKDE):
-    """Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point"""
+    """Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point
+
+    Args:
+      batch:
+      evalKDE:
+
+    Returns:
+
+    """
     # Define random data points in 2D
     dataDim = 2
     numDataPoints = 3
@@ -57,7 +65,18 @@ def test_KDE_batch(batch, evalKDE):
 @pytest.mark.parametrize("data, stdevs, grid_bounds", kde_data_test_set())
 @pytest.mark.parametrize("evalKDE", kernel_estimators())
 def test_KDE_data(evalKDE, data, stdevs, grid_bounds, resolution=33):
-    """Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid"""
+    """Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid
+
+    Args:
+      evalKDE:
+      data:
+      stdevs:
+      grid_bounds:
+      resolution:  (Default value = 33)
+
+    Returns:
+
+    """
 
     xGrid = np.linspace(*(grid_bounds[0]), resolution)
     yGrid = np.linspace(*(grid_bounds[1]), resolution)

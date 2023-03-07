@@ -23,14 +23,16 @@ def evalKDECauchy(
         .. math::
             density_{i} = \frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \frac{1}{(\frac{x_{i,d} - y_{s,d}}{scales_d})^2 \; \pi \; scales_d}
 
-    :param data: data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
-    :type data: jnp.ndarray
-    :param simRes: evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
-    :type simRes: jnp.ndarray
-    :param scales: one scale for each dimension
-    :type scales: jnp.ndarray
-    :return: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
-    :rtype: jnp.double
+    Args:
+      data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
+      simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
+      scales(jnp.ndarray): one scale for each dimension
+      data: jnp.ndarray:
+      simRes: jnp.ndarray:
+      scales: jnp.ndarray:
+
+    Returns:
+      jnp.double: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
     """
 
     return (
@@ -54,14 +56,17 @@ def evalKDEGauss(
     This is for example given for time-series data, where each evaluation time is one dimension of the data point.
     While it is possible to define different standard deviations for different measurement dimensions, it is so far not possible to define covariances.
 
-    :param data: data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
-    :type data: jnp.ndarray
-    :param simRes: evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
-    :type simRes: jnp.ndarray
-    :param scales: one scale for each dimension
-    :type scales: jnp.ndarray
-    :return: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
-    :rtype: jnp.double
+    Args:
+      data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
+      simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
+      scales(jnp.ndarray): one scale for each dimension
+      data: jnp.ndarray:
+      simRes: jnp.ndarray:
+      scales: jnp.ndarray:
+
+    Returns:
+      jnp.double: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
+
     """
 
     return (
@@ -83,6 +88,12 @@ def calcKernelWidth(data: jnp.ndarray) -> jnp.double:
     Input: data: 2d array with shape (#Samples, #MeasurementDimensions): data for the model
 
     Output: stdevs: array with shape (#MeasurementDimensions): suitable kernel standard deviations for each measurement dimension
+
+    Args:
+      data: jnp.ndarray:
+
+    Returns:
+
     """
     numDataPoints, dataDim = data.shape
     stdevs = jnp.std(data, axis=0, ddof=1)

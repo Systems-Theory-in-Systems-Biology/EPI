@@ -20,14 +20,15 @@ colorExtra2 = np.array([255.0, 218.0, 174.0]) / 255.0
 def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
     """Plot sampling results in comparison to true results
 
-    :param model: Model from which the results will be plotted
-    :type model: Model
-    :param numBurnSamples: Ignore the first samples of each chain
-    :type numBurnSamples: _type_
-    :param occurrence: step of sampling from chains
-    :type occurrence: _type_
-    :param resolution: number of points on the plotting grid?, defaults to 100
-    :type resolution: int, optional
+    Args:
+      model(Model): Model from which the results will be plotted
+      numBurnSamples(_type_): Ignore the first samples of each chain
+      occurrence(_type_): step of sampling from chains
+      resolution(int, optional, optional): number of points on the plotting grid?, defaults to 100
+      model: Model:
+
+    Returns:
+
     """
     artificialModel = model.isArtificial()
 
@@ -137,6 +138,14 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
 
 
 def plotDataMarginals(model: Model):
+    """
+
+    Args:
+      model: Model:
+
+    Returns:
+
+    """
     (
         paramDim,
         dataDim,
@@ -175,6 +184,16 @@ def plotDataMarginals(model: Model):
 
 
 def plotMarginals(model: Model, numBurnSamples, occurrence):
+    """
+
+    Args:
+      model: Model:
+      numBurnSamples:
+      occurrence:
+
+    Returns:
+
+    """
     artificialModel = model.isArtificial()
 
     simResults = np.loadtxt(
@@ -198,9 +217,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
     if artificialModel:
         trueParams, paramStdevs = model.paramLoader()
         trueParamMarginals = np.loadtxt(
-            "Applications/"
-            + model.name
-            + "/Plots/trueParamMarginals.csv",
+            "Applications/" + model.name + "/Plots/trueParamMarginals.csv",
             delimiter=",",
         )
 
@@ -264,10 +281,16 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     """Draw each sample (row of the matrix) as a circle of linear interpolations of its dimensions.
     Loads all necessary data and subsequently calls the method singleWeb 3 or 4 times
 
-    :param model: (model ID)
-    :param numBurnSamples: (Number of ignored first samples of each chain)
-    :param occurence: (step of sampling from chains)
-    :return: None, shows a plot
+    Args:
+      model: model ID)
+      numBurnSamples: Number of ignored first samples of each chain)
+      occurence: step of sampling from chains)
+      model: Model:
+      occurrence:
+
+    Returns:
+      None, shows a plot
+
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
@@ -284,9 +307,7 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     )[numBurnSamples::occurrence, :]
 
     # load underlying data
-    trueData = np.loadtxt(
-        "Data/" + model.name + "Data.csv", delimiter=","
-    )
+    trueData = np.loadtxt("Data/" + model.name + "Data.csv", delimiter=",")
 
     # if available, load also the true parameter values
     if artificialModel:
@@ -340,9 +361,7 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
             trueParams, lowerBoundsParams, upperBoundsParams, colorQ, dpi
         )
         plt.savefig(
-            "Applications/"
-            + model.name
-            + "/SpiderWebs/trueParams.png",
+            "Applications/" + model.name + "/SpiderWebs/trueParams.png",
             dpi=dpi,
         )
 
@@ -357,6 +376,16 @@ def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
            dpi (int that defines the quality of the image)
 
     Output: web (matplotlib figure representing the single spider web)
+
+    Args:
+      matrix:
+      lowerBounds:
+      upperBounds:
+      color:
+      dpi:
+
+    Returns:
+
     """
 
     # extract matrix dimensions
@@ -423,12 +452,16 @@ def plotTest(
     """Visualize the results of EPI applied to a model with 2 parameters and
         2 output dimensions as surface plots.
 
-    :param model: model from which the results shall be loaded
-    :type model: Model
-    :param dataPlotResolution: number of grid points per data dimension, defaults to 25
-    :type dataPlotResolution: int, optional
-    :param paramPlotResolution: number of grid points per parameter dimension
-    :type dataPlotResolution: int, optional
+    Args:
+      model(Model): model from which the results shall be loaded
+      dataPlotResolution(int, optional): number of grid points per data dimension, defaults to 25
+      paramPlotResolution: number of grid points per parameter dimension
+      model: Model:
+      dataPlotResolution: int:  (Default value = 25)
+      paramPlotResolution: int:  (Default value = 25)
+
+    Returns:
+
     """
 
     # ---------------------------------------------------------------------------
@@ -563,8 +596,12 @@ def plotTest(
 def plotGridResults(model: Model) -> None:
     """The temperature model for artificial and real data is evaluated over a grid and plotted
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
 
     (
@@ -689,9 +726,7 @@ def plotGridResults(model: Model) -> None:
         label="True Latitudes (KDE)",
     )
     plt.legend()
-    plt.savefig(
-        "Images/model.name/TrueLatKDE.svg", bbox_inches="tight"
-    )
+    plt.savefig("Images/model.name/TrueLatKDE.svg", bbox_inches="tight")
     plt.show()
 
     sim_measure_temp = (

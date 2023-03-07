@@ -12,6 +12,11 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
     Data0: Size [0,2] # the more water and sun the better
     Data1: Health [0,1], to much water is not good, too much sun is not good
     Data2: Sciarid :P
+
+    Args:
+
+    Returns:
+
     """
 
     paramDim = 2
@@ -22,6 +27,14 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
 
     @classmethod
     def forward(cls, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return jnp.array(
             [
                 param[0] * param[1],
@@ -31,11 +44,27 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
         )
 
     def generateArtificialParams(self, numSamples: int):
+        """
+
+        Args:
+          numSamples: int:
+
+        Returns:
+
+        """
         return np.random.rand(numSamples, 2)
 
 
 @jit
 def fw(param):
+    """
+
+    Args:
+      param:
+
+    Returns:
+
+    """
     return jnp.array(
         [
             param[0] * param[1],
@@ -50,6 +79,14 @@ fwJac = jit(jacrev(fw))
 
 @jit
 def bw(param):
+    """
+
+    Args:
+      param:
+
+    Returns:
+
+    """
     return fwJac(param)
 
 
@@ -60,6 +97,11 @@ class ExternalPlant(Model, ArtificialModelInterface):
     Data0: Size [0,2] # the more water and sun the better
     Data1: Health [0,1], to much water is not good, too much sun is not good
     Data2: Trauerfliegen :P
+
+    Args:
+
+    Returns:
+
     """
 
     paramDim = 2
@@ -69,10 +111,34 @@ class ExternalPlant(Model, ArtificialModelInterface):
     defaultCentralParam = np.array([0.5, 0.5])
 
     def forward(self, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return fw(param)
 
     def jacobian(self, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return bw(param)
 
     def generateArtificialParams(self, numSamples: int):
+        """
+
+        Args:
+          numSamples: int:
+
+        Returns:
+
+        """
         return np.random.rand(numSamples, 2)

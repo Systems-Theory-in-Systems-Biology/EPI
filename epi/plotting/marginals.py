@@ -8,9 +8,15 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
     """Evaluate the one-dimensional marginals of the original data over equi-distant grids.
         The stored evaluations can then be used for result visualization.
 
-    :parameter model: The model which manages the data and provides the visualization grid
-    :parameter resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime
-    :return: None, but stores results as files
+    Args:
+      eter: model: The model which manages the data and provides the visualization grid
+      eter: resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime
+      model: Model:
+      resolution: int:
+
+    Returns:
+      None, but stores results as files
+
     """
 
     # Load data, data standard deviations and model characteristics for the specified model.
@@ -54,11 +60,18 @@ def calcEmceeSimResultsMarginals(
     """Evaluate the one-dimensional marginals of the emcee sampling simulation results over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
-    :param model:
-    :param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
-    :param occurence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
-    :param resolution: (defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
-    :return: None, except for stored files
+    Args:
+      model: param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
+      occurence: step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
+      resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
+      model: Model:
+      numBurnSamples: int:
+      occurrence: int:
+      resolution: int:
+
+    Returns:
+      None, except for stored files
+
     """
 
     # Load the emcee simulation results chain
@@ -109,11 +122,19 @@ def calcParamMarginals(
     """Evaluate the one-dimensional marginals of the emcee sampling parameters (and potentially true parameters) over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
-    :param model:(model ID)
-    :param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
-    :param occurrence: (step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
-    :param resolution: (defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
-    :return: None, except for stored files
+    Args:
+      model: model ID)
+      numBurnSamples: Number of ignored first samples of each chain), defaults to 20% of all samples
+      occurrence: step of sampling from chains), defaults to numWalkers+1 (ensures that the chosen samples are nearly uncorrelated)
+      resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
+      model: Model:
+      numBurnSamples: int:
+      occurrence: int:
+      resolution: int:
+
+    Returns:
+      None, except for stored files
+
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
@@ -176,9 +197,7 @@ def calcParamMarginals(
 
     if artificialModel:
         np.savetxt(
-            "Applications/"
-            + model.name
-            + "/Plots/trueParamMarginals.csv",
+            "Applications/" + model.name + "/Plots/trueParamMarginals.csv",
             trueParamMarginals,
             delimiter=",",
         )

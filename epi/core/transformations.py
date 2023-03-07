@@ -24,6 +24,16 @@ def evaluateDensity(
            dataStdevs (array of suitable kernel standard deviations for each data dimension)
     Output: logTransformedDensity (natural log of parameter density at the point param)
           : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
+
+    Args:
+      param: np.ndarray:
+      model: Model:
+      data: np.ndarray:
+      dataStdevs: np.ndarray:
+      slice: np.ndarray:
+
+    Returns:
+
     """
 
     limits = model.paramLimits
@@ -77,6 +87,16 @@ def evalLogTransformedDensity(
            dataStdevs (array of suitable kernel standard deviations for each data dimension)
     Output: logTransformedDensity (natural log of parameter density at the point param)
           : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
+
+    Args:
+      param: np.ndarray:
+      model: Model:
+      data: np.ndarray:
+      dataStdevs: np.ndarray:
+      slice: np.ndarray:
+
+    Returns:
+
     """
     trafoDensityEvaluation, evaluationResults = evaluateDensity(
         param, model, data, dataStdevs, slice
@@ -90,8 +110,12 @@ def calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:
     """Evaluate the pseudo-determinant of the jacobian (that serves as a correction term) in one specific parameter point.
     Returns 0 if the correction factor is not finite.
 
-    :param jac: The jacobian for which the pseudo determinant shall be calculated
-    :type jac: jnp.ndarray
+    Args:
+      jac(jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
+      jac: jnp.ndarray:
+
+    Returns:
+
     """
     correction = _calcGramDeterminant(jac)
     # If the correction factor is not finite, return 0 instead to not affect the sampling.
@@ -107,6 +131,12 @@ def _calcGramDeterminant(jac: jnp.ndarray) -> jnp.double:
     It does not check if the correction factor is finite.
 
     Not much faster than a similar numpy version. However it can run on gpu and is maybe a bit faster because we can jit compile the sequence of operations.
+
+    Args:
+      jac: jnp.ndarray:
+
+    Returns:
+
     """
 
     jac = jnp.atleast_2d(jac)

@@ -31,6 +31,13 @@ def basis1D(
 
     Output: (np.1darray (size equivalent to size of points1D) of hat function evaluations)
 
+    Args:
+      points1D: np.ndarray:
+      centre1D: np.double:
+      level: int:
+
+    Returns:
+
     """
 
     return np.maximum(
@@ -49,6 +56,14 @@ def basisnD(
            levels (np.1darray of type int and shape #Dims defining one basis function level per dimension)
 
     Output: basisEval (np.1darray of shape #Points returning one nD basis evaluation per specified evaluation point)
+
+    Args:
+      points: np.ndarray:
+      centre: np.ndarray:
+      levels: np.ndarray:
+
+    Returns:
+
     """
 
     # Initialize the basis evaluation of each point as 1
@@ -69,6 +84,12 @@ def meshgrid2Matrix(meshgrid: list) -> np.ndarray:
     Input: meshgrid (list of np.arrays returned by np.meshgrid)
 
     Output: matrix (np.2darray of shape #Points x #Dims defining all grid points)
+
+    Args:
+      meshgrid: list:
+
+    Returns:
+
     """
 
     # calculate the shape of the matrix and initialize with 0s
@@ -90,6 +111,11 @@ class SparseGrid(object):
     """Each object of this class respresents a sparse grid.
     In this implementation, a sparse grid is a list of Smolnyak-subspaces.
     Each subspace is in principle a regular grid of a certain grid width but every second grid point is negelcted.
+
+    Args:
+
+    Returns:
+
     """
 
     def __init__(self, dim: int, maxLevelSum: int) -> None:
@@ -132,6 +158,13 @@ class SparseGrid(object):
 
         Input: currentLevels (np.1darray of type int and shape #Dims that specifies the subspace we are currently considering)
                indexRefinedLevel (int that stores the index that got altered to form the current subspace)
+
+        Args:
+          currentLevels: np.ndarray:
+          indexRefinedLevel: int:
+
+        Returns:
+
         """
 
         # This loop makes sure that each subspace is only counted once.
@@ -211,6 +244,12 @@ class SparseGrid(object):
         """Evaluate the provided function for all subspaces of a sparse grid by using Subspace.evalFunction
 
         Input: function (python function that can be evaluated in one sparse grid point)
+
+        Args:
+          function:
+
+        Returns:
+
         """
 
         # loop over all subspaces
@@ -221,6 +260,11 @@ class SparseGrid(object):
     def computeCoefficients(self):
         """When using sparse grids for function interpolation (and quadrature),
         this function computes the coefficients of all basis function of the whole sparse grid.
+
+        Args:
+
+        Returns:
+
         """
 
         # loop over all smolnyak subspaces in a low to high level order
@@ -303,6 +347,12 @@ class Subspace(object):
         This function is typically called by SparseGrid.evalFunctionSG.
 
         Input: function (python function that can be evaluated in one sparse grid point)
+
+        Args:
+          function:
+
+        Returns:
+
         """
         # create an empty array of size #Points
         self.fEval = np.zeros(self.nPoints)
@@ -343,15 +393,18 @@ def sparseGridInference(
 ):
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
+    Args:
+      model(Model): The model describing the mapping from parameters to data.
+      data: The data to be used for inference
+      numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points, defaults to NUM_LEVELS
+      numProcesses(int, optional): number of processes to use, defaults to NUM_PROCESSES
+      model: Model:
+      data: np.ndarray:
+      numLevels: int:  (Default value = NUM_LEVELS)
+      numProcesses: int:  (Default value = NUM_PROCESSES)
 
-    :param model: The model describing the mapping from parameters to data.
-    :type model: Model
-    :param data: The data to be used for inference
-    :type dataPath: np.ndarray
-    :param numLevels: Maximum sparse grid level depth that mainly defines the number of points, defaults to NUM_LEVELS
-    :type numLevels: int, optional
-    :param numProcesses: number of processes to use, defaults to NUM_PROCESSES
-    :type numProcesses: int, optional
+    Returns:
+
     """
 
     # Load data, data standard deviations and model characteristics for the specified model.

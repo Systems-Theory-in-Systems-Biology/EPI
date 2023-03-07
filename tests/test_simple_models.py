@@ -14,6 +14,7 @@ from epi.examples.simple_models import Exponential, Linear, LinearODE
 
 
 def test_transformationLinear():
+    """ """
     model = Linear()
 
     # create approx. 1000 data points that are perfectly uniformly distributed over a grid
@@ -93,6 +94,7 @@ def test_transformationLinear():
 
 
 def test_transformationExponential():
+    """ """
     model = Exponential()
 
     # create true parameter points that are drawn uniformly from [0,1]^2
@@ -163,12 +165,16 @@ def test_transformationExponential():
 
 
 def test_transformationODELinear():
-    """
-    Exemplary application of Eulerian Parameter Inference a very simplistic ordinary differential equation model.
+    """Exemplary application of Eulerian Parameter Inference a very simplistic ordinary differential equation model.
     We create our toy data by first defining a true parameter distribution.
     The actual data is then obtained by evaluating the model in parameters drawn from this true distribution.
     Ideally, we would be able to reconstruct the true parameter density.
     However, we will see that this parameter inference problem possesses more than one solution and is therefore not well-posed.
+
+    Args:
+
+    Returns:
+
     """
 
     # define the model

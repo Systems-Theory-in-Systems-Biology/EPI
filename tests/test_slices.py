@@ -13,6 +13,7 @@ from epi.examples.corona import CoronaArtificial
 
 
 def test_slices():
+    """ """
     model: Model = CoronaArtificial()
 
     # generate artificial data

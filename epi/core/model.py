@@ -15,6 +15,11 @@ class Model(ABC):
     """The base class for all models using the EPI algorithm.
 
     It contains three abstract methods which need to be implemented by subclasses
+
+    Args:
+
+    Returns:
+
     """
 
     paramDim = None
@@ -75,8 +80,15 @@ class Model(ABC):
     def forward(self, param: np.ndarray):
         """Executed the forward pass of the model to obtain data from a parameter. You can also do equivalently :code:`model(param)`.
 
-        :param param: The parameter(set) for which the model should be evaluated.
-        :raises NotImplementedError: Implement this method to make you model callable.
+        Args:
+          param: The parameter(set) for which the model should be evaluated.
+          param: np.ndarray:
+
+        Returns:
+
+        Raises:
+          NotImplementedError: Implement this method to make you model callable.
+
         """
         raise NotImplementedError
 
@@ -84,10 +96,13 @@ class Model(ABC):
     def jacobian(self, param: np.ndarray):
         """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method.
 
-        :param param: The parameter(set) for which the jacobian of your model should be evaluated.
-        :type param: np.ndarray
-        :return: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
-        :rtype: np.ndarray
+        Args:
+          param(np.ndarray): The parameter(set) for which the jacobian of your model should be evaluated.
+          param: np.ndarray:
+
+        Returns:
+          np.ndarray: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
+
         """
         raise NotImplementedError
 
@@ -95,8 +110,12 @@ class Model(ABC):
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
         it simply calls :func:`~epic.core.model.Model.forward` and :func:`~epic.core.model.Model.jacobian`.
 
-        :param param: The parameter(set) for which the model and the jacobian should be evaluated.
-        :type param: np.ndarray
+        Args:
+          param(np.ndarray): The parameter(set) for which the model and the jacobian should be evaluated.
+          param: np.ndarray:
+
+        Returns:
+
         """
 
         return self.forward(param), self.jacobian(param)
@@ -104,8 +123,11 @@ class Model(ABC):
     def isArtificial(self) -> bool:
         """Determines whether the model provides artificial data
 
-        :return: True if the model inherits from the ArtificialModelInterface
-        :rtype: bool
+        Args:
+
+        Returns:
+          bool: True if the model inherits from the ArtificialModelInterface
+
         """
         return issubclass(self.__class__, ArtificialModelInterface)
 
@@ -115,14 +137,27 @@ class ArtificialModelInterface(ABC):
     and the corresponding artificial data dataset, which can be used to compare the results from epi with the ground truth.
     The comparison can be done using the plotEmceeResults.
 
-    :raises NotImplementedError: Implement the generateArtificialData function to implement this interface.
+    Args:
+
+    Returns:
+
+    Raises:
+      NotImplementedError: Implement the generateArtificialData function to implement this interface.
+
     """
 
     @abstractmethod
     def generateArtificialParams(self, numSamples: int):
         """This method must be overwritten an return an numpy array of numSamples parameters.
 
-        :raises NotImplementedError: _description_
+        Args:
+          numSamples: int:
+
+        Returns:
+
+        Raises:
+          NotImplementedError: _description_
+
         """
         raise NotImplementedError
 
@@ -131,10 +166,16 @@ class ArtificialModelInterface(ABC):
         params: typing.Union[os.PathLike, str, np.ndarray],
     ) -> None:
         """This method is called when the user wants to generate artificial data from the model.
-        :param numSamples: The number of samples to generate.
-        :type numSamples: int
-        :param params: The parameters for which the artificial data should be generated.
-        :type params: np.ndarray or Path or str
+
+        Args:
+          numSamples(int): The number of samples to generate.
+          params(np.ndarray or Path or str): The parameters for which the artificial data should be generated.
+          params: typing.Union[os.PathLike:
+          str:
+          np.ndarray]:
+
+        Returns:
+
         """
         if isinstance(params, str) or isinstance(params, os.PathLike):
             params = np.loadtxt(params, delimiter=",", ndmin=2)
@@ -159,6 +200,14 @@ class ArtificialModelInterface(ABC):
 
 
 def autodiff(_cls):
+    """
+
+    Args:
+      _cls:
+
+    Returns:
+
+    """
     _cls.initFwAndBw()
     return _cls
 
@@ -170,8 +219,11 @@ class JaxModel(Model):
     Dont overwrite the __init__ method of JaxModel without calling the super constructor.
     Else your forward method wont be jitted.
 
-    :param Model: Abstract parent class
-    :type Model: Model
+    Args:
+      Model(Model: Model): Abstract parent class
+
+    Returns:
+
     """
 
     def __init__(self, name: str = None) -> None:
@@ -184,6 +236,7 @@ class JaxModel(Model):
 
     @classmethod
     def initFwAndBw(cls):
+        """ """
         # Calculate jitted methods for the subclass(es)
         # It is an unintended sideeffect that this happens for all intermediate classes also.
         # E.g. for: class CoronaArtificial(Corona)
@@ -193,10 +246,34 @@ class JaxModel(Model):
 
     @staticmethod
     def forward_method(self, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return type(self).fw(param)
 
     def jacobian(self, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return type(self).bw(param)
 
     def valjac(self, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return type(self).vj(param)

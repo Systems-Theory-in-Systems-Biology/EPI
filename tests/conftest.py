@@ -6,6 +6,12 @@ def pytest_sessionstart(session):
     """Called once at the start of a pytest session
 
     Currently disables the matplotlib output
+
+    Args:
+      session:
+
+    Returns:
+
     """
     import matplotlib
 

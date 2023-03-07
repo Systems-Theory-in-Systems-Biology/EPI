@@ -11,7 +11,16 @@ NUM_GRID_POINTS = 10
 
 
 def generate_grid(numGridPoints: np.ndarray, limits: np.ndarray, flat=False):
-    """Generate a grid with the given number of grid points for each dimension."""
+    """Generate a grid with the given number of grid points for each dimension.
+
+    Args:
+      numGridPoints: np.ndarray:
+      limits: np.ndarray:
+      flat:  (Default value = False)
+
+    Returns:
+
+    """
     ndim = numGridPoints.size
     axes = [
         np.linspace(limits[i][0], limits[i][1], num=numGridPoints[i])
@@ -34,7 +43,19 @@ def runDenseGridEvaluation(
     numGridPoints: np.ndarray,
     numProcesses=NUM_PROCESSES,
 ) -> None:
-    """This function runs a dense grid evaluation for the given model and data. # TODO document properly"""
+    """This function runs a dense grid evaluation for the given model and data. # TODO document properly
+
+    Args:
+      model: Model:
+      data: np.ndarray:
+      slice: np.ndarray:
+      result_manager: ResultManager:
+      numGridPoints: np.ndarray:
+      numProcesses:  (Default value = NUM_PROCESSES)
+
+    Returns:
+
+    """
 
     if slice.shape[0] != numGridPoints.shape[0]:
         raise ValueError(

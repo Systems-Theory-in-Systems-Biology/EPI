@@ -7,6 +7,7 @@ from epi.core.model import ArtificialModelInterface, JaxModel
 
 
 class Corona(JaxModel):
+    """ """
 
     paramDim = 3
     dataDim = 4
@@ -17,17 +18,37 @@ class Corona(JaxModel):
     defaultCentralParam = np.array([-1.8, 0.0, 0.7])
 
     def getDataBounds(self):
+        """ """
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
 
     def getParamBounds(self):
+        """ """
         return np.array([[-3.5, -0.5], [-1.0, 2.0], [-1.0, 2.0]])
 
     @classmethod
     def forward(cls, logParam):
+        """
+
+        Args:
+          logParam:
+
+        Returns:
+
+        """
         param = jnp.power(10, logParam)
         xInit = jnp.array([999.0, 0.0, 1.0, 0.0])
 
         def rhs(t, x, param):
+            """
+
+            Args:
+              t:
+              x:
+              param:
+
+            Returns:
+
+            """
             return jnp.array(
                 [
                     -param[0] * x[0] * x[2],
@@ -62,10 +83,19 @@ class Corona(JaxModel):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
+    """ """
 
     paramLimits = np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])
 
     def generateArtificialParams(self, numSamples):
+        """
+
+        Args:
+          numSamples:
+
+        Returns:
+
+        """
         lowerBound = np.array([-1.9, -0.1, 0.6])
         upperBound = np.array([-1.7, 0.1, 0.8])
 

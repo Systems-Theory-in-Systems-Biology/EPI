@@ -1,14 +1,11 @@
 import jax.numpy as jnp
 import numpy as np
-from jax import vmap
 
-from epi.core.model import (
-    ArtificialModelInterface,
-    JaxModel,
-)
+from epi.core.model import ArtificialModelInterface, JaxModel
 
 
 class Linear(JaxModel, ArtificialModelInterface):
+    """ """
 
     paramDim = 2
     dataDim = 2
@@ -18,19 +15,52 @@ class Linear(JaxModel, ArtificialModelInterface):
 
     @classmethod
     def forward(cls, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return jnp.array([param[0] * 10, (-2.0) * param[1] - 2.0])
 
     def generateArtificialParams(self, numSamples: int):
+        """
+
+        Args:
+          numSamples: int:
+
+        Returns:
+
+        """
         return np.random.rand(numSamples, self.paramDim)
 
     def getParamBounds(self, scale=1.0) -> np.ndarray:
+        """
+
+        Args:
+          scale:  (Default value = 1.0)
+
+        Returns:
+
+        """
         return np.array([[-0.2, 1.2], [-0.2, 1.2]])
 
     def getDataBounds(self, scale=1.0) -> np.ndarray:
+        """
+
+        Args:
+          scale:  (Default value = 1.0)
+
+        Returns:
+
+        """
         return np.array([[-2.0, 12.0], [-4.4, -1.6]])
 
 
 class Exponential(JaxModel):
+    """ """
 
     paramDim = 2
     dataDim = 2
@@ -40,9 +70,18 @@ class Exponential(JaxModel):
 
     @classmethod
     def forward(cls, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return jnp.array([param[0] * jnp.exp(1), jnp.exp(param[1])])
 
     def getParamBounds(self) -> np.ndarray:
+        """ """
         return np.array([0.8, 2.2], [0.8, 2.2])
 
     # TODO: ???
@@ -50,10 +89,12 @@ class Exponential(JaxModel):
     # KDEyGrid = np.linspace(np.exp(0.8), np.exp(2.2), KDEresolution)
     # KDExMesh, KDEyMesh = np.meshgrid(KDExGrid, KDEyGrid)
     def getDataBounds(self) -> np.ndarray:
+        """ """
         return self.forward(self.getParamBounds())
 
 
 class LinearODE(JaxModel, ArtificialModelInterface):
+    """ """
 
     paramDim = 2
     dataDim = 2
@@ -63,6 +104,14 @@ class LinearODE(JaxModel, ArtificialModelInterface):
 
     @classmethod
     def forward(cls, param):
+        """
+
+        Args:
+          param:
+
+        Returns:
+
+        """
         return jnp.array(
             [
                 param[0] * jnp.exp(param[1] * 1.0),
@@ -71,4 +120,12 @@ class LinearODE(JaxModel, ArtificialModelInterface):
         )
 
     def generateArtificialParams(self, numSamples: int):
+        """
+
+        Args:
+          numSamples: int:
+
+        Returns:
+
+        """
         return np.random.rand(numSamples, 2) + 1

@@ -40,7 +40,14 @@ def Examples():
 
 
 def getExampleName(example):
-    """Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k"""
+    """Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k
+
+    Args:
+      example:
+
+    Returns:
+
+    """
     return example[1]
 
 
@@ -48,8 +55,11 @@ def getExampleName(example):
 def test_examples(example):
     """
 
-    :param example: The example which should be tested. The tuple contains the module location, the class name and the number of walkers.
-    :type example: Tuple[str, str, int]
+    Args:
+      example(Tuple[str, str, int]): The example which should be tested. The tuple contains the module location, the class name and the number of walkers.
+
+    Returns:
+
     """
     # extract example parameters from tuple
     try:
