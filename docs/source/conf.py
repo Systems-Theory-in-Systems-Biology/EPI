@@ -40,6 +40,7 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
     "sphinx_copybutton",
 ]
 

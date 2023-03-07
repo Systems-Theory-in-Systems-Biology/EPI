@@ -22,8 +22,17 @@ from epi.core.sampling import (
 
 # Define an enum for the inference types: DenseGrid, MCMC
 class InferenceType(Enum):
-    """ """
+    """The type of inference to be used.
 
+    Args:
+        Enum: The enum class.
+
+    Attributes:
+        DENSE_GRID: The dense grid inference.
+        MCMC: The MCMC inference.
+    """
+
+    # TODO: Sparse grid inference
     DENSE_GRID = 0
     MCMC = 1
 
@@ -41,23 +50,14 @@ def inference(
     """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
-      model(Model): The model describing the mapping from parameters to data.
-      dataPath(str, optional): path to the data relative to the current working directory.
-    If None, the default path defined in the Model class initializer is used, defaults to None
-      numRuns(int, optional): Number of independent runs, defaults to NUM_RUNS
-      numWalkers(int, optional): Number of walkers for each run, influencing each other, defaults to NUM_WALKERS
-      numSteps(int, optional): Number of steps each walker does in each run, defaults to NUM_STEPS
-      numProcesses(int, optional): number of processes to use, defaults to NUM_PROCESSES
-      model: Model:
-      data: typing.Union[str:
-      os.PathLike:
-      np.ndarray]:
-      inference_type: InferenceType:  (Default value = InferenceType.MCMC)
-      slices: list[np.ndarray]:  (Default value = None)
-      run_name: str:  (Default value = "default_run")
-      result_manager:  (Default value = None)
-      continue_sampling: bool:  (Default value = False)
-      **kwargs:
+        model(Model): The model describing the mapping from parameters to data.
+        data(typing.Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
+        inference_type(InferenceType): The type of inference to be used. (Default value = InferenceType.MCMC)
+        slices(list[np.ndarray]): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
+        run_name(str): The name of the run. (Default value = "default_run")
+        result_manager(ResultManager): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
+        continue_sampling(bool): If True, the inference will continue sampling from the last saved point. (Default value = False)
+        **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
 
@@ -96,26 +96,25 @@ def inference(
 
 
 def inference_dense_grid(
-    model,
-    data,
-    result_manager: ResultManager = None,
-    slices: np.ndarray = None,
+    model: Model,
+    data: np.ndarray,
+    result_manager: ResultManager,
+    slices: np.ndarray,
     allNumsGridPoints: typing.Union[int, list[np.ndarray]] = NUM_GRID_POINTS,
     numProcesses: int = NUM_PROCESSES,
 ):
-    """This function runs a dense grid evaluation for the given model and data. # TODO document properly
+    """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
 
     Args:
-      model:
-      data:
-      result_manager: ResultManager:  (Default value = None)
-      slices: np.ndarray:  (Default value = None)
-      allNumsGridPoints: typing.Union[int:
-      list[np.ndarray]]:  (Default value = NUM_GRID_POINTS)
-      numProcesses: int:  (Default value = NUM_PROCESSES)
+        model (Model): The model describing the mapping from parameters to data.
+        data (np.ndarray): The data to be used for the inference.
+        result_manager (ResultManager): The result manager to be used for the inference.
+        slices (np.ndarray): A list of slices to be used for the inference.
+        allNumsGridPoints (typing.Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to NUM_GRID_POINTS.
+        numProcesses (int, optional): The number of processes to be used for the inference. Defaults to NUM_PROCESSES.
 
-    Returns:
-
+    Raises:
+        TypeError: If the numGridPoints argument has the wrong type.
     """
 
     # If the number of grid points is given as an int, it is assumed to be the same for all parameters
@@ -146,28 +145,26 @@ def inference_dense_grid(
 def inference_mcmc(
     model,
     data,
-    result_manager=None,
-    slices=None,
+    result_manager,
+    slices,
     numRuns: int = NUM_RUNS,
     numWalkers: int = NUM_WALKERS,
     numSteps: int = NUM_STEPS,
     numProcesses: int = NUM_PROCESSES,
     calcWalkerAcceptanceB: bool = False,
 ):
-    """
+    """This function runs a MCMC sampling for the given model and data.
 
     Args:
-      model:
-      data:
-      result_manager:  (Default value = None)
-      slices:  (Default value = None)
-      numRuns: int:  (Default value = NUM_RUNS)
-      numWalkers: int:  (Default value = NUM_WALKERS)
-      numSteps: int:  (Default value = NUM_STEPS)
-      numProcesses: int:  (Default value = NUM_PROCESSES)
-      calcWalkerAcceptanceB: bool:  (Default value = False)
-
-    Returns:
+        model (Model): The model describing the mapping from parameters to data.
+        data (np.ndarray): The data to be used for the inference.
+        result_manager (ResultManager): The result manager to be used for the inference.
+        slices (np.ndarray): A list of slices to be used for the inference.
+        numRuns (int, optional): The number of runs to be used for the inference. Defaults to NUM_RUNS.
+        numWalkers (int, optional): The number of walkers to be used for the inference. Defaults to NUM_WALKERS.
+        numSteps (int, optional): The number of steps to be used for the inference. Defaults to NUM_STEPS.
+        numProcesses (int, optional): The number of processes to be used for the inference. Defaults to NUM_PROCESSES.
+        calcWalkerAcceptanceB (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
 
     """
 
