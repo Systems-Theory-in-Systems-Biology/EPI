@@ -56,19 +56,13 @@ def inference(
     """
 
     # Load data from file if necessary
-    assert data is not None
-    if (
-        isinstance(data, str)
-        or isinstance(data, os.PathLike)
-        or isinstance(data, pathlib.Path)
-    ):
+    if isinstance(data, (str, os.PathLike, pathlib.Path)):
         data = np.loadtxt(data, delimiter=",", ndmin=2)
-    elif isinstance(data, np.ndarray) or isinstance(data, jnp.ndarray):
-        pass
-    else:
+    elif not isinstance(data, (np.ndarray, jnp.ndarray)):
         raise TypeError(
-            f"The params argument has to be either a path to a file or a numpy array. The passed argument was of type {type(data)}"
+            f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(data)}."
         )
+
     # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
     if slices is None:
         slice = np.arange(model.paramDim)
