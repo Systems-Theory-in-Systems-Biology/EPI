@@ -23,7 +23,7 @@ def Examples():
     for example in [
         ("epi.examples.stock", "Stock", "ETF50.csv"),
         ("epi.examples.stock", "StockArtificial"),
-        # ("epi.examples.corona", "Corona", "CoronaData.csv"),
+        ("epi.examples.corona", "Corona", "CoronaData.csv"),
         ("epi.examples.corona", "CoronaArtificial"),
         ("epi.examples.temperature", "Temperature", "TemperatureData.csv"),
         ("epi.examples.temperature", "TemperatureArtificial"),
