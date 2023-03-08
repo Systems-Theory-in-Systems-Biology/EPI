@@ -1,20 +1,24 @@
 """
-The code which is executed here should contain code which represents the typical usage of the epi library.
-It could be extended to somehow measure the performance of the code for all examples in a reproducible and comparable way.
-At the moment the simplest way to get an indication for the performance is to run the tests and look at the time it takes to run the tests.
-For profiling / identifying bottlenecks and not just observing the iterations per seconds, run this file with the following command:
-scalene tests/profiling.py from the root directory of the project.
+Test the slices functionality for each of the inference methods.
 """
 import numpy as np
+import pytest
 
 from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
-from epi.examples.corona import CoronaArtificial
+from epi.examples.stock import StockArtificial
+
+# Parametrize the test to run for each inference type
 
 
-def test_slices():
+@pytest.mark.parametrize(
+    "inference_type",
+    InferenceType._member_map_.values(),
+    ids=InferenceType._member_names_,
+)
+def test_slices(inference_type):
     """ """
-    model: Model = CoronaArtificial()
+    model: Model = StockArtificial()
 
     # generate artificial data
     if model.isArtificial():
@@ -24,7 +28,9 @@ def test_slices():
     else:
         raise Exception("This test is only for artificial data")
 
-    # run MCMC sampling for EPI
     slice1 = np.array([0])
     slice2 = np.array([1, 2])
-    inference(model, data, InferenceType.MCMC, slices=[slice1, slice2])
+    slice3 = np.array([3, 4, 5])
+    slices = [slice1, slice2, slice3]
+
+    inference(model, data, inference_type, slices=slices)

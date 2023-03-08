@@ -117,19 +117,16 @@ def inference_dense_grid(
         TypeError: If the numGridPoints argument has the wrong type.
     """
 
-    # If the number of grid points is given as an int, it is assumed to be the same for all parameters
+    # If the number of grid points is given as an int, we construct a list of arrays with the same number of grid points for each parameter in the slice
     if isinstance(allNumsGridPoints, int):
-        homogenousNumGridPoints = allNumsGridPoints
-        numGridPoints = []
-        for slice in slices:
-            allNumsGridPoints.append(
-                homogenousNumGridPoints * np.ones(slices[slice].shape[0])
-            )
+        allNumsGridPoints = [
+            np.full(len(slice), allNumsGridPoints) for slice in slices
+        ]
     elif isinstance(allNumsGridPoints, list[np.ndarray]):
         pass
     else:
         raise TypeError(
-            f"The numGridPoints argument has to be either an int or a list of arrays. The passed argument was of type {type(numGridPoints)}"
+            f"The numGridPoints argument has to be either an int or a list of arrays. The passed argument was of type {type(allNumsGridPoints)}"
         )
     for slice, numGridPoints in zip(slices, allNumsGridPoints):
         runDenseGridEvaluation(

@@ -28,8 +28,7 @@ def evaluateDensity(
     Returns:
         Tuple[np.double, np.ndarray]:
             : parameter density at the point param
-            : samplerResults (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
-
+            : vector containing the parameter, the simulation result and the density
     """
 
     limits = model.paramLimits

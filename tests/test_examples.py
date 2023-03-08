@@ -100,3 +100,5 @@ def test_examples(example):
         numWalkers=nWalkers,
         numSteps=nSteps,
     )
+
+    # TODO: Check if results are correct by comparing them with the artificial data for the artificial models

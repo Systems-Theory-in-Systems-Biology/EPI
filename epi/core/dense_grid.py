@@ -68,20 +68,43 @@ def runDenseGridEvaluation(
 
     grid = generate_grid(numGridPoints, limits, flat=True)
 
-    # TODO: Do not spawn a process for each grid point, but spawn a process for each core and let it evaluate multiple grid points
-    pool = Pool(processes=numProcesses)
-    results = []
-    for result in pool.imap_unordered(
-        evaluateDensity,
-        [(point, model, data, dataStdevs, slice) for point in grid],
-    ):
-        trafoDensityEvaluation, evaluationResults = result
-        results.append(result)
-        # TODO save intermediate results in csv
+    # Split the grid into chunks that can be evaluated by each process
+    grid_chunks = np.array_split(grid, numProcesses)
 
+    # Define a function which evaluates the density for a given grid chunk
+    global evaluateOnGridChunk  # Needed to make this function pickleable
+
+    def evaluateOnGridChunk(args):
+        grid_chunk, model, data, dataStdevs, slice = args
+        # Init the result array
+        evaluationResults = np.zeros(
+            (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
+        )
+        # Evaluate the grid points
+        for i, gridPoint in enumerate(grid_chunk):
+            density, param_simRes_density = evaluateDensity(
+                gridPoint, model, data, dataStdevs, slice
+            )
+            evaluationResults[i] = param_simRes_density
+        return evaluationResults
+
+    pool = Pool(processes=numProcesses)
+    results = np.zeros((grid.shape[0], data.shape[1] + slice.shape[0] + 1))
+    for i, result in enumerate(
+        pool.imap(
+            evaluateOnGridChunk,
+            [
+                (grid_chunks[i], model, data, dataStdevs, slice)
+                for i in range(numProcesses)
+            ],
+        )
+    ):
+        results[
+            i * grid_chunks[i].shape[0] : (i + 1) * grid_chunks[i].shape[0]
+        ] = result[1]
     pool.close()
     pool.join()
 
-    for result in results:
-        trafoDensityEvaluation, evaluationResults = result
-        # TODO save overall results in csv
+    result_manager.save_overall(
+        slice, results[:, 0], results[:, 1], results[:, 2]
+    )
