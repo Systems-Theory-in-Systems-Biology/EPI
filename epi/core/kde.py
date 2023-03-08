@@ -12,7 +12,7 @@ from jax.scipy.stats import cauchy, norm
 
 
 @jit
-def evalKDECauchy(
+def eval_kde_cauchy(
     data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
     r"""Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
@@ -48,7 +48,7 @@ def evalKDECauchy(
 
 
 @jit
-def evalKDEGauss(
+def eval_kde_gauss(
     data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
     """Evaluates a Gaussian Kernel Density estimator in one or severalsimulation result.
@@ -78,7 +78,7 @@ def evalKDEGauss(
 
 
 @jit
-def calcKernelWidth(data: jnp.ndarray) -> jnp.ndarray:
+def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
     """Sets the width of the kernels used for density estimation of the data according to the Silverman rule
 
     Args:
@@ -88,10 +88,10 @@ def calcKernelWidth(data: jnp.ndarray) -> jnp.ndarray:
         jnp.ndarray: kernel width for each data dimension, shape: (#MeasurementDimensions,)
 
     """
-    numDataPoints, dataDim = data.shape
+    num_data_points, data_dim = data.shape
     stdevs = jnp.std(data, axis=0, ddof=1)
 
     # Silvermans rule
-    return stdevs * (numDataPoints * (dataDim + 2) / 4.0) ** (
-        -1.0 / (dataDim + 4)
+    return stdevs * (num_data_points * (data_dim + 2) / 4.0) ** (
+        -1.0 / (data_dim + 4)
     )

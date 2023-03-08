@@ -12,11 +12,11 @@ from epi.core.model import ArtificialModelInterface, Model
 class Temperature(Model):
     """ """
 
-    paramDim = 1
-    dataDim = 1
+    param_dim = 1
+    data_dim = 1
 
     defaultParamSamplingLimits = np.array([[0, np.pi / 2]])
-    defaultCentralParam = np.array([np.pi / 4.0])
+    defaultcentral_param = np.array([np.pi / 4.0])
 
     def __init__(self, name: str = None) -> None:
         super().__init__(name=name)
@@ -26,9 +26,11 @@ class Temperature(Model):
         )
 
     def forward(self, param):
-        lowT = -30.0
-        highT = 30.0
-        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
+        low_T = -30.0
+        high_T = 30.0
+        res = jnp.array(
+            [low_T + (high_T - low_T) * jnp.cos(jnp.abs(param[0]))]
+        )
         return res
 
     def jacobian(self, param):
@@ -36,28 +38,30 @@ class Temperature(Model):
 
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
-    def generateArtificialParams(self, nDataPoints: int = -1):
+    def generate_artificial_params(self, num_data_points: int = -1):
         paramPath = importlib.resources.path(
             "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )
-        trueParamSample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
-        return trueParamSample
+        true_param_sample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
+        return true_param_sample
 
 
 class TemperatureWithFixedParams(Temperature):
     def __init__(self, name: str = None) -> None:
         super().__init__(name=name)
-        self.lowT = -30.0
-        self.highT = 30.0
+        self.low_T = -30.0
+        self.high_T = 30.0
 
     def forward(self, param):
-        return self.calcForward(param, self.highT, self.lowT)
+        return self.calc_forward(param, self.high_T, self.low_T)
 
-    def calcForward(self, param, highT, lowT):
-        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
+    def calc_forward(self, param, high_T, low_T):
+        res = jnp.array(
+            [low_T + (high_T - low_T) * jnp.cos(jnp.abs(param[0]))]
+        )
         return res
 
     def jacobian(self, param):
         return jnp.array(
-            [(self.highT - self.lowT) * jnp.sin(jnp.abs(param[0]))]
+            [(self.high_T - self.low_T) * jnp.sin(jnp.abs(param[0]))]
         )

@@ -5,16 +5,16 @@ At the moment the simplest way to get an indication for the performance is to ru
 For profiling / identifying bottlenecks and not just observing the iterations per seconds, run this file with the following command:
 scalene tests/profiling.py from the root directory of the project.
 """
+from epi.core.inference import inference
 from epi.core.model import Model
-from epi.core.sampling import inference
 from epi.examples.corona import CoronaArtificial
 
 if __name__ == "__main__":
     model: Model = CoronaArtificial()
 
     # generate artificial data
-    if model.isArtificial():
-        model.generateArtificialData()
+    if model.is_artificial():
+        model.generate_artificial_data()
 
     # run MCMC sampling for EPI
     inference(model=model)

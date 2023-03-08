@@ -21,10 +21,10 @@ def test_slices(inference_type):
     model: Model = StockArtificial()
 
     # generate artificial data
-    if model.isArtificial():
-        nDataPoints = 1000
-        params = model.generateArtificialParams(nDataPoints)
-        data = model.generateArtificialData(params)
+    if model.is_artificial():
+        num_data_points = 1000
+        params = model.generate_artificial_params(num_data_points)
+        data = model.generate_artificial_data(params)
     else:
         raise Exception("This test is only for artificial data")
 

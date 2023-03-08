@@ -9,23 +9,23 @@ from epi.core.model import ArtificialModelInterface, JaxModel
 class Corona(JaxModel):
     """ """
 
-    paramDim = 3
-    dataDim = 4
+    param_dim = 3
+    data_dim = 4
 
     defaultParamSamplingLimits = np.array(
         [[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]]
     )
-    defaultCentralParam = np.array([-1.8, 0.0, 0.7])
+    defaultcentral_param = np.array([-1.8, 0.0, 0.7])
 
-    def getDataBounds(self):
+    def get_data_bounds(self):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
 
-    def getParamBounds(self):
+    def get_param_bounds(self):
         return np.array([[-3.5, -0.5], [-1.0, 2.0], [-1.0, 2.0]])
 
     @classmethod
-    def forward(cls, logParam):
-        param = jnp.power(10, logParam)
+    def forward(cls, log_param):
+        param = jnp.power(10, log_param)
         xInit = jnp.array([999.0, 0.0, 1.0, 0.0])
 
         def rhs(t, x, param):
@@ -44,7 +44,7 @@ class Corona(JaxModel):
         stepsize_controller = dx.PIDController(rtol=1e-5, atol=1e-5)
 
         try:
-            odeSol = dx.diffeqsolve(
+            ode_sol = dx.diffeqsolve(
                 term,
                 solver,
                 t0=0.0,
@@ -55,7 +55,7 @@ class Corona(JaxModel):
                 saveat=saveat,
                 stepsize_controller=stepsize_controller,
             )
-            return odeSol.ys[1:5, 2]
+            return ode_sol.ys[1:5, 2]
 
         except Exception as e:
             logger.warning("ODE solution not possible!", exc_info=e)
@@ -63,14 +63,14 @@ class Corona(JaxModel):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    paramLimits = np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])
+    param_limits = np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])
 
-    def generateArtificialParams(self, numSamples):
-        lowerBound = np.array([-1.9, -0.1, 0.6])
-        upperBound = np.array([-1.7, 0.1, 0.8])
+    def generate_artificial_params(self, num_samples):
+        lower_bound = np.array([-1.9, -0.1, 0.6])
+        upper_bound = np.array([-1.7, 0.1, 0.8])
 
-        trueParamSample = lowerBound + (
-            upperBound - lowerBound
-        ) * np.random.rand(numSamples, 3)
+        true_param_sample = lower_bound + (
+            upper_bound - lower_bound
+        ) * np.random.rand(num_samples, 3)
 
-        return trueParamSample
+        return true_param_sample

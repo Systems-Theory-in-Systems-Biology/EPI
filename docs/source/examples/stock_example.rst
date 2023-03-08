@@ -1,4 +1,4 @@
-StockData Model
+stock_data Model
 ---------------
 The high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
 
@@ -10,7 +10,7 @@ Specialities
 ____________
 
 * External Data Source: The model shows how to use an external data source in the workflow by overwriting the method :py:meth:`epi.core.model.Model.dataLoader`.
-* High-Dimensional: The model has a high number of dimensions: DataDim = 19, ParamDim = 6
+* High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6
   * Large Number of Walkers in MCMC Sampling
   * Visualization: The visualization can be done for each dimension separately, for two selected dimensions or using spider web plots.
 

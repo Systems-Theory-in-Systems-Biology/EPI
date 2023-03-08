@@ -15,30 +15,30 @@ class Model(ABC):
     """The base class for all models using the EPI algorithm.
 
     Attributes:
-        paramDim(int): The dimension of the parameter space.
-        dataDim(int): The dimension of the data space.
+        param_dim(int): The dimension of the parameter space.
+        data_dim(int): The dimension of the data space.
 
-        defaultParamSamplingLimits(np.ndarray): The default limits for the parameters. The limits are given as a 2D array with shape (paramDim, 2).
-        defaultCentralParam(np.ndarray): The default central parameter for the model.
+        defaultParamSamplingLimits(np.ndarray): The default limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2).
+        defaultcentral_param(np.ndarray): The default central parameter for the model.
 
-        centralParam(np.ndarray): The central parameter for the model.
-        paramLimits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (paramDim, 2).
+        central_param(np.ndarray): The central parameter for the model.
+        param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2).
         name(str): The name of the model.
 
     """
 
-    paramDim = None
-    dataDim = None
+    param_dim = None
+    data_dim = None
 
     defaultParamSamplingLimits = None
-    defaultCentralParam = None
+    defaultcentral_param = None
 
     def __init_subclass__(cls, **kwargs):
         """Check if the required attributes are set."""
         if not inspect.isabstract(cls):
             for required in (
-                "paramDim",
-                "dataDim",
+                "param_dim",
+                "data_dim",
             ):
                 if not getattr(cls, required):
                     raise AttributeError(
@@ -48,29 +48,31 @@ class Model(ABC):
 
     def __init__(
         self,
-        centralParam: np.ndarray = None,
-        paramLimits: np.ndarray = None,
+        central_param: np.ndarray = None,
+        param_limits: np.ndarray = None,
         name: str = None,
     ) -> None:
         """Initializes the model with the given parameters.
 
         Args:
-            centralParam(np.ndarray): The central parameter for the model. (Default value = None)
-            paramLimits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (paramDim, 2). (Default value = None)
+            central_param(np.ndarray): The central parameter for the model. (Default value = None)
+            param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)
             name(str): The name of the model. The class name is used if no name is given. (Default value = None)
         """
 
-        assert centralParam is not None or self.defaultCentralParam is not None
         assert (
-            paramLimits is not None
+            central_param is not None or self.defaultcentral_param is not None
+        )
+        assert (
+            param_limits is not None
             or self.defaultParamSamplingLimits is not None
         )
 
-        self.centralParam = (
-            centralParam if centralParam else self.defaultCentralParam
+        self.central_param = (
+            central_param if central_param else self.defaultcentral_param
         )
-        self.paramLimits = (
-            paramLimits if paramLimits else self.defaultParamSamplingLimits
+        self.param_limits = (
+            param_limits if param_limits else self.defaultParamSamplingLimits
         )
 
         if name is None:
@@ -120,7 +122,7 @@ class Model(ABC):
 
         return self.forward(param), self.jacobian(param)
 
-    def isArtificial(self) -> bool:
+    def is_artificial(self) -> bool:
         """Determines whether the model provides artificial parameter and data sets.
 
         Returns:
@@ -138,11 +140,11 @@ class ArtificialModelInterface(ABC):
     """
 
     @abstractmethod
-    def generateArtificialParams(self, numSamples: int) -> np.ndarray:
-        """This method must be overwritten an return an numpy array of numSamples parameters.
+    def generate_artificial_params(self, num_samples: int) -> np.ndarray:
+        """This method must be overwritten an return an numpy array of num_samples parameters.
 
         Args:
-            numSamples(int): The number of parameters to generate.
+            num_samples(int): The number of parameters to generate.
 
         Returns:
             np.ndarray: The generated parameters.
@@ -153,7 +155,7 @@ class ArtificialModelInterface(ABC):
         """
         raise NotImplementedError
 
-    def generateArtificialData(
+    def generate_artificial_data(
         self,
         params: typing.Union[os.PathLike, str, np.ndarray],
     ) -> np.ndarray:
@@ -197,7 +199,7 @@ def autodiff(_cls):
         The decorated class with the jacobian method and the forward and jacobian method jit compiled with jax.
 
     """
-    _cls.initFwAndBw()
+    _cls.init_fw_and_bw()
     return _cls
 
 
@@ -225,7 +227,7 @@ class JaxModel(Model):
         return autodiff(super().__init_subclass__(**kwargs))
 
     @classmethod
-    def initFwAndBw(cls):
+    def init_fw_and_bw(cls):
         """Calculates the jitted methods for the subclass(es).
         It is an unintended sideeffect that this happens for all intermediate classes also.
         E.g. for: class CoronaArtificial(Corona)

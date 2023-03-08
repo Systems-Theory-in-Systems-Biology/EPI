@@ -20,7 +20,7 @@ class ResultManager:
         self.model_name = model_name
         self.run_name = run_name
 
-    def countEmceeSubRuns(self, slice: np.ndarray) -> int:
+    def count_emcee_sub_runs(self, slice: np.ndarray) -> int:
         """This data organization function counts how many sub runs are saved for the specified scenario.
 
         Args:
@@ -35,7 +35,7 @@ class ResultManager:
 
         # Increase the just defined number until no corresponding file is found anymore ...
         while path.isfile(
-            self.getSlicePath(slice)
+            self.get_slice_path(slice)
             + "/SimResults/"
             + "simResults_"
             + str(numExistingFiles)
@@ -45,7 +45,7 @@ class ResultManager:
 
         return numExistingFiles
 
-    def getSliceName(self, slice: np.ndarray) -> str:
+    def get_slice_name(self, slice: np.ndarray) -> str:
         """This organization function returns the name of the folder for the current slice.
 
         Args:
@@ -58,7 +58,7 @@ class ResultManager:
 
         return "Slice_" + "Q".join([str(i) for i in slice])
 
-    def getSlicePath(self, slice: np.ndarray) -> str:
+    def get_slice_path(self, slice: np.ndarray) -> str:
         """Returns the path to the folder where the results for the given slice are stored.
 
         Args:
@@ -68,12 +68,12 @@ class ResultManager:
             str: The path to the folder where the results for the given slice are stored.
 
         """
-        sliceName = self.getSliceName(slice)
+        sliceName = self.get_slice_name(slice)
         return os.path.join(
             "Applications", self.model_name, self.run_name, sliceName
         )
 
-    def createApplicationFolderStructure(
+    def create_application_folder_structure(
         self, model: Model, slices: list[np.ndarray] = None
     ) -> None:
         """Creates the `Application` folder including subfolder where all simulation results
@@ -86,11 +86,11 @@ class ResultManager:
         """
 
         if slices is None:
-            slices = [np.arange(model.paramDim)]
+            slices = [np.arange(model.param_dim)]
         for slice in slices:
-            self.createSliceFolderStructure(slice)
+            self.create_slice_folder_structure(slice)
 
-    def createSliceFolderStructure(self, slice: np.ndarray) -> None:
+    def create_slice_folder_structure(self, slice: np.ndarray) -> None:
         """Creates the subfolders in `Aplication` for the given slice where all simulation results
         are stored for this model and slice. No files are deleted during this action.
 
@@ -134,7 +134,7 @@ class ResultManager:
                 except FileExistsError:
                     logger.info(f"File `{joined}` already exists")
 
-        sliceName = self.getSliceName(slice)
+        sliceName = self.get_slice_name(slice)
         fakeStructure = seedir.fakedir_fromstring(
             structure.format(
                 modelName=self.model_name,
@@ -147,7 +147,7 @@ class ResultManager:
         )
         fakeStructure.realize(path)
 
-    def deleteApplicationFolderStructure(self, model, slices) -> None:
+    def delete_application_folder_structure(self, model, slices) -> None:
         """Deletes the `Applications` subfolder
 
         Args:
@@ -156,23 +156,23 @@ class ResultManager:
         """
         for slice in slices:
             try:
-                self.deleteSliceFolderStructure(slice)
+                self.delete_slice_folder_structure(slice)
             except FileNotFoundError:
                 logger.info(
                     f"Folder structure for slice {slice} does not exist"
                 )
 
-    def deleteSliceFolderStructure(self, slice: np.ndarray) -> None:
+    def delete_slice_folder_structure(self, slice: np.ndarray) -> None:
         """Deletes the `Applications/[slice]` subfolder
 
         Args:
             slice(np.ndarray): The slice for which the folder structure will be deleted
 
         """
-        path = self.getSlicePath(slice)
+        path = self.get_slice_path(slice)
         shutil.rmtree(path)
 
-    def getApplicationPath(self) -> str:
+    def get_application_path(self) -> str:
         """Returns the path to the simulation results folder, containing also intermediate results.
 
         Returns:
@@ -187,44 +187,46 @@ class ResultManager:
         model: Model,
         slice: np.ndarray,
         run,
-        samplerResults: np.ndarray,
+        sampler_results: np.ndarray,
         finalWalkerPositions: np.ndarray,
     ) -> None:
         """Saves the results of a single run of the emcee particle swarm sampler.
-        SamplerResults has the shape (numWalkers * numSteps, samplingDim + dataDim + 1), we save them
+        sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them
         as seperate files in the folders 'Params' and'SimResults' and 'densityEvals'.
 
         Args:
             model(Model): The model for which the results will be saved
             slice(np.ndarray): The slice for which the results will be saved
             run(int): The run for which the results will be saved
-            samplerResults(np.ndarray): The results of the sampler, expects an np.array with shape (numWalkers * numSteps, samplingDim + dataDim + 1)
-            finalWalkerPositions(np.ndarray): The final positions of the walkers, expects an np.array with shape (numWalkers, samplingDim)
+            sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)
+            finalWalkerPositions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)
 
         """
 
-        samplingDim = finalWalkerPositions.shape[1]
+        sampling_dim = finalWalkerPositions.shape[1]
 
-        results_path = self.getSlicePath(slice)
+        results_path = self.get_slice_path(slice)
 
         # Save the parameters
         np.savetxt(
             results_path + "/Params/params_" + str(run) + ".csv",
-            samplerResults[:, :samplingDim],
+            sampler_results[:, :sampling_dim],
             delimiter=",",
         )
 
         # Save the density evaluations
         np.savetxt(
             results_path + "/DensityEvals/densityEvals_" + str(run) + ".csv",
-            samplerResults[:, -1],
+            sampler_results[:, -1],
             delimiter=",",
         )
 
         # Save the simulation results
         np.savetxt(
             results_path + "/SimResults/simResults_" + str(run) + ".csv",
-            samplerResults[:, samplingDim : model.paramDim + model.dataDim],
+            sampler_results[
+                :, sampling_dim : model.param_dim + model.data_dim
+            ],
             delimiter=",",
         )
 
@@ -249,22 +251,22 @@ class ResultManager:
         """
         # Save the three just-created files.
         np.savetxt(
-            self.getSlicePath(slice) + "/OverallDensityEvals.csv",
+            self.get_slice_path(slice) + "/OverallDensityEvals.csv",
             overallDensityEvals,
             delimiter=",",
         )
         np.savetxt(
-            self.getSlicePath(slice) + "/OverallSimResults.csv",
+            self.get_slice_path(slice) + "/OverallSimResults.csv",
             overallSimResults,
             delimiter=",",
         )
         np.savetxt(
-            self.getSlicePath(slice) + "/OverallParams.csv",
+            self.get_slice_path(slice) + "/OverallParams.csv",
             overallParams,
             delimiter=",",
         )
 
-    def loadSimResults(
+    def load_sim_results(
         self, slice: np.ndarray, numBurnSamples: int, occurrence: int
     ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Load the files generated by the EPI algorithm through sampling
@@ -278,7 +280,7 @@ class ResultManager:
             typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The density evaluations, the simulation results and the parameter chain
 
         """
-        results_path = self.getSlicePath(slice)
+        results_path = self.get_slice_path(slice)
 
         densityEvals = np.loadtxt(
             results_path + "/OverallDensityEvals.csv",

@@ -90,7 +90,7 @@ Of course, you also need the imports:
     from epi.core.model import Model
 
 A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~epi.core.model.Model.getCentralParam` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+In addition it must provide the methods :py:meth:`~epi.core.model.Model.getcentral_param` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::

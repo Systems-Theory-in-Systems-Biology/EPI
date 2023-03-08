@@ -18,7 +18,7 @@ ____________
 
   .. code-block:: python
 
-    artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
+    artificialData = vmap(self.forward, in_axes=0)(true_param_sample)
 
 .. literalinclude:: ../../../epi/examples/corona/corona.py
   :language: python

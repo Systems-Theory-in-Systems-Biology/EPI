@@ -39,7 +39,7 @@ def Examples():
         yield example
 
 
-def getExampleName(example):
+def get_example_name(example):
     """Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k
 
     Args:
@@ -51,7 +51,7 @@ def getExampleName(example):
     return example[1]
 
 
-@pytest.mark.parametrize("example", Examples(), ids=getExampleName)
+@pytest.mark.parametrize("example", Examples(), ids=get_example_name)
 def test_examples(example):
     """
 
@@ -75,10 +75,10 @@ def test_examples(example):
     # TODO: Delete old results and recreate folder structure
 
     # generate artificial data if necessary
-    if model.isArtificial():
-        nDataPoints = 1000
-        params = model.generateArtificialParams(nDataPoints)
-        data = model.generateArtificialData(params)
+    if model.is_artificial():
+        num_data_points = 1000
+        params = model.generate_artificial_params(num_data_points)
+        data = model.generate_artificial_data(params)
     else:
         assert dataFileName is not None
         data = importlib.resources.path(module_location, dataFileName)
@@ -86,19 +86,19 @@ def test_examples(example):
         if (
             className == "Stock"
         ):  # We check using string comparison because we dont want to statically import the Corona class
-            data, _, _ = model.downloadData(
+            data, _, _ = model.download_data(
                 data
             )  # Download the actual stock data from the ticker list data from the internet
 
     # Run inference
-    nSteps = 1000
-    nWalkers = 12  # We choose 12 because then we have enough walkers for all examples. The higher the dimensionality of the model, the more walkers are needed.
+    num_steps = 1000
+    num_walkers = 12  # We choose 12 because then we have enough walkers for all examples. The higher the dimensionality of the model, the more walkers are needed.
     inference(
         model,
         data,
         inference_type=InferenceType.MCMC,
-        numWalkers=nWalkers,
-        numSteps=nSteps,
+        num_walkers=num_walkers,
+        num_steps=num_steps,
     )
 
     # TODO: Check if results are correct by comparing them with the artificial data for the artificial models

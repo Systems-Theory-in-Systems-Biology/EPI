@@ -6,13 +6,13 @@ import numpy as np
 import pytest
 from matplotlib import cm
 
-from epi.core.kde import calcKernelWidth, evalKDECauchy, evalKDEGauss
+from epi.core.kde import calc_kernel_width, eval_kde_cauchy, eval_kde_gauss
 
 
 def kernel_estimators():
     """Yields the kernel density estimators"""
-    yield evalKDECauchy
-    yield evalKDEGauss
+    yield eval_kde_cauchy
+    yield eval_kde_gauss
 
 
 def kde_data_test_set():
@@ -40,17 +40,17 @@ def test_KDE_batch(batch, evalKDE):
 
     """
     # Define random data points in 2D
-    dataDim = 2
-    numDataPoints = 3
-    data = np.random.rand(numDataPoints, dataDim)
-    stdevs = calcKernelWidth(data)
+    data_dim = 2
+    num_data_points = 3
+    data = np.random.rand(num_data_points, data_dim)
+    stdevs = calc_kernel_width(data)
 
     # define the evaluation point(s)
     n_samples = 5
     if batch:
-        evalPoint = np.random.rand(n_samples, dataDim)
+        evalPoint = np.random.rand(n_samples, data_dim)
     else:
-        evalPoint = np.array([0.5] * dataDim)
+        evalPoint = np.array([0.5] * data_dim)
 
     # evaluate the KDE
     evaluated = evalKDE(data, evalPoint, stdevs)

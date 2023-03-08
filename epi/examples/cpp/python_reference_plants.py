@@ -15,11 +15,11 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
 
     """
 
-    paramDim = 2
-    dataDim = 3
+    param_dim = 2
+    data_dim = 3
 
     defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
-    defaultCentralParam = np.array([0.5, 0.5])
+    defaultcentral_param = np.array([0.5, 0.5])
 
     @classmethod
     def forward(cls, param):
@@ -31,8 +31,8 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
             ]
         )
 
-    def generateArtificialParams(self, numSamples: int):
-        return np.random.rand(numSamples, 2)
+    def generate_artificial_params(self, num_samples: int):
+        return np.random.rand(num_samples, 2)
 
 
 @jit
@@ -63,11 +63,11 @@ class ExternalPlant(Model, ArtificialModelInterface):
     Data2: Trauerfliegen :P
     """
 
-    paramDim = 2
-    dataDim = 3
+    param_dim = 2
+    data_dim = 3
 
     defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
-    defaultCentralParam = np.array([0.5, 0.5])
+    defaultcentral_param = np.array([0.5, 0.5])
 
     def forward(self, param):
         return fw(param)
@@ -75,5 +75,5 @@ class ExternalPlant(Model, ArtificialModelInterface):
     def jacobian(self, param):
         return bw(param)
 
-    def generateArtificialParams(self, numSamples: int):
-        return np.random.rand(numSamples, 2)
+    def generate_artificial_params(self, num_samples: int):
+        return np.random.rand(num_samples, 2)

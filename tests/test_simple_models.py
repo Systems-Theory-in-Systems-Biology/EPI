@@ -8,8 +8,8 @@ from jax import vmap
 from matplotlib import cm
 
 from epi.core.inference import InferenceType, inference
-from epi.core.kde import calcKernelWidth, evalKDEGauss
-from epi.core.transformations import evaluateDensity
+from epi.core.kde import calc_kernel_width, eval_kde_gauss
+from epi.core.transformations import evaluate_density
 from epi.examples.simple_models import Exponential, Linear, LinearODE
 
 
@@ -28,7 +28,7 @@ def test_transformationLinear():
     data = np.array([xMesh.flatten(), yMesh.flatten()]).T
 
     # define standard deviations according to silverman
-    dataStdevs = calcKernelWidth(data)
+    dataStdevs = calc_kernel_width(data)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -43,7 +43,7 @@ def test_transformationLinear():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = evalKDEGauss(data, evalPoint, dataStdevs)
+            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, dataStdevs)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -71,12 +71,12 @@ def test_transformationLinear():
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evaluateDensity(
+            paramEvals[i, j], _ = evaluate_density(
                 paramPoint,
                 model,
                 data,
                 dataStdevs,
-                slice=np.arange(model.paramDim),
+                slice=np.arange(model.param_dim),
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -99,13 +99,13 @@ def test_transformationExponential():
 
     # create true parameter points that are drawn uniformly from [0,1]^2
 
-    numDataPoints = 10000
-    trueParam = np.random.rand(numDataPoints, 2) + 1
+    num_data_points = 10000
+    trueParam = np.random.rand(num_data_points, 2) + 1
 
     data = vmap(model.forward, in_axes=0)(trueParam)
 
     # define standard deviations according to silverman
-    dataStdevs = calcKernelWidth(data)
+    dataStdevs = calc_kernel_width(data)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -119,7 +119,7 @@ def test_transformationExponential():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = evalKDEGauss(data, evalPoint, dataStdevs)
+            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, dataStdevs)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -141,12 +141,12 @@ def test_transformationExponential():
     paramxMesh, paramyMesh = np.meshgrid(paramxGrid, paramyGrid)
 
     paramEvals = np.zeros((paramResolution, paramResolution))
-    fullSlice = np.arange(model.paramDim)
+    fullSlice = np.arange(model.param_dim)
 
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evaluateDensity(
+            paramEvals[i, j], _ = evaluate_density(
                 paramPoint, model, data, dataStdevs, slice=fullSlice
             )
 
@@ -181,9 +181,9 @@ def test_transformationODELinear():
     model = LinearODE()
 
     # generate artificial data
-    nDataPoints = 10000
-    params = model.generateArtificialParams(nDataPoints)
-    data = model.generateArtificialData(params)
+    num_data_points = 10000
+    params = model.generate_artificial_params(num_data_points)
+    data = model.generate_artificial_data(params)
 
     # run MCMC sampling for EPI
     inference(model, data, InferenceType.MCMC)

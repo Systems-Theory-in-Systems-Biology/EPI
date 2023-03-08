@@ -46,16 +46,16 @@ from epi.core.model import Model
 
 class MyModel(Model):
 
-    paramDim = N # The dimension of a parameter point
-    dataDim = M # The dimension of a data point
+    param_dim = N # The dimension of a parameter point
+    data_dim = M # The dimension of a data point
 
     def forward(self, param):
         return jnp.array(...)
 
     def getParamSamplingLimits(self):
-        return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
+        return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[upper_bound_dim1,lower_bound_dim1],...]
 
-    def getCentralParam(self):
+    def getcentral_param(self):
         return jnp.array([0.5, -30.0,...])
 
     def jacobian(self, param):
@@ -70,7 +70,7 @@ from epi.sampling import inference
 from my_model import MyModel
 
 model = MyModel()
-inference(model=model, dataPath="my_data.csv", numRuns=1, numWalkers=10, numSteps=2500, numProcesses=4)
+inference(model=model, dataPath="my_data.csv", num_runs=1, num_walkers=10, num_steps=2500, numProcesses=4)
 ```
 
 The file `my_data.csv` has to contain the data in csv format with `seperator=","` in the format
@@ -83,8 +83,8 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-which corresponds to a matrix with the shape `nSamples x dataDim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+which corresponds to a matrix with the shape `nSamples x data_dim`.
+The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `num_runs`, `num_walkers`, `num_steps`, `numProcesses` have fixed defaults. The results are written to three files:
 
 * `./Applications/<ModelName>/OverallParams.csv`
 * `./Applications/<ModelName>/OverallSimResults.csv`

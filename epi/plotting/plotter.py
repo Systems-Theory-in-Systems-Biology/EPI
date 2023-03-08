@@ -8,7 +8,7 @@ from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 
-from epi.core.kde import evalKDEGauss
+from epi.core.kde import eval_kde_gauss
 from epi.core.model import Model
 
 # Colors
@@ -49,7 +49,7 @@ def plotKDEoverGrid(
         evaluations = np.zeros(resolution)
 
         for i in range(resolution):
-            evaluations[i] = evalKDEGauss(
+            evaluations[i] = eval_kde_gauss(
                 np.transpose(np.array([data[:, dim]])),
                 np.array([evalPoints[i]]),
                 np.array([stdevs[dim]]),
@@ -80,7 +80,7 @@ def plotDataSamples(model: Model):
 
     """
 
-    artificialModel = model.isArtificial()
+    artificialModel = model.is_artificial()
     name = "Sim" if artificialModel else "Meas"
     sim_measure_label = (
         "Simulation data" if artificialModel else "Measured data"
@@ -102,7 +102,7 @@ def plotDataSamples(model: Model):
         # if not artificial: plot inferred data samples from result param samples
         # if not artificialModel:
         #     # Second, we load the emcee parameter sampling results and als visualize them
-        #     simResults = model.loadSimResults(0,1)[1] # Picking simResults
+        #     simResults = model.load_sim_results(0,1)[1] # Picking simResults
         #     plt.scatter(
         #         simResults[:,dim],
         #         np.zeros(simResults.shape[0]),

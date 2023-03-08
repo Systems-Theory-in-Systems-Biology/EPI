@@ -14,11 +14,11 @@ class CppPlant(Model, ArtificialModelInterface):
 
     """
 
-    paramDim = 2
-    dataDim = 3
+    param_dim = 2
+    data_dim = 3
 
     defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
-    defaultCentralParam = np.array([0.5, 0.5])
+    defaultcentral_param = np.array([0.5, 0.5])
 
     def forward(self, param):
         return cpp_model.forward(param)
@@ -26,5 +26,5 @@ class CppPlant(Model, ArtificialModelInterface):
     def jacobian(self, param):
         return cpp_model.jacobian(param)
 
-    def generateArtificialParams(self, numSamples: int):
-        return np.random.rand(numSamples, 2)
+    def generate_artificial_params(self, num_samples: int):
+        return np.random.rand(num_samples, 2)

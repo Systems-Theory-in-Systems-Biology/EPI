@@ -22,10 +22,10 @@ import emcee
 import numpy as np
 
 from epi import logger
-from epi.core.kde import calcKernelWidth
+from epi.core.kde import calc_kernel_width
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
-from epi.core.transformations import evalLogTransformedDensity
+from epi.core.transformations import eval_log_transformed_density
 
 NUM_RUNS = 2
 NUM_WALKERS = 10
@@ -36,20 +36,20 @@ NUM_PROCESSES = 4
 # Return the samples.
 # return sampler.get_chain(discard=0, thin=1, flat=True)
 # TODO: This stores the sample as 2d array in the format walker1_step1, walker2_step1, walker3_step1, walker1_step2, walker2_step2, walker3_step2, ...
-# samplerResults = samplerBlob.reshape(
-#     numWalkers * numSteps, samplingDim + dataDim + 1
+# sampler_results = samplerBlob.reshape(
+#     num_walkers * num_steps, sampling_dim + data_dim + 1
 # )
 
 
-def runEmceeOnce(
+def run_emcee_once(
     model: Model,
     data: np.ndarray,
     dataStdevs: np.ndarray,
     slice: np.ndarray,
     initialWalkerPositions: np.ndarray,
-    numWalkers: int,
-    numSteps: int,
-    numProcesses: int,
+    num_walkers: int,
+    num_steps: int,
+    num_processes: int,
 ) -> np.ndarray:
     """Run the emcee particle swarm sampler once.
 
@@ -59,16 +59,16 @@ def runEmceeOnce(
         dataStdevs (np.ndarray): kernel width for the data
         slice (np.ndarray): slice of the parameter space which will be sampled
         initialWalkerPositions (np.ndarray): initial parameter values for the walkers
-        numWalkers (int): number of particles in the particle swarm sampler
-        numSteps (int): number of samples each particle performs before storing the sub run
-        numProcesses (int): number of parallel threads
+        num_walkers (int): number of particles in the particle swarm sampler
+        num_steps (int): number of samples each particle performs before storing the sub run
+        num_processes (int): number of parallel threads
 
     Returns:
         np.ndarray: samples from the transformed parameter density
 
     """
     # Create a pool of worker processes.
-    pool = Pool(processes=numProcesses)
+    pool = Pool(processes=num_processes)
     # define a custom move policy
     movePolicy = [
         (emcee.moves.WalkMove(), 0.1),
@@ -79,33 +79,33 @@ def runEmceeOnce(
         ),
     ]
     # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
-    samplingDim = slice.shape[0]
+    sampling_dim = slice.shape[0]
 
     # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
     sampler = emcee.EnsembleSampler(
-        numWalkers,
-        samplingDim,
-        evalLogTransformedDensity,
+        num_walkers,
+        sampling_dim,
+        eval_log_transformed_density,
         pool=pool,
         moves=movePolicy,
         args=[model, data, dataStdevs, slice],
     )
     # Extract the final walker position and close the pool of worker processes.
     finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
-        initialWalkerPositions, numSteps, tune=True, progress=True
+        initialWalkerPositions, num_steps, tune=True, progress=True
     )
     pool.close()
     pool.join()
 
     # TODO: Keep as 3d array?
-    # Should have shape (numSteps, numWalkers, paramDim+dataDim+1)
-    samplerResults = sampler.get_blobs()
-    dataDim = data.shape[1]
-    samplerResults = samplerResults.reshape(
-        numSteps * numWalkers, samplingDim + dataDim + 1
+    # Should have shape (num_steps, num_walkers, param_dim+data_dim+1)
+    sampler_results = sampler.get_blobs()
+    data_dim = data.shape[1]
+    sampler_results = sampler_results.reshape(
+        num_steps * num_walkers, sampling_dim + data_dim + 1
     )
-    samplerResults = samplerResults.reshape(
-        numWalkers * numSteps, samplingDim + dataDim + 1
+    sampler_results = sampler_results.reshape(
+        num_walkers * num_steps, sampling_dim + data_dim + 1
     )
 
     logger.info(
@@ -119,57 +119,57 @@ def runEmceeOnce(
             "The autocorrelation time could not be calculate reliable"
         )
 
-    return samplerResults, finalWalkerPositionsitions
+    return sampler_results, finalWalkerPositionsitions
 
 
-def runEmceeSampling(
+def run_emcee_sampling(
     model: Model,
     data: np.ndarray,
     slice: np.ndarray,
     result_manager: ResultManager,
-    numRuns: int = NUM_RUNS,
-    numWalkers: int = NUM_WALKERS,
-    numSteps: int = NUM_STEPS,
-    numProcesses: int = NUM_PROCESSES,
+    num_runs: int = NUM_RUNS,
+    num_walkers: int = NUM_WALKERS,
+    num_steps: int = NUM_STEPS,
+    num_processes: int = NUM_PROCESSES,
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
-       Inital values are not stored in the chain and each file contains <numSteps> blocks of size numWalkers.
+       Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
 
     Args:
         model (Model): The model which will be sampled
         data (np.ndarray): data
         slice (np.ndarray): slice of the parameter space which will be sampled
         result_manager (ResultManager): ResultManager which will store the results
-        numRuns (int, optional): number of stored sub runs. Defaults to NUM_RUNS.
-        numWalkers (int, optional): number of particles in the particle swarm sampler. Defaults to NUM_WALKERS.
-        numSteps (int, optional): number of samples each particle performs before storing the sub run. Defaults to NUM_STEPS.
-        numProcesses (int, optional): number of parallel threads. Defaults to NUM_PROCESSES.
+        num_runs (int, optional): number of stored sub runs. Defaults to NUM_RUNS.
+        num_walkers (int, optional): number of particles in the particle swarm sampler. Defaults to NUM_WALKERS.
+        num_steps (int, optional): number of samples each particle performs before storing the sub run. Defaults to NUM_STEPS.
+        num_processes (int, optional): number of parallel threads. Defaults to NUM_PROCESSES.
 
     Returns:
         typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
 
     """
 
-    dataStdevs = calcKernelWidth(data)
-    samplingDim = slice.shape[0]
-    centralParam = model.centralParam
+    dataStdevs = calc_kernel_width(data)
+    sampling_dim = slice.shape[0]
+    central_param = model.central_param
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
     # TODO Make random variation of initial walker positions dependent on sampling limits?
-    initialWalkerPositions = centralParam[slice] + 0.002 * (
-        np.random.rand(numWalkers, samplingDim) - 0.5
+    initialWalkerPositions = central_param[slice] + 0.002 * (
+        np.random.rand(num_walkers, sampling_dim) - 0.5
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = result_manager.countEmceeSubRuns(slice)
+    numExistingFiles = result_manager.count_emcee_sub_runs(slice)
     logger.debug(f"{numExistingFiles} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
-    for run in range(numExistingFiles, numExistingFiles + numRuns):
-        logger.info(f"Run {run} of {numRuns}")
+    for run in range(numExistingFiles, numExistingFiles + num_runs):
+        logger.info(f"Run {run} of {num_runs}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = result_manager.getSlicePath(slice) + "/currentPos.csv"
+        positionPath = result_manager.get_slice_path(slice) + "/currentPos.csv"
         if path.isfile(positionPath):
             initialWalkerPositions = np.loadtxt(
                 positionPath,
@@ -181,33 +181,33 @@ def runEmceeSampling(
             )
 
         # Run the sampler.
-        samplerResults, finalWalkerPositions = runEmceeOnce(
+        sampler_results, finalWalkerPositions = run_emcee_once(
             model,
             data,
             dataStdevs,
             slice,
             initialWalkerPositions,
-            numWalkers,
-            numSteps,
-            numProcesses,
+            num_walkers,
+            num_steps,
+            num_processes,
         )
 
         result_manager.save_run(
-            model, slice, run, samplerResults, finalWalkerPositions
+            model, slice, run, sampler_results, finalWalkerPositions
         )
 
     (
         overallParams,
         overallSimResults,
         overallDensityEvals,
-    ) = concatenateEmceeSamplingResults(model, result_manager, slice)
+    ) = concatenate_emcee_sampling_results(model, result_manager, slice)
     result_manager.save_overall(
         slice, overallParams, overallSimResults, overallDensityEvals
     )
     return overallParams, overallSimResults, overallDensityEvals
 
 
-def concatenateEmceeSamplingResults(
+def concatenate_emcee_sampling_results(
     model: Model, result_manager: ResultManager, slice: np.ndarray
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
@@ -224,17 +224,17 @@ def concatenateEmceeSamplingResults(
     """
 
     # Count and print how many sub runs are ready to be merged.
-    numExistingFiles = result_manager.countEmceeSubRuns(slice)
+    numExistingFiles = result_manager.count_emcee_sub_runs(slice)
     logger.info(f"{numExistingFiles} existing files found for concatenation")
 
     densityFiles = (
-        result_manager.getSlicePath(slice)
+        result_manager.get_slice_path(slice)
         + "/DensityEvals/densityEvals_{}.csv"
     )
     simResultsFiles = (
-        result_manager.getSlicePath(slice) + "/SimResults/simResults_{}.csv"
+        result_manager.get_slice_path(slice) + "/SimResults/simResults_{}.csv"
     )
-    paramFiles = result_manager.getSlicePath(slice) + "/Params/params_{}.csv"
+    paramFiles = result_manager.get_slice_path(slice) + "/Params/params_{}.csv"
 
     overallParams = np.vstack(
         [
@@ -258,10 +258,10 @@ def concatenateEmceeSamplingResults(
     return overallParams, overallSimResults, overallDensityEvals
 
 
-def calcWalkerAcceptance(
+def calc_walker_acceptance(
     model: Model,
     slice: np.ndarray,
-    numWalkers: int,
+    num_walkers: int,
     numBurnSamples: int,
     result_manager: ResultManager,
 ):
@@ -271,7 +271,7 @@ def calcWalkerAcceptance(
     Args:
         model (Model): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
-        numWalkers (int): number of walkers in the emcee chain
+        num_walkers (int): number of walkers in the emcee chain
         numBurnSamples (int): number of samples that were ignored at the beginning of each chain
         result_manager (ResultManager): ResultManager to load the results from
 
@@ -282,17 +282,17 @@ def calcWalkerAcceptance(
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        result_manager.getSlicePath(slice) + "/OverallParams.csv",
+        result_manager.get_slice_path(slice) + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
     )[numBurnSamples:, :]
 
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
-    numSteps = int(params.shape[0] / numWalkers) - 1
+    num_steps = int(params.shape[0] / num_walkers) - 1
 
     # Unflatten the parameter chain and count the number of accepted steps for each walker
-    params = params.reshape(numSteps + 1, numWalkers, model.paramDim)
+    params = params.reshape(num_steps + 1, num_walkers, model.param_dim)
 
     # Build a boolean array that is true if the parameters of the current step are the same as the parameters of the next step and sum over it
     # If the parameters are the same, the step is not accepted and we add 0 to the number of accepted steps
@@ -303,27 +303,6 @@ def calcWalkerAcceptance(
     )
 
     # calculate the acceptance ratio by dividing the number of accepted steps by the overall number of steps
-    acceptanceRatios = numAcceptedSteps / numSteps
+    acceptanceRatios = numAcceptedSteps / num_steps
 
     return acceptanceRatios
-
-
-# TODO: Benjamin mach mal!
-# Dependeny matrix definieren
-# Cis beliebig aber marginals nicht 0 -> central param als start wählen
-# Ergebnisse müssen für verschiedene Marginals gespeichert werden z.b. Q1, Q2
-
-# Defininiere param abhängig in blocken durch slices
-# E.g.: s1 = [0,1,2], s2 = [3], s4 = [4,5]
-# -> slices = [s1,s2,s3] oder als np array. einzelne slices müssen np. arrays sein für np indexierung
-# Alles was an emcee geht muss reduzierte dimension haben
-# Walker init, paramdim, ?
-# Und am wichtigsten: evalLogTransformedDensity braucht slice (+default value) parameter
-# evalLogTransformedDensity bekommt evtl. reduzierte param "version" und wir müssen vollen vektor zusammen aus centralParam
-# rekonstruieren
-
-# Inference takes slices
-# parameter sampling and sampling takes one slice
-# other functions have to be also adapted because of all the file names
-
-# TODO generell: inference: gitter vs samplingbasiert: nutzer auswählen lassen

@@ -30,8 +30,8 @@ How to start
 ------------
 
 | Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getCentralParam`.
-| The last requirement is to define the data and parameter Dimension, dataDim and paramDim.
+| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getcentral_param`.
+| The last requirement is to define the data and parameter Dimension, data_dim and param_dim.
 
 .. code-block:: python
    
@@ -42,16 +42,16 @@ How to start
 
    class MyModel(Model):
 
-      paramDim = N # The dimension of a parameter point
-      dataDim = M # The dimension of a data point
+      param_dim = N # The dimension of a parameter point
+      data_dim = M # The dimension of a data point
 
       def forward(self, param):
          return jnp.array(...)
 
       def getParamSamplingLimits(self):
-         return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
+         return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[upper_bound_dim1,lower_bound_dim1],...]
 
-      def getCentralParam(self):
+      def getcentral_param(self):
          return jnp.array([0.5, -30.0,...])
 
       def jacobian(self, param):
@@ -79,8 +79,8 @@ The file :file:`my_data.csv` has to contain the data in csv format with :code:`s
    ...
    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-which corresponds to a matrix with the shape `nSamples x dataDim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+which corresponds to a matrix with the shape `nSamples x data_dim`.
+The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `num_runs`, `num_walkers`, `num_steps`, `numProcesses` have fixed defaults. The results are written to three files:
 
 * `./Applications/<ModelName>/OverallParams.csv`
 * `./Applications/<ModelName>/OverallSimResults.csv`
