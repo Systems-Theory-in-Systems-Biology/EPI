@@ -179,16 +179,10 @@ class ArtificialModelInterface(ABC):
             )
 
         # try to use jax vmap to perform the forward pass on multiple parameters at once
-        try:
-            artificialData = vmap(self.forward, in_axes=0)(params)
-        except Exception:
-            # use standard numpy vectorization if forward is not implemented with jax
-            # data = np.vectorize(self.forward)(params)
-            artificialData = np.zeros((params.shape[0], 3))
-            for i in range(params.shape[0]):
-                artificialData[i, :] = self.forward(params[i, :])
-
-        return artificialData
+        if isinstance(self, JaxModel):
+            return vmap(self.forward, in_axes=0)(params)
+        else:
+            return np.vectorize(self.forward, signature="(n)->(m)")(params)
 
 
 def autodiff(_cls):
