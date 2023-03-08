@@ -13,6 +13,7 @@ import numpy as np
 
 from epi.core.kde import calc_kernel_width
 from epi.core.model import Model
+from epi.core.result_manager import ResultManager
 from epi.core.transformations import eval_log_transformed_density
 
 NUM_LEVELS = 5
@@ -365,10 +366,11 @@ class Subspace(object):
                     )
 
 
-# TODO: Move to inference? And include slices and correct result paths with result_manager
 def sparse_grid_inference(
     model: Model,
     data: np.ndarray,
+    result_manager: ResultManager,
+    slices: typing.List[np.ndarray],
     numLevels: int = NUM_LEVELS,
     num_processes: int = NUM_PROCESSES,
 ):
@@ -383,75 +385,52 @@ def sparse_grid_inference(
     """
 
     # Load data, data standard deviations and model characteristics for the specified model.
-    data_dim = model.data_dim
     dataStdevs = calc_kernel_width(data)
-    param_dim = model.param_dim
 
-    # build the sparse grid over [0,1]^param_dim
-    grid = SparseGrid(param_dim, numLevels)
+    for slice in slices:
+        # build the sparse grid over [0,1]^param_dim
+        grid = SparseGrid(slice.shape[0], numLevels)
 
-    # get the model's parameter limits
-    param_limits = model.param_limits
+        # get the model's parameter limits
+        param_limits = model.param_limits
 
-    # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
-    scaledSparseGridPoints = param_limits[:, 0] + grid.points * (
-        param_limits[:, 1] - param_limits[:, 0]
-    )
+        # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
+        scaledSparseGridPoints = param_limits[slice, 0] + grid.points * (
+            param_limits[slice, 1] - param_limits[slice, 0]
+        )
 
-    # allocate Memory for the parameters, their simulation evaluation and their probability density
-    sampler_results = np.zeros((grid.n_points, param_dim + model.data_dim + 1))
+        # allocate Memory for the parameters, their simulation evaluation and their probability density
+        results = np.zeros(
+            (grid.n_points, slice.shape[0] + model.data_dim + 1)
+        )
 
-    # Create a pool of worker processes
-    pool = Pool(processes=num_processes)
+        # Create a pool of worker processes
+        pool = Pool(processes=num_processes)
 
-    # evaluate the probability density transformation for all sparse grid points in parallel
-    parResults = pool.map(
-        partial(
-            eval_log_transformed_density,
-            model=model,
-            data=data,
-            dataStdevs=dataStdevs,
-        ),
-        scaledSparseGridPoints,
-    )
+        # evaluate the probability density transformation for all sparse grid points in parallel
+        parResults = pool.map(
+            partial(
+                eval_log_transformed_density,
+                model=model,
+                data=data,
+                dataStdevs=dataStdevs,
+                slice=slice,
+            ),
+            scaledSparseGridPoints,
+        )
 
-    # close the worker pool
-    pool.close()
-    pool.join()
+        # close the worker pool
+        pool.close()
+        pool.join()
 
-    # extract the parameter, simulation result and transformed density evaluation
-    for i in range(grid.n_points):
-        sampler_results[i, :] = parResults[i][1]
+        # extract the parameter, simulation result and transformed density evaluation
+        for i in range(grid.n_points):
+            results[i, :] = parResults[i][1]
 
-    # Save all sparse grid evaluation results in separate .csv files that also indicate the sparse grid level.
-    np.savetxt(
-        "Applications/"
-        + model.name
-        + "/Params/SG"
-        + str(numLevels)
-        + "Levels.csv",
-        sampler_results[:, 0:param_dim],
-        delimiter=",",
-    )
-    np.savetxt(
-        "Applications/"
-        + model.name
-        + "/SimResults/SG"
-        + str(numLevels)
-        + "Levels.csv",
-        sampler_results[:, param_dim : param_dim + data_dim],
-        delimiter=",",
-    )
-    np.savetxt(
-        "Applications/"
-        + model.name
-        + "/DensityEvals/SG"
-        + str(numLevels)
-        + "Levels.csv",
-        sampler_results[:, -1],
-        delimiter=",",
-    )
-
-
-# TODO: Use maybe only one function for storing sampler_results
-# TODO: Plotting for general dimension
+        # save the results
+        result_manager.save_overall(
+            slice,
+            results[:, 0 : data.shape[1]],
+            results[:, data.shape[1] : data.shape[1] + slice.shape[0]],
+            results[:, data.shape[1] + slice.shape[0] :],
+        )

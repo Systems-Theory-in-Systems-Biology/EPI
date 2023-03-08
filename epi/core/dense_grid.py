@@ -107,10 +107,14 @@ def run_dense_grid_evaluation(
     ):
         results[
             i * grid_chunks[i].shape[0] : (i + 1) * grid_chunks[i].shape[0]
-        ] = result[1]
+        ] = result
+
     pool.close()
     pool.join()
 
     result_manager.save_overall(
-        slice, results[:, 0], results[:, 1], results[:, 2]
+        slice,
+        results[:, 0 : data.shape[1]],
+        results[:, data.shape[1] : data.shape[1] + slice.shape[0]],
+        results[:, data.shape[1] + slice.shape[0] :],
     )

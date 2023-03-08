@@ -18,6 +18,7 @@ from epi.core.sampling import (
     calc_walker_acceptance,
     run_emcee_sampling,
 )
+from epi.core.sparsegrid import sparse_grid_inference
 
 
 # Define an enum for the inference types: DenseGrid, MCMC
@@ -32,9 +33,9 @@ class InferenceType(Enum):
         MCMC: The MCMC inference.
     """
 
-    # TODO: Sparse grid inference
     DENSE_GRID = 0
-    MCMC = 1
+    SPARSE_GRID = 1
+    MCMC = 2
 
 
 def inference(
@@ -89,6 +90,8 @@ def inference(
         inference_dense_grid(model, data, result_manager, slices, **kwargs)
     elif inference_type == InferenceType.MCMC:
         inference_mcmc(model, data, result_manager, slices, **kwargs)
+    elif inference_type == InferenceType.SPARSE_GRID:
+        sparse_grid_inference(model, data, result_manager, slices, **kwargs)
     else:
         raise NotImplementedError(
             f"The inference type {inference_type} is not implemented yet."
