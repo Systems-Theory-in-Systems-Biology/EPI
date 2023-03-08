@@ -43,6 +43,7 @@ def run_dense_grid_evaluation(
     result_manager: ResultManager,
     num_grid_points: np.ndarray,
     num_processes=NUM_PROCESSES,
+    load_balancing_safety_faktor=4,
 ) -> None:
     """This function runs a dense grid evaluation for the given model and data.
 
@@ -53,6 +54,9 @@ def run_dense_grid_evaluation(
         result_manager(ResultManager): The result manager that should be used to save the results.
         num_grid_points(np.ndarray): The number of grid points for each dimension.
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
+        load_balancing_safety_faktor(int): Split the grid into num_processes * load_balancing_safety_faktor chunks.
+            This will ensure that each process can be loaded with a similar amount of work if the run time difference between the evaluations
+            does not exceed the load_balancing_safety_faktor. (Default value = 4)
 
     Raises:
         ValueError: If the dimension of the numbers of grid points does not match the number of parameters in the slice.
@@ -69,7 +73,9 @@ def run_dense_grid_evaluation(
     grid = generate_grid(num_grid_points, limits, flat=True)
 
     # Split the grid into chunks that can be evaluated by each process
-    grid_chunks = np.array_split(grid, num_processes)
+    grid_chunks = np.array_split(
+        grid, num_processes * load_balancing_safety_faktor
+    )
 
     # Define a function which evaluates the density for a given grid chunk
     global evaluate_on_grid_chunk  # Needed to make this function pickleable
