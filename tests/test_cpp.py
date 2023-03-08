@@ -2,8 +2,7 @@
 Test the cpp model and its equivalent python implementation. Can be used to compare the performance during the sampling.
 """
 
-import glob
-import os
+import importlib
 
 import pytest
 
@@ -14,8 +13,9 @@ import pytest
 )
 def test_cpp_lib_exists():
     """Test if the cpp library for the plant model exists."""
-    cpp_lib_pattern = "epi/examples/cpp/cpp_model*.so*"
-    file_exists = (
-        len([n for n in glob.glob(cpp_lib_pattern) if os.path.isfile(n)]) > 0
-    )
-    assert file_exists
+    cpp_path = importlib.resources.path("epi.examples.cpp", "")
+
+    # Check if the cpp library exists by checking if an .so file exists in the cpp directory
+    assert any(
+        [file.suffix == ".so" for file in cpp_path.iterdir()]
+    ), "No cpp library found in the cpp directory"
