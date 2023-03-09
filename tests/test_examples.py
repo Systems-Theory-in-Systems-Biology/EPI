@@ -10,7 +10,7 @@ from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
 
 cpp_plant_example = pytest.param(
-    ("epi.examples.cpp", "CppPlant"),
+    ("epi.examples.cpp.cpp_plant", "CppPlant"),
     marks=pytest.mark.xfail(
         True,
         reason="XFAIL means that the Cpp Library for the plant model ist not compiled yet",
@@ -33,8 +33,8 @@ def Examples():
             "TemperatureData.csv",
         ),
         cpp_plant_example,
-        ("epi.examples.cpp", "ExternalPlant"),
-        ("epi.examples.cpp", "JaxPlant"),
+        ("epi.examples.cpp.python_reference_plants", "ExternalPlant"),
+        ("epi.examples.cpp.python_reference_plants", "JaxPlant"),
     ]:
         yield example
 
