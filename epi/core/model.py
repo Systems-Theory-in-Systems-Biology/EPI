@@ -8,7 +8,10 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit, vmap
 
+import amici
 from epi.jax_extension import value_and_jacrev
+
+# TODO: Deal with stdevs = 0.0 somewhere!!!
 
 
 class Model(ABC):
@@ -274,3 +277,70 @@ class JaxModel(Model):
 
         """
         return type(self).vj(param)
+
+
+class SBMLModel(Model):
+    @property
+    def param_dim(self):
+        return len(self.model.getParameterIds())
+
+    @property
+    def data_dim(self):
+        return len(self.model.getObservableIds())
+
+    def __init__(
+        self,
+        sbml_file: str,
+        param_names=None,
+        tEnd=1.0,
+        skip_creation: bool = False,
+        central_param: np.ndarray = None,
+        param_limits: np.ndarray = None,
+        name: str = None,
+    ) -> None:
+        super().__init__(central_param, param_limits, name)
+
+        model_name = self.name
+        model_dir = "./amici"
+
+        # Generate python code
+        if not skip_creation:
+            sbml_importer = amici.SbmlImporter(sbml_file)
+            sbml_importer.sbml2amici(model_name, model_dir)
+
+        # Load the generated model
+        model_module = amici.import_model_module(model_name, model_dir)
+        model = model_module.getModel()
+        solver = model.getSolver()
+
+        model.setTimepoints([tEnd])
+        model.requireSensitivitiesForAllParameters()
+        solver.setSensitivityMethod(amici.SensitivityMethod.forward)
+        solver.setSensitivityOrder(amici.SensitivityOrder.first)
+        if param_names is None:
+            self.param_names = model.getParameterNames()
+        else:
+            self.param_names = param_names
+
+        self.model = model
+        self.solver = solver
+
+    def forward(self, params):
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.x[-1]
+
+    def jacobian(self, params):
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.sx[-1].T
+
+    def valjac(
+        self, params: np.ndarray
+    ) -> typing.Tuple[np.ndarray, np.ndarray]:
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.x[-1], rdata.sx[-1].T

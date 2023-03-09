@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="Caffeine_2Wks_Exponential_decay" name="Caffeine_2Wks_Exponential_decay">
+    <listOfCompartments>
+      <compartment id="Compartment" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="y" compartment="Compartment" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="t" name="t" constant="false"/>
+      <parameter id="A" name="A" value="1" constant="true"/>
+      <parameter id="B" name="B" value="1" constant="true"/>
+      <parameter id="sd_y_obs" name="sd_y_obs" value="0.1" constant="true"/>
+    </listOfParameters>
+    <listOfRules>
+      <rateRule variable="y">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <apply>
+              <minus/>
+              <cn type="integer"> 1 </cn>
+              <apply>
+                <times/>
+                <ci> A </ci>
+                <ci> t </ci>
+              </apply>
+            </apply>
+            <apply>
+              <exp/>
+              <apply>
+                <minus/>
+                <ci> B </ci>
+                <apply>
+                  <times/>
+                  <ci> A </ci>
+                  <ci> t </ci>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <assignmentRule variable="t">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+  </model>
+</sbml>

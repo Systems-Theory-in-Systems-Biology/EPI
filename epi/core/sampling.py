@@ -13,13 +13,11 @@ Attributes:
 """
 
 import typing
-from multiprocessing import Pool
-
-# from pathos.multiprocessing import Pool
 from os import path
 
 import emcee
 import numpy as np
+from schwimmbad import MultiPool
 
 from epi import logger
 from epi.core.kde import calc_kernel_width
@@ -67,8 +65,17 @@ def run_emcee_once(
         np.ndarray: samples from the transformed parameter density
 
     """
-    # Create a pool of worker processes.
-    pool = Pool(processes=num_processes)
+
+    global work
+
+    def work(params):
+        s = eval_log_transformed_density(
+            params, model, data, dataStdevs, slice
+        )
+        return s
+
+    pool = MultiPool(processes=num_processes)
+
     # define a custom move policy
     movePolicy = [
         (emcee.moves.WalkMove(), 0.1),
@@ -85,17 +92,19 @@ def run_emcee_once(
     sampler = emcee.EnsembleSampler(
         num_walkers,
         sampling_dim,
-        eval_log_transformed_density,
+        # eval_log_transformed_density,
+        work,
         pool=pool,
         moves=movePolicy,
-        args=[model, data, dataStdevs, slice],
+        # args=[model, data, dataStdevs, slice],
     )
     # Extract the final walker position and close the pool of worker processes.
     finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
         initialWalkerPositions, num_steps, tune=True, progress=True
     )
-    pool.close()
-    pool.join()
+    if pool is not None:
+        pool.close()
+        pool.join()
 
     # TODO: Keep as 3d array?
     # Should have shape (num_steps, num_walkers, param_dim+data_dim+1)

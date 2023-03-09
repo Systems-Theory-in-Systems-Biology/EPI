@@ -32,6 +32,8 @@ seedir = "^0.4.2"
 sbmltoodepy = "^1.0.4"
 pysces = {extras = ["sbml"], version = "^1.0.3"}
 yfinance = "^0.1.87"
+amici = "^0.16.1"
+schwimmbad = "^0.3.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -70,6 +72,13 @@ per-file-ignores = ["__init__.py: F401"]
 [tool.pytest.ini_options]
 testpaths = [
   "tests",
+]
+norecursedirs = [
+    "swig",
+    "generated_sbml_model",
+    "Data",
+    "Applications",
+    "build",
 ]
 addopts = [
     "--import-mode=importlib",

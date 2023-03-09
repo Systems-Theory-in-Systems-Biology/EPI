@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="Simple_Menten" name="Simple_Menten">
+    <listOfUnitDefinitions>
+      <unitDefinition metaid="METAID_U0" id="u0" name="ml">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="METAID_U1" id="u1" name="mmole / l">
+        <listOfUnits>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="mole" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="METAID_U2" id="u2" name="umole / l">
+        <listOfUnits>
+          <unit kind="litre" exponent="-1" scale="1" multiplier="1"/>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="METAID_U3" id="u3" name="1 / s">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="METAID_U4" id="u4" name="s">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="v0" name="Tube" spatialDimensions="3" size="10" units="u0" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="METAID_P0" sboTerm="SBO:0000252" id="p0" name="Protein" compartment="v0" initialConcentration="100" substanceUnits="u2" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="true"/>
+      <species metaid="METAID_S0" sboTerm="SBO:0000247" id="s0" name="Substrate" compartment="v0" initialConcentration="10" substanceUnits="u1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="METAID_S1" sboTerm="SBO:0000247" id="s1" name="Product" compartment="v0" initialConcentration="0" substanceUnits="u1" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="Km" value="50" units="u1" constant="false"/>
+      <parameter id="kcat" value="1" units="u3" constant="false"/>
+    </listOfParameters>
+    <listOfReactions>
+      <annotation>
+        <enzymeml:data xmlns:enzymeml="http://sbml.org/enzymeml/version2">
+          <enzymeml:formats>
+            <enzymeml:format id="format0">
+              <enzymeml:column type="time" unit="u4" index="0"/>
+              <enzymeml:column replica="simu_simulation1.yaml_s0_25.0" species="s0" type="conc" unit="u1" index="1" isCalculated="True"/>
+              <enzymeml:column replica="simu_simulation1.yaml_s1_0.0" species="s1" type="conc" unit="u1" index="2" isCalculated="True"/>
+            </enzymeml:format>
+            <enzymeml:format id="format1">
+              <enzymeml:column type="time" unit="u4" index="0"/>
+              <enzymeml:column replica="simu_simulation2.yaml_s0_100.0" species="s0" type="conc" unit="u1" index="1" isCalculated="True"/>
+              <enzymeml:column replica="simu_simulation2.yaml_s1_0.0" species="s1" type="conc" unit="u1" index="2" isCalculated="True"/>
+            </enzymeml:format>
+          </enzymeml:formats>
+          <enzymeml:listOfMeasurements>
+            <enzymeml:measurement file="file0" id="m0" name="simulation1.yaml">
+              <enzymeml:initConc reactant="s0" value="25.0" unit="u1"/>
+              <enzymeml:initConc reactant="s1" value="0.0" unit="u1"/>
+              <enzymeml:initConc reactant="p0" value="1.0" unit="u2"/>
+            </enzymeml:measurement>
+            <enzymeml:measurement file="file1" id="m1" name="simulation2.yaml">
+              <enzymeml:initConc reactant="s0" value="100.0" unit="u1"/>
+              <enzymeml:initConc reactant="s1" value="0.0" unit="u1"/>
+              <enzymeml:initConc reactant="p0" value="1.0" unit="u2"/>
+            </enzymeml:measurement>
+          </enzymeml:listOfMeasurements>
+          <enzymeml:files>
+            <enzymeml:file file="./data/m0.csv" format="format0" id="file0"/>
+            <enzymeml:file file="./data/m1.csv" format="format1" id="file1"/>
+          </enzymeml:files>
+        </enzymeml:data>
+      </annotation>
+      <reaction metaid="METAID_R0" sboTerm="SBO:0000176" id="r0" name="Reaction" reversible="false">
+        <listOfReactants>
+          <speciesReference sboTerm="SBO:0000015" species="s0" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference sboTerm="SBO:0000011" species="s1" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000013" species="p0"/>
+        </listOfModifiers>
+        <kineticLaw name="Menten-Model">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> kcat </ci>
+                <ci> p0 </ci>
+                <ci> s0 </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <ci> Km </ci>
+                <ci> s0 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

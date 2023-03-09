@@ -35,6 +35,8 @@ def Examples():
         cpp_plant_example,
         ("epi.examples.cpp.python_reference_plants", "ExternalPlant"),
         ("epi.examples.cpp.python_reference_plants", "JaxPlant"),
+        ("epi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+        ("epi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
     ]:
         yield example
 
