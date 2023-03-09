@@ -4,6 +4,7 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
+from epi.core.dense_grid import DenseGridType
 from epi.core.inference import InferenceType, inference
 from epi.core.model import Model
 from epi.examples.stock import StockArtificial
@@ -12,11 +13,11 @@ from epi.examples.stock import StockArtificial
 
 
 @pytest.mark.parametrize(
-    "inference_type",
-    InferenceType._member_map_.values(),
-    ids=InferenceType._member_names_,
+    "dense_grid_type",
+    DenseGridType._member_map_.values(),
+    ids=DenseGridType._member_names_,
 )
-def test_slices(inference_type):
+def test_dense_grid(dense_grid_type):
     """ """
     model: Model = StockArtificial()
 
@@ -35,6 +36,7 @@ def test_slices(inference_type):
     inference(
         model,
         data,
-        inference_type,
+        inference_type=InferenceType.DENSE_GRID,
         slices=slices,
+        dense_grid_type=dense_grid_type,
     )
