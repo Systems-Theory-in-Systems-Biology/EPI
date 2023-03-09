@@ -22,6 +22,24 @@
   curl -sSL https://install.python-poetry.org | python3 -
   ```
   
+- Install dependencies:
+  
+  - For amici (sbml):
+
+    ```bash
+    sudo apt install swig
+    sudo apt install libblas-dev
+    sudo apt install atlas-devel or sudo apt install atlas-base-dev
+    ```
+  
+  - For cpp:
+
+    ```bash
+    sudo apt install cmake
+    sudo apt install libeigen3-dev
+    sudo apt install pybind11-dev
+    ```
+
 - Install epi:
 
   ```bash
