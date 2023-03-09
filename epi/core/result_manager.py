@@ -152,6 +152,7 @@ class ResultManager:
 
         Args:
             slices(list[np.ndarray]): The slices for which the folder structure will be deleted
+            model(Model): The model for which the folder structure will be deleted
 
         """
         for slice in slices:
