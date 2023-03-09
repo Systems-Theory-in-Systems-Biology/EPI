@@ -7,7 +7,11 @@ import jax.numpy as jnp
 import numpy as np
 
 from epi import logger
-from epi.core.dense_grid import NUM_GRID_POINTS, run_dense_grid_evaluation
+from epi.core.dense_grid import (
+    NUM_GRID_POINTS,
+    DenseGridType,
+    run_dense_grid_evaluation,
+)
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
 from epi.core.sampling import (
@@ -106,6 +110,7 @@ def inference_dense_grid(
     all_nums_grid_points: typing.Union[
         int, list[np.ndarray]
     ] = NUM_GRID_POINTS,
+    dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     num_processes: int = NUM_PROCESSES,
 ) -> None:
     """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
@@ -135,12 +140,13 @@ def inference_dense_grid(
         )
     for slice, num_grid_points in zip(slices, all_nums_grid_points):
         run_dense_grid_evaluation(
-            model,
-            data,
-            slice,
-            result_manager,
-            num_grid_points,
-            num_processes,
+            model=model,
+            data=data,
+            slice=slice,
+            result_manager=result_manager,
+            num_grid_points=num_grid_points,
+            dense_grid_type=dense_grid_type,
+            num_processes=num_processes,
         )
 
 
@@ -172,14 +178,14 @@ def inference_mcmc(
 
     for slice in slices:
         run_emcee_sampling(
-            model,
-            data,
-            slice,
-            result_manager,
-            num_runs,
-            num_walkers,
-            num_steps,
-            num_processes,
+            model=model,
+            data=data,
+            slice=slice,
+            result_manager=result_manager,
+            num_runs=num_runs,
+            num_walkers=num_walkers,
+            num_steps=num_steps,
+            num_processes=num_processes,
         )
         if calc_walker_acceptanceB:
             acceptance = calc_walker_acceptance(

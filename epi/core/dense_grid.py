@@ -13,10 +13,10 @@ from epi.core.transformations import evaluate_density
 NUM_GRID_POINTS = 10
 
 
-class GridType(Enum):
+class DenseGridType(Enum):
     """The type of grid to be used."""
 
-    REGULAR = 0
+    EQUIDISTANT = 0
     CHEBYSHEV = 1
 
 
@@ -42,8 +42,6 @@ def generate_chebyshev_grid(
     ]
     mesh = np.meshgrid(*axes, indexing="ij")
     if flat:
-        # TODO: Check if this is equivalent to the old code:  grid = grid.T.reshape(-1, slice.shape[0])
-        # TODO: Can this code be simplified?
         return np.array(mesh).reshape(ndim, -1).T
     else:
         return mesh
@@ -70,8 +68,6 @@ def generate_regular_grid(
     ]
     mesh = np.meshgrid(*axes, indexing="ij")
     if flat:
-        # TODO: Check if this is equivalent to the old code:  grid = grid.T.reshape(-1, slice.shape[0])
-        # TODO: Can this code be simplified?
         return np.array(mesh).reshape(ndim, -1).T
     else:
         return mesh
@@ -83,7 +79,7 @@ def run_dense_grid_evaluation(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_grid_points: np.ndarray,
-    grid_type: GridType = GridType.REGULAR,
+    dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     num_processes=NUM_PROCESSES,
     load_balancing_safety_faktor=4,
 ) -> None:
@@ -95,7 +91,7 @@ def run_dense_grid_evaluation(
         slice(np.ndarray): The slice for which the evaluation should be performed.
         result_manager(ResultManager): The result manager that should be used to save the results.
         num_grid_points(np.ndarray): The number of grid points for each dimension.
-        grid_type(GridType): The type of grid that should be used. (Default value = GridType.REGULAR)
+        dense_grid_type(DenseGridType): The type of grid that should be used. (Default value = DenseGridType.EQUIDISTANT)
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
         load_balancing_safety_faktor(int): Split the grid into num_processes * load_balancing_safety_faktor chunks.
             This will ensure that each process can be loaded with a similar amount of work if the run time difference between the evaluations
@@ -114,12 +110,12 @@ def run_dense_grid_evaluation(
     limits = model.param_limits
     dataStdevs = calc_kernel_width(data)
 
-    if grid_type == GridType.CHEBYSHEV:
+    if dense_grid_type == DenseGridType.CHEBYSHEV:
         grid = generate_chebyshev_grid(num_grid_points, limits, flat=True)
-    elif grid_type == GridType.REGULAR:
+    elif dense_grid_type == DenseGridType.EQUIDISTANT:
         grid = generate_regular_grid(num_grid_points, limits, flat=True)
     else:
-        raise ValueError(f"Unknown grid type: {grid_type}")
+        raise ValueError(f"Unknown grid type: {dense_grid_type}")
 
     # Split the grid into chunks that can be evaluated by each process
     grid_chunks = np.array_split(
