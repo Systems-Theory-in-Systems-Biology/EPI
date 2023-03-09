@@ -47,6 +47,11 @@ jobs:
           installer-parallel: true
       - name: Verify poetry installation
         run: poetry --version
+      - name: Install amici dependencies
+        run: |
+          sudo apt install -y swig
+          sudo apt install -y libblas-dev
+          sudo apt install -y atlas-base-dev
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
