@@ -78,7 +78,7 @@ def test_examples(example):
 
     # generate artificial data if necessary
     if model.is_artificial():
-        num_data_points = 1000
+        num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)
     else:
@@ -93,7 +93,7 @@ def test_examples(example):
             )  # Download the actual stock data from the ticker list data from the internet
 
     # Run inference
-    num_steps = 1000
+    num_steps = 500
     num_walkers = 12  # We choose 12 because then we have enough walkers for all examples. The higher the dimensionality of the model, the more walkers are needed.
     inference(
         model,

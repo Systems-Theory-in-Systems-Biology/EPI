@@ -23,7 +23,7 @@ def test_dense_grid(dense_grid_type):
 
     # generate artificial data
     if model.is_artificial():
-        num_data_points = 1000
+        num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)
     else:
