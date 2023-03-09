@@ -29,7 +29,7 @@
     ```bash
     sudo apt install swig
     sudo apt install libblas-dev
-    sudo apt install atlas-devel or sudo apt install atlas-base-dev
+    sudo apt install libatlas-base-dev
     ```
   
   - For cpp:
