@@ -99,12 +99,16 @@ Here are the most important infos on how to maintain this repository.
   coverage html
   ```
 
-<!--  TODO:
 - **Profiling with scalene**:
 
-  You can profile epi with scalene (or gprofile) using the commands
+  You can profile epi with scalene (or gprofile) using the commands:
 
-   -->
+  ```bash
+  python3 -m pip install -U scalene
+  scalene tests/profiling.py
+  ```
+
+  This will create a `profile.html` file, which you can open using your browser. Do not rely on the OPENAI optimization proposals. They are often plain wrong in scalene.
 
 <!-- TODO: Add a docker development environment -->
 <!-- - **Working with docker**:
