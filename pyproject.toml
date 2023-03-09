@@ -64,6 +64,7 @@ profile = "black"
 skip_gitignore = "true"
 float_to_top = "true"
 line_length = 79
+known_first_party = "amici"
 
 [tool.flake8]
 extend-ignore = ["E501", "E203", "F841"] # Length of lines already handled by black, spacing, unused variables
