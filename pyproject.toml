@@ -83,8 +83,6 @@ norecursedirs = [
 ]
 addopts = [
     "--import-mode=importlib",
-    "--ignore=tests/test_pysces.py",
-    "--ignore=tests/test_sbml_model.py",
 ]
 pythonpath = ["epi"]
 filterwarnings = [

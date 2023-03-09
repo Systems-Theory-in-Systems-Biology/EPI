@@ -28,6 +28,14 @@ tests.test\_cpp module
    :undoc-members:
    :show-inheritance:
 
+tests.test\_dense\_grid module
+------------------------------
+
+.. automodule:: tests.test_dense_grid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tests.test\_examples module
 ---------------------------
 
