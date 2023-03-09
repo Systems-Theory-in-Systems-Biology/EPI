@@ -47,7 +47,7 @@ def inference(
     result_manager=None,
     continue_sampling: bool = False,
     **kwargs,
-):
+) -> None:
     """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
@@ -107,7 +107,7 @@ def inference_dense_grid(
         int, list[np.ndarray]
     ] = NUM_GRID_POINTS,
     num_processes: int = NUM_PROCESSES,
-):
+) -> None:
     """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
 
     Args:
@@ -145,16 +145,16 @@ def inference_dense_grid(
 
 
 def inference_mcmc(
-    model,
-    data,
-    result_manager,
-    slices,
+    model: Model,
+    data: np.ndarray,
+    result_manager: ResultManager,
+    slices: np.ndarray,
     num_runs: int = NUM_RUNS,
     num_walkers: int = NUM_WALKERS,
     num_steps: int = NUM_STEPS,
     num_processes: int = NUM_PROCESSES,
     calc_walker_acceptanceB: bool = False,
-):
+) -> None:
     """This function runs a MCMC sampling for the given model and data.
 
     Args:

@@ -1,6 +1,9 @@
+import typing
+from enum import Enum
 from multiprocessing import Pool
 
 import numpy as np
+from numpy.polynomial.chebyshev import chebpts1
 
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
@@ -10,7 +13,45 @@ from epi.core.transformations import evaluate_density
 NUM_GRID_POINTS = 10
 
 
-def generate_grid(num_grid_points: np.ndarray, limits: np.ndarray, flat=False):
+class GridType(Enum):
+    """The type of grid to be used."""
+
+    REGULAR = 0
+    CHEBYSHEV = 1
+
+
+def generate_chebyshev_grid(
+    num_grid_points: np.ndarray, limits: np.ndarray, flat=False
+) -> typing.Union[np.ndarray, list[np.ndarray]]:
+    """Generate a grid with the given number of grid points for each dimension.
+
+    Args:
+        num_grid_points(np.ndarray): The number of grid points for each dimension.
+        limits(np.ndarray): The limits for each dimension.
+        flat(bool): If True, the grid is returned as a flat array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
+
+    Returns:
+        np.ndarray: The grid containing the grid points.
+
+    """
+    ndim = num_grid_points.size
+    axes = [
+        chebpts1(num_grid_points[i]) * (limits[i][1] - limits[i][0]) / 2
+        + (limits[i][1] + limits[i][0]) / 2
+        for i in range(ndim)
+    ]
+    mesh = np.meshgrid(*axes, indexing="ij")
+    if flat:
+        # TODO: Check if this is equivalent to the old code:  grid = grid.T.reshape(-1, slice.shape[0])
+        # TODO: Can this code be simplified?
+        return np.array(mesh).reshape(ndim, -1).T
+    else:
+        return mesh
+
+
+def generate_regular_grid(
+    num_grid_points: np.ndarray, limits: np.ndarray, flat=False
+) -> typing.Union[np.ndarray, list[np.ndarray]]:
     """Generate a grid with the given number of grid points for each dimension.
 
     Args:
@@ -42,6 +83,7 @@ def run_dense_grid_evaluation(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_grid_points: np.ndarray,
+    grid_type: GridType = GridType.REGULAR,
     num_processes=NUM_PROCESSES,
     load_balancing_safety_faktor=4,
 ) -> None:
@@ -53,6 +95,7 @@ def run_dense_grid_evaluation(
         slice(np.ndarray): The slice for which the evaluation should be performed.
         result_manager(ResultManager): The result manager that should be used to save the results.
         num_grid_points(np.ndarray): The number of grid points for each dimension.
+        grid_type(GridType): The type of grid that should be used. (Default value = GridType.REGULAR)
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
         load_balancing_safety_faktor(int): Split the grid into num_processes * load_balancing_safety_faktor chunks.
             This will ensure that each process can be loaded with a similar amount of work if the run time difference between the evaluations
@@ -60,6 +103,7 @@ def run_dense_grid_evaluation(
 
     Raises:
         ValueError: If the dimension of the numbers of grid points does not match the number of parameters in the slice.
+        ValueError: If the grid type is unknown.
 
     """
 
@@ -70,7 +114,12 @@ def run_dense_grid_evaluation(
     limits = model.param_limits
     dataStdevs = calc_kernel_width(data)
 
-    grid = generate_grid(num_grid_points, limits, flat=True)
+    if grid_type == GridType.CHEBYSHEV:
+        grid = generate_chebyshev_grid(num_grid_points, limits, flat=True)
+    elif grid_type == GridType.REGULAR:
+        grid = generate_regular_grid(num_grid_points, limits, flat=True)
+    else:
+        raise ValueError(f"Unknown grid type: {grid_type}")
 
     # Split the grid into chunks that can be evaluated by each process
     grid_chunks = np.array_split(
