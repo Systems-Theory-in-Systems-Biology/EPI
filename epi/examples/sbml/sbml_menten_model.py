@@ -30,6 +30,17 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
             name,
         )
 
+    # Overwrite the forward, jacobian, and valjac methods to remove the first variable which is not dependent on the parameters
+    def forward(self, params) -> np.ndarray:
+        return super().forward(params)[1:]
+
+    def jacobian(self, params) -> np.ndarray:
+        return super().jacobian(params)[1:, :]
+
+    def valjac(self, params) -> np.ndarray:
+        val, jac = super().valjac(params)
+        return val[1:], jac[1:, :]
+
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:
         diff0 = 5.0
         diff1 = 0.2
