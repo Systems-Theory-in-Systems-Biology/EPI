@@ -1,3 +1,5 @@
+from typing import Optional
+
 import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
@@ -12,10 +14,17 @@ class Corona(JaxModel):
     param_dim = 3
     data_dim = 4
 
-    defaultParamSamplingLimits = np.array(
-        [[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]]
-    )
-    defaultcentral_param = np.array([-1.8, 0.0, 0.7])
+    PARAM_LIMITS = np.array([[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]])
+    CENTRAL_PARAM = np.array([-1.8, 0.0, 0.7])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     def get_data_bounds(self):
         return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])

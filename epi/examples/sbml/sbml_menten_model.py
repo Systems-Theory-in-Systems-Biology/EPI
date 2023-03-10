@@ -8,14 +8,15 @@ from epi.core.model import ArtificialModelInterface, SBMLModel
 
 class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
 
-    defaultcentral_param = np.array([50.0, 1.0])
-    defaultParamSamplingLimits = np.array([[0.0, 100.0], [0.0, 2.0]])
+    CENTRAL_PARAM = np.array([50.0, 1.0])
+    PARAM_LIMITS = np.array([[0.0, 100.0], [0.0, 2.0]])
 
     def __init__(
         self,
-        central_param: Optional[np.ndarray] = None,
-        param_limits: Optional[np.ndarray] = None,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
         name: Optional[str] = None,
+        **kwargs,
     ) -> None:
         sbml_file = importlib.resources.path(
             "epi.examples.sbml", "sbml_menten_model.xml"
@@ -23,12 +24,13 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         param_names = ["Km", "kcat"]
         super().__init__(
             sbml_file,
+            central_param,
+            param_limits,
             param_names,
             1.0,
             False,
-            central_param,
-            param_limits,
             name,
+            **kwargs,
         )
 
     # Overwrite the forward, jacobian, and valjac methods to remove the first variable which is not dependent on the parameters

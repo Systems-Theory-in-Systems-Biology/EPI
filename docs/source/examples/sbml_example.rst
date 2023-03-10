@@ -17,7 +17,7 @@ ____________
     from epi.core.model import SBMLModel
     from epi.core.inference import inference
 
-    model = SBMLModel('model.xml', param_names=['k1', 'k2'], central_param=[1.0, 1.0], param_limits=[[0.0, 2.0], [0.0, 2.0]])
+    model = SBMLModel('model.xml', central_param=[1.0, 1.0], param_limits=[[0.0, 2.0], [0.0, 2.0]], param_names=['k1', 'k2'])
     model.inference(model, 'data.csv')
 
 The attribute :py:attr:`~epi.core.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.

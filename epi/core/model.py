@@ -11,30 +11,22 @@ from jax import jacrev, jit, vmap
 import amici
 from epi.jax_extension import value_and_jacrev
 
-# TODO: Deal with stdevs = 0.0 somewhere!!!
-
 
 class Model(ABC):
     """The base class for all models using the EPI algorithm.
 
-    Attributes:
-        param_dim(int): The dimension of the parameter space.
-        data_dim(int): The dimension of the data space.
-
-        defaultParamSamplingLimits(np.ndarray): The default limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2).
-        defaultcentral_param(np.ndarray): The default central parameter for the model.
-
-        central_param(np.ndarray): The central parameter for the model.
-        param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2).
-        name(str): The name of the model.
-
+    Args:
+        central_param(np.ndarray): The central parameter for the model. (Default value = None)
+        param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)
+        name(str): The name of the model. The class name is used if no name is given. (Default value = None)
     """
 
-    param_dim: Optional[np.ndarray] = None
-    data_dim: Optional[np.ndarray] = None
-
-    defaultParamSamplingLimits: Optional[np.ndarray] = None
-    defaultcentral_param: Optional[np.ndarray] = None
+    param_dim: Optional[
+        np.ndarray
+    ] = None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
+    data_dim: Optional[
+        np.ndarray
+    ] = None  #: The dimension of the data space of the model. It must be defined in the subclass.
 
     def __init_subclass__(cls, **kwargs):
         """Check if the required attributes are set."""
@@ -51,32 +43,12 @@ class Model(ABC):
 
     def __init__(
         self,
-        central_param: Optional[np.ndarray] = None,
-        param_limits: Optional[np.ndarray] = None,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
         name: Optional[str] = None,
     ) -> None:
-        """Initializes the model with the given parameters.
-
-        Args:
-            central_param(np.ndarray): The central parameter for the model. (Default value = None)
-            param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)
-            name(str): The name of the model. The class name is used if no name is given. (Default value = None)
-        """
-
-        assert (
-            central_param is not None or self.defaultcentral_param is not None
-        )
-        assert (
-            param_limits is not None
-            or self.defaultParamSamplingLimits is not None
-        )
-
-        self.central_param = (
-            central_param if central_param else self.defaultcentral_param
-        )
-        self.param_limits = (
-            param_limits if param_limits else self.defaultParamSamplingLimits
-        )
+        self.central_param = central_param
+        self.param_limits = param_limits
 
         if name is None:
             self.name = self.__class__.__name__
@@ -213,13 +185,24 @@ class JaxModel(Model):
 
     """
 
-    def __init__(self, name: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
         """Constructor of the JaxModel class.
 
         Args:
             name: str: The name of the model. If None the name of the class is used.
         """
-        super().__init__(name=name)
+        super().__init__(
+            central_param=central_param,
+            param_limits=param_limits,
+            name=name,
+            **kwargs,
+        )
         # TODO: Check performance implications of not setting this at the class level but for each instance.
         type(self).forward = partial(JaxModel.forward_method, self)
 
@@ -276,25 +259,39 @@ class JaxModel(Model):
 
 
 class SBMLModel(Model):
+    """The SBMLModel class is a wrapper for the AMICI python interface to simulate SBML models using this package.
+
+    Args:
+        sbml_file(str): The path to the SBML model file.
+        param_names(list): A list of parameter names. If None the parameter names are extracted from the SBML model.
+        tEnd(float): The end time of the simulation. (Default value = 1.0)
+        skip_creation(bool): If True the model is not created againg based on the SBML file. Instead the model is loaded from a previously created model. (Default value = False)
+        central_param(np.ndarray): The central parameter for the model
+        param_limits(np.ndarray): The parameter limits for the model
+    """
+
     @property
     def param_dim(self):
+        """The number of parameters of the model."""
         return len(self.model.getParameterIds())
 
     @property
     def data_dim(self):
+        """The number of observables of the model."""
         return len(self.model.getObservableIds())
 
     def __init__(
         self,
         sbml_file: str,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
         param_names=None,
         tEnd=1.0,
         skip_creation: bool = False,
-        central_param: Optional[np.ndarray] = None,
-        param_limits: Optional[np.ndarray] = None,
         name: Optional[str] = None,
+        **kwargs,
     ) -> None:
-        super().__init__(central_param, param_limits, name)
+        super().__init__(central_param, param_limits, name, **kwargs)
 
         model_name = self.name
         model_dir = "./amici"

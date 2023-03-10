@@ -11,14 +11,15 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
     param_dim = 2
     data_dim = 1
 
-    defaultcentral_param = np.array([1.0, 1.0])
-    defaultParamSamplingLimits = np.array([[0.0, 2.0], [0.0, 2.0]])
+    CENTRAL_PARAM = np.array([1.0, 1.0])
+    PARAM_LIMITS = np.array([[0.0, 2.0], [0.0, 2.0]])
 
     def __init__(
         self,
-        central_param: Optional[np.ndarray] = None,
-        param_limits: np.ndarray = None,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
         name: Optional[str] = None,
+        **kwargs,
     ) -> None:
         sbml_file = importlib.resources.path(
             "epi.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"
@@ -26,12 +27,13 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
         param_names = ["A", "B"]
         super().__init__(
             sbml_file,
+            central_param,
+            param_limits,
             param_names,
             1.0,
             False,
-            central_param,
-            param_limits,
             name,
+            **kwargs,
         )
 
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:

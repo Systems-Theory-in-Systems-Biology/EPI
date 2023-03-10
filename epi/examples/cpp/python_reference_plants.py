@@ -18,8 +18,22 @@ class JaxPlant(JaxModel, ArtificialModelInterface):
     param_dim = 2
     data_dim = 3
 
-    defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
-    defaultcentral_param = np.array([0.5, 0.5])
+    PARAM_LIMITS = np.array([[0, 1], [0, 1]])
+    CENTRAL_PARAM = np.array([0.5, 0.5])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: str = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(
+            central_param,
+            param_limits,
+            name,
+            **kwargs,
+        )
 
     @classmethod
     def forward(cls, param):
@@ -66,8 +80,20 @@ class ExternalPlant(Model, ArtificialModelInterface):
     param_dim = 2
     data_dim = 3
 
-    defaultParamSamplingLimits = np.array([[0, 1], [0, 1]])
-    defaultcentral_param = np.array([0.5, 0.5])
+    PARAM_LIMITS = np.array([[0, 1], [0, 1]])
+    CENTRAL_PARAM = np.array([0.5, 0.5])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: str = None,
+    ) -> None:
+        super().__init__(
+            central_param,
+            param_limits,
+            name,
+        )
 
     def forward(self, param):
         return fw(param)

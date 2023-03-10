@@ -1,3 +1,5 @@
+from typing import Optional
+
 import jax.numpy as jnp
 import numpy as np
 import pandas as pd
@@ -25,10 +27,8 @@ class Stock(JaxModel):
     data_dim = 19
     param_dim = 6
 
-    defaultParamSamplingLimits = np.array(
-        [[-10.0, 10.0] for _ in range(param_dim)]
-    )
-    defaultcentral_param = np.array(
+    PARAM_LIMITS = np.array([[-10.0, 10.0] for _ in range(param_dim)])
+    CENTRAL_PARAM = np.array(
         [
             0.41406223,
             1.04680993,
@@ -39,11 +39,14 @@ class Stock(JaxModel):
         ]
     )
 
-    def get_data_bounds(self):
-        return np.array([[-7.5, 7.5] for _ in range(self.data_dim)])
-
-    def get_param_bounds(self):
-        return np.array([[-2.0, 2.0] for _ in range(self.param_dim)])
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     def download_data(self, ticker_list_path: str):
         """Download stock data for a ticker list from yahoo finance.
@@ -128,10 +131,18 @@ class Stock(JaxModel):
 class StockArtificial(Stock, ArtificialModelInterface):
     """ """
 
-    param_limits = np.array([[-1.0, 3.0] * Stock.param_dim])
+    PARAM_LIMITS = np.array([[-1.0, 3.0] for _ in range(Stock.param_dim)])
 
-    def __init__(self, *args, **kwargs):
-        super(Stock, self).__init__(*args, **kwargs)
+    def __init__(
+        self,
+        central_param: np.ndarray = Stock.CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super(Stock, self).__init__(
+            central_param, param_limits, name=name, **kwargs
+        )
 
     def generate_artificial_params(self, num_samples):
         mean = np.array(

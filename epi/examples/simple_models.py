@@ -1,3 +1,5 @@
+from typing import Optional
+
 import jax.numpy as jnp
 import numpy as np
 
@@ -8,8 +10,17 @@ class Linear(JaxModel, ArtificialModelInterface):
     param_dim = 2
     data_dim = 2
 
-    defaultParamSamplingLimits = np.array([[-10.0, 11.0], [-10.0, 11.0]])
-    defaultcentral_param = np.array([0.5, 0.5])
+    PARAM_LIMITS = np.array([[-10.0, 11.0], [-10.0, 11.0]])
+    CENTRAL_PARAM = np.array([0.5, 0.5])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     @classmethod
     def forward(cls, param):
@@ -29,8 +40,17 @@ class Exponential(JaxModel):
     param_dim = 2
     data_dim = 2
 
-    defaultParamSamplingLimits = np.array([[1.0, 2.0], [1.0, 2.0]])
-    defaultcentral_param = np.array([1.0, 1.0])
+    PARAM_LIMITS = np.array([[1.0, 2.0], [1.0, 2.0]])
+    CENTRAL_PARAM = np.array([1.0, 1.0])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     @classmethod
     def forward(cls, param):
@@ -51,8 +71,17 @@ class LinearODE(JaxModel, ArtificialModelInterface):
     param_dim = 2
     data_dim = 2
 
-    defaultParamSamplingLimits = np.array([[-10.0, 23.0], [-10.0, 23.0]])
-    defaultcentral_param = np.array([1.5, 1.5])
+    PARAM_LIMITS = np.array([[-10.0, 23.0], [-10.0, 23.0]])
+    CENTRAL_PARAM = np.array([1.5, 1.5])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     @classmethod
     def forward(cls, param):

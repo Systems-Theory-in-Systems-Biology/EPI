@@ -16,11 +16,17 @@ class Temperature(Model):
     param_dim = 1
     data_dim = 1
 
-    defaultParamSamplingLimits = np.array([[0, np.pi / 2]])
-    defaultcentral_param = np.array([np.pi / 4.0])
+    PARAM_LIMITS = np.array([[0, np.pi / 2]])
+    CENTRAL_PARAM = np.array([np.pi / 4.0])
 
-    def __init__(self, name: Optional[str] = None) -> None:
-        super().__init__(name=name)
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     def forward(self, param):
         low_T = -30.0
@@ -44,8 +50,8 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
 
 
 class TemperatureWithFixedParams(Temperature):
-    def __init__(self, name: Optional[str] = None) -> None:
-        super().__init__(name=name)
+    def __init__(self, name: Optional[str] = None, **kwargs) -> None:
+        super().__init__(name=name, **kwargs)
         self.low_T = -30.0
         self.high_T = 30.0
 
