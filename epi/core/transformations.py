@@ -42,7 +42,7 @@ def evaluate_density(
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
-        return 0, np.zeros(model.param_dim + model.data_dim + 1)
+        return 0, np.zeros(slice.shape[0] + model.data_dim + 1)
 
     # If the parameter is within the valid ranges...
     else:
