@@ -271,7 +271,7 @@ def calc_walker_acceptance(
     model: Model,
     slice: np.ndarray,
     num_walkers: int,
-    numBurnSamples: int,
+    num_burn_samples: int,
     result_manager: ResultManager,
 ):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
@@ -281,7 +281,7 @@ def calc_walker_acceptance(
         model (Model): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
         num_walkers (int): number of walkers in the emcee chain
-        numBurnSamples (int): number of samples that were ignored at the beginning of each chain
+        num_burn_samples (int): number of samples that were ignored at the beginning of each chain
         result_manager (ResultManager): ResultManager to load the results from
 
     Returns:
@@ -294,7 +294,7 @@ def calc_walker_acceptance(
         result_manager.get_slice_path(slice) + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
-    )[numBurnSamples:, :]
+    )[num_burn_samples:, :]
 
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters

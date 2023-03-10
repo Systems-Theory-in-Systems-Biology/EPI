@@ -1,20 +1,18 @@
 Temperature Model
 -----------------
 The temperature model is contained in :file:`epi/examples/temperature/temperature.py`.
-The model :math:`y_i(q_i)=60 \cos(q_i)-30=s(q_i)` describes the temperature for a place on the earth :math:`y_i` by using the latitude coordinates :math:`q_i`.
-The jacobian :math:`{\frac{dy}{dq}]_i(q_i)=-30 \sin(q_i)` can be calculated analytically.
+The model :math:`y(q)=60 \cos(q)-30=s(q)` describes the temperature for a place on the earth :math:`y` by using the latitude coordinates :math:`q`.
+The jacobian :math:`{\frac{dy}{dq}}(q_i)=-30 \sin(q_i)` can be calculated analytically.
 
 Specialities
 ____________
 
 * Additional fixed parameters: The model includes fixed parameters :code:`self.low_T=30.0` and :code:`self.high_T=30.0`.
   These fixed parameters are passed to the forward function separately. You can create models with different parameters by
-  creating several model objects. However you should think about overwriting the method :py:meth:`epi.core.model.Model.name`
-  to include the fixed parameters of the model object. Else your results for different fixed parameter sets will be mixed.
-
-.. TODO::
-
-    Fix _forward, call, ... and maybe adapt this documentation part then
+  creating several model objects.
+  
+  To seperate the output for models with the same class but different parameters, you can overwrite the attribute :py:attr:`epi.core.model.Model.name`
+  and include the fixed parameters of the model object. Alternatively you can use a :py:class:`~epi.core.result_manager.ResultManager` object with custom :py:attr:`~epi.core.result_manager.ResultManager.run_name` attribute.
 
 .. literalinclude:: ../../../epi/examples/temperature/temperature.py
   :language: python

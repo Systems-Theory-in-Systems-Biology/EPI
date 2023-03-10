@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 import numpy as np
 
@@ -12,9 +13,9 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
 
     def __init__(
         self,
-        central_param: np.ndarray = None,
-        param_limits: np.ndarray = None,
-        name: str = None,
+        central_param: Optional[np.ndarray] = None,
+        param_limits: Optional[np.ndarray] = None,
+        name: Optional[str] = None,
     ) -> None:
         sbml_file = importlib.resources.path(
             "epi.examples.sbml", "sbml_menten_model.xml"

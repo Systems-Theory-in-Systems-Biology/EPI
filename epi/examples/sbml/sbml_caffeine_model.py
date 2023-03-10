@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 import numpy as np
 
@@ -15,9 +16,9 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
 
     def __init__(
         self,
-        central_param: np.ndarray = None,
+        central_param: Optional[np.ndarray] = None,
         param_limits: np.ndarray = None,
-        name: str = None,
+        name: Optional[str] = None,
     ) -> None:
         sbml_file = importlib.resources.path(
             "epi.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"

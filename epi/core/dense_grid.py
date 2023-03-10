@@ -16,7 +16,9 @@ NUM_GRID_POINTS = 10
 class DenseGridType(Enum):
     """The type of grid to be used."""
 
+    #: The equidistant grid has the same distance between two grid points in each dimension.
     EQUIDISTANT = 0
+    #: The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.
     CHEBYSHEV = 1
 
 

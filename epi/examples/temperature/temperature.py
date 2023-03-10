@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 import jax.numpy as jnp
 import numpy as np
@@ -18,12 +19,8 @@ class Temperature(Model):
     defaultParamSamplingLimits = np.array([[0, np.pi / 2]])
     defaultcentral_param = np.array([np.pi / 4.0])
 
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, name: Optional[str] = None) -> None:
         super().__init__(name=name)
-
-        self.dataPath = importlib.resources.path(
-            "epi.examples.temperature", "TemperatureData.csv"
-        )
 
     def forward(self, param):
         low_T = -30.0
@@ -47,7 +44,7 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
 
 
 class TemperatureWithFixedParams(Temperature):
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, name: Optional[str] = None) -> None:
         super().__init__(name=name)
         self.low_T = -30.0
         self.high_T = 30.0

@@ -52,12 +52,6 @@ class MyModel(Model):
     def forward(self, param):
         return jnp.array(...)
 
-    def getParamSamplingLimits(self):
-        return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[upper_bound_dim1,lower_bound_dim1],...]
-
-    def getcentral_param(self):
-        return jnp.array([0.5, -30.0,...])
-
     def jacobian(self, param):
         return jnp.array(...)
 ```
@@ -69,11 +63,14 @@ from epi.sampling import inference
 
 from my_model import MyModel
 
-model = MyModel()
-inference(model=model, dataPath="my_data.csv", num_runs=1, num_walkers=10, num_steps=2500, numProcesses=4)
+central_param = np.array([0.5, -1.5, ...])
+param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
+
+model = MyModel(central_param, param_limits)
+inference(model=model, data="my_data.csv")
 ```
 
-The file `my_data.csv` has to contain the data in csv format with `seperator=","` in the format
+`data` can be a numpy-2d-array or a PathLike object, which leads to a csv file. In the shown case, the csv file `my_data.csv` has to contain the data in the format
 
 ```text
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
@@ -83,11 +80,12 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-which corresponds to a matrix with the shape `nSamples x data_dim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `num_runs`, `num_walkers`, `num_steps`, `numProcesses` have fixed defaults. The results are written to three files:
+which corresponds to a matrix with the shape `nSamples x data_dim`. More available options and parameters for the `inference` method can be found in the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epi.core.html#module-epi.core.inference). Most importantly the inference can be done with grid based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
-* `./Applications/<ModelName>/OverallParams.csv`
-* `./Applications/<ModelName>/OverallSimResults.csv`
-* `./Applications/<ModelName>/OverallDensityEvals.csv`
+The results are stored in the following location:
+
+* `./Applications/<ModelName>/.../OverallParams.csv`
+* `./Applications/<ModelName>/.../OverallSimResults.csv`
+* `./Applications/<ModelName>/.../OverallDensityEvals.csv`
 
 and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.

@@ -30,79 +30,60 @@ How to start
 ------------
 
 | Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getcentral_param`.
-| The last requirement is to define the data and parameter Dimension, data_dim and param_dim.
+| You also need to define the data and parameter Dimension, :py:attr:`~epi.core.model.Model.data_dim` and :py:attr:`~epi.core.model.Model.param_dim` as class attributes or property methods.
 
 .. code-block:: python
-   
-   # my_model.py
 
-   import jax.numpy as jnp
-   from epi.core.model import Model
+    import jax.numpy as jnp
 
-   class MyModel(Model):
+    from epi.core.model import Model
 
-      param_dim = N # The dimension of a parameter point
-      data_dim = M # The dimension of a data point
+    class MyModel(Model):
 
-      def forward(self, param):
-         return jnp.array(...)
+        param_dim = N # The dimension of a parameter point
+        data_dim = M # The dimension of a data point
 
-      def getParamSamplingLimits(self):
-         return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[upper_bound_dim1,lower_bound_dim1],...]
+        def forward(self, param):
+            return jnp.array(...)
 
-      def getcentral_param(self):
-         return jnp.array([0.5, -30.0,...])
-
-      def jacobian(self, param):
-         return jnp.array(...)
+        def jacobian(self, param):
+            return jnp.array(...)
 
 To evaluate the model and infer the parameter distribution, call:
 
 .. code-block:: python
 
-   from epi.core.sampling import inference
-   from my_model import MyModel
+    from epi.core.inference import inference
 
-   model = MyModel()
-   inference(model=model, dataPath="my_data.csv")
+    from my_model import MyModel
 
-The file :file:`my_data.csv` has to contain the data in csv format with :code:`seperator=,` in the format
+    central_param = np.array([0.5, -1.5, ...])
+    param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
+
+    model = MyModel(central_param, param_limits)
+    inference(model=model, data="my_data.csv")
+
+The parameter :py:attr:`data` can be a numpy-2d-array or a PathLike object, which leads to a csv file. In the shown case, the csv file :file:`my_data.csv` has to contain the data in the format
 
 .. code-block:: text
-   
-   # my_data.csv
 
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   ...
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    ...
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-which corresponds to a matrix with the shape `nSamples x data_dim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `num_runs`, `num_walkers`, `num_steps`, `numProcesses` have fixed defaults. The results are written to three files:
+which corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. More available options and parameters for the :py:mod:`~epi.core.inference` method can be found in the documentation.
+Most importantly the inference can be done with grid based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
-* `./Applications/<ModelName>/OverallParams.csv`
-* `./Applications/<ModelName>/OverallSimResults.csv`
-* `./Applications/<ModelName>/OverallDensityEvals.csv`
+The results are stored in the locations
 
-and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
+* :file:`./Applications/<ModelName>/.../OverallParams.csv`
+* :file:`./Applications/<ModelName>/.../OverallSimResults.csv`
+* :file:`./Applications/<ModelName>/.../OverallDensityEvals.csv`
+
+and contain the sampled parameters or grid points, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
 
 .. note::
    
    Please read the documentation for our :doc:`Examples </examples>`.
-
-.. TODO: move this ?
-
-.. You can also derive your model from
-
-.. * :py:class:`~epi.core.model.JaxModel`: The jacobian of your forward method is automatically calculated. Use jax.numpy instead of numpy for the forward method implementation!
-.. * :py:class:`~epi.core.model.SBMLModel`: The complete model is derived from the given sbml file. You don't need to define the Model manually.
-
-.. Optionally you can also inherit, and implement the abstract functions from
-
-.. * :py:class:`~epi.core.model.ArtificialModelInterface`: This allows you to check if the inversion algorithm is working for your model using the function :py:meth:`~epi.core.model.Model.test`.
-   
-.. * :py:class:`~epi.core.model.VisualizationModelInterface`: This allows you to plot the results of the data inference using the function :py:meth:`~epi.core.model.Model.plot`.
-
-.. .. warning:: TODO: The functions plot and test may not exist yet!!!

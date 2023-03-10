@@ -17,12 +17,14 @@ colorExtra2 = np.array([255.0, 218.0, 174.0]) / 255.0
 # TODO: Fix np.loadtxt(..., ndmin=2) in all functions
 
 
-def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
+def plotEmceeResults(
+    model: Model, num_burn_samples, occurrence, resolution=100
+):
     """Plot sampling results in comparison to true results
 
     Args:
       model(Model): Model from which the results will be plotted
-      numBurnSamples(_type_): Ignore the first samples of each chain
+      num_burn_samples(_type_): Ignore the first samples of each chain
       occurrence(_type_): step of sampling from chains
       resolution(int, optional, optional): number of points on the plotting grid?, defaults to 100
       model: Model:
@@ -39,7 +41,7 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
     ) = model.dataLoader()
 
     densityEvals, simResults, paramChain = model.load_sim_results(
-        numBurnSamples, occurrence
+        num_burn_samples, occurrence
     )
 
     if artificialModel:
@@ -183,12 +185,12 @@ def plotDataMarginals(model: Model):
         plt.show()
 
 
-def plotMarginals(model: Model, numBurnSamples, occurrence):
+def plotMarginals(model: Model, num_burn_samples, occurrence):
     """
 
     Args:
       model: Model:
-      numBurnSamples:
+      num_burn_samples:
       occurrence:
 
     Returns:
@@ -199,11 +201,11 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
     simResults = np.loadtxt(
         model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
     paramChain = np.loadtxt(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     paramGrid = np.loadtxt(
         model.get_application_path() + "/Plots/paramGrid.csv",
@@ -277,13 +279,13 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         plt.show()
 
 
-def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
+def plotSpiderWebs(model: Model, num_burn_samples, occurrence):
     """Draw each sample (row of the matrix) as a circle of linear interpolations of its dimensions.
     Loads all necessary data and subsequently calls the method singleWeb 3 or 4 times
 
     Args:
       model: model ID)
-      numBurnSamples: Number of ignored first samples of each chain)
+      num_burn_samples: Number of ignored first samples of each chain)
       occurence: step of sampling from chains)
       model: Model:
       occurrence:
@@ -300,11 +302,11 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     emceeParams = np.loadtxt(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
     emceeSimResults = np.loadtxt(
         model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     # load underlying data
     trueData = np.loadtxt("Data/" + model.name + "Data.csv", delimiter=",")

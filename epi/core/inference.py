@@ -1,7 +1,7 @@
 import os
 import pathlib
-import typing
 from enum import Enum
+from typing import Optional, Union
 
 import jax.numpy as jnp
 import numpy as np
@@ -27,26 +27,18 @@ from epi.core.sparsegrid import sparse_grid_inference
 
 # Define an enum for the inference types: DenseGrid, MCMC
 class InferenceType(Enum):
-    """The type of inference to be used.
+    """The type of inference to be used."""
 
-    Args:
-        Enum: The enum class.
-
-    Attributes:
-        DENSE_GRID: The dense grid inference.
-        MCMC: The MCMC inference.
-    """
-
-    DENSE_GRID = 0
-    SPARSE_GRID = 1
-    MCMC = 2
+    DENSE_GRID = 0  #: The dense grid inference uses a dense grid to evaluate the joint distribution.
+    SPARSE_GRID = 1  #: The sparse grid inference uses a sparse grid to evaluate the joint distribution.
+    MCMC = 2  #: The MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
 
 
 def inference(
     model: Model,
-    data: typing.Union[str, os.PathLike, np.ndarray],
+    data: Union[str, os.PathLike, np.ndarray],
     inference_type: InferenceType = InferenceType.MCMC,
-    slices: list[np.ndarray] = None,
+    slices: Optional[list[np.ndarray]] = None,
     run_name: str = "default_run",
     result_manager=None,
     continue_sampling: bool = False,
@@ -56,7 +48,7 @@ def inference(
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
-        data(typing.Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
+        data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
         inference_type(InferenceType): The type of inference to be used. (Default value = InferenceType.MCMC)
         slices(list[np.ndarray]): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
         run_name(str): The name of the run. (Default value = "default_run")
@@ -106,10 +98,8 @@ def inference_dense_grid(
     model: Model,
     data: np.ndarray,
     result_manager: ResultManager,
-    slices: np.ndarray,
-    all_nums_grid_points: typing.Union[
-        int, list[np.ndarray]
-    ] = NUM_GRID_POINTS,
+    slices: list[np.ndarray],
+    all_nums_grid_points: Union[int, list[np.ndarray]] = NUM_GRID_POINTS,
     dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     num_processes: int = NUM_PROCESSES,
 ) -> None:
@@ -120,7 +110,7 @@ def inference_dense_grid(
         data (np.ndarray): The data to be used for the inference.
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
-        all_nums_grid_points (typing.Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to NUM_GRID_POINTS.
+        all_nums_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to NUM_GRID_POINTS.
         num_processes (int, optional): The number of processes to be used for the inference. Defaults to NUM_PROCESSES.
 
     Raises:
@@ -154,7 +144,7 @@ def inference_mcmc(
     model: Model,
     data: np.ndarray,
     result_manager: ResultManager,
-    slices: np.ndarray,
+    slices: list[np.ndarray],
     num_runs: int = NUM_RUNS,
     num_walkers: int = NUM_WALKERS,
     num_steps: int = NUM_STEPS,
@@ -188,7 +178,8 @@ def inference_mcmc(
             num_processes=num_processes,
         )
         if calc_walker_acceptanceB:
+            num_burn_in_steps = int(num_steps * 0.01)
             acceptance = calc_walker_acceptance(
-                model, result_manager, num_walkers, numBurnSamples=0
+                model, slice, num_walkers, num_burn_in_steps, result_manager
             )
             logger.info(f"Acceptance rate for slice {slice}: {acceptance}")

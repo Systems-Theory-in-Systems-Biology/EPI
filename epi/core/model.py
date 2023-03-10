@@ -1,8 +1,8 @@
 import inspect
 import os
-import typing
 from abc import ABC, abstractmethod
 from functools import partial
+from typing import Optional, Tuple, Union
 
 import jax.numpy as jnp
 import numpy as np
@@ -30,11 +30,11 @@ class Model(ABC):
 
     """
 
-    param_dim = None
-    data_dim = None
+    param_dim: Optional[np.ndarray] = None
+    data_dim: Optional[np.ndarray] = None
 
-    defaultParamSamplingLimits = None
-    defaultcentral_param = None
+    defaultParamSamplingLimits: Optional[np.ndarray] = None
+    defaultcentral_param: Optional[np.ndarray] = None
 
     def __init_subclass__(cls, **kwargs):
         """Check if the required attributes are set."""
@@ -51,9 +51,9 @@ class Model(ABC):
 
     def __init__(
         self,
-        central_param: np.ndarray = None,
-        param_limits: np.ndarray = None,
-        name: str = None,
+        central_param: Optional[np.ndarray] = None,
+        param_limits: Optional[np.ndarray] = None,
+        name: Optional[str] = None,
     ) -> None:
         """Initializes the model with the given parameters.
 
@@ -98,28 +98,26 @@ class Model(ABC):
 
     @abstractmethod
     def jacobian(self, param: np.ndarray) -> np.ndarray:
-        """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method.
+        """Evaluates the jacobian of the :func:`~epi.core.model.Model.forward` method.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
 
         """
         raise NotImplementedError
 
-    def valjac(
-        self, param: np.ndarray
-    ) -> typing.Tuple[np.ndarray, np.ndarray]:
+    def valjac(self, param: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-        it simply calls :func:`~epic.core.model.Model.forward` and :func:`~epic.core.model.Model.jacobian`.
+        it simply calls :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian`.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
+            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
 
         """
 
@@ -160,7 +158,7 @@ class ArtificialModelInterface(ABC):
 
     def generate_artificial_data(
         self,
-        params: typing.Union[os.PathLike, str, np.ndarray],
+        params: Union[os.PathLike, str, np.ndarray],
     ) -> np.ndarray:
         """This method is called when the user wants to generate artificial data from the model.
 
@@ -215,7 +213,7 @@ class JaxModel(Model):
 
     """
 
-    def __init__(self, name: str = None) -> None:
+    def __init__(self, name: Optional[str] = None) -> None:
         """Constructor of the JaxModel class.
 
         Args:
@@ -259,15 +257,13 @@ class JaxModel(Model):
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
 
         """
         return type(self).bw(param)
 
-    def valjac(
-        self, param: np.ndarray
-    ) -> typing.Tuple[np.ndarray, np.ndarray]:
-        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epic.core.model.Model.forward` and :func:`~epic.core.model.Model.jacobian` methods separately.
+    def valjac(self, param: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian` methods separately.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
@@ -294,9 +290,9 @@ class SBMLModel(Model):
         param_names=None,
         tEnd=1.0,
         skip_creation: bool = False,
-        central_param: np.ndarray = None,
-        param_limits: np.ndarray = None,
-        name: str = None,
+        central_param: Optional[np.ndarray] = None,
+        param_limits: Optional[np.ndarray] = None,
+        name: Optional[str] = None,
     ) -> None:
         super().__init__(central_param, param_limits, name)
 
@@ -337,9 +333,7 @@ class SBMLModel(Model):
         rdata = amici.runAmiciSimulation(self.model, self.solver)
         return rdata.sx[-1].T
 
-    def valjac(
-        self, params: np.ndarray
-    ) -> typing.Tuple[np.ndarray, np.ndarray]:
+    def valjac(self, params: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         for i, param in enumerate(params):
             self.model.setParameterByName(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.model, self.solver)

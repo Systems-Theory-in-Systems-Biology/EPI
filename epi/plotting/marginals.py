@@ -55,17 +55,17 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
 
 
 def calcEmceeSimResultsMarginals(
-    model: Model, numBurnSamples: int, occurrence: int, resolution: int
+    model: Model, num_burn_samples: int, occurrence: int, resolution: int
 ) -> None:
     """Evaluate the one-dimensional marginals of the emcee sampling simulation results over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
     Args:
-      model: param numBurnSamples: (Number of ignored first samples of each chain), defaults to 20% of all samples
+      model: param num_burn_samples: (Number of ignored first samples of each chain), defaults to 20% of all samples
       occurence: step of sampling from chains), defaults to num_walkers+1 (ensures that the chosen samples are nearly uncorrelated)
       resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
       model: Model:
-      numBurnSamples: int:
+      num_burn_samples: int:
       occurrence: int:
       resolution: int:
 
@@ -79,7 +79,7 @@ def calcEmceeSimResultsMarginals(
         model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
         ndmin=2,
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     # Load data, data standard deviations and model characteristics for the specified model.
     (
@@ -117,18 +117,18 @@ def calcEmceeSimResultsMarginals(
 
 
 def calcParamMarginals(
-    model: Model, numBurnSamples: int, occurrence: int, resolution: int
+    model: Model, num_burn_samples: int, occurrence: int, resolution: int
 ) -> None:
     """Evaluate the one-dimensional marginals of the emcee sampling parameters (and potentially true parameters) over equi-distant grids.
         The stores evaluations can then be used for result visualization.
 
     Args:
       model: model ID)
-      numBurnSamples: Number of ignored first samples of each chain), defaults to 20% of all samples
+      num_burn_samples: Number of ignored first samples of each chain), defaults to 20% of all samples
       occurrence: step of sampling from chains), defaults to num_walkers+1 (ensures that the chosen samples are nearly uncorrelated)
       resolution: defines the number of grid points for each marginal evaluation is directly proportional to the runtime), defaults to 100
       model: Model:
-      numBurnSamples: int:
+      num_burn_samples: int:
       occurrence: int:
       resolution: int:
 
@@ -145,7 +145,7 @@ def calcParamMarginals(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     param_dim = model.param_dim
 
