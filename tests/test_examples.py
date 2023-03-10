@@ -87,7 +87,7 @@ def test_examples(example):
 
         if (
             className == "Stock"
-        ):  # We check using string comparison because we dont want to statically import the Corona class
+        ):  # We check using string comparison because we dont want to statically import the Stock class
             data, _, _ = model.download_data(
                 data
             )  # Download the actual stock data from the ticker list data from the internet
