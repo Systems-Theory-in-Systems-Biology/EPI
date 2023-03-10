@@ -75,7 +75,7 @@ def calcEmceeSimResultsMarginals(
     """
 
     # Load the emcee simulation results chain
-    simResults = np.loadtxt(
+    sim_results = np.loadtxt(
         model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
         ndmin=2,
@@ -97,8 +97,8 @@ def calcEmceeSimResultsMarginals(
     # Loop over each data dimension and marginalize over the rest.
     for dim in range(data_dim):
         # The 1D-arrays of simulation resultshave to be casted to 2D-arrays, as this format is obligatory for kernel density estimation.
-        marginalSimResults = np.zeros((simResults.shape[0], 1))
-        marginalSimResults[:, 0] = simResults[:, dim]
+        marginalSimResults = np.zeros((sim_results.shape[0], 1))
+        marginalSimResults[:, 0] = sim_results[:, dim]
 
         # Loop over all grid points and evaluate the 1D kernel marginal density estimation of the emcee simulation results.
         for i in range(resolution):
@@ -141,7 +141,7 @@ def calcParamMarginals(
     artificialModel = model.is_artificial()
 
     # Load the emcee parameter chain
-    paramChain = np.loadtxt(
+    param_chain = np.loadtxt(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
         ndmin=2,
@@ -150,7 +150,7 @@ def calcParamMarginals(
     param_dim = model.param_dim
 
     # Define the standard deviation for plotting the parameters based on the sampled parameters and not the true ones.
-    paramStdevs = calc_kernel_width(paramChain)
+    paramStdevs = calc_kernel_width(param_chain)
 
     # Create containers for the parameter marginal evaluations and the underlying grid.
     _, paramGrid = model.generateVisualizationGrid(resolution)
@@ -164,8 +164,8 @@ def calcParamMarginals(
     # Loop over each parameter dimension and marginalize over the rest.
     for dim in range(param_dim):
         # As the kernel density estimators only work for 2D-arrays of data, we have to cast the column of parameter samples into a 1-column matrix (or 2D-array).
-        marginalParamChain = np.zeros((paramChain.shape[0], 1))
-        marginalParamChain[:, 0] = paramChain[:, dim]
+        marginalParamChain = np.zeros((param_chain.shape[0], 1))
+        marginalParamChain[:, 0] = param_chain[:, dim]
 
         # If there is true parameter information available, we have to do the same type cast for the true parameter samples.
         if artificialModel:

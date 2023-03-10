@@ -47,10 +47,10 @@ def evaluate_density(
     # If the parameter is within the valid ranges...
     else:
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        simRes, jac = model.valjac(fullParam)
+        sim_res, jac = model.valjac(fullParam)
 
         # Evaluate the data density in the simulation result.
-        densityEvaluation = eval_kde_gauss(data, simRes, dataStdevs)
+        densityEvaluation = eval_kde_gauss(data, sim_res, dataStdevs)
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         correction = calc_gram_determinant(jac)
@@ -60,7 +60,7 @@ def evaluate_density(
 
         # Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.
         evaluation_results = np.concatenate(
-            (param, simRes, np.array([trafo_density_evaluation]))
+            (param, sim_res, np.array([trafo_density_evaluation]))
         )
 
         return trafo_density_evaluation, evaluation_results

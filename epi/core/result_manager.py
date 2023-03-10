@@ -34,23 +34,23 @@ class ResultManager:
             slice(np.ndarray): The slice for which the number of sub runs should be counted.
 
         Returns:
-          numExistingFiles(int): The number of completed sub runs of the emcee particle swarm sampler.
+          num_existing_files(int): The number of completed sub runs of the emcee particle swarm sampler.
 
         """
         # Initialize the number of existing files to be 0
-        numExistingFiles = 0
+        num_existing_files = 0
 
         # Increase the just defined number until no corresponding file is found anymore ...
         while path.isfile(
             self.get_slice_path(slice)
             + "/SimResults/"
-            + "simResults_"
-            + str(numExistingFiles)
+            + "sim_results_"
+            + str(num_existing_files)
             + ".csv"
         ):
-            numExistingFiles += 1
+            num_existing_files += 1
 
-        return numExistingFiles
+        return num_existing_files
 
     def get_slice_name(self, slice: np.ndarray) -> str:
         """This organization function returns the name of the folder for the current slice.
@@ -196,22 +196,22 @@ class ResultManager:
         slice: np.ndarray,
         run,
         sampler_results: np.ndarray,
-        finalWalkerPositions: np.ndarray,
+        final_walker_positions: np.ndarray,
     ) -> None:
         """Saves the results of a single run of the emcee particle swarm sampler.
         sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them
-        as seperate files in the folders 'Params' and'SimResults' and 'densityEvals'.
+        as seperate files in the folders 'Params' and'SimResults' and 'DensityEvals'.
 
         Args:
             model(Model): The model for which the results will be saved
             slice(np.ndarray): The slice for which the results will be saved
             run(int): The run for which the results will be saved
             sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)
-            finalWalkerPositions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)
+            final_walker_positions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)
 
         """
 
-        sampling_dim = finalWalkerPositions.shape[1]
+        sampling_dim = final_walker_positions.shape[1]
 
         results_path = self.get_slice_path(slice)
 
@@ -224,14 +224,14 @@ class ResultManager:
 
         # Save the density evaluations
         np.savetxt(
-            results_path + "/DensityEvals/densityEvals_" + str(run) + ".csv",
+            results_path + "/DensityEvals/density_evals_" + str(run) + ".csv",
             sampler_results[:, -1],
             delimiter=",",
         )
 
         # Save the simulation results
         np.savetxt(
-            results_path + "/SimResults/simResults_" + str(run) + ".csv",
+            results_path + "/SimResults/sim_results_" + str(run) + ".csv",
             sampler_results[
                 :, sampling_dim : model.param_dim + model.data_dim
             ],
@@ -240,37 +240,37 @@ class ResultManager:
 
         # Save the final walker positions
         np.savetxt(
-            results_path + "/finalWalkerPositions_" + str(run) + ".csv",
-            finalWalkerPositions,
+            results_path + "/final_walker_positions_" + str(run) + ".csv",
+            final_walker_positions,
             delimiter=",",
         )
 
     def save_overall(
-        self, slice, overallParams, overallSimResults, overallDensityEvals
+        self, slice, overall_params, overall_sim_results, overall_density_evals
     ):
         """Saves the results of all runs of the emcee particle swarm sampler for the given slice.
 
         Args:
-            slice(np.ndarray): The slice for which the results will be saved. TODO document dimensions of overallParams, overallSimResults, overallDensityEvals
-            overallParams(np.ndarray): The results of the sampler.
-            overallSimResults(np.ndarray): The results of the sampler.
-            overallDensityEvals(np.ndarray): The results of the sampler.
+            slice(np.ndarray): The slice for which the results will be saved. TODO document dimensions of overall_params, overall_sim_results, overall_density_evals
+            overall_params(np.ndarray): The results of the sampler.
+            overall_sim_results(np.ndarray): The results of the sampler.
+            overall_density_evals(np.ndarray): The results of the sampler.
 
         """
         # Save the three just-created files.
         np.savetxt(
-            self.get_slice_path(slice) + "/OverallDensityEvals.csv",
-            overallDensityEvals,
+            self.get_slice_path(slice) + "/overall_density_evals.csv",
+            overall_density_evals,
             delimiter=",",
         )
         np.savetxt(
-            self.get_slice_path(slice) + "/OverallSimResults.csv",
-            overallSimResults,
+            self.get_slice_path(slice) + "/overall_sim_results.csv",
+            overall_sim_results,
             delimiter=",",
         )
         np.savetxt(
-            self.get_slice_path(slice) + "/OverallParams.csv",
-            overallParams,
+            self.get_slice_path(slice) + "/overall_params.csv",
+            overall_params,
             delimiter=",",
         )
 
@@ -290,18 +290,18 @@ class ResultManager:
         """
         results_path = self.get_slice_path(slice)
 
-        densityEvals = np.loadtxt(
-            results_path + "/OverallDensityEvals.csv",
+        density_evals = np.loadtxt(
+            results_path + "/overall_density_evals.csv",
             delimiter=",",
         )[num_burn_samples::occurrence]
-        simResults = np.loadtxt(
-            results_path + "/OverallSimResults.csv",
+        sim_results = np.loadtxt(
+            results_path + "/overall_sim_results.csv",
             delimiter=",",
             ndmin=2,
         )[num_burn_samples::occurrence, :]
-        paramChain = np.loadtxt(
-            results_path + "/OverallParams.csv",
+        param_chain = np.loadtxt(
+            results_path + "/overall_params.csv",
             delimiter=",",
             ndmin=2,
         )[num_burn_samples::occurrence, :]
-        return densityEvals, simResults, paramChain
+        return density_evals, sim_results, param_chain

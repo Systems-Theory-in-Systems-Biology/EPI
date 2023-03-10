@@ -13,21 +13,21 @@ from jax.scipy.stats import cauchy, norm
 
 @jit
 def eval_kde_cauchy(
-    data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
+    data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
     r"""Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
         Assumes that each data point is a potentially high-dimensional sample
         from a joint data distribution.
         This is for example given for time-series data, where each evaluation
         time is one dimension of the data point.
-        In the following formula x are the evaluation points (simRes) and y is the data.
+        In the following formula x are the evaluation points (sim_res) and y is the data.
 
         .. math::
             density_{i} = \frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \frac{1}{(\frac{x_{i,d} - y_{s,d}}{scales_d})^2 \; \pi \; scales_d}
 
     Args:
       data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
-      simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
+      sim_res(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
       scales(jnp.ndarray): one scale for each dimension
 
     Returns:
@@ -38,7 +38,7 @@ def eval_kde_cauchy(
     return (
         jnp.sum(
             jnp.prod(
-                cauchy.pdf(simRes[..., jnp.newaxis, :], data, scales),
+                cauchy.pdf(sim_res[..., jnp.newaxis, :], data, scales),
                 axis=-1,  # prod over #measurementDimensions
             ),
             axis=-1,  # sum over sampleDim
@@ -49,7 +49,7 @@ def eval_kde_cauchy(
 
 @jit
 def eval_kde_gauss(
-    data: jnp.ndarray, simRes: jnp.ndarray, scales: jnp.ndarray
+    data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
     """Evaluates a Gaussian Kernel Density estimator in one or severalsimulation result.
     Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
@@ -58,7 +58,7 @@ def eval_kde_gauss(
 
     Args:
       data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
-      simRes(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
+      sim_res(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
       scales(jnp.ndarray): one scale for each dimension
 
     Returns:
@@ -68,7 +68,7 @@ def eval_kde_gauss(
     return (
         jnp.sum(
             jnp.prod(
-                norm.pdf(simRes[..., jnp.newaxis, :], data, scales),
+                norm.pdf(sim_res[..., jnp.newaxis, :], data, scales),
                 axis=-1,  # prod over #measurementDimensions
             ),
             axis=-1,  # sum over sampleDim

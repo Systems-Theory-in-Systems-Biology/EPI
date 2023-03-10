@@ -40,24 +40,24 @@ def plotEmceeResults(
         dataStdevs,
     ) = model.dataLoader()
 
-    densityEvals, simResults, paramChain = model.load_sim_results(
+    density_evals, sim_results, param_chain = model.load_sim_results(
         num_burn_samples, occurrence
     )
 
     if artificialModel:
         trueParams, paramStdevs = model.paramLoader()
     else:
-        paramStdevs = calc_kernel_width(paramChain)
+        paramStdevs = calc_kernel_width(param_chain)
 
     # plot sampled parameters in comparison to true ones
     for dim in range(model.param_dim):
         evaluations = np.zeros(resolution)
-        singleParamChain = np.zeros((paramChain.shape[0], 1))
-        singleParamChain[:, 0] = paramChain[:, dim]
+        singleParamChain = np.zeros((param_chain.shape[0], 1))
+        singleParamChain[:, 0] = param_chain[:, dim]
 
         paramGrid = np.linspace(
-            np.amin(paramChain[:, dim]),
-            np.amax(paramChain[:, dim]),
+            np.amin(param_chain[:, dim]),
+            np.amax(param_chain[:, dim]),
             resolution,
         )
 
@@ -101,8 +101,8 @@ def plotEmceeResults(
         simResEvaluations = np.zeros(resolution)
         dataEvaluations = np.zeros(resolution)
 
-        singleSimResults = np.zeros((simResults.shape[0], 1))
-        singleSimResults[:, 0] = simResults[:, dim]
+        singleSimResults = np.zeros((sim_results.shape[0], 1))
+        singleSimResults[:, 0] = sim_results[:, dim]
         singleData = np.zeros((data.shape[0], 1))
         singleData[:, 0] = data[:, dim]
 
@@ -198,11 +198,11 @@ def plotMarginals(model: Model, num_burn_samples, occurrence):
     """
     artificialModel = model.is_artificial()
 
-    simResults = np.loadtxt(
+    sim_results = np.loadtxt(
         model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
     )[num_burn_samples::occurrence, :]
-    paramChain = np.loadtxt(
+    param_chain = np.loadtxt(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
     )[num_burn_samples::occurrence, :]
@@ -244,7 +244,7 @@ def plotMarginals(model: Model, num_burn_samples, occurrence):
             c=colorQApprox,
             label="inferred param. marg. KDE",
         )
-        # plt.hist(paramChain[:,dim], bins = paramGrid[:,dim], color = np.concatenate((colorQApprox, np.array([0.5]))), label = "inferred param. marg. hist.", density = True)
+        # plt.hist(param_chain[:,dim], bins = paramGrid[:,dim], color = np.concatenate((colorQApprox, np.array([0.5]))), label = "inferred param. marg. hist.", density = True)
 
         if artificialModel:
             plt.plot(
@@ -266,7 +266,7 @@ def plotMarginals(model: Model, num_burn_samples, occurrence):
             c=colorYApprox,
             label="reconstr. data marg. KDE",
         )
-        # plt.hist(simResults[:,dim], bins = dataGrid[:,dim], color = np.concatenate((colorYApprox, np.array([0.5]))), label = "recontr. data. marg. hist.", density = True)
+        # plt.hist(sim_results[:,dim], bins = dataGrid[:,dim], color = np.concatenate((colorYApprox, np.array([0.5]))), label = "recontr. data. marg. hist.", density = True)
 
         plt.plot(
             dataGrid[:, dim],
@@ -510,13 +510,13 @@ def plotTest(
 
     # ---------------------------------------------------------------------------
     # Second, we load the emcee parameter sampling results and als visualize them
-    paramChain = np.loadtxt(
+    param_chain = np.loadtxt(
         model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
     )
 
     # calculate reasonable standard deviations for the KDE
-    paramChainStdevs = calc_kernel_width(paramChain)
+    paramChainStdevs = calc_kernel_width(param_chain)
 
     # define the grid over which the inferred parameter density will be evaluated
     paramxGrid = np.linspace(0.8, 2.2, paramPlotResolution)
@@ -534,7 +534,7 @@ def plotTest(
             paramEvalPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             # evaluate the parameter KDE at the defined grid point
             paramEvals[i, j] = eval_kde_gauss(
-                paramChain, paramEvalPoint, paramChainStdevs
+                param_chain, paramEvalPoint, paramChainStdevs
             )
 
     # plot the inferred parameter distribution

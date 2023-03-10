@@ -135,10 +135,10 @@ def run_dense_grid_evaluation(
         )
         # Evaluate the grid points
         for i, gridPoint in enumerate(grid_chunk):
-            density, param_simRes_density = evaluate_density(
+            density, param_sim_res_density = evaluate_density(
                 gridPoint, model, data, dataStdevs, slice
             )
-            evaluation_results[i] = param_simRes_density
+            evaluation_results[i] = param_sim_res_density
         return evaluation_results
 
     pool = Pool(processes=num_processes)

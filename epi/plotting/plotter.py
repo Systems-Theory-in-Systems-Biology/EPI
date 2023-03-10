@@ -102,10 +102,10 @@ def plotDataSamples(model: Model):
         # if not artificial: plot inferred data samples from result param samples
         # if not artificialModel:
         #     # Second, we load the emcee parameter sampling results and als visualize them
-        #     simResults = model.load_sim_results(0,1)[1] # Picking simResults
+        #     sim_results = model.load_sim_results(0,1)[1] # Picking sim_results
         #     plt.scatter(
-        #         simResults[:,dim],
-        #         np.zeros(simResults.shape[0]),
+        #         sim_results[:,dim],
+        #         np.zeros(sim_results.shape[0]),
         #         color=colorYApprox,
         #         alpha=0.1,
         #         label="Inferred Data samples"
@@ -154,7 +154,7 @@ def plotParamKDE(model: Model):
 
     """
     # if artificial: plot param kde from param samples file
-    # plot inferred param kde from paramChain sim results
+    # plot inferred param kde from param_chain sim results
     pass
 
 

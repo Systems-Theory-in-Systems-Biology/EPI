@@ -89,19 +89,31 @@ def run_emcee_once(
     sampling_dim = slice.shape[0]
 
     # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
-    sampler = emcee.EnsembleSampler(
-        num_walkers,
-        sampling_dim,
-        # eval_log_transformed_density,
-        work,
-        pool=pool,
-        moves=movePolicy,
-        # args=[model, data, dataStdevs, slice],
-    )
-    # Extract the final walker position and close the pool of worker processes.
-    finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
-        initialWalkerPositions, num_steps, tune=True, progress=True
-    )
+    try:
+        sampler = emcee.EnsembleSampler(
+            num_walkers,
+            sampling_dim,
+            # eval_log_transformed_density,
+            work,
+            pool=pool,
+            moves=movePolicy,
+            # args=[model, data, dataStdevs, slice],
+        )
+        # Extract the final walker position and close the pool of worker processes.
+        finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
+            initialWalkerPositions, num_steps, tune=True, progress=True
+        )
+    except ValueError as e:
+        # If the message equals "Probability function returned NaN."
+        if str(e) == "Probability function returned NaN.":
+            raise ValueError(
+                "Probability function returned NaN. "
+                "You possibly have to exclude data dimensions which do not depend on the paramaters. "
+                "In addition your parameters should not be linearly dependent."
+            )
+        else:
+            raise e
+
     if pool is not None:
         pool.close()
         pool.join()
@@ -170,11 +182,11 @@ def run_emcee_sampling(
     )
 
     # Count and print how many runs have already been performed for this model
-    numExistingFiles = result_manager.count_emcee_sub_runs(slice)
-    logger.debug(f"{numExistingFiles} existing files found")
+    num_existing_files = result_manager.count_emcee_sub_runs(slice)
+    logger.debug(f"{num_existing_files} existing files found")
 
     # Loop over the remaining sub runs and contiune the counter where it ended.
-    for run in range(numExistingFiles, numExistingFiles + num_runs):
+    for run in range(num_existing_files, num_existing_files + num_runs):
         logger.info(f"Run {run} of {num_runs}")
 
         # If there are current walker positions defined by runs before this one, use them.
@@ -190,7 +202,7 @@ def run_emcee_sampling(
             )
 
         # Run the sampler.
-        sampler_results, finalWalkerPositions = run_emcee_once(
+        sampler_results, final_walker_positions = run_emcee_once(
             model,
             data,
             dataStdevs,
@@ -202,20 +214,21 @@ def run_emcee_sampling(
         )
 
         result_manager.save_run(
-            model, slice, run, sampler_results, finalWalkerPositions
+            model, slice, run, sampler_results, final_walker_positions
         )
 
     (
-        overallParams,
-        overallSimResults,
-        overallDensityEvals,
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
     ) = concatenate_emcee_sampling_results(model, result_manager, slice)
     result_manager.save_overall(
-        slice, overallParams, overallSimResults, overallDensityEvals
+        slice, overall_params, overall_sim_results, overall_density_evals
     )
-    return overallParams, overallSimResults, overallDensityEvals
+    return overall_params, overall_sim_results, overall_density_evals
 
 
+# TODO: Make this a method of the ResultManager? It uses the ResultManager to load the results and many hard coded paths.
 def concatenate_emcee_sampling_results(
     model: Model, result_manager: ResultManager, slice: np.ndarray
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -233,38 +246,38 @@ def concatenate_emcee_sampling_results(
     """
 
     # Count and print how many sub runs are ready to be merged.
-    numExistingFiles = result_manager.count_emcee_sub_runs(slice)
-    logger.info(f"{numExistingFiles} existing files found for concatenation")
+    num_existing_files = result_manager.count_emcee_sub_runs(slice)
+    logger.info(f"{num_existing_files} existing files found for concatenation")
 
     densityFiles = (
         result_manager.get_slice_path(slice)
-        + "/DensityEvals/densityEvals_{}.csv"
+        + "/DensityEvals/density_evals_{}.csv"
     )
-    simResultsFiles = (
-        result_manager.get_slice_path(slice) + "/SimResults/simResults_{}.csv"
+    sim_result_files = (
+        result_manager.get_slice_path(slice) + "/SimResults/sim_results_{}.csv"
     )
     paramFiles = result_manager.get_slice_path(slice) + "/Params/params_{}.csv"
 
-    overallParams = np.vstack(
+    overall_params = np.vstack(
         [
             np.loadtxt(paramFiles.format(i), delimiter=",", ndmin=2)
-            for i in range(numExistingFiles)
+            for i in range(num_existing_files)
         ]
     )
-    overallSimResults = np.vstack(
+    overall_sim_results = np.vstack(
         [
-            np.loadtxt(simResultsFiles.format(i), delimiter=",", ndmin=2)
-            for i in range(numExistingFiles)
+            np.loadtxt(sim_result_files.format(i), delimiter=",", ndmin=2)
+            for i in range(num_existing_files)
         ]
     )
-    overallDensityEvals = np.hstack(
+    overall_density_evals = np.hstack(
         [
             np.loadtxt(densityFiles.format(i), delimiter=",")
-            for i in range(numExistingFiles)
+            for i in range(num_existing_files)
         ]
     )
 
-    return overallParams, overallSimResults, overallDensityEvals
+    return overall_params, overall_sim_results, overall_density_evals
 
 
 def calc_walker_acceptance(
@@ -291,7 +304,7 @@ def calc_walker_acceptance(
 
     # load the emcee parameter chain
     params = np.loadtxt(
-        result_manager.get_slice_path(slice) + "/OverallParams.csv",
+        result_manager.get_slice_path(slice) + "/overall_params.csv",
         delimiter=",",
         ndmin=2,
     )[num_burn_samples:, :]
