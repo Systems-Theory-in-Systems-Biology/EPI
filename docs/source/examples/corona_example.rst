@@ -1,10 +1,6 @@
 Corona ODE Model
 ----------------
-The corona ode model is contained in :file:`epi/examples/corona/corona.py`. 
-
-.. TODO::
-
-    The model implements the function :math:`y_i(q_i)=???`.
+A corona ode model is contained in :file:`epi/examples/corona/corona.py`. 
 
 Specialities
 ____________
@@ -14,11 +10,6 @@ ____________
   which automatically calculates the :py:meth:`epi.core.model.jacobian`.
 * JIT compilation: Inheriting from :py:class:`~epi.core.model.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.
   This usually results in a significant execution speedup. It also allows to run your model on the gpu.
-* vectorization of model calls using :code:`jax.vmap`:
-
-  .. code-block:: python
-
-    artificialData = vmap(self.forward, in_axes=0)(true_param_sample)
 
 .. literalinclude:: ../../../epi/examples/corona/corona.py
   :language: python

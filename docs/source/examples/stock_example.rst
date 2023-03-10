@@ -1,22 +1,12 @@
 stock_data Model
 ---------------
-The high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
-
-.. TODO::
-
-    The model implements the function :math:`y_i(q_i)`
+A high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
 
 Specialities
 ____________
 
-* External Data Source: The model shows how to use an external data source in the workflow by overwriting the method :py:meth:`epi.core.model.Model.dataLoader`.
-* High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6
-  * Large Number of Walkers in MCMC Sampling
-  * Visualization: The visualization can be done for each dimension separately, for two selected dimensions or using spider web plots.
-
-.. TODO::
-
-    Visualization
+* External Data Source: The model loads stock data from the web.
+* High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6. The samples emcee strongly recommended to use at least 12 walkers for this model. 
 
 .. literalinclude:: ../../../epi/examples/stock/stock.py
   :language: python
