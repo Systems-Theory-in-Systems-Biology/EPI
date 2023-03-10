@@ -131,6 +131,8 @@ Here are the most important infos on how to maintain this repository.
   All extensions of sphinx which are used to create this documentation and further settings are stored in the file `docs/source/conf.py`.
   If you add extensions to `conf.py` which are not part of sphinx, add them to the `docs/source/requirement.txt` file to allow github action `mmaraskar/sphinx-action@master` to still build the documentation.
 
+  A [cheatsheet](https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/WritingReST/CheatSheet.html) for reStructuredText with Sphinx.
+
 - **Hosting with GitHub Pages**: \
   To publish the documentation on github pages you probably have to change some settings in the [GitHub Repository](https://github.com/Systems-Theory-in-Systems-Biology/EPI)
 
