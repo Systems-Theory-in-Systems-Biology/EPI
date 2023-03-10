@@ -2,7 +2,6 @@ from typing import Optional
 
 import jax.numpy as jnp
 import numpy as np
-import pandas as pd
 import yfinance as yf
 
 from epi import logger
@@ -65,7 +64,7 @@ class Stock(JaxModel):
         stocks = np.loadtxt(ticker_list_path, dtype="str")
 
         try:
-            df: pd.DataFrame = yf.download(
+            df = yf.download(
                 stocks.tolist(), start, end, interval="1d", repair=True
             )
         except Exception as e:
