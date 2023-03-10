@@ -142,6 +142,19 @@ Here are the most important infos on how to maintain this repository.
   - Branch: gh-pages && /(root)
   ```
 
+- **Changelog**: \
+    We use the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format for the changelog. It should be updated with every pull request.
+
+- **Versioning**: \
+    We use [Semantic Versioning](https://semver.org/). A version number is composed of three parts: major.minor.patch
+    1. The major version should be incremented when you make incompatible changes.
+    2. The minor version should be incremented when you add new functionality in a backwards-compatible manner.
+    3. The patch version should be incremented when you make backwards-compatible bug fixes.
+
+    Every time a new version is tagged, a GitHub Action workflow is trigger which builds and uploads the version to pypi.
+
+    Please update the version number in the `pyproject.toml` file before tagging the version.
+
 - **Test Deployment with TestPyPi**: \
     You have to setup testpypi once:
 
