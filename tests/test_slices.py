@@ -32,9 +32,14 @@ def test_slices(inference_type):
     slice2 = np.array([1, 2])
     slice3 = np.array([3, 4, 5])
     slices = [slice1, slice2, slice3]
+    if inference_type == InferenceType.MCMC:
+        kwargs = {"num_steps": 100}
+    else:
+        kwargs = {}
     inference(
         model,
         data,
         inference_type,
         slices=slices,
+        **kwargs,
     )
