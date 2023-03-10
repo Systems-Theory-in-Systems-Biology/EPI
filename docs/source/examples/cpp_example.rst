@@ -9,7 +9,7 @@ Specialities
 ____________
 
 * Calling C++ Code: Calls external c++ code using pybind11
-* Performance Comparison: The file :file:`python_reference_plants.py` includes
+* Performance Comparison: The file :file:`epi/examples/cpp/python_reference_plants.py` includes
   python models implementing the same mapping. You can compare the performance of the different approaches.
 
 Preparation
@@ -25,11 +25,14 @@ ___________
 C++ Model Definition
 ____________________
 
-.. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
+.. literalinclude:: ../../../epi/examples/cpp/cpp_model.hpp
   :language: c++
 
+Wrapping the C++ Code
+_____________________
 
-.. #TODO: Why is pygments not parsing the c++ code?
+.. literalinclude:: ../../../epi/examples/cpp/wrapper.cpp
+  :language: c++
 
 The example code is inconsistent in the following way:
 It uses a normal array for the forward method,

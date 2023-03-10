@@ -50,10 +50,16 @@ class TemperatureArtificial(Temperature, ArtificialModelInterface):
 
 
 class TemperatureWithFixedParams(Temperature):
-    def __init__(self, name: Optional[str] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        low_T: np.double = -30.0,
+        high_T: np.double = 30.0,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
         super().__init__(name=name, **kwargs)
-        self.low_T = -30.0
-        self.high_T = 30.0
+        self.low_T = low_T
+        self.high_T = high_T
 
     def forward(self, param):
         return self.calc_forward(param, self.high_T, self.low_T)
@@ -65,6 +71,7 @@ class TemperatureWithFixedParams(Temperature):
         return res
 
     def jacobian(self, param):
-        return jnp.array(
-            [(self.high_T - self.low_T) * jnp.sin(jnp.abs(param[0]))]
-        )
+        return self.calc_jacobian(param, self.high_T, self.low_T)
+
+    def calc_jacobian(self, param, high_T, low_T):
+        return jnp.array([(high_T - low_T) * jnp.sin(jnp.abs(param[0]))])
