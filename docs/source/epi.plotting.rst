@@ -4,29 +4,12 @@ epi.plotting package
 Submodules
 ----------
 
-epi.plotting.marginals module
------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: epi.plotting.marginals
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-epi.plotting.plots module
--------------------------
-
-.. automodule:: epi.plotting.plots
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-epi.plotting.plotter module
----------------------------
-
-.. automodule:: epi.plotting.plotter
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   Marginals<epi.plotting.marginals>
+   Plots<epi.plotting.plots>
+   Plotting<epi.plotting.plotter>
 
 Module contents
 ---------------

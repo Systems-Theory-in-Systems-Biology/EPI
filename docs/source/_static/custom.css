@@ -7,7 +7,9 @@ button.copybtn {
     clear: both;
 }
 
-.toggle .header {display: inline;}
+.toggle .header {
+    display: inline;
+}
 
 .toggle .header p:after {
     content: " ▶";

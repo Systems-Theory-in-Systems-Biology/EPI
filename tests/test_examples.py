@@ -74,7 +74,6 @@ def test_examples(example):
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
     model: Model = ModelClass()
-    # TODO: Delete old results and recreate folder structure
 
     # generate artificial data if necessary
     if model.is_artificial():
@@ -103,4 +102,4 @@ def test_examples(example):
         num_steps=num_steps,
     )
 
-    # TODO: Check if results are correct by comparing them with the artificial data for the artificial models
+    # TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models

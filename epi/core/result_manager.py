@@ -13,17 +13,14 @@ from epi.core.model import Model
 
 
 class ResultManager:
-    """ """
+    """The result manager is responsible for saving the results of the inference and loading them again.
 
-    # TODO: Comment this class
+    Attributes:
+        model_name(str): The name of the model (e.g. "temperature"). It is used to create the folder structure.
+        run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.
+    """
 
     def __init__(self, model_name: str, run_name: str) -> None:
-        """Initialize the ResultManager.
-
-        Args:
-            model_name (str): The name of the model (e.g. "temperature").
-            run_name (str): The name of the run which shall be saved (e.g. "run_with_...")
-        """
         self.model_name = model_name
         self.run_name = run_name
 

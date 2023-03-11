@@ -4,85 +4,19 @@ tests package
 Submodules
 ----------
 
-tests.conftest module
----------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: tests.conftest
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.profiling module
-----------------------
-
-.. automodule:: tests.profiling
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_dense\_grid module
-------------------------------
-
-.. automodule:: tests.test_dense_grid
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_examples module
----------------------------
-
-.. automodule:: tests.test_examples
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_fixed\_params module
---------------------------------
-
-.. automodule:: tests.test_fixed_params
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_jax module
-----------------------
-
-.. automodule:: tests.test_jax
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_kde module
-----------------------
-
-.. automodule:: tests.test_kde
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_plotting module
----------------------------
-
-.. automodule:: tests.test_plotting
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_simple\_models module
----------------------------------
-
-.. automodule:: tests.test_simple_models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-tests.test\_slices module
--------------------------
-
-.. automodule:: tests.test_slices
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   conftest<tests.conftest>
+   Profiling<tests.profiling>
+   Test Dense Grid<tests.test_dense_grid>
+   Test Examples<tests.test_examples>
+   Test Fixed Params<tests.test_fixed_params>
+   Test Jax<tests.test_jax>
+   Test KDE<tests.test_kde>
+   Test Plotting<tests.test_plotting>
+   Test Simple Models<tests.test_simple_models>
+   Test Slices<tests.test_slices>
 
 Module contents
 ---------------

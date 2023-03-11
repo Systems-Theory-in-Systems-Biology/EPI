@@ -44,15 +44,6 @@ extensions = [
     "sphinx_copybutton",
 ]
 
-# TODO: Switch to a nicer docstyle like numpy or google and also maybe change the theme
-#     'sphinxcontrib.napoleon',
-#     'numpydoc',
-# ]
-# Depending on what is chosen:
-#  html_theme = "pydata_sphinx_theme"
-# poetry add pydata-sphinx-theme --group=dev
-# poetry add sphinxcontrib-napoleon --group=dev
-# poetry add numpydoc --group=dev
 
 myst_enable_extensions = [
     "tasklist",
@@ -88,7 +79,7 @@ myst_heading_anchors = 3
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_book_theme"
 
 html_logo = "../../epi.png"
 
@@ -98,3 +89,20 @@ html_logo = "../../epi.png"
 html_static_path = ["_static"]
 
 todo_include_todos = 1
+
+html_theme_options = {
+    "repository_url": "https://github.com/Systems-Theory-in-Systems-Biology/EPI",
+    "use_repository_button": True,
+    "show_navbar_depth": 1,
+    "show_toc_level": 2,
+    "use_download_button": True,
+    "home_page_in_toc": True,
+    # "use_source_button": True,
+    # "repository_branch": "gh-pages",
+    # "use_edit_page_button": True,
+}
+
+
+# Configurate autodoc
+autodoc_member_order = "groupwise"
+add_module_names = False

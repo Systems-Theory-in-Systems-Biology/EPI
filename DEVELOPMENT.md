@@ -58,57 +58,59 @@
 
 Here are the most important infos on how to maintain this repository.
 
-- **Dependency Management with Poetry**: \
-  We use poetry as build system, for the dependency management and the virtual environment. During the [Quickstart](#quickstart) we installed all dependencies into the virtual environment, therefore:
+### Dependency Management with Poetry
 
-  ---
-  **IMPORTANT**
+We use poetry as build system, for the dependency management and the virtual environment. During the [Quickstart](#quickstart) we installed all dependencies into the virtual environment, therefore:
 
-  Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively you can run commands with `poetry run <yourcommand>`.
+---
+**IMPORTANT**
 
-  ---
+Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively you can run commands with `poetry run <yourcommand>`.
 
-  Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
+---
+
+Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
   
-  For more information read the [Poetry Documentation](https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project).
+For more information read the [Poetry Documentation](https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project).
 
-- **Code quality checks**: \
-  We use black, flake8, isort to maintain a common style and check the code. Please check your code install the pre-commit hook:
+### Code quality checks
 
-    ``` bash
-    pre-commit install
-    ```
+We use black, flake8, isort to maintain a common style and check the code. Please check your code install the pre-commit hook:
 
-    You can also check your changes manually:
-
-    ``` bash
-    pre-commit run --all-files
-    ```
-
-- **Testing with pytest**:
-
-  ```bash
-  pytest
+  ``` bash
+  pre-commit install
   ```
 
-  You can generate a coverage report by running the following code block in your terminal. Please be aware that it might take a long time, think about lowering the number of steps in the sampling.
+  You can also check your changes manually:
 
-  ```bash
-  coverage run -m pytest -v
-  coverage report
-  coverage html
+  ``` bash
+  pre-commit run --all-files
   ```
 
-- **Profiling with scalene**:
+Testing with pytest
 
-  You can profile epi with scalene (or gprofile) using the commands:
+```bash
+pytest
+```
 
-  ```bash
-  python3 -m pip install -U scalene
-  scalene tests/profiling.py
-  ```
+You can generate a coverage report by running the following code block in your terminal. Please be aware that it might take a long time, think about lowering the number of steps in the sampling.
 
-  This will create a `profile.html` file, which you can open using your browser. Do not rely on the OPENAI optimization proposals. They are often plain wrong in scalene.
+```bash
+coverage run -m pytest -v
+coverage report
+coverage html
+```
+
+### Profiling with scalene
+
+You can profile epi with scalene (or gprofile) using the commands:
+
+```bash
+python3 -m pip install -U scalene
+scalene tests/profiling.py
+```
+
+This will create a `profile.html` file, which you can open using your browser. Do not rely on the OPENAI optimization proposals. They are often plain wrong in scalene.
 
 <!-- TODO: Add a docker development environment -->
 <!-- - **Working with docker**:
@@ -120,80 +122,86 @@ Here are the most important infos on how to maintain this repository.
   sudo service docker stop
   ``` -->
 
-- **Documentation with Sphinx**:
+### Documentation with Sphinx
 
-  ``` bash
-  cd docs
-  sphinx-apidoc -f -o source/ ../
-  make html
-  ```
+``` bash
+cd docs
+sphinx-apidoc -e -f -o source/ ../
+make html
+```
 
-  All extensions of sphinx which are used to create this documentation and further settings are stored in the file `docs/source/conf.py`.
-  If you add extensions to `conf.py` which are not part of sphinx, add them to the `docs/source/requirement.txt` file to allow github action `mmaraskar/sphinx-action@master` to still build the documentation.
+All extensions of sphinx which are used to create this documentation and further settings are stored in the file `docs/source/conf.py`.
+If you add extensions to `conf.py` which are not part of sphinx, add them to the `docs/source/requirement.txt` file to allow github action `mmaraskar/sphinx-action@master` to still build the documentation.
 
-  A [cheatsheet](https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/WritingReST/CheatSheet.html) for reStructuredText with Sphinx.
+A [cheatsheet](https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/WritingReST/CheatSheet.html) for reStructuredText with Sphinx.
 
-- **Hosting with GitHub Pages**: \
-  To publish the documentation on github pages you probably have to change some settings in the [GitHub Repository](https://github.com/Systems-Theory-in-Systems-Biology/EPI)
+### Hosting with GitHub Pages
 
-  ``` text
-  Settings -> Code and automation -> Pages -> Build and Deployment:
-  - Source: Deploy from a branch
-  - Branch: gh-pages && /(root)
-  ```
+To publish the documentation on github pages you probably have to change some settings in the [GitHub Repository](https://github.com/Systems-Theory-in-Systems-Biology/EPI)
 
-- **Changelog**: \
-    We use the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format for the changelog. It should be updated with every pull request.
+``` text
+Settings -> Code and automation -> Pages -> Build and Deployment:
+- Source: Deploy from a branch
+- Branch: gh-pages && /(root)
+```
 
-- **Versioning**: \
-    We use [Semantic Versioning](https://semver.org/). A version number is composed of three parts: major.minor.patch
-    1. The major version should be incremented when you make incompatible changes.
-    2. The minor version should be incremented when you add new functionality in a backwards-compatible manner.
-    3. The patch version should be incremented when you make backwards-compatible bug fixes.
+### Changelog
 
-    Every time a new version is tagged, a GitHub Action workflow is trigger which builds and uploads the version to pypi.
+We use the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format for the changelog. It should be updated with every pull request.
 
-    Please update the version number in the `pyproject.toml` file before tagging the version.
+### Versioning
 
-- **Test Deployment with TestPyPi**: \
-    You have to setup testpypi once:
+We use [Semantic Versioning](https://semver.org/). A version number is composed of three parts: major.minor.patch
 
-    ```bash
-    poetry config repositories.testpypi https://test.pypi.org/legacy/
-    poetry config http-basic.testpypi __token__ pypi-your-api-token-here
-    ```
+1. The major version should be incremented when you make incompatible changes.
+2. The minor version should be incremented when you add new functionality in a backwards-compatible manner.
+3. The patch version should be incremented when you make backwards-compatible bug fixes.
 
-    Build and deploy:
+Every time a new version is tagged, a GitHub Action workflow is trigger which builds and uploads the version to pypi.
 
-    ```bash
-    poetry build
-    poetry publish -r testpypi
-    ```
+Please update the version number in the `pyproject.toml` file before tagging the version.
 
-    Test this with
+### Test Deployment with TestPyPi
 
-    ```bash
-    python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epi
-    ```
+You have to setup testpypi once:
 
-- **Deployment with PyPi**: \
-    You have to setup pypi once:
+```bash
+poetry config repositories.testpypi https://test.pypi.org/legacy/
+poetry config http-basic.testpypi __token__ pypi-your-api-token-here
+```
 
-    ```bash
-    poetry config pypi-token.pypi pypi-your-token-here
-    ```
+Build and deploy:
 
-    Build and deploy:
+```bash
+poetry build
+poetry publish -r testpypi
+```
 
-    ```bash
-    poetry publish --build
-    ```
+Test this with
 
-    Test this with
+```bash
+python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epi
+```
 
-    ```bash
-    pip install epi
-    ```
+### Deployment with PyPi
+  
+You have to setup pypi once:
+
+```bash
+poetry config pypi-token.pypi pypi-your-token-here
+```
+
+Build and deploy:
+
+```bash
+poetry publish --build
+```
+
+Test this with
+
+```bash
+pip install epi
+```
 
 ## Jax with CUDA
 

@@ -1,5 +1,5 @@
 .. image:: images/epi.png
-   :width: 200pt
+   :width: 100pt
 
 -------------------------------
 EPI - Euler Parameter Inference

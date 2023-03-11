@@ -14,20 +14,11 @@
 ## Documentation
 
 - [ ] [Dependabot badge](https://github.com/dependabot/dependabot-core/issues/1912)
-- [ ] Deactivate todos in conf.py
-- [ ] Remove unfinished documentation and references to unfinished code, e.g. temperature model fixed params
 - [ ] How to run jupyternotebook with poetry in vs code and in terminal
 
 ## Deployment
 
 - [ ] Deployment to pypi
-
-## SBML
-
-- Complete sbml class using one of
-  - [ ] [SymbolicSBML](https://gitlab.com/wurssb/Modelling/symbolicsbml)
-  - [ ] [RoadRunner](https://sys-bio.github.io/roadrunner/docs-build/index.html) Could be a good option
-  - [ ] [Sbmltodepy](https://github.com/AnabelSMRuggiero/sbmltoodepy) they dont want users to make issues/ pull requests / .. :(
 
 ## Postponed
 
