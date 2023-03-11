@@ -14,36 +14,33 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)
 [![Python](https://img.shields.io/badge/python-3.10-purple.svg)](https://www.python.org/)
 
-The Euler Parameter Inference (EPI) is a python package for inverse parameter inference.
+Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
 
 ## Documentation
 
 The full documentation to this software, including a detailed tutorial on how to use EPI and the api documentation, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
 
-## About
+## Features
 
-The EPI algorithm takes observed data and a model as input and returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
+EPI supports
 
-We support SBML ode models and user provided models.
+- SBML ode models
+- User provided models
+- Models with automatic differentation using jax
 
 ## Installation
 
-  ---
-  **IMPORTANT**
+**IMPORTANT**: The package is not yet available on pypi.
 
-  The package is not yet available on pypi.
+<!-- ```text
+pip install epi
+``` -->
 
-  <!-- ```text
-  pip install epi
-  ``` -->
-
-  ---
-
-You can build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
+You can build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
 
-Derive your model from ```Model``` class and implement the abstract functions.
+To use EPI, derive your model from the `Model` class and implement the abstract functions. Here's an example code snippet:
 
 ```python
 import jax.numpy as jnp
@@ -76,7 +73,7 @@ model = MyModel(central_param, param_limits)
 inference(model=model, data="my_data.csv")
 ```
 
-`data` can be a numpy-2d-array or a PathLike object, which leads to a csv file. In the shown case, the csv file `my_data.csv` has to contain the data in the format
+The `data` argument can be a numpy-2d-array or a PathLike object that points to a CSV file. In the example shown above, the CSV file `my_data.csv` should contain the data in the following format:
 
 ```text
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
@@ -86,7 +83,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-which corresponds to a matrix with the shape `nSamples x data_dim`. More available options and parameters for the `inference` method can be found in the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epi.core.html#module-epi.core.inference). Most importantly the inference can be done with grid based methods (dense grids, sparse grids) or sampling methods (mcmc).
+This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epi.core.html#module-epi.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
 The results are stored in the following location:
 
@@ -94,4 +91,4 @@ The results are stored in the following location:
 * `./Applications/<ModelName>/.../OverallSimResults.csv`
 * `./Applications/<ModelName>/.../OverallDensityEvals.csv`
 
-and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
+These files contain the sampled parameters, the corresponding data points obtained from the model forward pass, and the corresponding density evaluation.

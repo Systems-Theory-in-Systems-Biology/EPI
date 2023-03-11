@@ -12,6 +12,8 @@ ____________
 * Super simple setup
 * No need to write any model code
 
+Here's a code snippet to load your own sbml model and to do the parameter inference:
+
 .. code-block:: python
 
     from epi.core.model import SBMLModel
