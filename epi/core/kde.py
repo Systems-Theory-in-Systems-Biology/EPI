@@ -57,9 +57,9 @@ def eval_kde_gauss(
     While it is possible to define different standard deviations for different measurement dimensions, it is so far not possible to define covariances.
 
     Args:
-      data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
-      sim_res(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
-      scales(jnp.ndarray): one scale for each dimension
+        data(jnp.ndarray): data for the model: 2D array with shape (#Samples, #MeasurementDimensions)
+        sim_res(jnp.ndarray): evaluation coordinates array of shape (#nEvals, #MeasurementDimensions) or (#MeasurementDimensions,)
+        scales(jnp.ndarray): one scale for each dimension
 
     Returns:
         typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
