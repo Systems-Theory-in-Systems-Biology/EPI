@@ -20,14 +20,6 @@ tests.profiling module
    :undoc-members:
    :show-inheritance:
 
-tests.test\_cpp module
-----------------------
-
-.. automodule:: tests.test_cpp
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 tests.test\_dense\_grid module
 ------------------------------
 
