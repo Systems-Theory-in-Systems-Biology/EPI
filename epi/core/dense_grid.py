@@ -119,7 +119,10 @@ def run_dense_grid_evaluation(
     grid_chunks = np.array_split(
         grid, num_processes * load_balancing_safety_faktor
     )
-
+    # Calc cumsum for indexing
+    grid_chunks_cumsum = np.cumsum(
+        [0] + [grid_chunk.shape[0] for grid_chunk in grid_chunks]
+    )
     # Define a function which evaluates the density for a given grid chunk
     global evaluate_on_grid_chunk  # Needed to make this function pickleable
 
@@ -144,13 +147,11 @@ def run_dense_grid_evaluation(
             evaluate_on_grid_chunk,
             [
                 (grid_chunks[i], model, data, data_stdevs, slice)
-                for i in range(num_processes)
+                for i in range(len(grid_chunks))
             ],
         )
     ):
-        results[
-            i * grid_chunks[i].shape[0] : (i + 1) * grid_chunks[i].shape[0]
-        ] = result
+        results[grid_chunks_cumsum[i] : grid_chunks_cumsum[i + 1]] = result
 
     pool.close()
     pool.join()
@@ -169,7 +170,7 @@ def inference_dense_grid(
     result_manager: ResultManager,
     slices: list[np.ndarray],
     num_processes: int,
-    all_nums_grid_points: Union[int, list[np.ndarray]] = 10,
+    num_grid_points: Union[int, list[np.ndarray]] = 10,
     dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     load_balancing_safety_faktor: int = 4,
 ) -> None:
@@ -181,7 +182,7 @@ def inference_dense_grid(
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
-        all_nums_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
+        num_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
         load_balancing_safety_faktor (int, optional): Split the grid into num_processes * load_balancing_safety_faktor chunks. Defaults to 4.
 
     Raises:
@@ -189,23 +190,23 @@ def inference_dense_grid(
     """
 
     # If the number of grid points is given as an int, we construct a list of arrays with the same number of grid points for each parameter in the slice
-    if isinstance(all_nums_grid_points, int):
-        all_nums_grid_points = [
-            np.full(len(slice), all_nums_grid_points) for slice in slices
+    if isinstance(num_grid_points, int):
+        num_grid_points = [
+            np.full(len(slice), num_grid_points) for slice in slices
         ]
-    elif isinstance(all_nums_grid_points, list[np.ndarray]):
+    elif isinstance(num_grid_points, list[np.ndarray]):
         pass
     else:
         raise TypeError(
-            f"The num_grid_points argument has to be either an int or a list of arrays. The passed argument was of type {type(all_nums_grid_points)}"
+            f"The num_grid_points argument has to be either an int or a list of arrays. The passed argument was of type {type(num_grid_points)}"
         )
-    for slice, num_grid_points in zip(slices, all_nums_grid_points):
+    for slice, n_points in zip(slices, num_grid_points):
         run_dense_grid_evaluation(
             model=model,
             data=data,
             slice=slice,
             result_manager=result_manager,
-            num_grid_points=num_grid_points,
+            num_grid_points=n_points,
             dense_grid_type=dense_grid_type,
             num_processes=num_processes,
             load_balancing_safety_faktor=load_balancing_safety_faktor,
