@@ -25,11 +25,6 @@ from epi.core.model import Model
 from epi.core.result_manager import ResultManager
 from epi.core.transformations import eval_log_transformed_density
 
-NUM_RUNS = 2
-NUM_WALKERS = 10
-NUM_STEPS = 2500
-NUM_PROCESSES = 4
-
 # TODO: This works on the blob
 # Return the samples.
 # return sampler.get_chain(discard=0, thin=1, flat=True)
@@ -148,10 +143,10 @@ def run_emcee_sampling(
     data: np.ndarray,
     slice: np.ndarray,
     result_manager: ResultManager,
-    num_runs: int = NUM_RUNS,
-    num_walkers: int = NUM_WALKERS,
-    num_steps: int = NUM_STEPS,
-    num_processes: int = NUM_PROCESSES,
+    num_processes: int,
+    num_runs: int,
+    num_walkers: int,
+    num_steps: int,
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
        Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
@@ -161,10 +156,10 @@ def run_emcee_sampling(
         data (np.ndarray): data
         slice (np.ndarray): slice of the parameter space which will be sampled
         result_manager (ResultManager): ResultManager which will store the results
-        num_runs (int, optional): number of stored sub runs. Defaults to NUM_RUNS.
-        num_walkers (int, optional): number of particles in the particle swarm sampler. Defaults to NUM_WALKERS.
-        num_steps (int, optional): number of samples each particle performs before storing the sub run. Defaults to NUM_STEPS.
-        num_processes (int, optional): number of parallel threads. Defaults to NUM_PROCESSES.
+        num_processes (int): number of parallel threads.
+        num_runs (int): number of stored sub runs.
+        num_walkers (int): number of particles in the particle swarm sampler.
+        num_steps (int): number of samples each particle performs before storing the sub run.
 
     Returns:
         typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
@@ -328,3 +323,48 @@ def calc_walker_acceptance(
     acceptanceRatios = numAcceptedSteps / num_steps
 
     return acceptanceRatios
+
+
+def inference_mcmc(
+    model: Model,
+    data: np.ndarray,
+    result_manager: ResultManager,
+    slices: list[np.ndarray],
+    num_processes: int,
+    num_runs: int = 2,
+    num_walkers: int = 10,
+    num_steps: int = 2500,
+    calc_walker_acceptance_bool: bool = False,
+) -> None:
+    """This function runs a MCMC sampling for the given model and data.
+
+    Args:
+        model (Model): The model describing the mapping from parameters to data.
+        data (np.ndarray): The data to be used for the inference.
+        result_manager (ResultManager): The result manager to be used for the inference.
+        slices (np.ndarray): A list of slices to be used for the inference.
+        num_processes (int): The number of processes to be used for the inference.
+        num_runs (int, optional): The number of runs to be used for the inference. Defaults to 2.
+        num_walkers (int, optional): The number of walkers to be used for the inference. Defaults to 10.
+        num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
+        calc_walker_acceptance_bool (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
+
+    """
+
+    for slice in slices:
+        run_emcee_sampling(
+            model=model,
+            data=data,
+            slice=slice,
+            result_manager=result_manager,
+            num_runs=num_runs,
+            num_walkers=num_walkers,
+            num_steps=num_steps,
+            num_processes=num_processes,
+        )
+        if calc_walker_acceptance_bool:
+            num_burn_in_steps = int(num_steps * 0.01)
+            acceptance = calc_walker_acceptance(
+                model, slice, num_walkers, num_burn_in_steps, result_manager
+            )
+            logger.info(f"Acceptance rate for slice {slice}: {acceptance}")

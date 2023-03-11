@@ -16,9 +16,6 @@ from epi.core.model import Model
 from epi.core.result_manager import ResultManager
 from epi.core.transformations import eval_log_transformed_density
 
-NUM_LEVELS = 5
-NUM_PROCESSES = 4
-
 
 def basis_1d(
     points1D: np.ndarray, centre1D: np.double, level: int
@@ -366,21 +363,21 @@ class Subspace(object):
                     )
 
 
-def sparse_grid_inference(
+def inference_sparse_grid(
     model: Model,
     data: np.ndarray,
     result_manager: ResultManager,
     slices: typing.List[np.ndarray],
-    numLevels: int = NUM_LEVELS,
-    num_processes: int = NUM_PROCESSES,
+    num_processes: int,
+    numLevels: int = 5,
 ):
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
       model(Model): The model describing the mapping from parameters to data.
       data(np.ndarray): The data to be used for inference.
-      numLevels(int): Maximum sparse grid level depth that mainly defines the number of points. Defaults to NUM_LEVELS.
-      num_processes(int): number of processes to use for parallel evaluation of the model. Defaults to NUM_PROCESSES.
+      num_processes(int): number of processes to use for parallel evaluation of the model.
+      numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     """
 

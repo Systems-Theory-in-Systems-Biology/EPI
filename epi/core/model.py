@@ -50,10 +50,7 @@ class Model(ABC):
         self.central_param = central_param
         self.param_limits = param_limits
 
-        if name is None:
-            self.name = self.__class__.__name__
-        else:
-            self.name = name
+        self.name = name or self.__class__.__name__
 
     @abstractmethod
     def forward(self, param: np.ndarray) -> np.ndarray:
@@ -310,10 +307,8 @@ class SBMLModel(Model):
         model.requireSensitivitiesForAllParameters()
         solver.setSensitivityMethod(amici.SensitivityMethod.forward)
         solver.setSensitivityOrder(amici.SensitivityOrder.first)
-        if param_names is None:
-            self.param_names = model.getParameterNames()
-        else:
-            self.param_names = param_names
+
+        self.param_names = param_names or model.getParameterNames()
 
         self.model = model
         self.solver = solver

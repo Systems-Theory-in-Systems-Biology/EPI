@@ -1,36 +1,32 @@
-import typing
 from enum import Enum
 from multiprocessing import Pool
+from typing import Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
-from epi.core.sampling import NUM_PROCESSES, calc_kernel_width
+from epi.core.sampling import calc_kernel_width
 from epi.core.transformations import evaluate_density
-
-NUM_GRID_POINTS = 10
 
 
 class DenseGridType(Enum):
     """The type of grid to be used."""
 
-    #: The equidistant grid has the same distance between two grid points in each dimension.
-    EQUIDISTANT = 0
-    #: The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.
-    CHEBYSHEV = 1
+    EQUIDISTANT = 0  #: The equidistant grid has the same distance between two grid points in each dimension.
+    CHEBYSHEV = 1  #: The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.
 
 
 def generate_chebyshev_grid(
-    num_grid_points: np.ndarray, limits: np.ndarray, flat=False
-) -> typing.Union[np.ndarray, list[np.ndarray]]:
+    num_grid_points: np.ndarray, limits: np.ndarray, flatten=False
+) -> Union[np.ndarray, list[np.ndarray]]:
     """Generate a grid with the given number of grid points for each dimension.
 
     Args:
         num_grid_points(np.ndarray): The number of grid points for each dimension.
         limits(np.ndarray): The limits for each dimension.
-        flat(bool): If True, the grid is returned as a flat array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
+        flatten(bool): If True, the grid is returned as a flatten array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
 
     Returns:
         np.ndarray: The grid containing the grid points.
@@ -43,21 +39,21 @@ def generate_chebyshev_grid(
         for i in range(ndim)
     ]
     mesh = np.meshgrid(*axes, indexing="ij")
-    if flat:
+    if flatten:
         return np.array(mesh).reshape(ndim, -1).T
     else:
         return mesh
 
 
 def generate_regular_grid(
-    num_grid_points: np.ndarray, limits: np.ndarray, flat=False
-) -> typing.Union[np.ndarray, list[np.ndarray]]:
+    num_grid_points: np.ndarray, limits: np.ndarray, flatten=False
+) -> Union[np.ndarray, list[np.ndarray]]:
     """Generate a grid with the given number of grid points for each dimension.
 
     Args:
         num_grid_points(np.ndarray): The number of grid points for each dimension.
         limits(np.ndarray): The limits for each dimension.
-        flat(bool): If True, the grid is returned as a flat array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
+        flatten(bool): If True, the grid is returned as a flatten array. If False, the grid is returned as a list of arrays, one for each dimension. (Default value = False)
 
     Returns:
         np.ndarray: The grid containing the grid points.
@@ -69,7 +65,7 @@ def generate_regular_grid(
         for i in range(ndim)
     ]
     mesh = np.meshgrid(*axes, indexing="ij")
-    if flat:
+    if flatten:
         return np.array(mesh).reshape(ndim, -1).T
     else:
         return mesh
@@ -81,9 +77,9 @@ def run_dense_grid_evaluation(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_grid_points: np.ndarray,
-    dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
-    num_processes=NUM_PROCESSES,
-    load_balancing_safety_faktor=4,
+    dense_grid_type: DenseGridType,
+    num_processes: int,
+    load_balancing_safety_faktor: int,
 ) -> None:
     """This function runs a dense grid evaluation for the given model and data.
 
@@ -113,9 +109,9 @@ def run_dense_grid_evaluation(
     dataStdevs = calc_kernel_width(data)
 
     if dense_grid_type == DenseGridType.CHEBYSHEV:
-        grid = generate_chebyshev_grid(num_grid_points, limits, flat=True)
+        grid = generate_chebyshev_grid(num_grid_points, limits, flatten=True)
     elif dense_grid_type == DenseGridType.EQUIDISTANT:
-        grid = generate_regular_grid(num_grid_points, limits, flat=True)
+        grid = generate_regular_grid(num_grid_points, limits, flatten=True)
     else:
         raise ValueError(f"Unknown grid type: {dense_grid_type}")
 
@@ -165,3 +161,52 @@ def run_dense_grid_evaluation(
         results[:, data.shape[1] : data.shape[1] + slice.shape[0]],
         results[:, data.shape[1] + slice.shape[0] :],
     )
+
+
+def inference_dense_grid(
+    model: Model,
+    data: np.ndarray,
+    result_manager: ResultManager,
+    slices: list[np.ndarray],
+    num_processes: int,
+    all_nums_grid_points: Union[int, list[np.ndarray]] = 10,
+    dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
+    load_balancing_safety_faktor: int = 4,
+) -> None:
+    """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
+
+    Args:
+        model (Model): The model describing the mapping from parameters to data.
+        data (np.ndarray): The data to be used for the inference.
+        result_manager (ResultManager): The result manager to be used for the inference.
+        slices (np.ndarray): A list of slices to be used for the inference.
+        num_processes (int): The number of processes to be used for the inference.
+        all_nums_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
+        load_balancing_safety_faktor (int, optional): Split the grid into num_processes * load_balancing_safety_faktor chunks. Defaults to 4.
+
+    Raises:
+        TypeError: If the num_grid_points argument has the wrong type.
+    """
+
+    # If the number of grid points is given as an int, we construct a list of arrays with the same number of grid points for each parameter in the slice
+    if isinstance(all_nums_grid_points, int):
+        all_nums_grid_points = [
+            np.full(len(slice), all_nums_grid_points) for slice in slices
+        ]
+    elif isinstance(all_nums_grid_points, list[np.ndarray]):
+        pass
+    else:
+        raise TypeError(
+            f"The num_grid_points argument has to be either an int or a list of arrays. The passed argument was of type {type(all_nums_grid_points)}"
+        )
+    for slice, num_grid_points in zip(slices, all_nums_grid_points):
+        run_dense_grid_evaluation(
+            model=model,
+            data=data,
+            slice=slice,
+            result_manager=result_manager,
+            num_grid_points=num_grid_points,
+            dense_grid_type=dense_grid_type,
+            num_processes=num_processes,
+            load_balancing_safety_faktor=load_balancing_safety_faktor,
+        )
