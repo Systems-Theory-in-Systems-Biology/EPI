@@ -55,8 +55,10 @@ class LinearODE(JaxModel, ArtificialModelInterface):
     param_dim = 2
     data_dim = 2
 
-    PARAM_LIMITS = np.array([[-10.0, 23.0], [-10.0, 23.0]])
+    PARAM_LIMITS = np.array([[-2.0, 4.0], [-2.0, 4.0]])
     CENTRAL_PARAM = np.array([1.5, 1.5])
+
+    TRUE_PARAM_LIMITS = np.array([[1.0, 2.0], [1.0, 2.0]])
 
     def __init__(
         self,
