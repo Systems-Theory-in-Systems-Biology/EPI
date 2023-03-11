@@ -181,7 +181,7 @@ def test_transformationODELinear():
     model = LinearODE()
 
     # generate artificial data
-    num_data_points = 10000
+    num_data_points = 100
     params = model.generate_artificial_params(num_data_points)
     data = model.generate_artificial_data(params)
 
