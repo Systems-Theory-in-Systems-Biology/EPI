@@ -29,7 +29,7 @@ def inference(
     slices: Optional[list[np.ndarray]] = None,
     num_processes: int = 4,
     run_name: str = "default_run",
-    result_manager=None,
+    result_manager: ResultManager = None,
     continue_sampling: bool = False,
     **kwargs,
 ) -> None:
