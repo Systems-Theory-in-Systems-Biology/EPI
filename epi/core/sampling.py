@@ -37,9 +37,9 @@ from epi.core.transformations import eval_log_transformed_density
 def run_emcee_once(
     model: Model,
     data: np.ndarray,
-    dataStdevs: np.ndarray,
+    data_stdevs: np.ndarray,
     slice: np.ndarray,
-    initialWalkerPositions: np.ndarray,
+    initial_walker_positions: np.ndarray,
     num_walkers: int,
     num_steps: int,
     num_processes: int,
@@ -49,9 +49,9 @@ def run_emcee_once(
     Args:
         model (Model): The model which will be sampled
         data (np.ndarray): data
-        dataStdevs (np.ndarray): kernel width for the data
+        data_stdevs (np.ndarray): kernel width for the data
         slice (np.ndarray): slice of the parameter space which will be sampled
-        initialWalkerPositions (np.ndarray): initial parameter values for the walkers
+        initial_walker_positions (np.ndarray): initial parameter values for the walkers
         num_walkers (int): number of particles in the particle swarm sampler
         num_steps (int): number of samples each particle performs before storing the sub run
         num_processes (int): number of parallel threads
@@ -65,7 +65,7 @@ def run_emcee_once(
 
     def work(params):
         s = eval_log_transformed_density(
-            params, model, data, dataStdevs, slice
+            params, model, data, data_stdevs, slice
         )
         return s
 
@@ -92,11 +92,11 @@ def run_emcee_once(
             work,
             pool=pool,
             moves=movePolicy,
-            # args=[model, data, dataStdevs, slice],
+            # args=[model, data, data_stdevs, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
-        finalWalkerPositionsitions, _, _, _ = sampler.run_mcmc(
-            initialWalkerPositions, num_steps, tune=True, progress=True
+        final_walker_positions, _, _, _ = sampler.run_mcmc(
+            initial_walker_positions, num_steps, tune=True, progress=True
         )
     except ValueError as e:
         # If the message equals "Probability function returned NaN."
@@ -135,7 +135,7 @@ def run_emcee_once(
             "The autocorrelation time could not be calculate reliable"
         )
 
-    return sampler_results, finalWalkerPositionsitions
+    return sampler_results, final_walker_positions
 
 
 def run_emcee_sampling(
@@ -166,13 +166,13 @@ def run_emcee_sampling(
 
     """
 
-    dataStdevs = calc_kernel_width(data)
+    data_stdevs = calc_kernel_width(data)
     sampling_dim = slice.shape[0]
     central_param = model.central_param
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
     # TODO Make random variation of initial walker positions dependent on sampling limits?
-    initialWalkerPositions = central_param[slice] + 0.002 * (
+    initial_walker_positions = central_param[slice] + 0.002 * (
         np.random.rand(num_walkers, sampling_dim) - 0.5
     )
 
@@ -185,24 +185,26 @@ def run_emcee_sampling(
         logger.info(f"Run {run} of {num_runs}")
 
         # If there are current walker positions defined by runs before this one, use them.
-        positionPath = result_manager.get_slice_path(slice) + "/currentPos.csv"
-        if path.isfile(positionPath):
-            initialWalkerPositions = np.loadtxt(
-                positionPath,
+        position_path = (
+            result_manager.get_slice_path(slice) + "/currentPos.csv"
+        )
+        if path.isfile(position_path):
+            initial_walker_positions = np.loadtxt(
+                position_path,
                 delimiter=",",
                 ndmin=2,
             )
             logger.info(
-                f"Continue sampling from saved sampler position in {positionPath}"
+                f"Continue sampling from saved sampler position in {position_path}"
             )
 
         # Run the sampler.
         sampler_results, final_walker_positions = run_emcee_once(
             model,
             data,
-            dataStdevs,
+            data_stdevs,
             slice,
-            initialWalkerPositions,
+            initial_walker_positions,
             num_walkers,
             num_steps,
             num_processes,

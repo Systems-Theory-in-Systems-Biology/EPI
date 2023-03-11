@@ -106,7 +106,7 @@ def run_dense_grid_evaluation(
             f"The dimension of the numbers of grid points {num_grid_points} does not match the number of parameters in the slice {slice}"
         )
     limits = model.param_limits
-    dataStdevs = calc_kernel_width(data)
+    data_stdevs = calc_kernel_width(data)
 
     if dense_grid_type == DenseGridType.CHEBYSHEV:
         grid = generate_chebyshev_grid(num_grid_points, limits, flatten=True)
@@ -124,7 +124,7 @@ def run_dense_grid_evaluation(
     global evaluate_on_grid_chunk  # Needed to make this function pickleable
 
     def evaluate_on_grid_chunk(args):
-        grid_chunk, model, data, dataStdevs, slice = args
+        grid_chunk, model, data, data_stdevs, slice = args
         # Init the result array
         evaluation_results = np.zeros(
             (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
@@ -132,7 +132,7 @@ def run_dense_grid_evaluation(
         # Evaluate the grid points
         for i, gridPoint in enumerate(grid_chunk):
             density, param_sim_res_density = evaluate_density(
-                gridPoint, model, data, dataStdevs, slice
+                gridPoint, model, data, data_stdevs, slice
             )
             evaluation_results[i] = param_sim_res_density
         return evaluation_results
@@ -143,7 +143,7 @@ def run_dense_grid_evaluation(
         pool.imap(
             evaluate_on_grid_chunk,
             [
-                (grid_chunks[i], model, data, dataStdevs, slice)
+                (grid_chunks[i], model, data, data_stdevs, slice)
                 for i in range(num_processes)
             ],
         )

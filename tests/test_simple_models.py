@@ -28,7 +28,7 @@ def test_transformationLinear():
     data = np.array([xMesh.flatten(), yMesh.flatten()]).T
 
     # define standard deviations according to silverman
-    dataStdevs = calc_kernel_width(data)
+    data_stdevs = calc_kernel_width(data)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -43,7 +43,7 @@ def test_transformationLinear():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, dataStdevs)
+            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, data_stdevs)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -75,7 +75,7 @@ def test_transformationLinear():
                 paramPoint,
                 model,
                 data,
-                dataStdevs,
+                data_stdevs,
                 slice=np.arange(model.param_dim),
             )
 
@@ -105,7 +105,7 @@ def test_transformationExponential():
     data = vmap(model.forward, in_axes=0)(trueParam)
 
     # define standard deviations according to silverman
-    dataStdevs = calc_kernel_width(data)
+    data_stdevs = calc_kernel_width(data)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -119,7 +119,7 @@ def test_transformationExponential():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, dataStdevs)
+            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, data_stdevs)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -147,7 +147,7 @@ def test_transformationExponential():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evaluate_density(
-                paramPoint, model, data, dataStdevs, slice=fullSlice
+                paramPoint, model, data, data_stdevs, slice=fullSlice
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})

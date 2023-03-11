@@ -37,7 +37,7 @@ def plotEmceeResults(
     (
         data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
     density_evals, sim_results, param_chain = model.load_sim_results(
@@ -119,12 +119,12 @@ def plotEmceeResults(
             simResEvaluations[i] = eval_kde_gauss(
                 singleSimResults,
                 np.array([evalGrid[i]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
             dataEvaluations[i] = eval_kde_gauss(
                 singleData,
                 np.array([evalGrid[i]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
 
         plt.figure()
@@ -154,7 +154,7 @@ def plotDataMarginals(model: Model):
         num_data_points,
         central_param,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.loadData()
 
     dataGrid = np.loadtxt(
@@ -471,7 +471,7 @@ def plotTest(
     (
         data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
     # create the grid over which the data KDE will be evaluated
@@ -492,7 +492,7 @@ def plotTest(
             # define the evaluation grid point
             dataEvalPoint = np.array([dataxMesh[i, j], datayMesh[i, j]])
             # evaluate the data density at the defined grid point
-            dataEvals[i, j] = eval_kde_gauss(data, dataEvalPoint, dataStdevs)
+            dataEvals[i, j] = eval_kde_gauss(data, dataEvalPoint, data_stdevs)
 
     # plot the data KDE using a surface plot
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})

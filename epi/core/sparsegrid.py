@@ -382,7 +382,7 @@ def inference_sparse_grid(
     """
 
     # Load data, data standard deviations and model characteristics for the specified model.
-    dataStdevs = calc_kernel_width(data)
+    data_stdevs = calc_kernel_width(data)
 
     for slice in slices:
         # build the sparse grid over [0,1]^param_dim
@@ -410,7 +410,7 @@ def inference_sparse_grid(
                 eval_log_transformed_density,
                 model=model,
                 data=data,
-                dataStdevs=dataStdevs,
+                data_stdevs=data_stdevs,
                 slice=slice,
             ),
             scaledSparseGridPoints,

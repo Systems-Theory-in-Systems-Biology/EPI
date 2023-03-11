@@ -13,7 +13,7 @@ def evaluate_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
-    dataStdevs: np.ndarray,
+    data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
@@ -22,7 +22,7 @@ def evaluate_density(
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
-        dataStdevs (np.ndarray): array of suitable kernel width for each data dimension
+        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
     Returns:
@@ -47,10 +47,10 @@ def evaluate_density(
     # If the parameter is within the valid ranges...
     else:
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        sim_res, jac = model.valjac(fullParam)
+        sim_res, jac = model.forward_and_jacobian(fullParam)
 
         # Evaluate the data density in the simulation result.
-        densityEvaluation = eval_kde_gauss(data, sim_res, dataStdevs)
+        densityEvaluation = eval_kde_gauss(data, sim_res, data_stdevs)
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         correction = calc_gram_determinant(jac)
@@ -70,7 +70,7 @@ def eval_log_transformed_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
-    dataStdevs: np.ndarray,
+    data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.
@@ -80,7 +80,7 @@ def eval_log_transformed_density(
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
-        dataStdevs (np.ndarray): array of suitable kernel width for each data dimension
+        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
     Returns:
@@ -90,7 +90,7 @@ def eval_log_transformed_density(
 
     """
     trafo_density_evaluation, evaluation_results = evaluate_density(
-        param, model, data, dataStdevs, slice
+        param, model, data, data_stdevs, slice
     )
     if trafo_density_evaluation == 0:
         return -np.inf, evaluation_results

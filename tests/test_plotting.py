@@ -10,5 +10,5 @@ def test_plotKDEoverGrid():
     t = TemperatureArtificial()
     params = t.generate_artificial_params()
     data = t.generate_artificial_data(params)
-    dataStdevs = calc_kernel_width(data)
-    plotter.plotKDEoverGrid(data, dataStdevs, resolution=100)
+    data_stdevs = calc_kernel_width(data)
+    plotter.plotKDEoverGrid(data, data_stdevs, resolution=100)

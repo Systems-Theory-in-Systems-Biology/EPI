@@ -78,7 +78,9 @@ class Model(ABC):
         """
         raise NotImplementedError
 
-    def valjac(self, param: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def forward_and_jacobian(
+        self, param: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
         it simply calls :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian`.
 
@@ -157,7 +159,7 @@ class ArtificialModelInterface(ABC):
             return np.vectorize(self.forward, signature="(n)->(m)")(params)
 
 
-def autodiff(_cls):
+def add_autodiff(_cls):
     """
     Decorator to automatically create the jacobian method based on the forward method.
     Additionally it jit compiles the forward and jacobian method with jax.
@@ -205,7 +207,7 @@ class JaxModel(Model):
 
     def __init_subclass__(cls, **kwargs):
         """Automatically create the jacobian method based on the forward method for the subclass."""
-        return autodiff(super().__init_subclass__(**kwargs))
+        return add_autodiff(super().__init_subclass__(**kwargs))
 
     @classmethod
     def init_fw_and_bw(cls):
@@ -242,7 +244,9 @@ class JaxModel(Model):
         """
         return type(self).bw(param)
 
-    def valjac(self, param: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def forward_and_jacobian(
+        self, param: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian` methods separately.
 
         Args:
@@ -325,7 +329,9 @@ class SBMLModel(Model):
         rdata = amici.runAmiciSimulation(self.model, self.solver)
         return rdata.sx[-1].T
 
-    def valjac(self, params: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def forward_and_jacobian(
+        self, params: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         for i, param in enumerate(params):
             self.model.setParameterByName(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.model, self.solver)

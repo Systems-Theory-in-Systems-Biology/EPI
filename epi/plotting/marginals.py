@@ -23,7 +23,7 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
     (
         data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
     # Create containers for the data marginal evaluations.
@@ -43,7 +43,7 @@ def calcDataMarginals(model: Model, resolution: int) -> None:
             trueDataMarginals[i, dim] = eval_kde_gauss(
                 marginalData,
                 np.array([dataGrid[i, dim]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
 
     # Store the marginal KDE approximation of the data
@@ -85,7 +85,7 @@ def calcEmceeSimResultsMarginals(
     (
         data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
     # Create containers for the simulation results marginal evaluations.
@@ -105,7 +105,7 @@ def calcEmceeSimResultsMarginals(
             inferredDataMarginals[i, dim] = eval_kde_gauss(
                 marginalSimResults,
                 np.array([dataGrid[i, dim]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
 
     # Store the marginal KDE approximation of the simulation results emcee sample
