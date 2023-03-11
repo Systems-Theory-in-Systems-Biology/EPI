@@ -40,12 +40,12 @@ pytest-datafiles = "^2.0.1"
 pyproject-flake8 = "^6.0.0"
 sphinx-copybutton = "^0.5.1"
 sphinx = "^5"
-sphinx-rtd-theme = "^1.2.0"
 myst-parser = "^0.18.1"
 coverage = "^7.0.5"
 sphinx-togglebutton = "^0.3.2"
 ipykernel = "^6.21.2"
 sphinx-book-theme = "^1.0.0"
+sphinx-rtd-theme = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core"]
