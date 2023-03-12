@@ -1,7 +1,6 @@
 import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
-import pytest
 
 from epi.core.dense_grid import generate_regular_grid
 from epi.core.inference import InferenceType, inference
@@ -17,89 +16,16 @@ def integrate(z, x, y):
     return integral
 
 
-@pytest.mark.parametrize("dim", [1, 2], ids=["1D", "2D"])
-def test_kde_converges_gauss(dim, num_grid_points=100, num_data_points=1000):
-    """Test whether the KDE converges to the true distribution."""
-    # Generate random numbers from a normal distribution
-    data = np.random.randn(num_data_points, dim)
-    stdevs = calc_kernel_width(data)
-
-    # Define the grid
-    num_grid_points = np.array(
-        [num_grid_points for _ in range(dim)], dtype=np.int32
-    )
-    limits = np.array([[-5, 5] for _ in range(dim)])
-    grid = generate_regular_grid(num_grid_points, limits, flatten=True)
-
-    kde_on_grid = eval_kde_gauss(data, grid, stdevs)  # Evaluate the KDE
-    mean = np.zeros(dim)
-    cov = np.eye(dim)
-    exact_on_grid = jstats.multivariate_normal.pdf(
-        grid, mean, cov
-    )  # Evaluate the true distribution
-    diff = np.abs(kde_on_grid - exact_on_grid)  # difference between the two
-
-    # Plot the KDE
-    import matplotlib.pyplot as plt
-
-    if dim == 1:
-        grid = grid[:, 0]
-        error = np.trapz(diff, grid)  # Calculate the error
-        assert error < 0.1  # ~0.06 for 100 grid points, 1000 data points
-
-        plt.plot(grid, kde_on_grid)
-        plt.plot(grid, exact_on_grid)
-
-    elif dim == 2:
-        # Calculate the error
-        diff = diff.reshape(num_grid_points[0], num_grid_points[1])
-        x = np.linspace(limits[0, 0], limits[0, 1], num_grid_points[0])
-        y = np.linspace(limits[1, 0], limits[1, 1], num_grid_points[1])
-        error = integrate(diff, x, y)
-        assert error < 0.15  # ~0.13 for 100 grid points, 1000 data points
-        # Surface plot
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection="3d")
-        grid_2d = grid.reshape(num_grid_points[0], num_grid_points[1], dim)
-
-        exact_on_grid_2d = exact_on_grid.reshape(
-            num_grid_points[0], num_grid_points[1]
-        )
-        surf = ax.plot_surface(
-            grid_2d[:, :, 0],
-            grid_2d[:, :, 1],
-            exact_on_grid_2d,
-            alpha=0.7,
-            label="exact",
-        )
-        surf._edgecolors2d = surf._edgecolor3d
-        surf._facecolors2d = surf._facecolor3d
-
-        kde_on_grid_2d = kde_on_grid.reshape(
-            num_grid_points[0], num_grid_points[1]
-        )
-        surf = ax.plot_surface(
-            grid_2d[:, :, 0],
-            grid_2d[:, :, 1],
-            kde_on_grid_2d,
-            alpha=0.7,
-            label="kde",
-        )
-        surf._edgecolors2d = surf._edgecolor3d
-        surf._facecolors2d = surf._facecolor3d
-
-    plt.show()
-
-
 # TODO: Generalize, currently only works for dense vs mcmc
-def test_linear_ode_cor():
+def test_inference_mcmc_dense_exact(
+    num_data_points=1000,
+    num_steps=3000,
+    num_grid_points=50,
+):
     # define the model
     model = LinearODE()
 
     # generate artificial data
-    num_data_points = 1000
-    num_steps = 1000
-    num_grid_points = 50
     params = model.generate_artificial_params(num_data_points)
     data = model.generate_artificial_data(params)
 
@@ -116,6 +42,10 @@ def test_linear_ode_cor():
                 result_manager=result_manager,
                 num_steps=num_steps,
             )
+            # Take every second sample and skip the first 5% of the chain
+            results[inference_type] = result_manager.load_sim_results(
+                full_slice, num_steps // 20, 2
+            )
         elif InferenceType(inference_type) == InferenceType.DENSE_GRID:
             inference(
                 model,
@@ -124,12 +54,12 @@ def test_linear_ode_cor():
                 result_manager=result_manager,
                 num_grid_points=num_grid_points,
             )
+            results[inference_type] = result_manager.load_sim_results(
+                full_slice, 0, 1
+            )
         else:
-            # next iteration
+            # skip other inference types
             continue
-        results[inference_type] = result_manager.load_sim_results(
-            full_slice, 0, 1
-        )
 
     # define true pdf
     def true_pdf(grid, distribution="uniform"):
@@ -190,12 +120,42 @@ def test_linear_ode_cor():
     def to2d(grid):
         return grid.reshape(num_grid_points, num_grid_points)
 
+    integral_mcmc_kde = integrate(to2d(mcmc_kde), x, y)
+    integral_dense_grid_pdf = integrate(to2d(dense_grid_pdf), x, y)
+    integral_true_pdf = integrate(to2d(true_pdf_grid), x, y)
+
     # DEBUGGING
-    print("kernel width", calc_kernel_width(mcmc_params))
-    print("true kernel width", calc_kernel_width(params))
-    print("integral of mcmc kde", integrate(to2d(mcmc_kde), x, y))
-    print("integral of dense grid pdf ", integrate(to2d(dense_grid_pdf), x, y))
-    print("integral of true pdf ", integrate(to2d(true_pdf_grid), x, y))
+    print("integral of mcmc kde", integral_mcmc_kde)
+    print("integral of dense grid pdf ", integral_dense_grid_pdf)
+    print("integral of true pdf ", integral_true_pdf)
+
+    # Just a quick check if the integrals are correct and that the range chosen limits are large enough
+    threshold = 0.9  # We want to capture at least 90% of the probability mass
+    # TODO: The threshold should be adapted depending on how hard the problem is
+    # and how many samples / grid points we have
+    assert integral_mcmc_kde > threshold
+    assert integral_dense_grid_pdf > threshold
+    assert integral_true_pdf > threshold
+
+    # Calculate the errors on the grid
+    mcmc_kde_error = np.abs(mcmc_kde - true_pdf_grid)
+    dense_grid_pdf_error = np.abs(dense_grid_pdf - true_pdf_grid)
+
+    # Calculate the integrals of the errors
+    integral_mcmc_kde_error = integrate(to2d(mcmc_kde_error), x, y)
+    integral_dense_grid_pdf_error = integrate(to2d(dense_grid_pdf_error), x, y)
+
+    # Divide the integral through the area of the grid
+    integral_mcmc_kde_error /= (lims[0, 1] - lims[0, 0]) * (
+        lims[1, 1] - lims[1, 0]
+    )
+    integral_dense_grid_pdf_error /= (lims[0, 1] - lims[0, 0]) * (
+        lims[1, 1] - lims[1, 0]
+    )
+
+    # DEBUGGING
+    print("integral of mcmc kde error", integral_mcmc_kde_error)
+    print("integral of dense grid pdf error", integral_dense_grid_pdf_error)
 
     scatter_mcmc_params = False
     surf_mcmc_kde = True
@@ -266,10 +226,14 @@ def test_linear_ode_cor():
     ax.legend()
     plt.show()
 
+    # Assert that the errors are "small"
+    # TODO: Giving a meaning to the hreshold / error should be easy, because we know the true pdf and the pdfs are normalized
+    # TODO: Then evaluate whether the threshold is set reasonable
+    threshold = 0.05
+    assert integral_mcmc_kde_error < threshold
+    assert integral_dense_grid_pdf_error < threshold
 
+
+# Run the inference if main
 if __name__ == "__main__":
-    from epi import logger
-
-    logger.setLevel("DEBUG")
-
-    test_linear_ode_cor()
+    test_inference_mcmc_dense_exact()

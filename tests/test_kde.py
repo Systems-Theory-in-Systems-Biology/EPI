@@ -1,11 +1,13 @@
 """Tests for the Kernel Density Estimation module"""
 
 import jax
+import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib import cm
 
+from epi.core.dense_grid import generate_regular_grid
 from epi.core.kde import calc_kernel_width, eval_kde_cauchy, eval_kde_gauss
 
 
@@ -117,4 +119,87 @@ def test_KDE_data(evalKDE, data, stdevs, grid_bounds, resolution=33):
         linewidth=0,
         antialiased=False,
     )
+    plt.show()
+
+
+# WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
+def integrate(z, x, y):
+    # Integrate the function over the grid
+    integral = np.trapz(np.trapz(z, y, axis=0), x, axis=0)
+    return integral
+
+
+@pytest.mark.parametrize("dim", [1, 2], ids=["1D", "2D"])
+def test_kde_convergence_gauss(
+    dim, num_grid_points=100, num_data_points=10000
+):
+    """Test whether the KDE converges to the true distribution."""
+    # Generate random numbers from a normal distribution
+    data = np.random.randn(num_data_points, dim)
+    stdevs = calc_kernel_width(data)
+
+    # Define the grid
+    num_grid_points = np.array(
+        [num_grid_points for _ in range(dim)], dtype=np.int32
+    )
+    limits = np.array([[-5, 5] for _ in range(dim)])
+    grid = generate_regular_grid(num_grid_points, limits, flatten=True)
+
+    kde_on_grid = eval_kde_gauss(data, grid, stdevs)  # Evaluate the KDE
+    mean = np.zeros(dim)
+    cov = np.eye(dim)
+    exact_on_grid = jstats.multivariate_normal.pdf(
+        grid, mean, cov
+    )  # Evaluate the true distribution
+    diff = np.abs(kde_on_grid - exact_on_grid)  # difference between the two
+
+    # Plot the KDE
+    import matplotlib.pyplot as plt
+
+    if dim == 1:
+        grid = grid[:, 0]
+        error = np.trapz(diff, grid)  # Calculate the error
+        assert error < 0.1  # ~0.06 for 100 grid points, 1000 data points
+
+        plt.plot(grid, kde_on_grid)
+        plt.plot(grid, exact_on_grid)
+
+    elif dim == 2:
+        # Calculate the error
+        diff = diff.reshape(num_grid_points[0], num_grid_points[1])
+        x = np.linspace(limits[0, 0], limits[0, 1], num_grid_points[0])
+        y = np.linspace(limits[1, 0], limits[1, 1], num_grid_points[1])
+        error = integrate(diff, x, y)
+        assert error < 0.15  # ~0.13 for 100 grid points, 1000 data points
+        # Surface plot
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection="3d")
+        grid_2d = grid.reshape(num_grid_points[0], num_grid_points[1], dim)
+
+        exact_on_grid_2d = exact_on_grid.reshape(
+            num_grid_points[0], num_grid_points[1]
+        )
+        surf = ax.plot_surface(
+            grid_2d[:, :, 0],
+            grid_2d[:, :, 1],
+            exact_on_grid_2d,
+            alpha=0.7,
+            label="exact",
+        )
+        surf._edgecolors2d = surf._edgecolor3d
+        surf._facecolors2d = surf._facecolor3d
+
+        kde_on_grid_2d = kde_on_grid.reshape(
+            num_grid_points[0], num_grid_points[1]
+        )
+        surf = ax.plot_surface(
+            grid_2d[:, :, 0],
+            grid_2d[:, :, 1],
+            kde_on_grid_2d,
+            alpha=0.7,
+            label="kde",
+        )
+        surf._edgecolors2d = surf._edgecolor3d
+        surf._facecolors2d = surf._facecolor3d
+
     plt.show()
