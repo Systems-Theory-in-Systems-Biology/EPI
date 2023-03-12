@@ -41,9 +41,8 @@ def test_kde_gauss():
 
     data = np.array([[0.0], [2.0]])
     data_stdevs = calc_kernel_width(data)
-    slice = np.array([0])
     grid = np.array([[0.0], [1.0], [2.0]])
-    kde = eval_kde_gauss(data, grid, data_stdevs, slice)
+    kde = eval_kde_gauss(data, grid, data_stdevs)
     assert kde == np.array([0.5, 0.25, 0.5])
 
 
