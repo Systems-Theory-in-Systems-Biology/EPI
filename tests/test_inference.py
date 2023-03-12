@@ -229,6 +229,8 @@ def test_inference_mcmc_dense_exact(
     # Assert that the errors are "small"
     # TODO: Giving a meaning to the hreshold / error should be easy, because we know the true pdf and the pdfs are normalized
     # TODO: Then evaluate whether the threshold is set reasonable
+    # TODO: The threshold should be adapted depending on how hard the problem is
+    # and how many samples / grid points we have
     threshold = 0.05
     assert integral_mcmc_kde_error < threshold
     assert integral_dense_grid_pdf_error < threshold
