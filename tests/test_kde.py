@@ -27,6 +27,26 @@ def kde_data_test_set():
         yield data_list[i], stdev_list[i], grid_bounds_list[i]
 
 
+# Mark the test as expected to fail because the function is not implemented yet, but definitly should be implemented soon!
+@pytest.mark.xfail(reason="Not implemented yet, but is important!")
+def test_calc_kernel_width():
+    data = np.array([[0.0, 1.0], [-1.0, 2.0], [1.0, 3.0]])
+    data_stdevs = calc_kernel_width(data)
+    assert 0 == 1
+
+
+@pytest.mark.xfail(reason="Not implemented yet, contains false values")
+def test_kde_gauss():
+    from epi.core.kde import eval_kde_gauss
+
+    data = np.array([[0.0], [2.0]])
+    data_stdevs = calc_kernel_width(data)
+    slice = np.array([0])
+    grid = np.array([[0.0], [1.0], [2.0]])
+    kde = eval_kde_gauss(data, grid, data_stdevs, slice)
+    assert kde == np.array([0.5, 0.25, 0.5])
+
+
 @pytest.mark.parametrize("evalKDE", kernel_estimators())
 @pytest.mark.parametrize("batch", [False, True])
 def test_KDE_batch(batch, evalKDE):
