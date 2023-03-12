@@ -9,6 +9,7 @@ Submodules
 
    conftest<tests.conftest>
    Profiling<tests.profiling>
+   Correctness<tests.test_correctness>
    Test Dense Grid<tests.test_dense_grid>
    Test Examples<tests.test_examples>
    Test Fixed Params<tests.test_fixed_params>

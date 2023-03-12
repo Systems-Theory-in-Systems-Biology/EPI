@@ -19,6 +19,11 @@ button.copybtn {
     content: " ▼";
 }
 
+/* Set the background color of the sidebar */
+.bd-sidebar-primary {
+    background-color: #ececec;
+}
+
 /*Toggle from: https://stackoverflow.com/questions/2454577/sphinx-restructuredtext-show-hide-code-snippets */
 /* .. container:: toggle
 

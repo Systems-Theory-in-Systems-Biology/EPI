@@ -103,6 +103,15 @@ html_theme_options = {
     # "use_edit_page_button": True,
 }
 
+# Add searchbar to sidebar
+if html_theme == "sphinx_book_theme":
+    html_sidebars = {
+        "**": [
+            "navbar-logo.html",
+            "search-field.html",
+            "sbt-sidebar-nav.html",
+        ]  # "sidebar-nav-bs"]
+    }
 
 # Configurate autodoc
 autodoc_member_order = "groupwise"
