@@ -91,6 +91,10 @@ html_static_path = ["_static"]
 
 todo_include_todos = 1
 
+html_theme_options = {
+    "navigation_depth": -1,
+}
+
 if html_theme == "sphinx_book_theme":
     # Add searchbar to sidebar in book theme
     html_sidebars = {
