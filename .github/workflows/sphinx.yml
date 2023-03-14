@@ -14,6 +14,7 @@ jobs:
       uses: ammaraskar/sphinx-action@master
       with:
         pre-build-command: |
+          sudo apt update -y && sudo apt install -y python-dev build-essential
           sudo apt install -y gcc
           sudo apt install -y swig
           sudo apt install -y libblas-dev
