@@ -1,6 +1,9 @@
-"""This module provides functions to handle create Sparse Grids (SGs_) and work with them.
-   All pure SG functions are defined on the unit hypercube $[0,1]^d$.
+""" This module provides functions to handle create Sparse Grids (SGs_) and work with them.
+    All pure SG functions are defined on the unit hypercube $[0,1]^d$.
 
+    .. warning::
+
+        The inference with this class is not tested and not recommended for use!
 
 .. _SGs: https://en.wikipedia.org/wiki/Sparse_grid
 """
@@ -11,6 +14,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
+from epi import logger
 from epi.core.kde import calc_kernel_width
 from epi.core.model import Model
 from epi.core.result_manager import ResultManager
@@ -380,6 +384,10 @@ def inference_sparse_grid(
       numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     """
+
+    logger.warning(
+        "The inference_sparse_grid function is not tested and not recommended for use."
+    )
 
     # Load data, data standard deviations and model characteristics for the specified model.
     data_stdevs = calc_kernel_width(data)
