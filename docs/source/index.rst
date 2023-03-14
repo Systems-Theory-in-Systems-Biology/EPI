@@ -12,7 +12,7 @@ Welcome to EPI's documentation!
 .. include:: welcome.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    API DOC<modules>
