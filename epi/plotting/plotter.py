@@ -8,7 +8,7 @@ from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 
-from epi.core.kde import evalKDEGauss
+from epi.core.kde import eval_kde_gauss
 from epi.core.model import Model
 
 # Colors
@@ -26,12 +26,16 @@ def plotKDEoverGrid(
 ) -> None:
     """Plot the 1D kernel density estimation of different data sets over a grid
 
-    :param data: array of array of samples
-    :type data: np.ndarray
-    :param stdevs: one kernel standard deviation for each dimension
-    :type stdevs: np.ndarray
-    :param resolution: _description_, defaults to 101
-    :type resolution: int, optional
+    Args:
+      data(np.ndarray): array of array of samples
+      stdevs(np.ndarray): one kernel standard deviation for each dimension
+      resolution(int, optional): _description_, defaults to 101
+      data: np.ndarray:
+      stdevs: np.ndarray:
+      resolution: int:  (Default value = 101)
+
+    Returns:
+
     """
 
     for dim in range(data.shape[1]):
@@ -45,7 +49,7 @@ def plotKDEoverGrid(
         evaluations = np.zeros(resolution)
 
         for i in range(resolution):
-            evaluations[i] = evalKDEGauss(
+            evaluations[i] = eval_kde_gauss(
                 np.transpose(np.array([data[:, dim]])),
                 np.array([evalPoints[i]]),
                 np.array([stdevs[dim]]),
@@ -58,6 +62,8 @@ def plotKDEoverGrid(
 
 
 class DataParamEnum(Enum):
+    """ """
+
     Data = (0,)
     Params = 1
 
@@ -66,11 +72,15 @@ class DataParamEnum(Enum):
 def plotDataSamples(model: Model):
     """Scatter plot of data samples?
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
 
-    artificialModel = model.isArtificial()
+    artificialModel = model.is_artificial()
     name = "Sim" if artificialModel else "Meas"
     sim_measure_label = (
         "Simulation data" if artificialModel else "Measured data"
@@ -92,10 +102,10 @@ def plotDataSamples(model: Model):
         # if not artificial: plot inferred data samples from result param samples
         # if not artificialModel:
         #     # Second, we load the emcee parameter sampling results and als visualize them
-        #     simResults = model.loadSimResults(0,1)[1] # Picking simResults
+        #     sim_results = model.load_sim_results(0,1)[1] # Picking sim_results
         #     plt.scatter(
-        #         simResults[:,dim],
-        #         np.zeros(simResults.shape[0]),
+        #         sim_results[:,dim],
+        #         np.zeros(sim_results.shape[0]),
         #         color=colorYApprox,
         #         alpha=0.1,
         #         label="Inferred Data samples"
@@ -106,8 +116,12 @@ def plotDataSamples(model: Model):
 def plotDataKDE(model: Model):
     """Continuos plot of data kde?
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
     # plot data kde
     # if not artificial: plot inferred data kde from inferred data samples
@@ -117,8 +131,12 @@ def plotDataKDE(model: Model):
 def plotParamSamples(model: Model):
     """Scatter plot of param samples?
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
     # if artificial: plot param samples from file
     # else: sample from inferred param distr to get samples
@@ -128,11 +146,15 @@ def plotParamSamples(model: Model):
 def plotParamKDE(model: Model):
     """Continuos plot of param kde?
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
     # if artificial: plot param kde from param samples file
-    # plot inferred param kde from paramChain sim results
+    # plot inferred param kde from param_chain sim results
     pass
 
 
@@ -140,9 +162,13 @@ def sampleFromResults(model: Model, sampleSize: int = 1000):
     """Samples from the calculated param distribution
     and calculates the data points for these parameters
 
-    :param model: The model from which the results shall be loaded
-    :type model: Model
-    :param sampleSize: number of drawn samples, defaults to 1000
-    :type sampleSize: int, optional
+    Args:
+      model(Model): The model from which the results shall be loaded
+      sampleSize(int, optional): number of drawn samples, defaults to 1000
+      model: Model:
+      sampleSize: int:  (Default value = 1000)
+
+    Returns:
+
     """
     pass

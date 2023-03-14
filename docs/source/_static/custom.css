@@ -7,7 +7,9 @@ button.copybtn {
     clear: both;
 }
 
-.toggle .header {display: inline;}
+.toggle .header {
+    display: inline;
+}
 
 .toggle .header p:after {
     content: " ▶";
@@ -15,6 +17,11 @@ button.copybtn {
 
 .toggle .header.open p:after {
     content: " ▼";
+}
+
+/* Set the background color of the sidebar */
+.bd-sidebar-primary {
+    background-color: #ececec;
 }
 
 /*Toggle from: https://stackoverflow.com/questions/2454577/sphinx-restructuredtext-show-hide-code-snippets */

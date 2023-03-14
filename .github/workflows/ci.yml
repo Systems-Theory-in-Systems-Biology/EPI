@@ -47,6 +47,11 @@ jobs:
           installer-parallel: true
       - name: Verify poetry installation
         run: poetry --version
+      - name: Install amici dependencies
+        run: |
+          sudo apt install -y swig
+          sudo apt install -y libblas-dev
+          sudo apt install -y libatlas-base-dev
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
@@ -72,8 +77,9 @@ jobs:
         run: |
           source $VENV
           pytest -v
-      - name: Run coverage
-        run: |
-          source $VENV
-          coverage run -m pytest -v
-          coverage report
+      # TODO: coverage run creates segmentation fault on Github ci, but not locally. Debug it
+      # - name: Run coverage
+      #   run: |
+      #     source $VENV
+      #     coverage run -m pytest -v
+      #     coverage report

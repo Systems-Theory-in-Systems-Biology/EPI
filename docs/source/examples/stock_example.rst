@@ -1,22 +1,16 @@
-StockData Model
----------------
-The high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
-
-.. TODO::
-
-    The model implements the function :math:`y_i(q_i)`
+Stock Data Model
+----------------
+A high-dimensional stock data model is contained in :file:`epi/examples/stock/stock.py`.
 
 Specialities
 ____________
 
-* External Data Source: The model shows how to use an external data source in the workflow by overwriting the method :py:meth:`epi.core.model.Model.dataLoader`.
-* High-Dimensional: The model has a high number of dimensions: DataDim = 19, ParamDim = 6
-  * Large Number of Walkers in MCMC Sampling
-  * Visualization: The visualization can be done for each dimension separately, for two selected dimensions or using spider web plots.
-
-.. TODO::
-
-    Visualization
+* External Data Source: The model loads stock data from the web.
+* High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6. The samples emcee strongly recommended to use at least 12 walkers for this model. 
+* Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class :py:class:`~epi.core.model.JaxModel`,
+  which automatically calculates sets :py:meth:`~epi.core.model.Model.jacobian`.
+* JIT compilation: Inheriting from :py:class:`~epi.core.model.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.
+  This usually results in a significant execution speedup. It also allows to run your model on the gpu.
 
 .. literalinclude:: ../../../epi/examples/stock/stock.py
   :language: python

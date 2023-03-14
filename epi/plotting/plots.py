@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from epi.core.functions import evalLogTransformedDensity
-from epi.core.kde import calcKernelWidth, evalKDEGauss
+from epi.core.kde import calc_kernel_width, eval_kde_gauss
 from epi.core.model import Model
+from epi.core.transformations import eval_log_transformed_density
 
 colorQ = np.array([255.0, 147.0, 79.0]) / 255.0
 colorQApprox = np.array([204.0, 45.0, 53.0]) / 255.0
@@ -17,44 +17,47 @@ colorExtra2 = np.array([255.0, 218.0, 174.0]) / 255.0
 # TODO: Fix np.loadtxt(..., ndmin=2) in all functions
 
 
-def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
+def plotEmceeResults(
+    model: Model, num_burn_samples, occurrence, resolution=100
+):
     """Plot sampling results in comparison to true results
 
-    :param model: Model from which the results will be plotted
-    :type model: Model
-    :param numBurnSamples: Ignore the first samples of each chain
-    :type numBurnSamples: _type_
-    :param occurrence: step of sampling from chains
-    :type occurrence: _type_
-    :param resolution: number of points on the plotting grid?, defaults to 100
-    :type resolution: int, optional
+    Args:
+      model(Model): Model from which the results will be plotted
+      num_burn_samples(_type_): Ignore the first samples of each chain
+      occurrence(_type_): step of sampling from chains
+      resolution(int, optional, optional): number of points on the plotting grid?, defaults to 100
+      model: Model:
+
+    Returns:
+
     """
-    artificialModel = model.isArtificial()
+    artificialModel = model.is_artificial()
 
     (
-        dataDim,
+        data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
-    densityEvals, simResults, paramChain = model.loadSimResults(
-        numBurnSamples, occurrence
+    density_evals, sim_results, param_chain = model.load_sim_results(
+        num_burn_samples, occurrence
     )
 
     if artificialModel:
         trueParams, paramStdevs = model.paramLoader()
     else:
-        paramStdevs = calcKernelWidth(paramChain)
+        paramStdevs = calc_kernel_width(param_chain)
 
     # plot sampled parameters in comparison to true ones
-    for dim in range(model.paramDim):
+    for dim in range(model.param_dim):
         evaluations = np.zeros(resolution)
-        singleParamChain = np.zeros((paramChain.shape[0], 1))
-        singleParamChain[:, 0] = paramChain[:, dim]
+        singleParamChain = np.zeros((param_chain.shape[0], 1))
+        singleParamChain[:, 0] = param_chain[:, dim]
 
         paramGrid = np.linspace(
-            np.amin(paramChain[:, dim]),
-            np.amax(paramChain[:, dim]),
+            np.amin(param_chain[:, dim]),
+            np.amax(param_chain[:, dim]),
             resolution,
         )
 
@@ -64,14 +67,14 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
             trueSingleParamSample[:, 0] = trueParams[:, dim]
 
         for i in range(resolution):
-            evaluations[i] = evalKDEGauss(
+            evaluations[i] = eval_kde_gauss(
                 singleParamChain,
                 np.array([paramGrid[i]]),
                 np.array(paramStdevs[dim]),
             )
 
             if artificialModel:
-                trueEvaluations[i] = evalKDEGauss(
+                trueEvaluations[i] = eval_kde_gauss(
                     trueSingleParamSample,
                     np.array([paramGrid[i]]),
                     np.array(paramStdevs[dim]),
@@ -94,12 +97,12 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
         plt.plot()
 
     # plot sampled simulation results in comparison to original data
-    for dim in range(dataDim):
+    for dim in range(data_dim):
         simResEvaluations = np.zeros(resolution)
         dataEvaluations = np.zeros(resolution)
 
-        singleSimResults = np.zeros((simResults.shape[0], 1))
-        singleSimResults[:, 0] = simResults[:, dim]
+        singleSimResults = np.zeros((sim_results.shape[0], 1))
+        singleSimResults[:, 0] = sim_results[:, dim]
         singleData = np.zeros((data.shape[0], 1))
         singleData[:, 0] = data[:, dim]
 
@@ -113,15 +116,15 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
         evalGrid = np.linspace(globalMin, globalMax, resolution)
 
         for i in range(resolution):
-            simResEvaluations[i] = evalKDEGauss(
+            simResEvaluations[i] = eval_kde_gauss(
                 singleSimResults,
                 np.array([evalGrid[i]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
-            dataEvaluations[i] = evalKDEGauss(
+            dataEvaluations[i] = eval_kde_gauss(
                 singleData,
                 np.array([evalGrid[i]]),
-                np.array([dataStdevs[dim]]),
+                np.array([data_stdevs[dim]]),
             )
 
         plt.figure()
@@ -137,25 +140,33 @@ def plotEmceeResults(model: Model, numBurnSamples, occurrence, resolution=100):
 
 
 def plotDataMarginals(model: Model):
+    """
+
+    Args:
+      model: Model:
+
+    Returns:
+
+    """
     (
-        paramDim,
-        dataDim,
-        numDataPoints,
-        centralParam,
+        param_dim,
+        data_dim,
+        num_data_points,
+        central_param,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.loadData()
 
     dataGrid = np.loadtxt(
-        model.getApplicationPath() + "/Plots/dataGrid.csv",
+        model.get_application_path() + "/Plots/dataGrid.csv",
         delimiter=",",
     )
     trueDataMarginals = np.loadtxt(
-        model.getApplicationPath() + "/Plots/trueDataMarginals.csv",
+        model.get_application_path() + "/Plots/trueDataMarginals.csv",
         delimiter=",",
     )
 
-    for dim in range(dataDim):
+    for dim in range(data_dim):
         plt.figure()
         plt.plot(
             dataGrid[:, dim],
@@ -174,50 +185,58 @@ def plotDataMarginals(model: Model):
         plt.show()
 
 
-def plotMarginals(model: Model, numBurnSamples, occurrence):
-    artificialModel = model.isArtificial()
+def plotMarginals(model: Model, num_burn_samples, occurrence):
+    """
 
-    simResults = np.loadtxt(
-        model.getApplicationPath() + "/OverallSimResults.csv",
+    Args:
+      model: Model:
+      num_burn_samples:
+      occurrence:
+
+    Returns:
+
+    """
+    artificialModel = model.is_artificial()
+
+    sim_results = np.loadtxt(
+        model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
-    paramChain = np.loadtxt(
-        model.getApplicationPath() + "/OverallParams.csv",
+    )[num_burn_samples::occurrence, :]
+    param_chain = np.loadtxt(
+        model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     paramGrid = np.loadtxt(
-        model.getApplicationPath() + "/Plots/paramGrid.csv",
+        model.get_application_path() + "/Plots/paramGrid.csv",
         delimiter=",",
     )
     inferredParamMarginals = np.loadtxt(
-        model.getApplicationPath() + "/Plots/inferredParamMarginals.csv",
+        model.get_application_path() + "/Plots/inferredParamMarginals.csv",
         delimiter=",",
     )
 
     if artificialModel:
         trueParams, paramStdevs = model.paramLoader()
         trueParamMarginals = np.loadtxt(
-            "Applications/"
-            + model.getModelName()
-            + "/Plots/trueParamMarginals.csv",
+            "Applications/" + model.name + "/Plots/trueParamMarginals.csv",
             delimiter=",",
         )
 
     dataGrid = np.loadtxt(
-        model.getApplicationPath() + "/Plots/dataGrid.csv",
+        model.get_application_path() + "/Plots/dataGrid.csv",
         delimiter=",",
     )
     trueDataMarginals = np.loadtxt(
-        model.getApplicationPath() + "/Plots/trueDataMarginals.csv",
+        model.get_application_path() + "/Plots/trueDataMarginals.csv",
         delimiter=",",
     )
     inferredDataMarginals = np.loadtxt(
-        model.getApplicationPath() + "/Plots/inferredDataMarginals.csv",
+        model.get_application_path() + "/Plots/inferredDataMarginals.csv",
         delimiter=",",
     )
 
-    for dim in range(model.paramDim):
+    for dim in range(model.param_dim):
         plt.figure()
         plt.plot(
             paramGrid[:, dim],
@@ -225,7 +244,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
             c=colorQApprox,
             label="inferred param. marg. KDE",
         )
-        # plt.hist(paramChain[:,dim], bins = paramGrid[:,dim], color = np.concatenate((colorQApprox, np.array([0.5]))), label = "inferred param. marg. hist.", density = True)
+        # plt.hist(param_chain[:,dim], bins = paramGrid[:,dim], color = np.concatenate((colorQApprox, np.array([0.5]))), label = "inferred param. marg. hist.", density = True)
 
         if artificialModel:
             plt.plot(
@@ -239,7 +258,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         plt.legend()
         plt.show()
 
-    for dim in range(model.dataDim):
+    for dim in range(model.data_dim):
         plt.figure()
         plt.plot(
             dataGrid[:, dim],
@@ -247,7 +266,7 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
             c=colorYApprox,
             label="reconstr. data marg. KDE",
         )
-        # plt.hist(simResults[:,dim], bins = dataGrid[:,dim], color = np.concatenate((colorYApprox, np.array([0.5]))), label = "recontr. data. marg. hist.", density = True)
+        # plt.hist(sim_results[:,dim], bins = dataGrid[:,dim], color = np.concatenate((colorYApprox, np.array([0.5]))), label = "recontr. data. marg. hist.", density = True)
 
         plt.plot(
             dataGrid[:, dim],
@@ -260,48 +279,52 @@ def plotMarginals(model: Model, numBurnSamples, occurrence):
         plt.show()
 
 
-def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
+def plotSpiderWebs(model: Model, num_burn_samples, occurrence):
     """Draw each sample (row of the matrix) as a circle of linear interpolations of its dimensions.
     Loads all necessary data and subsequently calls the method singleWeb 3 or 4 times
 
-    :param model: (model ID)
-    :param numBurnSamples: (Number of ignored first samples of each chain)
-    :param occurence: (step of sampling from chains)
-    :return: None, shows a plot
+    Args:
+      model: model ID)
+      num_burn_samples: Number of ignored first samples of each chain)
+      occurence: step of sampling from chains)
+      model: Model:
+      occurrence:
+
+    Returns:
+      None, shows a plot
+
     """
 
     # If the model name indicates an artificial setting, indicate that true parameter information is available
-    artificialModel = model.isArtificial()
+    artificialModel = model.is_artificial()
 
     # load emcee parameter samples and corresponding simulation results
     emceeParams = np.loadtxt(
-        model.getApplicationPath() + "/OverallParams.csv",
+        model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
     emceeSimResults = np.loadtxt(
-        model.getApplicationPath() + "/OverallSimResults.csv",
+        model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
-    )[numBurnSamples::occurrence, :]
+    )[num_burn_samples::occurrence, :]
 
     # load underlying data
-    trueData = np.loadtxt(
-        "Data/" + model.getModelName() + "Data.csv", delimiter=","
-    )
+    trueData = np.loadtxt("Data/" + model.name + "Data.csv", delimiter=",")
 
     # if available, load also the true parameter values
     if artificialModel:
         trueParams = np.loadtxt(
-            "Data/" + model.getModelName() + "Params.csv", delimiter=","
+            "Data/" + model.name + "Params.csv", delimiter=","
         )
 
     # compute the upper and lower bound of each data dimension
     # this serves as the identical scaling of every data plot
-    upperBoundsSimResults = np.max(emceeSimResults, 0)
-    lowerBoundsSimResults = np.min(emceeSimResults, 0)
+    upper_boundsSimResults = np.max(emceeSimResults, 0)
+    lower_boundsSimResults = np.min(emceeSimResults, 0)
 
     # do the same for the parameters
-    upperBoundsParams = np.max(emceeParams, 0)
-    lowerBoundsParams = np.min(emceeParams, 0)
+    upper_boundsParams = np.max(emceeParams, 0)
+    lower_boundsParams = np.min(emceeParams, 0)
 
     # set the image quality by defining dots per inch
     dpi = 1000
@@ -309,65 +332,73 @@ def plotSpiderWebs(model: Model, numBurnSamples, occurrence):
     # create all web figures
     emceeSimResultsWeb = singleWeb(
         emceeSimResults,
-        lowerBoundsSimResults,
-        upperBoundsSimResults,
+        lower_boundsSimResults,
+        upper_boundsSimResults,
         colorYApprox,
         dpi,
     )
     plt.savefig(
-        model.getApplicationPath() + "/SpiderWebs/emceeSimResults.png",
+        model.get_application_path() + "/SpiderWebs/emceeSimResults.png",
         dpi=dpi,
     )
 
     trueDataWeb = singleWeb(
-        trueData, lowerBoundsSimResults, upperBoundsSimResults, colorY, dpi
+        trueData, lower_boundsSimResults, upper_boundsSimResults, colorY, dpi
     )
     plt.savefig(
-        model.getApplicationPath() + "/SpiderWebs/trueData.png",
+        model.get_application_path() + "/SpiderWebs/trueData.png",
         dpi=dpi,
     )
 
     emceeParamsWeb = singleWeb(
-        emceeParams, lowerBoundsParams, upperBoundsParams, colorQApprox, dpi
+        emceeParams, lower_boundsParams, upper_boundsParams, colorQApprox, dpi
     )
     plt.savefig(
-        model.getApplicationPath() + "/SpiderWebs/emceeParams.png",
+        model.get_application_path() + "/SpiderWebs/emceeParams.png",
         dpi=dpi,
     )
 
     if artificialModel:
         trueParamsWeb = singleWeb(
-            trueParams, lowerBoundsParams, upperBoundsParams, colorQ, dpi
+            trueParams, lower_boundsParams, upper_boundsParams, colorQ, dpi
         )
         plt.savefig(
-            "Applications/"
-            + model.getModelName()
-            + "/SpiderWebs/trueParams.png",
+            "Applications/" + model.name + "/SpiderWebs/trueParams.png",
             dpi=dpi,
         )
 
 
-def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
+def singleWeb(matrix, lower_bounds, upper_bounds, color, dpi):
     """Create a single spider web plot for one data or parameter matrix and given bounds
 
     Input: matrix (2D np.array of size #samples x #dimensions)
-           lowerBounds (np.arraay of size #dimensions that defines the lower bound of all regarded values)
-           upperBounds (np.arraay of size #dimensions that defines the upper bound of all regarded values)
+           lower_bounds (np.arraay of size #dimensions that defines the lower bound of all regarded values)
+           upper_bounds (np.arraay of size #dimensions that defines the upper bound of all regarded values)
            color (np.array with 3 entries indicating RGB values of the plot)
            dpi (int that defines the quality of the image)
 
     Output: web (matplotlib figure representing the single spider web)
+
+    Args:
+      matrix:
+      lower_bounds:
+      upper_bounds:
+      color:
+      dpi:
+
+    Returns:
+
     """
 
     # extract matrix dimensions
-    numSamples, numDims = matrix.shape
+    num_samples, numDims = matrix.shape
 
     # create a normalized matrix where each column aka. dimension is scaled to [0, 1]
-    normMatrix = (matrix - lowerBounds) / (upperBounds - lowerBounds)
+    normMatrix = (matrix - lower_bounds) / (upper_bounds - lower_bounds)
 
     # create an augmented matrix that is identical to the normalized matrix
     # except for an additional last column that is obtained by copying the first one
-    augMatrix = np.zeros((numSamples, numDims + 1))
+    augMatrix = np.zeros((num_samples, numDims + 1))
     augMatrix[:, 0:numDims] = normMatrix
 
     # copy the first column to the end
@@ -396,13 +427,13 @@ def singleWeb(matrix, lowerBounds, upperBounds, color, dpi):
 
     plt.xticks([])
     plt.yticks([])
-    for i in range(numSamples):
+    for i in range(num_samples):
         # modColor = color*(1 - 0.3*np.random.rand(3))
         plt.plot(
             xProjCoords[i, :],
             yProjCoords[i, :],
             color=color,
-            linewidth=1000.0 / numSamples,
+            linewidth=1000.0 / num_samples,
             alpha=0.05,
         )
 
@@ -423,20 +454,24 @@ def plotTest(
     """Visualize the results of EPI applied to a model with 2 parameters and
         2 output dimensions as surface plots.
 
-    :param model: model from which the results shall be loaded
-    :type model: Model
-    :param dataPlotResolution: number of grid points per data dimension, defaults to 25
-    :type dataPlotResolution: int, optional
-    :param paramPlotResolution: number of grid points per parameter dimension
-    :type dataPlotResolution: int, optional
+    Args:
+      model(Model): model from which the results shall be loaded
+      dataPlotResolution(int, optional): number of grid points per data dimension, defaults to 25
+      paramPlotResolution: number of grid points per parameter dimension
+      model: Model:
+      dataPlotResolution: int:  (Default value = 25)
+      paramPlotResolution: int:  (Default value = 25)
+
+    Returns:
+
     """
 
     # ---------------------------------------------------------------------------
     # First, we load and visualize the underlying data
     (
-        dataDim,
+        data_dim,
         data,
-        dataStdevs,
+        data_stdevs,
     ) = model.dataLoader()
 
     # create the grid over which the data KDE will be evaluated
@@ -457,7 +492,7 @@ def plotTest(
             # define the evaluation grid point
             dataEvalPoint = np.array([dataxMesh[i, j], datayMesh[i, j]])
             # evaluate the data density at the defined grid point
-            dataEvals[i, j] = evalKDEGauss(data, dataEvalPoint, dataStdevs)
+            dataEvals[i, j] = eval_kde_gauss(data, dataEvalPoint, data_stdevs)
 
     # plot the data KDE using a surface plot
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -475,13 +510,13 @@ def plotTest(
 
     # ---------------------------------------------------------------------------
     # Second, we load the emcee parameter sampling results and als visualize them
-    paramChain = np.loadtxt(
-        model.getApplicationPath() + "/OverallParams.csv",
+    param_chain = np.loadtxt(
+        model.get_application_path() + "/OverallParams.csv",
         delimiter=",",
     )
 
     # calculate reasonable standard deviations for the KDE
-    paramChainStdevs = calcKernelWidth(paramChain)
+    paramChainStdevs = calc_kernel_width(param_chain)
 
     # define the grid over which the inferred parameter density will be evaluated
     paramxGrid = np.linspace(0.8, 2.2, paramPlotResolution)
@@ -498,8 +533,8 @@ def plotTest(
             # define the evaluation parameter point
             paramEvalPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             # evaluate the parameter KDE at the defined grid point
-            paramEvals[i, j] = evalKDEGauss(
-                paramChain, paramEvalPoint, paramChainStdevs
+            paramEvals[i, j] = eval_kde_gauss(
+                param_chain, paramEvalPoint, paramChainStdevs
             )
 
     # plot the inferred parameter distribution
@@ -525,12 +560,12 @@ def plotTest(
 
     # Load the MCMC simulation results
     simResultsChain = np.loadtxt(
-        model.getApplicationPath() + "/OverallSimResults.csv",
+        model.get_application_path() + "/OverallSimResults.csv",
         delimiter=",",
     )
 
     # calculate reasonable standard deviations for the KDE
-    simResultsChainStdevs = calcKernelWidth(simResultsChain)
+    simResultsChainStdevs = calc_kernel_width(simResultsChain)
 
     # allocate storage for the data density evaluation
     simResultsEvals = np.zeros((dataPlotResolution, dataPlotResolution))
@@ -541,7 +576,7 @@ def plotTest(
             # define the evaluation grid point
             simResultsEvalPoint = np.array([dataxMesh[i, j], datayMesh[i, j]])
             # evaluate the data density at the defined grid point
-            simResultsEvals[i, j] = evalKDEGauss(
+            simResultsEvals[i, j] = eval_kde_gauss(
                 simResultsChain, simResultsEvalPoint, simResultsChainStdevs
             )
 
@@ -563,12 +598,16 @@ def plotTest(
 def plotGridResults(model: Model) -> None:
     """The temperature model for artificial and real data is evaluated over a grid and plotted
 
-    :param model: _description_
-    :type model: Model
+    Args:
+      model(Model): _description_
+      model: Model:
+
+    Returns:
+
     """
 
     (
-        dataDim,
+        data_dim,
         data,
         stdevs,
     ) = model.dataLoader()
@@ -577,7 +616,7 @@ def plotGridResults(model: Model) -> None:
 
     # TODO: Fix var names etc.
     trueParams = paramStdevs = None
-    artificialModel = model.isArtificial()
+    artificialModel = model.is_artificial()
     if artificialModel:
         trueParams, paramStdevs = model.paramLoader()
 
@@ -585,7 +624,7 @@ def plotGridResults(model: Model) -> None:
         "Applications/Temperature/Latitudes.csv", delimiter=","
     )
     trueLatitudes = rawTrueLatitudes[..., np.newaxis]
-    trueLatitudesStdevs = calcKernelWidth(trueLatitudes)
+    trueLatitudesStdevs = calc_kernel_width(trueLatitudes)
 
     resolution = -1
     if artificialModel:
@@ -598,35 +637,35 @@ def plotGridResults(model: Model) -> None:
     trueDensity = np.zeros(resolution)
     trafoDensity = np.zeros(resolution)
 
-    if model.getModelName() == "TemperatureArtificial":
+    if model.name == "TemperatureArtificial":
         simulatedTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
-            trueDensity[i] = evalKDEGauss(
+            trueDensity[i] = eval_kde_gauss(
                 trueLatitudes,
                 np.array([latitudesGrid[i]]),
                 trueLatitudesStdevs,
             )
-            trafoDensity[i], _ = evalLogTransformedDensity(
+            trafoDensity[i], _ = eval_log_transformed_density(
                 model, np.array([latitudesGrid[i]]), data, stdevs
             )
-            simulatedTemperatures[i] = evalKDEGauss(
+            simulatedTemperatures[i] = eval_kde_gauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
             )
 
-    elif model.getModelName() == "Temperature":
+    elif model.name == "Temperature":
         measuredTemperatures = np.zeros(resolution)
 
         for i in range(resolution):
-            trueDensity[i] = evalKDEGauss(
+            trueDensity[i] = eval_kde_gauss(
                 trueLatitudes,
                 np.array([latitudesGrid[i]]),
                 trueLatitudesStdevs,
             )
-            trafoDensity[i], _ = evalLogTransformedDensity(
+            trafoDensity[i], _ = eval_log_transformed_density(
                 model, np.array([latitudesGrid[i]]), data, stdevs
             )
-            measuredTemperatures[i] = evalKDEGauss(
+            measuredTemperatures[i] = eval_kde_gauss(
                 data, np.array([temperaturesGrid[i]]), stdevs
             )
 
@@ -646,7 +685,7 @@ def plotGridResults(model: Model) -> None:
 
         inferredTemperatures = np.zeros(resolution)
         for i in range(resolution):
-            inferredTemperatures[i] = evalKDEGauss(
+            inferredTemperatures[i] = eval_kde_gauss(
                 inferredTemperaturesSample,
                 np.array([temperaturesGrid[i]]),
                 stdevs,
@@ -671,7 +710,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/TrueLatSample.svg",
+        "Images/" + model.name + "/TrueLatSample.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -689,9 +728,7 @@ def plotGridResults(model: Model) -> None:
         label="True Latitudes (KDE)",
     )
     plt.legend()
-    plt.savefig(
-        "Images/model.getModelName()/TrueLatKDE.svg", bbox_inches="tight"
-    )
+    plt.savefig("Images/model.name/TrueLatKDE.svg", bbox_inches="tight")
     plt.show()
 
     sim_measure_temp = (
@@ -718,7 +755,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/" + name + "TempSample.svg",
+        "Images/" + model.name + "/" + name + "TempSample.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -737,7 +774,7 @@ def plotGridResults(model: Model) -> None:
     plt.legend()
 
     plt.savefig(
-        "Images/" + model.getModelName() + "/" + name + "TempKDE.svg",
+        "Images/" + model.name + "/" + name + "TempKDE.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -763,7 +800,7 @@ def plotGridResults(model: Model) -> None:
     )
     plt.legend()
     plt.savefig(
-        "Images/" + model.getModelName() + "/TrueLatVsITAKDE.svg",
+        "Images/" + model.name + "/TrueLatVsITAKDE.svg",
         bbox_inches="tight",
     )
     plt.show()
@@ -825,7 +862,7 @@ def plotGridResults(model: Model) -> None:
         )
         plt.show()
 
-    if model.getModelName() == "Temperature":
+    if model.name == "Temperature":
         # plot ITA inferred latitude density alone
         plt.figure(figsize=(6, 4))
         plt.axis([-0.05, np.pi / 2.0 + 0.05, 0.0, 1.6])

@@ -9,7 +9,7 @@ Specialities
 ____________
 
 * Calling C++ Code: Calls external c++ code using pybind11
-* Performance Comparison: The file :file:`python_reference_plants.py` includes
+* Performance Comparison: The file :file:`epi/examples/cpp/python_reference_plants.py` includes
   python models implementing the same mapping. You can compare the performance of the different approaches.
 
 Preparation
@@ -25,12 +25,14 @@ ___________
 C++ Model Definition
 ____________________
 
-.. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
+.. literalinclude:: ../../../epi/examples/cpp/cpp_model.hpp
   :language: c++
 
-.. TODO::
+Wrapping the C++ Code
+_____________________
 
-    Why is pygments not parsing the c++ code?
+.. literalinclude:: ../../../epi/examples/cpp/wrapper.cpp
+  :language: c++
 
 The example code is inconsistent in the following way:
 It uses a normal array for the forward method,
@@ -39,15 +41,11 @@ for the jacobian method. This allows to show us how to write wrapper code
 for normal arrays as well as for eigen objects. On the python side exclusively
 numpy 1d/2d arrays will be used.
 
-.. TODO::
-
-    What about vectorization? Jax will likely not help with speeding up.
-
 .. note::
 
-    For more information on how to use pybind11 see:
-    PyBind11 Documentation: https://pybind11.readthedocs.io/en/stable/
-    PyBind11 Eigen Notes: https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html
+    The C++ code is wrapped using pybind11. For more information on how to use pybind11 see:
+    * PyBind11 Documentation: https://pybind11.readthedocs.io/en/stable/
+    * PyBind11 Eigen Notes: https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html
 
 
 Compilation
@@ -66,4 +64,4 @@ _________________
 .. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
     :language: python
 
-You can use the example model as template for your own C++ Model.
+You can use the cpp example model as template for your own C++ Model.

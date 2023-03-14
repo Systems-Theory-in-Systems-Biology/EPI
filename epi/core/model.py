@@ -1,34 +1,39 @@
 import inspect
 import os
-import shutil
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import Tuple
+from typing import Optional, Tuple, Union
 
+import jax.numpy as jnp
 import numpy as np
-import seedir
-from jax import jacrev, jit
-from seedir import FakeDir, FakeFile
+from jax import jacrev, jit, vmap
 
-from epi import logger
-from epi.core.kde import calcKernelWidth
+import amici
 from epi.jax_extension import value_and_jacrev
 
 
 class Model(ABC):
     """The base class for all models using the EPI algorithm.
 
-    It contains three abstract methods which need to be implemented by subclasses
+    Args:
+        central_param(np.ndarray): The central parameter for the model. (Default value = None)
+        param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)
+        name(str): The name of the model. The class name is used if no name is given. (Default value = None)
     """
 
-    paramDim = None
-    dataDim = None
+    param_dim: Optional[
+        np.ndarray
+    ] = None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
+    data_dim: Optional[
+        np.ndarray
+    ] = None  #: The dimension of the data space of the model. It must be defined in the subclass.
 
     def __init_subclass__(cls, **kwargs):
+        """Check if the required attributes are set."""
         if not inspect.isabstract(cls):
             for required in (
-                "paramDim",
-                "dataDim",
+                "param_dim",
+                "data_dim",
             ):
                 if not getattr(cls, required):
                     raise AttributeError(
@@ -36,212 +41,67 @@ class Model(ABC):
                     )
         return cls
 
-    def __init__(self, delete: bool = False, create: bool = True) -> None:
-        if delete:
-            self.deleteApplicationFolderStructure()
-            self.createApplicationFolderStructure()
-        elif create:
-            self.createApplicationFolderStructure()
+    def __init__(
+        self,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
+        name: Optional[str] = None,
+    ) -> None:
+        self.central_param = central_param
+        self.param_limits = param_limits
 
-        self.setDataPath(
-            "Data/" + self.getModelName() + "Data.csv"
-        )  # Set default data path
-
-    @abstractmethod
-    def getParamSamplingLimits(self) -> np.ndarray:
-        """Define model-specific lower and upper limits for the sampling
-        to avoid parameter regions where the evaluation of the model is instable.
-
-        :raises NotImplementedError: Implement this method allow the mcmc sampler to work stably
-        :return: The limits in the format np.array([lower_dim1, upper_dim1], [lower_dim2, upper_dim2], ...)
-        :rtype: np.ndarray
-        """
-        raise NotImplementedError
+        self.name = name or self.__class__.__name__
 
     @abstractmethod
-    def getCentralParam(self) -> np.ndarray:
-        """Define a model-specific central parameter point, which will be used as starting point for the mcmc sampler.
-
-        :raises NotImplementedError: Implement this method to provide a good starting point for the mcmc sampler.
-        :return: A single parameter point in the format np.array([p_dim1, p_dim2, ...])
-        :rtype: np.ndarray
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def forward(self, param: np.ndarray):
+    def forward(self, param: np.ndarray) -> np.ndarray:
         """Executed the forward pass of the model to obtain data from a parameter. You can also do equivalently :code:`model(param)`.
 
-        :param param: The parameter(set) for which the model should be evaluated.
-        :raises NotImplementedError: Implement this method to make you model callable.
+        Args:
+            param(np.ndarray): The parameter for which the data should be generated.
+
+        Returns:
+            np.ndarray: The data generated from the parameter.
+
         """
         raise NotImplementedError
 
     @abstractmethod
-    def jacobian(self, param: np.ndarray):
-        """Evaluates the jacobian of the :func:`~epic.core.model.Model.forward` method.
+    def jacobian(self, param: np.ndarray) -> np.ndarray:
+        """Evaluates the jacobian of the :func:`~epi.core.model.Model.forward` method.
 
-        :param param: The parameter(set) for which the jacobian of your model should be evaluated.
-        :type param: np.ndarray
-        :return: The jacobian for the variables returned by the :func:`~epic.core.model.Model.forward` method with respect to the parameters.
-        :rtype: np.ndarray
+        Args:
+            param(np.ndarray): The parameter for which the jacobian should be evaluated.
+
+        Returns:
+            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+
         """
         raise NotImplementedError
 
-    def valjac(self, param: np.ndarray):
+    def forward_and_jacobian(
+        self, param: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-        it simply calls :func:`~epic.core.model.Model.forward` and :func:`~epic.core.model.Model.jacobian`.
+        it simply calls :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian`.
 
-        :param param: The parameter(set) for which the model and the jacobian should be evaluated.
-        :type param: np.ndarray
+        Args:
+            param(np.ndarray): The parameter for which the jacobian should be evaluated.
+
+        Returns:
+            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+
         """
 
         return self.forward(param), self.jacobian(param)
 
-    def setDataPath(self, path: str) -> None:
-        """Set the path to the data file which shall be used from now on.
+    def is_artificial(self) -> bool:
+        """Determines whether the model provides artificial parameter and data sets.
 
-        :param path: The path to the data file.
-        :type path: str
-        """
-        self.dataPath = path
+        Returns:
+            bool: True if the model inherits from the ArtificialModelInterface
 
-    def dataLoader(
-        self,
-    ) -> Tuple[int, np.ndarray, np.ndarray, np.ndarray]:
-        """Load the data from the data file found under the models current data path and calculate several properties of the data.
-
-        :return: The dimension of the data space, the data and the estimated optimal kernel width for each dimension of the data.
-        """
-
-        data = np.loadtxt(self.dataPath, delimiter=",", ndmin=2)
-        dataStdevs = calcKernelWidth(data)
-
-        return (
-            self.dataDim,
-            data,
-            dataStdevs,
-        )
-
-    def loadSimResults(self, numBurnSamples: int, occurrence: int):
-        """Load the files generated by the EPI algorithm through sampling
-
-        :param model: Model from which the results will be loaded
-        :type model: Model
-        :param numBurnSamples: Ignore the first samples of each chain
-        :type numBurnSamples: int
-        :param occurrence: step of sampling from chains
-        :type occurrence: int
-        :return: _description_
-        :rtype: _type_
-        """
-        densityEvals = np.loadtxt(
-            self.getApplicationPath() + "/OverallDensityEvals.csv",
-            delimiter=",",
-        )[numBurnSamples::occurrence]
-        simResults = np.loadtxt(
-            self.getApplicationPath() + "/OverallSimResults.csv",
-            delimiter=",",
-            ndmin=2,
-        )[numBurnSamples::occurrence, :]
-        paramChain = np.loadtxt(
-            self.getApplicationPath() + "/OverallParams.csv",
-            delimiter=",",
-            ndmin=2,
-        )[numBurnSamples::occurrence, :]
-        return densityEvals, simResults, paramChain
-
-    def getModelName(self) -> str:
-        """Returns the name of the class to which the object belongs. Overwrite it if you want to
-        give your model a custom name, e. g. depending on the name of your parameters.
-
-        :return: The class name of the calling object.
-        :rtype: str
-        """
-        return self.__class__.__name__
-
-    def getApplicationPath(self) -> str:
-        """Returns the path to the simulation results folder, containing also intermediate results
-
-        :return: path as string to the simulation folder
-        :rtype: str
-        """
-        path = "Applications/" + self.getModelName()
-        return path
-
-    def createApplicationFolderStructure(self) -> None:
-        """Creates the `Application` folder including subfolder where all simulation results
-        are stored for this model. No files are deleted during this action.
-        """
-        indent = 4
-        plotFolderTree = (
-            (" " * indent + "- SpiderWebs/ \n" + " " * indent + "- Plots/")
-            if self.isVisualizable()
-            else ""
-        )
-
-        os.makedirs("Data", exist_ok=True)
-        applicationFolderStructure = (
-            "Applications/ \n"
-            "  - {modelName}/ \n"
-            "    - DensityEvals/ \n"
-            "    - Params/ \n"
-            "    - SimResults/ \n"
-        )
-        path = "."
-        structure = applicationFolderStructure + plotFolderTree
-
-        def create(f, root):
-            fpath = f.get_path()
-            joined = os.path.join(root, fpath)
-            if isinstance(f, FakeDir):
-                try:
-                    os.mkdir(joined)
-                except FileExistsError:
-                    logger.info(f"Directory `{joined}` already exists")
-            elif isinstance(f, FakeFile):
-                try:
-                    with open(joined, "w"):
-                        pass
-                except FileExistsError:
-                    logger.info(f"File `{joined}` already exists")
-
-        fakeStructure = seedir.fakedir_fromstring(
-            structure.format(modelName=self.getModelName())
-        )
-        fakeStructure.realize = lambda path_arg: fakeStructure.walk_apply(
-            create, root=path_arg
-        )
-        fakeStructure.realize(path)
-
-    def deleteApplicationFolderStructure(self):
-        """Deletes the models `Applications` subfolder"""
-        try:
-            shutil.rmtree(self.getApplicationPath())
-        except FileNotFoundError:
-            logger.info(
-                f"Directory `{self.getApplicationPath()}` can't be deleted, "
-                "because it does not exist."
-            )
-
-    def __call__(self, param):
-        return self.forward(param)
-
-    def isArtificial(self) -> bool:
-        """Determines whether the model provides artificial data
-
-        :return: True if the model inherits from the ArtificialModelInterface
-        :rtype: bool
         """
         return issubclass(self.__class__, ArtificialModelInterface)
-
-    def isVisualizable(self) -> bool:
-        """Determines whether the model provides bounds for the visualization grids
-
-        :return: True if the model inherits from the VisualizationModelInterface
-        :rtype: bool
-        """
-        return issubclass(self.__class__, VisualizationModelInterface)
 
 
 class ArtificialModelInterface(ABC):
@@ -249,120 +109,69 @@ class ArtificialModelInterface(ABC):
     and the corresponding artificial data dataset, which can be used to compare the results from epi with the ground truth.
     The comparison can be done using the plotEmceeResults.
 
-    :raises NotImplementedError: Implement the generateArtificialData function to implement this interface.
-    """
-
-    NUM_ARTIFICIAL_SAMPLES = 1000
-
-    @abstractmethod
-    def generateArtificialData(
-        self, numSamples: int = NUM_ARTIFICIAL_SAMPLES
-    ) -> None:
-        """
-        .. note::
-
-            This method returns None. You have to do the following:
-
-            .. code-block:: python
-
-                np.savetxt(trueParams,
-                    "Data/" + self.getModelName() + "Params.csv", delimiter=","
-                )
-                np.savetxt(trueData,
-                    "Data/" + self.getModelName() + "Data.csv", delimiter=","
-                )
-
-            To create the true data from the true params, you can simply call your model.
-
-        :raises NotImplementedError: Generating the artificial data is up to the user
-        """
-        raise NotImplementedError
-
-    def paramLoader(self) -> Tuple[np.ndarray, np.ndarray]:
-        """Load and return all parameters for artificial set ups
-
-        :return: Loaded parameters and the optimal kernel width for each parameter
-        :rtype: Tuple[np.ndarray, np.ndarray]
-        """
-        trueParams = np.loadtxt(
-            "Data/" + self.getModelName() + "Params.csv",
-            delimiter=",",
-            ndmin=2,
-        )
-        paramStdevs = calcKernelWidth(trueParams)
-
-        return trueParams, paramStdevs
-
-
-class VisualizationModelInterface(ABC):
-    """Provides the function for the generation of the dataGrid and paramGrid for the visualization of the distributions.
-    It forces subclasses to implement the abstract methods  getParamBounds: and getDataBounds:.
     """
 
     @abstractmethod
-    def getParamBounds(self) -> np.ndarray:
-        """Returns the bounds on the parameters used to visualize the parameter distribution.
+    def generate_artificial_params(self, num_samples: int) -> np.ndarray:
+        """This method must be overwritten an return an numpy array of num_samples parameters.
+
+        Args:
+            num_samples(int): The number of parameters to generate.
 
         Returns:
-              np.array: An array of the form [[lowerLimit_dim1, upperLimit_dim1], [lowerLimit_dim2, upperLimit_dim2],...]
+            np.ndarray: The generated parameters.
 
         Raises:
-            NotImplementedError: If the method is not implemented in the subclass
+            NotImplementedError: If the method is not overwritten in a subclass.
+
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def getDataBounds(self) -> np.ndarray:
-        """Returns the bounds on the data used to visualize the data distribution.
+    def generate_artificial_data(
+        self,
+        params: Union[os.PathLike, str, np.ndarray],
+    ) -> np.ndarray:
+        """This method is called when the user wants to generate artificial data from the model.
+
+        Args:
+            params: typing.Union[os.PathLike, str, np.ndarray]: The parameters for which the data should be generated. Can be either a path to a file, a numpy array or a string.
 
         Returns:
-              np.array: An array of the form [[lowerLimit_dim1, upperLimit_dim1], [lowerLimit_dim2, upperLimit_dim2],...]
+            np.ndarray: The data generated from the parameters.
 
         Raises:
-            NotImplementedError: If the method is not implemented in the subclass
+            TypeError: If the params argument is not a path to a file, a numpy array or a string.
+
         """
-        raise NotImplementedError
+        if isinstance(params, str) or isinstance(params, os.PathLike):
+            params = np.loadtxt(params, delimiter=",", ndmin=2)
+        elif isinstance(params, np.ndarray) or isinstance(params, jnp.ndarray):
+            pass
+        else:
+            raise TypeError(
+                f"The params argument has to be either a path to a file or a numpy array. The passed argument was of type {type(params)}"
+            )
 
-    def scale(interval: np.array, scale: float):
-        middle = (interval[1, :] - interval[0, :]) / 2.0
-        return (interval - middle) * scale + middle
-
-    def generateVisualizationGrid(
-        self, resolution: int
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """This function creates a grid for the data as well as the parameters with a
-        constant number of points in each dimension. It saves the grids as csv files in the `Plots/*grid.csv`
-        in your Application folder.
-
-        :param resolution: The number of grid points in each dimension
-        :type resolution: int
-        :return: The dataGrid and teh paramGrid.
-        :rtype: Tuple[np.ndarray, np.ndarray]
-        """
-        # allocate storage for the parameter and data plotting grid
-        paramGrid = np.zeros((resolution, self.paramDim))
-        dataGrid = np.zeros((resolution, self.dataDim))
-        for d in range(self.dataDim):
-            dataGrid[:, d] = np.linspace(*self.dataBounds[d, :], resolution)
-        for d in range(self.paramDim):
-            paramGrid[:, d] = np.linspace(*self.paramBounds[d, :], resolution)
-
-        # store both grids as csv files into the model-specific plot directory
-        np.savetxt(
-            "Applications/" + self.getModelName() + "/Plots/dataGrid.csv",
-            dataGrid,
-            delimiter=",",
-        )
-        np.savetxt(
-            "Applications/" + self.getModelName() + "/Plots/paramGrid.csv",
-            paramGrid,
-            delimiter=",",
-        )
-        return dataGrid, paramGrid
+        # try to use jax vmap to perform the forward pass on multiple parameters at once
+        if isinstance(self, JaxModel):
+            return vmap(self.forward, in_axes=0)(params)
+        else:
+            return np.vectorize(self.forward, signature="(n)->(m)")(params)
 
 
-def autodiff(_cls):
-    _cls.initFwAndBw()
+def add_autodiff(_cls):
+    """
+    Decorator to automatically create the jacobian method based on the forward method.
+    Additionally it jit compiles the forward and jacobian method with jax.
+
+    Args:
+        _cls: The class to decorate.
+
+    Returns:
+        The decorated class with the jacobian method and the forward and jacobian method jit compiled with jax.
+
+    """
+    _cls.init_fw_and_bw()
     return _cls
 
 
@@ -373,33 +182,157 @@ class JaxModel(Model):
     Dont overwrite the __init__ method of JaxModel without calling the super constructor.
     Else your forward method wont be jitted.
 
-    :param Model: Abstract parent class
-    :type Model: Model
     """
 
-    def __init__(self, delete: bool = False, create: bool = True) -> None:
-        super().__init__(delete, create)
+    def __init__(
+        self,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        """Constructor of the JaxModel class.
+
+        Args:
+            name: str: The name of the model. If None the name of the class is used.
+        """
+        super().__init__(
+            central_param=central_param,
+            param_limits=param_limits,
+            name=name,
+            **kwargs,
+        )
         # TODO: Check performance implications of not setting this at the class level but for each instance.
         type(self).forward = partial(JaxModel.forward_method, self)
 
     def __init_subclass__(cls, **kwargs):
-        return autodiff(super().__init_subclass__(**kwargs))
+        """Automatically create the jacobian method based on the forward method for the subclass."""
+        return add_autodiff(super().__init_subclass__(**kwargs))
 
     @classmethod
-    def initFwAndBw(cls):
-        # Calculate jitted methods for the subclass(es)
-        # It is an unintended sideeffect that this happens for all intermediate classes also.
-        # E.g. for: class CoronaArtificial(Corona)
+    def init_fw_and_bw(cls):
+        """Calculates the jitted methods for the subclass(es).
+        It is an unintended sideeffect that this happens for all intermediate classes also.
+        E.g. for: class CoronaArtificial(Corona)
+        """
         cls.fw = jit(cls.forward)
         cls.bw = jit(jacrev(cls.forward))
         cls.vj = jit(value_and_jacrev(cls.forward))
 
     @staticmethod
-    def forward_method(self, param):
+    def forward_method(self, param: np.ndarray) -> np.ndarray:
+        """This method is called by the jitted forward method. It is not intended to be called directly.
+
+        Args:
+            param(np.ndarray): The parameter for which the data should be generated.
+
+        Returns:
+            np.ndarray: The data generated from the parameter.
+
+        """
         return type(self).fw(param)
 
-    def jacobian(self, param):
+    def jacobian(self, param: np.ndarray) -> np.ndarray:
+        """Jacobian of the forward pass with respect to the parameters.
+
+        Args:
+            param(np.ndarray): The parameter for which the jacobian should be evaluated.
+
+        Returns:
+            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+
+        """
         return type(self).bw(param)
 
-    def valjac(self, param):
+    def forward_and_jacobian(
+        self, param: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian` methods separately.
+
+        Args:
+            param(np.ndarray): The parameter for which the jacobian should be evaluated.
+
+        Returns:
+            typing.Tuple[np.ndarray, np.ndarray]: The data and the jacobian for a given parameter.
+
+        """
         return type(self).vj(param)
+
+
+class SBMLModel(Model):
+    """The SBMLModel class is a wrapper for the AMICI python interface to simulate SBML models using this package.
+
+    Args:
+        sbml_file(str): The path to the SBML model file.
+        param_names(list): A list of parameter names. If None the parameter names are extracted from the SBML model.
+        tEnd(float): The end time of the simulation. (Default value = 1.0)
+        skip_creation(bool): If True the model is not created againg based on the SBML file. Instead the model is loaded from a previously created model. (Default value = False)
+        central_param(np.ndarray): The central parameter for the model
+        param_limits(np.ndarray): The parameter limits for the model
+    """
+
+    @property
+    def param_dim(self):
+        """The number of parameters of the model."""
+        return len(self.model.getParameterIds())
+
+    @property
+    def data_dim(self):
+        """The number of observables of the model."""
+        return len(self.model.getObservableIds())
+
+    def __init__(
+        self,
+        sbml_file: str,
+        central_param: np.ndarray,
+        param_limits: np.ndarray,
+        param_names=None,
+        tEnd=1.0,
+        skip_creation: bool = False,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name, **kwargs)
+
+        model_name = self.name
+        model_dir = "./amici"
+
+        # Generate python code
+        if not skip_creation:
+            sbml_importer = amici.SbmlImporter(sbml_file)
+            sbml_importer.sbml2amici(model_name, model_dir)
+
+        # Load the generated model
+        model_module = amici.import_model_module(model_name, model_dir)
+        model = model_module.getModel()
+        solver = model.getSolver()
+
+        model.setTimepoints([tEnd])
+        model.requireSensitivitiesForAllParameters()
+        solver.setSensitivityMethod(amici.SensitivityMethod.forward)
+        solver.setSensitivityOrder(amici.SensitivityOrder.first)
+
+        self.param_names = param_names or model.getParameterNames()
+
+        self.model = model
+        self.solver = solver
+
+    def forward(self, params):
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.x[-1]
+
+    def jacobian(self, params):
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.sx[-1].T
+
+    def forward_and_jacobian(
+        self, params: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        for i, param in enumerate(params):
+            self.model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.model, self.solver)
+        return rdata.x[-1], rdata.sx[-1].T

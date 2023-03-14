@@ -90,7 +90,7 @@ Of course, you also need the imports:
     from epi.core.model import Model
 
 A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~epi.core.model.Model.getCentralParam` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+In addition it must provide the methods :py:meth:`~epi.core.model.Model.getcentral_param` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
@@ -123,14 +123,15 @@ Now we can now use EPI to infer the parameter distribution from the data.
 
 .. code-block:: python
 
-    from epic.sampling import inference
+    from epi.core.inference import inference
 
     model = Temperature()
-    inference(model, dataPath = "TemperatureData.csv")
+    inference(model, data = "TemperatureData.csv")
 
 Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
-You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/OverallSimResults.csv`.
+You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/<run_nam>/<slice_name>/OverallSimResults.csv`.
+The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :py:func:`~epi.core.inference.inference` function.
 
 .. .. code-block:: python
 

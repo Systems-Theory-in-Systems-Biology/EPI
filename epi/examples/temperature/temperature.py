@@ -1,8 +1,8 @@
 import importlib
+from typing import Optional
 
 import jax.numpy as jnp
 import numpy as np
-from jax import vmap
 
 from epi.core.model import ArtificialModelInterface, Model
 
@@ -11,63 +11,67 @@ from epi.core.model import ArtificialModelInterface, Model
 
 
 class Temperature(Model):
+    """ """
 
-    paramDim = 1
-    dataDim = 1
+    param_dim = 1
+    data_dim = 1
 
-    def __init__(self, delete: bool = False, create: bool = True) -> None:
-        super().__init__(delete, create)
+    PARAM_LIMITS = np.array([[0, np.pi / 2]])
+    CENTRAL_PARAM = np.array([np.pi / 4.0])
 
-        self.dataPath = importlib.resources.path(
-            "epi.examples.temperature", "TemperatureData.csv"
-        )
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     def forward(self, param):
-        lowT = -30.0
-        highT = 30.0
-        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
+        low_T = -30.0
+        high_T = 30.0
+        res = jnp.array(
+            [low_T + (high_T - low_T) * jnp.cos(jnp.abs(param[0]))]
+        )
         return res
 
     def jacobian(self, param):
         return jnp.array([60.0 * jnp.sin(jnp.abs(param[0]))])
 
-    def getCentralParam(self):
-        return np.array([np.pi / 4.0])
-
-    def getParamSamplingLimits(self):
-        return np.array([[0, np.pi / 2]])
-
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
-    def generateArtificialData(self):
+    def generate_artificial_params(self, num_data_points: int = -1):
         paramPath = importlib.resources.path(
             "epi.examples.temperature", "TemperatureArtificialParams.csv"
         )
-        trueParamSample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
-
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
+        true_param_sample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
+        return true_param_sample
 
 
 class TemperatureWithFixedParams(Temperature):
-    def __init__(self, delete: bool = False, create: bool = True) -> None:
-        super().__init__(delete, create)
-        self.lowT = -30.0
-        self.highT = 30.0
+    def __init__(
+        self,
+        low_T: np.double = -30.0,
+        high_T: np.double = 30.0,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(name=name, **kwargs)
+        self.low_T = low_T
+        self.high_T = high_T
 
     def forward(self, param):
-        return self.calcForward(param, self.highT, self.lowT)
+        return self.calc_forward(param, self.high_T, self.low_T)
 
-    def calcForward(self, param, highT, lowT):
-        res = jnp.array([lowT + (highT - lowT) * jnp.cos(jnp.abs(param[0]))])
+    def calc_forward(self, param, high_T, low_T):
+        res = jnp.array(
+            [low_T + (high_T - low_T) * jnp.cos(jnp.abs(param[0]))]
+        )
         return res
 
     def jacobian(self, param):
-        return jnp.array(
-            [(self.highT - self.lowT) * jnp.sin(jnp.abs(param[0]))]
-        )
+        return self.calc_jacobian(param, self.high_T, self.low_T)
+
+    def calc_jacobian(self, param, high_T, low_T):
+        return jnp.array([(high_T - low_T) * jnp.sin(jnp.abs(param[0]))])

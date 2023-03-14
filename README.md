@@ -7,37 +7,40 @@
 [![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment)
 [![Build & Publish Documentation](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml)
 [![CI](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml)
+[![pytest](https://img.shields.io/github/actions/workflow/status/Systems-Theory-in-Systems-Biology/EPI/ci.yml?label=pytest&logo=pytest)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml)
 
-The Euler Parameter Inference (EPI) is a python package for inverse parameter inference.
+[![flake8](https://img.shields.io/badge/flake8-checked-blue.svg)](https://flake8.pycqa.org/)
+[![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)
+[![Python](https://img.shields.io/badge/python-3.10-purple.svg)](https://www.python.org/)
+
+Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
 
 ## Documentation
 
 The full documentation to this software, including a detailed tutorial on how to use EPI and the api documentation, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
 
-## About
+## Features
 
-The EPI algorithm takes observed data and a model as input and returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
+EPI supports
 
-We support SBML ode models and user provided models.
+- SBML ode models
+- User provided models
+- Models with automatic differentation using jax
 
 ## Installation
 
-  ---
-  **IMPORTANT**
+**IMPORTANT**: The package is not yet available on pypi.
 
-  The package is not yet available on pypi.
+<!-- ```text
+pip install epi
+``` -->
 
-  <!-- ```text
-  pip install epi
-  ``` -->
-
-  ---
-
-You can build the library from the newest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
+You can build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
 
-Derive your model from ```Model``` class and implement the abstract functions.
+To use EPI, derive your model from the `Model` class and implement the abstract functions. Here's an example code snippet:
 
 ```python
 import jax.numpy as jnp
@@ -46,17 +49,11 @@ from epi.core.model import Model
 
 class MyModel(Model):
 
-    paramDim = N # The dimension of a parameter point
-    dataDim = M # The dimension of a data point
+    param_dim = N # The dimension of a parameter point
+    data_dim = M # The dimension of a data point
 
     def forward(self, param):
         return jnp.array(...)
-
-    def getParamSamplingLimits(self):
-        return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
-
-    def getCentralParam(self):
-        return jnp.array([0.5, -30.0,...])
 
     def jacobian(self, param):
         return jnp.array(...)
@@ -69,11 +66,14 @@ from epi.sampling import inference
 
 from my_model import MyModel
 
-model = MyModel()
-inference(model=model, dataPath="my_data.csv", numRuns=1, numWalkers=10, numSteps=2500, numProcesses=4)
+central_param = np.array([0.5, -1.5, ...])
+param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
+
+model = MyModel(central_param, param_limits)
+inference(model=model, data="my_data.csv")
 ```
 
-The file `my_data.csv` has to contain the data in csv format with `seperator=","` in the format
+The `data` argument can be a numpy-2d-array or a PathLike object that points to a CSV file. In the example shown above, the CSV file `my_data.csv` should contain the data in the following format:
 
 ```text
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
@@ -83,11 +83,12 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-which corresponds to a matrix with the shape `nSamples x dataDim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epi.core.html#module-epi.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
-* `./Applications/<ModelName>/OverallParams.csv`
-* `./Applications/<ModelName>/OverallSimResults.csv`
-* `./Applications/<ModelName>/OverallDensityEvals.csv`
+The results are stored in the following location:
 
-and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
+* `./Applications/<ModelName>/.../OverallParams.csv`
+* `./Applications/<ModelName>/.../OverallSimResults.csv`
+* `./Applications/<ModelName>/.../OverallDensityEvals.csv`
+
+These files contain the sampled parameters, the corresponding data points obtained from the model forward pass, and the corresponding density evaluation.

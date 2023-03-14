@@ -7,19 +7,16 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   epi.core
-   epi.plotting
+   Core<epi.core>
+   Plotting<epi.plotting>
 
 Submodules
 ----------
 
-epi.jax\_extension module
--------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: epi.jax_extension
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   Jax Extension<epi.jax_extension>
 
 Module contents
 ---------------

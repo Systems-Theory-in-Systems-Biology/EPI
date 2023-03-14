@@ -1,18 +1,11 @@
-import importlib
-import os
+from typing import Optional
 
 import jax.numpy as jnp
 import numpy as np
-import pandas as pd
 import yfinance as yf
-from jax import vmap
 
 from epi import logger
-from epi.core.model import (
-    ArtificialModelInterface,
-    JaxModel,
-    VisualizationModelInterface,
-)
+from epi.core.model import ArtificialModelInterface, JaxModel
 
 # Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
 TICKERS = [
@@ -27,91 +20,51 @@ TICKERS = [
 ]
 
 
-class Stock(JaxModel, VisualizationModelInterface):
+class Stock(JaxModel):
     """Model simulating stock data."""
 
-    dataDim = 19
-    paramDim = 6
+    data_dim = 19
+    param_dim = 6
+
+    PARAM_LIMITS = np.array([[-10.0, 10.0] for _ in range(param_dim)])
+    CENTRAL_PARAM = np.array(
+        [
+            0.41406223,
+            1.04680993,
+            1.21173553,
+            0.8078955,
+            1.07772437,
+            0.64869251,
+        ]
+    )
 
     def __init__(
-        self, delete: bool = False, create: bool = True, ticker="ETF50"
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
     ) -> None:
-        """Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.
-        Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
-        :param ticker: The ticker from which the data should be used, defaults to "ETF"
-        :type ticker: str, optional
-        """
-        super().__init__(delete, create)
-        self.dataPath = f"Data/{self.getModelName()}/{ticker}Data.csv"
-
-        # Check if data for the given ticker exists
-        if not os.path.isfile(self.dataPath):
-            logger.warning("Ticker data not found. Downloading data...")
-            tickerPath = importlib.resources.path(
-                "epi.examples.stock", f"{ticker}.csv"
-            )
-            self.downloadData(tickerPath)
-
-    def getDataBounds(self):
-        return np.array([[-7.5, 7.5] * self.dataDim])
-
-    def getParamBounds(self):
-        return np.array([[-2.0, 2.0] * self.paramDim])
-
-    def getParamSamplingLimits(self):
-        return np.array([[-10.0, 10.0] * self.paramDim])
-
-    def getCentralParam(self):
-        return np.array(
-            [
-                0.41406223,
-                1.04680993,
-                1.21173553,
-                0.8078955,
-                1.07772437,
-                0.64869251,
-            ]
-        )
-
-    def downloadData(self, tickerListPath: str):
+    def download_data(self, ticker_list_path: str):
         """Download stock data for a ticker list from yahoo finance.
 
-        :param tickerListPath: path to the ticker list csv file
-        :type tickerListPath: str
+        Args:
+          ticker_list_path(str): path to the ticker list csv file
+
+        Returns:
+            stock_data, stock_ids and the name of the tickerList
+
         """
         logger.info("Downloading stock data...")
         start = "2022-01-31"
         end = "2022-03-01"
-        dates = np.array(
-            [
-                "2022-01-31",
-                "2022-02-01",
-                "2022-02-02",
-                "2022-02-03",
-                "2022-02-04",
-                "2022-02-07",
-                "2022-02-08",
-                "2022-02-09",
-                "2022-02-10",
-                "2022-02-11",
-                "2022-02-14",
-                "2022-02-15",
-                "2022-02-16",
-                "2022-02-17",
-                "2022-02-18",
-                "2022-02-22",
-                "2022-02-23",
-                "2022-02-24",
-                "2022-02-25",
-                "2022-02-28",
-            ]
-        )
 
-        stocks = np.loadtxt(tickerListPath, dtype="str")
+        stocks = np.loadtxt(ticker_list_path, dtype="str")
 
         try:
-            df: pd.DataFrame = yf.download(
+            df = yf.download(
                 stocks.tolist(), start, end, interval="1d", repair=True
             )
         except Exception as e:
@@ -137,29 +90,17 @@ class Stock(JaxModel, VisualizationModelInterface):
         # Drop the row of the first day
         df = df.iloc[1:, :]
 
-        # get the remaining stockIDs and create a numpy array from the dataframe
-        stockIDs = df.columns.get_level_values(1)  # .unique()
-        stockData = df.to_numpy()
+        # get the remaining stock_ids and create a numpy array from the dataframe
+        stock_ids = df.columns.get_level_values(1)  # .unique()
+        stock_data = df.to_numpy()
 
         # get the name of the tickerList
-        if type(tickerListPath) != str:
-            tickerListName = tickerListPath.name.split(".")[0]
+        if type(ticker_list_path) != str:
+            ticker_list_name = ticker_list_path.name.split(".")[0]
         else:
-            tickerListName = tickerListPath.split("/")[-1].split(".")[0]
+            ticker_list_name = ticker_list_path.split("/")[-1].split(".")[0]
 
-        # save all time points except for the first
-        os.makedirs(f"Data/{self.getModelName()}", exist_ok=True)
-        np.savetxt(
-            f"Data/{self.getModelName()}/{tickerListName}Data.csv",
-            stockData.T,
-            delimiter=",",
-        )
-        np.savetxt(
-            f"Data/{self.getModelName()}/{tickerListName}IDs.csv",
-            stockIDs,
-            delimiter=",",
-            fmt="% s",
-        )
+        return stock_data.T, stock_ids, ticker_list_name
 
     @classmethod
     def forward(cls, param):
@@ -173,72 +114,36 @@ class Stock(JaxModel, VisualizationModelInterface):
                 ]
             )
 
-        def repetition(x, param, numRepetitions):
-            for i in range(numRepetitions):
+        def repetition(x, param, num_repetitions):
+            for i in range(num_repetitions):
                 x = iteration(x, param)
-
             return x
 
-        x0 = jnp.zeros(2)
-        x1 = repetition(x0, param, 1)
-        x2 = repetition(x1, param, 1)
-        x3 = repetition(x2, param, 1)
-        x4 = repetition(x3, param, 1)
-        x5 = repetition(x4, param, 3)
-        x6 = repetition(x5, param, 1)
-        x7 = repetition(x6, param, 1)
-        x8 = repetition(x7, param, 1)
-        x9 = repetition(x8, param, 1)
-        x10 = repetition(x9, param, 3)
-        x11 = repetition(x10, param, 1)
-        x12 = repetition(x11, param, 1)
-        x13 = repetition(x12, param, 1)
-        x14 = repetition(x13, param, 1)
-        x15 = repetition(x14, param, 4)
-        x16 = repetition(x15, param, 1)
-        x17 = repetition(x16, param, 1)
-        x18 = repetition(x17, param, 1)
-        x19 = repetition(x18, param, 3)
-
-        timeCourse = jnp.array(
-            [
-                x1,
-                x2,
-                x3,
-                x4,
-                x5,
-                x6,
-                x7,
-                x8,
-                x9,
-                x10,
-                x11,
-                x12,
-                x13,
-                x14,
-                x15,
-                x16,
-                x17,
-                x18,
-                x19,
-            ]
-        )
-
-        return timeCourse[:, 0]
+        x = jnp.zeros(2)
+        time_course = [
+            repetition(x, param, n)
+            for n in [1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 4, 1, 1, 1, 3]
+        ]
+        return jnp.array([x[0] for x in time_course])
 
 
 class StockArtificial(Stock, ArtificialModelInterface):
-    def __init__(self, *args, **kwargs):
-        super(Stock, self).__init__(*args, **kwargs)
+    """ """
 
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
-    ):
-        logger.info(
-            f"Generating {numSamples} data samples by evaluating the model. "
-            "This might take a very long time!"
+    PARAM_LIMITS = np.array([[-1.0, 3.0] for _ in range(Stock.param_dim)])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = Stock.CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super(Stock, self).__init__(
+            central_param, param_limits, name=name, **kwargs
         )
 
+    def generate_artificial_params(self, num_samples):
         mean = np.array(
             [
                 0.41406223,
@@ -251,23 +156,8 @@ class StockArtificial(Stock, ArtificialModelInterface):
         )
         stdevs = np.array([0.005, 0.01, 0.05, 0.005, 0.01, 0.05])
 
-        trueParamSample = np.random.randn(numSamples, self.paramDim)
-        trueParamSample *= stdevs
-        trueParamSample += mean
+        true_param_sample = np.random.randn(num_samples, self.param_dim)
+        true_param_sample *= stdevs
+        true_param_sample += mean
 
-        artificialData = vmap(self.forward, in_axes=0)(trueParamSample)
-
-        np.savetxt(
-            f"Data/{self.getModelName()}Data.csv",
-            artificialData,
-            delimiter=",",
-        )
-
-        np.savetxt(
-            f"Data/{self.getModelName()}Params.csv",
-            trueParamSample,
-            delimiter=",",
-        )
-
-    def getParamSamplingLimits(self):
-        return np.array([[-1.0, 3.0] * self.paramDim])
+        return true_param_sample

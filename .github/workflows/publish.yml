@@ -1,0 +1,44 @@
+name: Publish to PyPI
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: pip
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          #version: 1.2.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Verify poetry installation
+        run: poetry --version
+      - name: Install amici dependencies
+        run: |
+          sudo apt install -y swig
+          sudo apt install -y libblas-dev
+          sudo apt install -y libatlas-base-dev
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install --no-interaction --with=dev
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      - name: Publish to PyPI
+        env:
+          PYPI_USERNAME: __token__
+          PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          poetry publish --build -u $PYPY_USERNAME -p $PYPI_PASSWORD

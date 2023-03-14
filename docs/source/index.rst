@@ -8,11 +8,11 @@ Welcome to EPI's documentation!
 .. role:: python(code)
    :language: python
    :class: highlight
-
+ 
 .. include:: welcome.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    API DOC<modules>
@@ -22,6 +22,7 @@ Welcome to EPI's documentation!
    MarkdownLinks/contributing
    MarkdownLinks/license
    MarkdownLinks/citation
+   MarkdownLinks/changelog
 
 ..
    Indices and tables
