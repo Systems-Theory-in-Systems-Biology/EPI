@@ -22,6 +22,7 @@ Welcome to EPI's documentation!
    MarkdownLinks/contributing
    MarkdownLinks/license
    MarkdownLinks/citation
+   MarkdownLinks/changelog
 
 ..
    Indices and tables
