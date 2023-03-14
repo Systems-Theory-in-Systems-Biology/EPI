@@ -9,18 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Install gcc?!
-      run: sudo apt update && sudo apt install gcc
-    - name: Install amici dependencies
-      run: |
-        sudo apt install -y swig
-        sudo apt install -y libblas-dev
-        sudo apt install -y libatlas-base-dev
     - uses: actions/checkout@v3
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: python -m pip install --upgrade pip
+        pre-build-command: |
+          sudo apt install -y gcc
+          sudo apt install -y swig
+          sudo apt install -y libblas-dev
+          sudo apt install -y libatlas-base-dev
+          python -m pip install --upgrade pip
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
