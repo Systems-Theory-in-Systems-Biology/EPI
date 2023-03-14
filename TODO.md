@@ -18,5 +18,5 @@
 
 ## Postponed
 
-- [ ] create single function ```Model.plot()``` that allows the user to visualize his results
-- [ ] create single function ```Model.test()``` that allows the user to test the inversion for his model on artificial data
+- [ ] create single function ```plot()``` that allows the user to visualize his results
+- [ ] create single function ```test()``` that allows the user to test the inversion for his model on artificial data

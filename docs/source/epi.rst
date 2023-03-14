@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    Core<epi.core>
-   Plotting<epi.plotting>
 
 Submodules
 ----------

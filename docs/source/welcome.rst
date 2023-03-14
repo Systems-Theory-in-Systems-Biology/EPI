@@ -56,6 +56,7 @@ How to start
 ------------
 
 .. To use EPI, derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~epi.core.model.Model.data_dim` and :py:attr:`~epi.core.model.Model.param_dim` of your model.
+
 To use EPI, derive your model from the Model class and implement the abstract functions. Here's an example code snippet:
 
 .. code-block:: python

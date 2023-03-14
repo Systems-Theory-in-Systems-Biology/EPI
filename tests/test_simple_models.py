@@ -1,5 +1,5 @@
 """
-Contains grid based evaluations and plotting of models, which implement simple transformations: Linear, Exponential, LinearODE
+Test the simple models
 """
 
 import matplotlib.pyplot as plt

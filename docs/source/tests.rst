@@ -15,7 +15,6 @@ Submodules
    Test Inference<tests.test_inference>
    Test Jax<tests.test_jax>
    Test KDE<tests.test_kde>
-   Test Plotting<tests.test_plotting>
    Test Simple Models<tests.test_simple_models>
    Test Slices<tests.test_slices>
    Test Transformation<tests.test_transformations>
