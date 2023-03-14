@@ -91,26 +91,26 @@ html_static_path = ["_static"]
 
 todo_include_todos = 1
 
-html_theme_options = {
-    "repository_url": "https://github.com/Systems-Theory-in-Systems-Biology/EPI",
-    "use_repository_button": True,
-    "show_navbar_depth": 1,
-    "show_toc_level": 2,
-    "use_download_button": True,
-    "home_page_in_toc": True,
-    # "use_source_button": True,
-    # "repository_branch": "gh-pages",
-    # "use_edit_page_button": True,
-}
-
-# Add searchbar to sidebar
 if html_theme == "sphinx_book_theme":
+    # Add searchbar to sidebar in book theme
     html_sidebars = {
         "**": [
             "navbar-logo.html",
             "search-field.html",
             "sbt-sidebar-nav.html",
         ]  # "sidebar-nav-bs"]
+    }
+    # Set book theme options
+    html_theme_options = {
+        "repository_url": "https://github.com/Systems-Theory-in-Systems-Biology/EPI",
+        "use_repository_button": True,
+        "show_navbar_depth": 1,
+        "show_toc_level": 2,
+        "use_download_button": True,
+        "home_page_in_toc": True,
+        # "use_source_button": True,
+        # "repository_branch": "gh-pages",
+        # "use_edit_page_button": True,
     }
 
 # Configurate autodoc
