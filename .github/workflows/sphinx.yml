@@ -9,6 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Install gcc?!
+      run: sudo apt update && sudo apt install gcc
     - name: Install amici dependencies
       run: |
         sudo apt install -y swig
