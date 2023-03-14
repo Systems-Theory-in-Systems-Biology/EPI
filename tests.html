@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tutorial" href="tutorial_material/tutorial.html" />
-    <link rel="prev" title="epi.plotting package" href="epi.plotting.html" /> 
+    <link rel="next" title="tests.conftest module" href="tests.conftest.html" />
+    <link rel="prev" title="epi.jax_extension module" href="epi.jax_extension.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,43 +53,18 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API DOC</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="epi.html">epi package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">tests package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.conftest">tests.conftest module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.conftest.pytest_sessionstart"><code class="docutils literal notranslate"><span class="pre">pytest_sessionstart()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.profiling">tests.profiling module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_cpp">tests.test_cpp module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_cpp.test_cpp_lib_exists"><code class="docutils literal notranslate"><span class="pre">test_cpp_lib_exists()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_examples">tests.test_examples module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.getExampleName"><code class="docutils literal notranslate"><span class="pre">getExampleName()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_jax">tests.test_jax module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.do_matrix_multiplication"><code class="docutils literal notranslate"><span class="pre">do_matrix_multiplication()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.test_jax_cpu"><code class="docutils literal notranslate"><span class="pre">test_jax_cpu()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_jax.test_jax_gpu"><code class="docutils literal notranslate"><span class="pre">test_jax_gpu()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_kde">tests.test_kde module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.kde_data_test_set"><code class="docutils literal notranslate"><span class="pre">kde_data_test_set()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.kernel_estimators"><code class="docutils literal notranslate"><span class="pre">kernel_estimators()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.test_KDE_batch"><code class="docutils literal notranslate"><span class="pre">test_KDE_batch()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_kde.test_KDE_data"><code class="docutils literal notranslate"><span class="pre">test_KDE_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_plotting">tests.test_plotting module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_plotting.test_plotKDEoverGrid"><code class="docutils literal notranslate"><span class="pre">test_plotKDEoverGrid()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tests.test_simple_models">tests.test_simple_models module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationExponential"><code class="docutils literal notranslate"><span class="pre">test_transformationExponential()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationLinear"><code class="docutils literal notranslate"><span class="pre">test_transformationLinear()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_simple_models.test_transformationODELinear"><code class="docutils literal notranslate"><span class="pre">test_transformationODELinear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.conftest.html">configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.profiling.html">Profiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_dense_grid.html">Test Dense Grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_examples.html">Test Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_fixed_params.html">Test Fixed Params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_inference.html">Test Inference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_jax.html">Test Jax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html">Test KDE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_simple_models.html">Test Simple Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_slices.html">Test Slices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_transformations.html">Test Transformation</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tests">Module contents</a></li>
@@ -103,6 +78,7 @@
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -134,150 +110,82 @@
 <h1>tests package<a class="headerlink" href="#tests-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
-<section id="module-tests.conftest">
-<span id="tests-conftest-module"></span><h2>tests.conftest module<a class="headerlink" href="#module-tests.conftest" title="Permalink to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.conftest.pytest_sessionstart">
-<span class="sig-prename descclassname"><span class="pre">tests.conftest.</span></span><span class="sig-name descname"><span class="pre">pytest_sessionstart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.conftest.pytest_sessionstart" title="Permalink to this definition"></a></dt>
-<dd><p>Called once at the start of a pytest session</p>
-<p>Currently disables the matplotlib output</p>
-</dd></dl>
-
-</section>
-<section id="module-tests.profiling">
-<span id="tests-profiling-module"></span><h2>tests.profiling module<a class="headerlink" href="#module-tests.profiling" title="Permalink to this heading"></a></h2>
-<p>The code which is executed here should contain code which represents the typical usage of the epi library.
-It could be extended to somehow measure the performance of the code for all examples in a reproducible and comparable way.
-At the moment the simplest way to get an indication for the performance is to run the tests and look at the time it takes to run the tests.
-For profiling / identifying bottlenecks and not just observing the iterations per seconds, run this file with the following command:
-scalene tests/profiling.py from the root directory of the project.</p>
-</section>
-<section id="module-tests.test_cpp">
-<span id="tests-test-cpp-module"></span><h2>tests.test_cpp module<a class="headerlink" href="#module-tests.test_cpp" title="Permalink to this heading"></a></h2>
-<p>Test the cpp model and its equivalent python implementation. Can be used to compare the performance during the sampling.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_cpp.test_cpp_lib_exists">
-<span class="sig-prename descclassname"><span class="pre">tests.test_cpp.</span></span><span class="sig-name descname"><span class="pre">test_cpp_lib_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_cpp.test_cpp_lib_exists" title="Permalink to this definition"></a></dt>
-<dd><p>Test if the cpp library for the plant model exists.</p>
-</dd></dl>
-
-</section>
-<section id="module-tests.test_examples">
-<span id="tests-test-examples-module"></span><h2>tests.test_examples module<a class="headerlink" href="#module-tests.test_examples" title="Permalink to this heading"></a></h2>
-<p>Test the instantiation, data loading / data generation and the inference for the example models in the examples folder.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_examples.Examples">
-<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">Examples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.Examples" title="Permalink to this definition"></a></dt>
-<dd><p>Provides the list of examples to the parametrized test</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_examples.getExampleName">
-<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">getExampleName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.getExampleName" title="Permalink to this definition"></a></dt>
-<dd><p>Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_examples.test_examples">
-<span class="sig-prename descclassname"><span class="pre">tests.test_examples.</span></span><span class="sig-name descname"><span class="pre">test_examples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.test_examples" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>example</strong> (<em>Tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em>) – The example which should be tested. The tuple contains the module location, the class name and the number of walkers.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="module-tests.test_jax">
-<span id="tests-test-jax-module"></span><h2>tests.test_jax module<a class="headerlink" href="#module-tests.test_jax" title="Permalink to this heading"></a></h2>
-<p>Test some jax functionality</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_jax.do_matrix_multiplication">
-<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">do_matrix_multiplication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.do_matrix_multiplication" title="Permalink to this definition"></a></dt>
-<dd><p>Do a simple matrix-matrix multiplication for two random matrices generated by numpy</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – number of entries per dimension, defaults to 5000</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_jax.test_jax_cpu">
-<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">test_jax_cpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.test_jax_cpu" title="Permalink to this definition"></a></dt>
-<dd><p>Test wether jax can run on the cpu by executing some jax code</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_jax.test_jax_gpu">
-<span class="sig-prename descclassname"><span class="pre">tests.test_jax.</span></span><span class="sig-name descname"><span class="pre">test_jax_gpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_jax.test_jax_gpu" title="Permalink to this definition"></a></dt>
-<dd><p>Test wether jax can run on the gpu by executing some jax code.
-The jax gpu test may fail if no nvidia gpu is available or the cuda and cudnn libraries are not installed.</p>
-</dd></dl>
-
-</section>
-<section id="module-tests.test_kde">
-<span id="tests-test-kde-module"></span><h2>tests.test_kde module<a class="headerlink" href="#module-tests.test_kde" title="Permalink to this heading"></a></h2>
-<p>Tests for the Kernel Density Estimation module</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_kde.kde_data_test_set">
-<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">kde_data_test_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.kde_data_test_set" title="Permalink to this definition"></a></dt>
-<dd><p>Yields test data for the KDE data tests</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_kde.kernel_estimators">
-<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">kernel_estimators</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.kernel_estimators" title="Permalink to this definition"></a></dt>
-<dd><p>Yields the kernel density estimators</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_kde.test_KDE_batch">
-<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">test_KDE_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evalKDE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.test_KDE_batch" title="Permalink to this definition"></a></dt>
-<dd><p>Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_kde.test_KDE_data">
-<span class="sig-prename descclassname"><span class="pre">tests.test_kde.</span></span><span class="sig-name descname"><span class="pre">test_KDE_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evalKDE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdevs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">33</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_kde.test_KDE_data" title="Permalink to this definition"></a></dt>
-<dd><p>Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid</p>
-</dd></dl>
-
-</section>
-<section id="module-tests.test_plotting">
-<span id="tests-test-plotting-module"></span><h2>tests.test_plotting module<a class="headerlink" href="#module-tests.test_plotting" title="Permalink to this heading"></a></h2>
-<p>Test plotting functions from the plotter module</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_plotting.test_plotKDEoverGrid">
-<span class="sig-prename descclassname"><span class="pre">tests.test_plotting.</span></span><span class="sig-name descname"><span class="pre">test_plotKDEoverGrid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_plotting.test_plotKDEoverGrid" title="Permalink to this definition"></a></dt>
-<dd><p>Test plotting a KDE over a grid.</p>
-</dd></dl>
-
-</section>
-<section id="module-tests.test_simple_models">
-<span id="tests-test-simple-models-module"></span><h2>tests.test_simple_models module<a class="headerlink" href="#module-tests.test_simple_models" title="Permalink to this heading"></a></h2>
-<p>Contains grid based evaluations and plotting of models, which implement simple transformations: Linear, Exponential, LinearODE</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationExponential">
-<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationExponential</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationExponential" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationLinear">
-<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationLinear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationLinear" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_simple_models.test_transformationODELinear">
-<span class="sig-prename descclassname"><span class="pre">tests.test_simple_models.</span></span><span class="sig-name descname"><span class="pre">test_transformationODELinear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_simple_models.test_transformationODELinear" title="Permalink to this definition"></a></dt>
-<dd><p>Exemplary application of Eulerian Parameter Inference a very simplistic ordinary differential equation model.
-We create our toy data by first defining a true parameter distribution.
-The actual data is then obtained by evaluating the model in parameters drawn from this true distribution.
-Ideally, we would be able to reconstruct the true parameter density.
-However, we will see that this parameter inference problem possesses more than one solution and is therefore not well-posed.</p>
-</dd></dl>
-
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tests.conftest.html">configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.conftest.html#tests.conftest.pytest_sessionstart"><code class="docutils literal notranslate"><span class="pre">pytest_sessionstart()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.profiling.html">Profiling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.profiling.html#tests.profiling.profiling_with_slices"><code class="docutils literal notranslate"><span class="pre">profiling_with_slices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_dense_grid.html">Test Dense Grid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_dense_grid.html#tests.test_dense_grid.test_dense_grid"><code class="docutils literal notranslate"><span class="pre">test_dense_grid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_examples.html">Test Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.get_example_name"><code class="docutils literal notranslate"><span class="pre">get_example_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_fixed_params.html">Test Fixed Params</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_fixed_params.html#tests.test_fixed_params.temp_name"><code class="docutils literal notranslate"><span class="pre">temp_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_fixed_params.html#tests.test_fixed_params.test_fixed_params"><code class="docutils literal notranslate"><span class="pre">test_fixed_params()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_inference.html">Test Inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_inference.html#tests.test_inference.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_inference.html#tests.test_inference.test_inference_mcmc_dense_exact"><code class="docutils literal notranslate"><span class="pre">test_inference_mcmc_dense_exact()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_jax.html">Test Jax</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.do_matrix_multiplication"><code class="docutils literal notranslate"><span class="pre">do_matrix_multiplication()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.test_jax_cpu"><code class="docutils literal notranslate"><span class="pre">test_jax_cpu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.test_jax_gpu"><code class="docutils literal notranslate"><span class="pre">test_jax_gpu()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_kde.html">Test KDE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.kde_data_test_set"><code class="docutils literal notranslate"><span class="pre">kde_data_test_set()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.kernel_estimators"><code class="docutils literal notranslate"><span class="pre">kernel_estimators()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_KDE_batch"><code class="docutils literal notranslate"><span class="pre">test_KDE_batch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_KDE_data"><code class="docutils literal notranslate"><span class="pre">test_KDE_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_calc_kernel_width"><code class="docutils literal notranslate"><span class="pre">test_calc_kernel_width()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_kde_convergence_gauss"><code class="docutils literal notranslate"><span class="pre">test_kde_convergence_gauss()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_kde_gauss"><code class="docutils literal notranslate"><span class="pre">test_kde_gauss()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_simple_models.html">Test Simple Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationExponential"><code class="docutils literal notranslate"><span class="pre">test_transformationExponential()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationLinear"><code class="docutils literal notranslate"><span class="pre">test_transformationLinear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationODELinear"><code class="docutils literal notranslate"><span class="pre">test_transformationODELinear()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_slices.html">Test Slices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_slices.html#tests.test_slices.test_slices"><code class="docutils literal notranslate"><span class="pre">test_slices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.test_transformations.html">Test Transformation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model"><code class="docutils literal notranslate"><span class="pre">X2Model</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.bw"><code class="docutils literal notranslate"><span class="pre">X2Model.bw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.forward"><code class="docutils literal notranslate"><span class="pre">X2Model.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.fw"><code class="docutils literal notranslate"><span class="pre">X2Model.fw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.generate_artificial_params"><code class="docutils literal notranslate"><span class="pre">X2Model.generate_artificial_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.vj"><code class="docutils literal notranslate"><span class="pre">X2Model.vj()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.CENTRAL_PARAM"><code class="docutils literal notranslate"><span class="pre">X2Model.CENTRAL_PARAM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.PARAM_LIMITS"><code class="docutils literal notranslate"><span class="pre">X2Model.PARAM_LIMITS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.data_dim"><code class="docutils literal notranslate"><span class="pre">X2Model.data_dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model.param_dim"><code class="docutils literal notranslate"><span class="pre">X2Model.param_dim</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.test_calc_gram_determinant"><code class="docutils literal notranslate"><span class="pre">test_calc_gram_determinant()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.test_evaluate_density"><code class="docutils literal notranslate"><span class="pre">test_evaluate_density()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 <section id="module-tests">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests" title="Permalink to this heading"></a></h2>
@@ -288,8 +196,8 @@ However, we will see that this parameter inference problem possesses more than o
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="epi.plotting.html" class="btn btn-neutral float-left" title="epi.plotting package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tutorial_material/tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="epi.jax_extension.html" class="btn btn-neutral float-left" title="epi.jax_extension module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.conftest.html" class="btn btn-neutral float-right" title="tests.conftest module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

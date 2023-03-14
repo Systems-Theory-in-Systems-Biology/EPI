@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Development" href="../MarkdownLinks/development.html" />
-    <link rel="prev" title="SBML Model" href="sbml_example.html" /> 
+    <link rel="prev" title="SBML Models" href="sbml_example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -61,6 +61,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#specialities">Specialities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#preparation">Preparation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#c-model-definition">C++ Model Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wrapping-the-c-code">Wrapping the C++ Code</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-side-model">Python Side Model</a></li>
 </ul>
@@ -71,6 +72,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -102,13 +104,13 @@
 <h1>C++ Model<a class="headerlink" href="#c-model" title="Permalink to this heading"></a></h1>
 <p>Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python <a class="reference internal" href="../epi.core.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
+call C++ code from your python <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
 It is primarily intended for fast implementations of the <cite>forward</cite> and <cite>jacobian</cite> method.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Calling C++ Code: Calls external c++ code using pybind11</p></li>
-<li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">python_reference_plants.py</span></code> includes
+<li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">epi/examples/cpp/python_reference_plants.py</span></code> includes
 python models implementing the same mapping. You can compare the performance of the different approaches.</p></li>
 </ul>
 </section>
@@ -123,60 +125,92 @@ sudo<span class="w"> </span>ln<span class="w"> </span>-s<span class="w"> </span>
 </section>
 <section id="c-model-definition">
 <h2>C++ Model Definition<a class="headerlink" href="#c-model-definition" title="Permalink to this heading"></a></h2>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span>import numpy as np
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef MY_CPP_MODEL</span>
+<span class="cp">#define MY_CPP_MODEL</span>
 
-from epi.core.model import ArtificialModelInterface, Model
-from epi.examples.cpp import cpp_model
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cmath&gt;</span>
 
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/stl.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/numpy.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/eigen.h&gt;</span>
 
-class CppPlant(Model, ArtificialModelInterface):
-    &quot;&quot;&quot;A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient
-    Param0: Water [0,1]
-    Param1: Sun   [0,1]
-    Data0: Size [0,2] # the more water and sun the better
-    Data1: Health [0,1], to much water is not good, too much sun is not good
-    Data2: Sciarid ;)
-    &quot;&quot;&quot;
+<span class="c1">// Returned from py::array_t&lt;double&gt;.request()</span>
+<span class="c1">// struct buffer_info {</span>
+<span class="c1">//     void *ptr;</span>
+<span class="c1">//     size_t itemsize;</span>
+<span class="c1">//     std::string format;</span>
+<span class="c1">//     int ndim;</span>
+<span class="c1">//     std::vector&lt;size_t&gt; shape;</span>
+<span class="c1">//     std::vector&lt;size_t&gt; strides;</span>
+<span class="c1">// };</span>
 
-    paramDim = 2
-    dataDim = 3
+<span class="k">namespace</span><span class="w"> </span><span class="nn">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pybind11</span><span class="p">;</span>
 
-    def forward(self, param):
-        return cpp_model.forward(param)
+<span class="c1">// Mapping from </span>
+<span class="n">py</span><span class="o">::</span><span class="n">array_t</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forward</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">array_t</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">param</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">buffer_info</span><span class="w"> </span><span class="n">bufParam</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param</span><span class="p">.</span><span class="n">request</span><span class="p">();</span>
 
-    def jacobian(self, param):
-        return cpp_model.jacobian(param)
+<span class="w">    </span><span class="c1">// Storage for the result</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">array_t</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">array</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">buffer_info</span><span class="p">(</span>
+<span class="w">        </span><span class="k">nullptr</span><span class="p">,</span><span class="w">            </span><span class="cm">/* Pointer to data (nullptr -&gt; ask NumPy to allocate!) */</span>
+<span class="w">        </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">),</span><span class="w">     </span><span class="cm">/* Size of one item */</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">format_descriptor</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="cm">/* Buffer format */</span>
+<span class="w">        </span><span class="mi">1</span><span class="p">,</span><span class="w">          </span><span class="cm">/* How many dimensions? */</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="cm">/* Number of elements for each dimension */</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="cm">/* Strides for each dimension */</span>
+<span class="w">    </span><span class="p">));</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">buffer_info</span><span class="w"> </span><span class="n">bufRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">request</span><span class="p">();</span>
 
-    def getCentralParam(self) -&gt; np.ndarray:
-        return np.array([0.5, 0.5])
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ptrParam</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">bufParam</span><span class="p">.</span><span class="n">ptr</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ptrRes</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">bufRes</span><span class="p">.</span><span class="n">ptr</span><span class="p">);</span>
 
-    def getParamSamplingLimits(self) -&gt; np.ndarray:
-        return np.array([[0.0, 1.0], [0.0, 1.0]])
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">water</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptrParam</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sun</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">ptrParam</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">water</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sun</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">green</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">water</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sun</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">flies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exp</span><span class="p">(</span><span class="n">water</span><span class="p">)</span><span class="mf">-0.999</span><span class="p">;</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">ptrRes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ptrRes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">green</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ptrRes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flies</span><span class="p">;</span>
 
-    def generateArtificialData(
-        self, numSamples=ArtificialModelInterface.NUM_ARTIFICIAL_SAMPLES
-    ):
-        # randomly create true parameters in [0,1]x[0,1]
-        trueParamSample = np.random.rand(numSamples, 2)
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
 
-        artificialData = np.zeros((trueParamSample.shape[0], 3))
-        for i in range(trueParamSample.shape[0]):
-            artificialData[i, :] = self.forward(trueParamSample[i, :])
-        np.savetxt(
-            f&quot;Data/{self.getModelName()}Data.csv&quot;,
-            artificialData,
-            delimiter=&quot;,&quot;,
-        )
-        np.savetxt(
-            f&quot;Data/{self.getModelName()}Params.csv&quot;,
-            trueParamSample,
-            delimiter=&quot;,&quot;,
-        )
+<span class="c1">// If using Eigen::Ref, prevent copy of data by using RowMajoger storage order which is also used in numpy</span>
+<span class="c1">// using RowMatrixXd = Eigen::Matrix&lt;double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor&gt;;</span>
+<span class="c1">// https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Matrix32d</span><span class="p">;</span>
+<span class="c1">//Jacobian for f:R^n -&gt; R^m is Jf:R^m -&gt; R^n = R^mxn</span>
+<span class="n">Matrix32d</span><span class="w"> </span><span class="nf">jacobian</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector2d</span><span class="w"> </span><span class="n">param</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Matrix32d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span><span class="n">M_PI</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exp</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="w">    </span><span class="n">res</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cp">#endif</span>
 </pre></div>
 </div>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Why is pygments not parsing the c++ code?</p>
+</section>
+<section id="wrapping-the-c-code">
+<h2>Wrapping the C++ Code<a class="headerlink" href="#wrapping-the-c-code" title="Permalink to this heading"></a></h2>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// pybind11_wrapper.cpp</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/pybind11.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;cpp_model.hpp&quot;</span>
+
+<span class="n">PYBIND11_MODULE</span><span class="p">(</span><span class="n">cpp_model</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m</span><span class="p">.</span><span class="n">doc</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;C++ EPI Model implemented with pybind11&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Optional module docstring</span>
+<span class="w">    </span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;forward&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">forward</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;A function that calculates the forward pass&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;jacobian&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">jacobian</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;A function that calculates the jacobian&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 <p>The example code is inconsistent in the following way:
 It uses a normal array for the forward method,
@@ -184,15 +218,11 @@ but an eigen vector as input and an eigen matrix as output
 for the jacobian method. This allows to show us how to write wrapper code
 for normal arrays as well as for eigen objects. On the python side exclusively
 numpy 1d/2d arrays will be used.</p>
-<div class="admonition-todo admonition" id="id2">
-<p class="admonition-title">Todo</p>
-<p>What about vectorization? Jax will likely not help with speeding up.</p>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For more information on how to use pybind11 see:
-PyBind11 Documentation: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">https://pybind11.readthedocs.io/en/stable/</a>
-PyBind11 Eigen Notes: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html">https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html</a></p>
+<p>The C++ code is wrapped using pybind11. For more information on how to use pybind11 see:
+* PyBind11 Documentation: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">https://pybind11.readthedocs.io/en/stable/</a>
+* PyBind11 Eigen Notes: <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html">https://pybind11.readthedocs.io/en/stable/advanced/cast/eigen.html</a></p>
 </div>
 </section>
 <section id="compilation">
@@ -219,10 +249,28 @@ make<span class="w"> </span>-j
 <span class="sd">    Data0: Size [0,2] # the more water and sun the better</span>
 <span class="sd">    Data1: Health [0,1], to much water is not good, too much sun is not good</span>
 <span class="sd">    Data2: Sciarid ;)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">central_param</span><span class="p">,</span>
+            <span class="n">param_limits</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
@@ -230,34 +278,11 @@ make<span class="w"> </span>-j
     <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
-
-    <span class="k">def</span> <span class="nf">generateArtificialData</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">numSamples</span><span class="o">=</span><span class="n">ArtificialModelInterface</span><span class="o">.</span><span class="n">NUM_ARTIFICIAL_SAMPLES</span>
-    <span class="p">):</span>
-        <span class="c1"># randomly create true parameters in [0,1]x[0,1]</span>
-        <span class="n">trueParamSample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">numSamples</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-        <span class="n">artificialData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">trueParamSample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">trueParamSample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">artificialData</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">trueParamSample</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">Data.csv&quot;</span><span class="p">,</span>
-            <span class="n">artificialData</span><span class="p">,</span>
-            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">Params.csv&quot;</span><span class="p">,</span>
-            <span class="n">trueParamSample</span><span class="p">,</span>
-            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can use the example model as template for your own C++ Model.</p>
+<p>You can use the cpp example model as template for your own C++ Model.</p>
 </section>
 </section>
 
@@ -265,7 +290,7 @@ make<span class="w"> </span>-j
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sbml_example.html" class="btn btn-neutral float-left" title="SBML Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sbml_example.html" class="btn btn-neutral float-left" title="SBML Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../MarkdownLinks/development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

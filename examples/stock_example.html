@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StockData Model &mdash; EPI  documentation</title>
+  <title>Stock Data Model &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
@@ -21,7 +21,6 @@
         <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -68,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -85,7 +85,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../examples.html">Example Models</a></li>
-      <li class="breadcrumb-item active">StockData Model</li>
+      <li class="breadcrumb-item active">Stock Data Model</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/examples/stock_example.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -95,110 +95,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="stockdata-model">
-<h1>StockData Model<a class="headerlink" href="#stockdata-model" title="Permalink to this heading"></a></h1>
-<p>The high-dimensional stock data model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/stock/stock.py</span></code>.</p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>The model implements the function <span class="math notranslate nohighlight">\(y_i(q_i)\)</span></p>
-</div>
+  <section id="stock-data-model">
+<h1>Stock Data Model<a class="headerlink" href="#stock-data-model" title="Permalink to this heading"></a></h1>
+<p>A high-dimensional stock data model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/stock/stock.py</span></code>.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>External Data Source: The model shows how to use an external data source in the workflow by overwriting the method <a class="reference internal" href="../epi.core.html#epi.core.model.Model.dataLoader" title="epi.core.model.Model.dataLoader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epi.core.model.Model.dataLoader()</span></code></a>.</p></li>
-<li><p>High-Dimensional: The model has a high number of dimensions: DataDim = 19, ParamDim = 6
-* Large Number of Walkers in MCMC Sampling
-* Visualization: The visualization can be done for each dimension separately, for two selected dimensions or using spider web plots.</p></li>
+<li><p>External Data Source: The model loads stock data from the web.</p></li>
+<li><p>High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6. The samples emcee strongly recommended to use at least 12 walkers for this model.</p></li>
+<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
+which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
+<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
+This usually results in a significant execution speedup. It also allows to run your model on the gpu.</p></li>
 </ul>
-<div class="admonition-todo admonition" id="id2">
-<p class="admonition-title">Todo</p>
-<p>Visualization</p>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Stock</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">,</span> <span class="n">VisualizationModelInterface</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Stock</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Model simulating stock data.&quot;&quot;&quot;</span>
 
-    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">19</span>
-    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">19</span>
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_dim</span><span class="p">)])</span>
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="mf">0.41406223</span><span class="p">,</span>
+            <span class="mf">1.04680993</span><span class="p">,</span>
+            <span class="mf">1.21173553</span><span class="p">,</span>
+            <span class="mf">0.8078955</span><span class="p">,</span>
+            <span class="mf">1.07772437</span><span class="p">,</span>
+            <span class="mf">0.64869251</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ticker</span><span class="o">=</span><span class="s2">&quot;ETF50&quot;</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the model and set a ticker. Can be chosen from the list of available tickers TICKERS.</span>
-<span class="sd">        Possibly outdated list: [ETF, Index1, Index2, Mutual, Stocks1, Stocks2, Stocks3]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">        :param ticker: The ticker from which the data should be used, defaults to &quot;ETF&quot;</span>
-<span class="sd">        :type ticker: str, optional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataPath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">Data.csv&quot;</span>
-
-        <span class="c1"># Check if data for the given ticker exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataPath</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Ticker data not found. Downloading data...&quot;</span><span class="p">)</span>
-            <span class="n">tickerPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-                <span class="s2">&quot;epi.examples.stock&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">.csv&quot;</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">downloadData</span><span class="p">(</span><span class="n">tickerPath</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">getDataBounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataDim</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">getParamBounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramDim</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramDim</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="mf">0.41406223</span><span class="p">,</span>
-                <span class="mf">1.04680993</span><span class="p">,</span>
-                <span class="mf">1.21173553</span><span class="p">,</span>
-                <span class="mf">0.8078955</span><span class="p">,</span>
-                <span class="mf">1.07772437</span><span class="p">,</span>
-                <span class="mf">0.64869251</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">downloadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tickerListPath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">download_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker_list_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Download stock data for a ticker list from yahoo finance.</span>
 
-<span class="sd">        :param tickerListPath: path to the ticker list csv file</span>
-<span class="sd">        :type tickerListPath: str</span>
+<span class="sd">        Args:</span>
+<span class="sd">          ticker_list_path(str): path to the ticker list csv file</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            stock_data, stock_ids and the name of the tickerList</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading stock data...&quot;</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="s2">&quot;2022-01-31&quot;</span>
         <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;2022-03-01&quot;</span>
-        <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="s2">&quot;2022-01-31&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-01&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-02&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-03&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-04&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-07&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-08&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-09&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-10&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-11&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-14&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-15&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-16&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-17&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-18&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-22&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-23&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-24&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-25&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;2022-02-28&quot;</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
 
-        <span class="n">stocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">tickerListPath</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;str&quot;</span><span class="p">)</span>
+        <span class="n">stocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">ticker_list_path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;str&quot;</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
                 <span class="n">stocks</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span> <span class="n">repair</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -224,29 +178,17 @@
         <span class="c1"># Drop the row of the first day</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
 
-        <span class="c1"># get the remaining stockIDs and create a numpy array from the dataframe</span>
-        <span class="n">stockIDs</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># .unique()</span>
-        <span class="n">stockData</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="c1"># get the remaining stock_ids and create a numpy array from the dataframe</span>
+        <span class="n">stock_ids</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># .unique()</span>
+        <span class="n">stock_data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
         <span class="c1"># get the name of the tickerList</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tickerListPath</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">tickerListName</span> <span class="o">=</span> <span class="n">tickerListPath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ticker_list_path</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">ticker_list_name</span> <span class="o">=</span> <span class="n">ticker_list_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tickerListName</span> <span class="o">=</span> <span class="n">tickerListPath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ticker_list_name</span> <span class="o">=</span> <span class="n">ticker_list_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># save all time points except for the first</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">tickerListName</span><span class="si">}</span><span class="s2">Data.csv&quot;</span><span class="p">,</span>
-            <span class="n">stockData</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getModelName</span><span class="p">()</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">tickerListName</span><span class="si">}</span><span class="s2">IDs.csv&quot;</span><span class="p">,</span>
-            <span class="n">stockIDs</span><span class="p">,</span>
-            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
-            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">% s</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">stock_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">stock_ids</span><span class="p">,</span> <span class="n">ticker_list_name</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
@@ -260,58 +202,17 @@
                 <span class="p">]</span>
             <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">repetition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">numRepetitions</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numRepetitions</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">repetition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">num_repetitions</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_repetitions</span><span class="p">):</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">iteration</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
-
             <span class="k">return</span> <span class="n">x</span>
 
-        <span class="n">x0</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">x1</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x2</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x3</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x4</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x5</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x4</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">x6</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x5</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x7</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x6</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x8</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x7</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x9</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x8</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x10</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x9</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">x11</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x10</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x12</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x11</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x13</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x12</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x14</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x13</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x15</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x14</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="n">x16</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x15</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x17</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x16</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x18</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x17</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">x19</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x18</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-
-        <span class="n">timeCourse</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">x1</span><span class="p">,</span>
-                <span class="n">x2</span><span class="p">,</span>
-                <span class="n">x3</span><span class="p">,</span>
-                <span class="n">x4</span><span class="p">,</span>
-                <span class="n">x5</span><span class="p">,</span>
-                <span class="n">x6</span><span class="p">,</span>
-                <span class="n">x7</span><span class="p">,</span>
-                <span class="n">x8</span><span class="p">,</span>
-                <span class="n">x9</span><span class="p">,</span>
-                <span class="n">x10</span><span class="p">,</span>
-                <span class="n">x11</span><span class="p">,</span>
-                <span class="n">x12</span><span class="p">,</span>
-                <span class="n">x13</span><span class="p">,</span>
-                <span class="n">x14</span><span class="p">,</span>
-                <span class="n">x15</span><span class="p">,</span>
-                <span class="n">x16</span><span class="p">,</span>
-                <span class="n">x17</span><span class="p">,</span>
-                <span class="n">x18</span><span class="p">,</span>
-                <span class="n">x19</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">timeCourse</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">time_course</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">repetition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">time_course</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>

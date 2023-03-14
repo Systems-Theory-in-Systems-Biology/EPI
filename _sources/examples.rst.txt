@@ -15,7 +15,7 @@ a sbml model; and a problem defined through external C++ code.
    External C++ Model <examples/cpp_example>
 
 .. * :ref:`1D-Temperature model from the tutorial<Temperature Model>`
-.. * :ref:`High-Dimensional Stock Data<StockData Model>`
+.. * :ref:`High-Dimensional Stock Data<stock_data Model>`
 .. * :ref:`Corona ODE Model<Corona ODE Model>`
 .. * :ref:`SBML Model<SBML Model>`
 .. * :ref:`External C++ Model<C++ Model>`

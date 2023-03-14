@@ -61,6 +61,7 @@
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -93,30 +94,19 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="epi.html">epi package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="epi.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="epi.core.html">epi.core package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.core.html">Core</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="epi.core.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core.functions">epi.core.functions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core.kde">epi.core.kde module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core.model">epi.core.model module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core.sampling">epi.core.sampling module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core.sparsegrid">epi.core.sparsegrid module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="epi.core.html#module-epi.core">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="epi.plotting.html">epi.plotting package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.marginals">epi.plotting.marginals module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.plots">epi.plotting.plots module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#module-epi.plotting.plotter">epi.plotting.plotter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="epi.plotting.html#module-epi.plotting">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="epi.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="epi.jax_extension.html">Jax Extension</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="epi.jax_extension.html#epi.jax_extension.value_and_jacfwd"><code class="docutils literal notranslate"><span class="pre">value_and_jacfwd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="epi.jax_extension.html#epi.jax_extension.value_and_jacrev"><code class="docutils literal notranslate"><span class="pre">value_and_jacrev()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="epi.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="epi.html#module-epi.jax_extension">epi.jax_extension module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="epi.html#epi.jax_extension.value_and_jacfwd"><code class="docutils literal notranslate"><span class="pre">value_and_jacfwd()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="epi.html#epi.jax_extension.value_and_jacrev"><code class="docutils literal notranslate"><span class="pre">value_and_jacrev()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="epi.html#module-epi">Module contents</a><ul>
@@ -127,43 +117,68 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.conftest">tests.conftest module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.conftest.pytest_sessionstart"><code class="docutils literal notranslate"><span class="pre">pytest_sessionstart()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tests.conftest.html">configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.conftest.html#tests.conftest.pytest_sessionstart"><code class="docutils literal notranslate"><span class="pre">pytest_sessionstart()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.profiling">tests.profiling module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_cpp">tests.test_cpp module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_cpp.test_cpp_lib_exists"><code class="docutils literal notranslate"><span class="pre">test_cpp_lib_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.profiling.html">Profiling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.profiling.html#tests.profiling.profiling_with_slices"><code class="docutils literal notranslate"><span class="pre">profiling_with_slices()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_examples">tests.test_examples module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_examples.getExampleName"><code class="docutils literal notranslate"><span class="pre">getExampleName()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_dense_grid.html">Test Dense Grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_dense_grid.html#tests.test_dense_grid.test_dense_grid"><code class="docutils literal notranslate"><span class="pre">test_dense_grid()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_jax">tests.test_jax module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_jax.do_matrix_multiplication"><code class="docutils literal notranslate"><span class="pre">do_matrix_multiplication()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_jax.test_jax_cpu"><code class="docutils literal notranslate"><span class="pre">test_jax_cpu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_jax.test_jax_gpu"><code class="docutils literal notranslate"><span class="pre">test_jax_gpu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_examples.html">Test Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.get_example_name"><code class="docutils literal notranslate"><span class="pre">get_example_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_examples.html#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_kde">tests.test_kde module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_kde.kde_data_test_set"><code class="docutils literal notranslate"><span class="pre">kde_data_test_set()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_kde.kernel_estimators"><code class="docutils literal notranslate"><span class="pre">kernel_estimators()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_kde.test_KDE_batch"><code class="docutils literal notranslate"><span class="pre">test_KDE_batch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_kde.test_KDE_data"><code class="docutils literal notranslate"><span class="pre">test_KDE_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_fixed_params.html">Test Fixed Params</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_fixed_params.html#tests.test_fixed_params.temp_name"><code class="docutils literal notranslate"><span class="pre">temp_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_fixed_params.html#tests.test_fixed_params.test_fixed_params"><code class="docutils literal notranslate"><span class="pre">test_fixed_params()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_plotting">tests.test_plotting module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_plotting.test_plotKDEoverGrid"><code class="docutils literal notranslate"><span class="pre">test_plotKDEoverGrid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_inference.html">Test Inference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_inference.html#tests.test_inference.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_inference.html#tests.test_inference.test_inference_mcmc_dense_exact"><code class="docutils literal notranslate"><span class="pre">test_inference_mcmc_dense_exact()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_simple_models">tests.test_simple_models module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_simple_models.test_transformationExponential"><code class="docutils literal notranslate"><span class="pre">test_transformationExponential()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_simple_models.test_transformationLinear"><code class="docutils literal notranslate"><span class="pre">test_transformationLinear()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_simple_models.test_transformationODELinear"><code class="docutils literal notranslate"><span class="pre">test_transformationODELinear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_jax.html">Test Jax</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.do_matrix_multiplication"><code class="docutils literal notranslate"><span class="pre">do_matrix_multiplication()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.test_jax_cpu"><code class="docutils literal notranslate"><span class="pre">test_jax_cpu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_jax.html#tests.test_jax.test_jax_gpu"><code class="docutils literal notranslate"><span class="pre">test_jax_gpu()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_kde.html">Test KDE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.kde_data_test_set"><code class="docutils literal notranslate"><span class="pre">kde_data_test_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.kernel_estimators"><code class="docutils literal notranslate"><span class="pre">kernel_estimators()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_KDE_batch"><code class="docutils literal notranslate"><span class="pre">test_KDE_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_KDE_data"><code class="docutils literal notranslate"><span class="pre">test_KDE_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_calc_kernel_width"><code class="docutils literal notranslate"><span class="pre">test_calc_kernel_width()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_kde_convergence_gauss"><code class="docutils literal notranslate"><span class="pre">test_kde_convergence_gauss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html#tests.test_kde.test_kde_gauss"><code class="docutils literal notranslate"><span class="pre">test_kde_gauss()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_simple_models.html">Test Simple Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationExponential"><code class="docutils literal notranslate"><span class="pre">test_transformationExponential()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationLinear"><code class="docutils literal notranslate"><span class="pre">test_transformationLinear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_simple_models.html#tests.test_simple_models.test_transformationODELinear"><code class="docutils literal notranslate"><span class="pre">test_transformationODELinear()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_slices.html">Test Slices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_slices.html#tests.test_slices.test_slices"><code class="docutils literal notranslate"><span class="pre">test_slices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_transformations.html">Test Transformation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.X2Model"><code class="docutils literal notranslate"><span class="pre">X2Model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.test_calc_gram_determinant"><code class="docutils literal notranslate"><span class="pre">test_calc_gram_determinant()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_transformations.html#tests.test_transformations.test_evaluate_density"><code class="docutils literal notranslate"><span class="pre">test_evaluate_density()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>

@@ -21,12 +21,11 @@
         <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="SBML Model" href="sbml_example.html" />
-    <link rel="prev" title="StockData Model" href="stock_example.html" /> 
+    <link rel="next" title="SBML Models" href="sbml_example.html" />
+    <link rel="prev" title="Stock Data Model" href="stock_example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -68,6 +67,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -97,51 +97,43 @@
              
   <section id="corona-ode-model">
 <h1>Corona ODE Model<a class="headerlink" href="#corona-ode-model" title="Permalink to this heading"></a></h1>
-<p>The corona ode model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/corona/corona.py</span></code>.</p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>The model implements the function <span class="math notranslate nohighlight">\(y_i(q_i)=???\)</span>.</p>
-</div>
+<p>A corona ode model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/corona/corona.py</span></code>.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
-<ul>
+<ul class="simple">
 <li><p>ODE solver: To solve the ODE problem the jax based ode solver library <code class="code docutils literal notranslate"><span class="pre">diffrax</span></code> is used: <a class="reference external" href="https://github.com/patrick-kidger/diffrax">https://github.com/patrick-kidger/diffrax</a>.</p></li>
-<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
-which automatically calculates the <code class="xref py py-meth docutils literal notranslate"><span class="pre">epi.core.model.jacobian()</span></code>.</p></li>
-<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
+<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
+which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
+<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
 This usually results in a significant execution speedup. It also allows to run your model on the gpu.</p></li>
-<li><p>vectorization of model calls using <code class="code docutils literal notranslate"><span class="pre">jax.vmap</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">artificialData</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">trueParamSample</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Corona</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">,</span> <span class="n">VisualizationModelInterface</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Corona</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
-    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">4</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-            <span class="s2">&quot;epi.examples.corona&quot;</span><span class="p">,</span> <span class="s2">&quot;CoronaData.csv&quot;</span>
-        <span class="p">)</span>
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">getDataBounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_data_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">]])</span>
 
-    <span class="k">def</span> <span class="nf">getParamBounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
-
-    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
-
-    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">get_param_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]])</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">logParam</span><span class="p">):</span>
-        <span class="n">param</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">logParam</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">log_param</span><span class="p">):</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">log_param</span><span class="p">)</span>
         <span class="n">xInit</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">999.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
 
         <span class="k">def</span> <span class="nf">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
@@ -160,7 +152,7 @@ This usually results in a significant execution speedup. It also allows to run y
         <span class="n">stepsize_controller</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">PIDController</span><span class="p">(</span><span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">odeSol</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">diffeqsolve</span><span class="p">(</span>
+            <span class="n">ode_sol</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">diffeqsolve</span><span class="p">(</span>
                 <span class="n">term</span><span class="p">,</span>
                 <span class="n">solver</span><span class="p">,</span>
                 <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -171,7 +163,7 @@ This usually results in a significant execution speedup. It also allows to run y
                 <span class="n">saveat</span><span class="o">=</span><span class="n">saveat</span><span class="p">,</span>
                 <span class="n">stepsize_controller</span><span class="o">=</span><span class="n">stepsize_controller</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">odeSol</span><span class="o">.</span><span class="n">ys</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ode_sol</span><span class="o">.</span><span class="n">ys</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ODE solution not possible!&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
@@ -185,8 +177,8 @@ This usually results in a significant execution speedup. It also allows to run y
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="stock_example.html" class="btn btn-neutral float-left" title="StockData Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sbml_example.html" class="btn btn-neutral float-right" title="SBML Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="stock_example.html" class="btn btn-neutral float-left" title="Stock Data Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sbml_example.html" class="btn btn-neutral float-right" title="SBML Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

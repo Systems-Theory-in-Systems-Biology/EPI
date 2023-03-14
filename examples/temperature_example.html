@@ -25,7 +25,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="StockData Model" href="stock_example.html" />
+    <link rel="next" title="Stock Data Model" href="stock_example.html" />
     <link rel="prev" title="Example Models" href="../examples.html" /> 
 </head>
 
@@ -68,6 +68,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -98,47 +99,96 @@
   <section id="temperature-model">
 <h1>Temperature Model<a class="headerlink" href="#temperature-model" title="Permalink to this heading"></a></h1>
 <p>The temperature model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/temperature/temperature.py</span></code>.
-The model <span class="math notranslate nohighlight">\(y_i(q_i)=60 \cos(q_i)-30=s(q_i)\)</span> describes the temperature for a place on the earth <span class="math notranslate nohighlight">\(y_i\)</span> by using the latitude coordinates <span class="math notranslate nohighlight">\(q_i\)</span>.
-The jacobian <span class="math notranslate nohighlight">\({\frac{dy}{dq}]_i(q_i)=-30 \sin(q_i)\)</span> can be calculated analytically.</p>
-<section id="specialities">
-<h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p>Additional fixed parameters: The model includes fixed parameters <code class="code docutils literal notranslate"><span class="pre">self.lowT=30.0</span></code> and <code class="code docutils literal notranslate"><span class="pre">self.highT=30.0</span></code>.
-These fixed parameters are passed to the forward function separately. You can create models with different parameters by
-creating several model objects. However you should think about overwriting the method <a class="reference internal" href="../epi.core.html#epi.core.model.Model.getModelName" title="epi.core.model.Model.getModelName"><code class="xref py py-meth docutils literal notranslate"><span class="pre">epi.core.model.Model.getModelName()</span></code></a>
-to include the fixed parameters of the model object. Else your results for different fixed parameter sets will be mixed.</p></li>
-</ul>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Fix _forward, call, … and maybe adapt this documentation part then</p>
-</div>
+The model <span class="math notranslate nohighlight">\(y(q)=60 \cos(q)-30=s(q)\)</span> describes the temperature for a place on the earth <span class="math notranslate nohighlight">\(y\)</span> by using the latitude coordinates <span class="math notranslate nohighlight">\(q\)</span>.
+The jacobian <span class="math notranslate nohighlight">\({\frac{dy}{dq}}(q_i)=-60 \sin(q_i)\)</span> can be calculated analytically.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
-    <span class="n">paramDim</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">dataDim</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">delete</span><span class="p">,</span> <span class="n">create</span><span class="p">)</span>
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]])</span>
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-            <span class="s2">&quot;epi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
-        <span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
-        <span class="n">lowT</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span>
-        <span class="n">highT</span> <span class="o">=</span> <span class="mf">30.0</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lowT</span> <span class="o">+</span> <span class="p">(</span><span class="n">highT</span> <span class="o">-</span> <span class="n">lowT</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
+        <span class="n">low_T</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span>
+        <span class="n">high_T</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">low_T</span> <span class="o">+</span> <span class="p">(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
     <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">60.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
-
-    <span class="k">def</span> <span class="nf">getCentralParam</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">getParamSamplingLimits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]])</span>
 </pre></div>
+</div>
+<section id="specialities">
+<h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
+<ul>
+<li><p>Additional fixed parameters: The model includes fixed parameters <code class="code docutils literal notranslate"><span class="pre">self.low_T=30.0</span></code> and <code class="code docutils literal notranslate"><span class="pre">self.high_T=30.0</span></code>.
+These fixed parameters are passed to the forward function separately. You can create models with different parameters by
+creating several model objects.</p>
+<p>The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">run_name</span></code> of the <a class="reference internal" href="../epi.core.inference.html#epi.core.inference.inference" title="epi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TemperatureWithFixedParams</span><span class="p">(</span><span class="n">Temperature</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">low_T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span>
+        <span class="n">high_T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span> <span class="o">=</span> <span class="n">low_T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span> <span class="o">=</span> <span class="n">high_T</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_forward</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">high_T</span><span class="p">,</span> <span class="n">low_T</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">low_T</span> <span class="o">+</span> <span class="p">(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_jacobian</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">high_T</span><span class="p">,</span> <span class="n">low_T</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_fixed_params</span><span class="p">(</span><span class="n">temperatures</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">TemperatureWithFixedParams</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+        <span class="s2">&quot;epi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">run_name</span> <span class="o">=</span> <span class="n">temp_name</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>
+
+    <span class="n">inference</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The functions <code class="xref py py-meth docutils literal notranslate"><span class="pre">calc_forward()</span></code> is not strictly necessary.
+However it can help to make it work with jax.</p>
 </div>
 </section>
 </section>
@@ -148,7 +198,7 @@ to include the fixed parameters of the model object. Else your results for diffe
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../examples.html" class="btn btn-neutral float-left" title="Example Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="stock_example.html" class="btn btn-neutral float-right" title="StockData Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="stock_example.html" class="btn btn-neutral float-right" title="Stock Data Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

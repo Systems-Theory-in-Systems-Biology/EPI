@@ -1,108 +1,117 @@
 .. image:: images/epi.png
-   :width: 200pt
+   :width: 100pt
 
 -------------------------------
 EPI - Euler Parameter Inference
 -------------------------------
 
-
-The Euler Parameter Inference Codebase (EPI) is a python package for inverse parameter inference.
-The EPI algorithm takes observed data and a model as input and returns a parameter distribution, which is consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
-We support SBML ode models and user provided models.
+Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
 
 .. Put the badges here?
+.. image:: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg
+    :target: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment
+.. image:: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg
+    :target: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml
+.. image:: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml
+.. image:: https://img.shields.io/github/actions/workflow/status/Systems-Theory-in-Systems-Biology/EPI/ci.yml?label=pytest&logo=pytest
+    :target: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml
+    :alt: pytest
+
+.. image:: https://img.shields.io/badge/flake8-checked-blue.svg
+    :target: https://flake8.pycqa.org/
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: ./LICENSE.md
+.. image:: https://img.shields.io/badge/python-3.10-purple.svg
+    :target: https://www.python.org/
+
+--------
+Features
+--------
+
+EPI supports
+
+* SBML ode models
+* User provided models
+* Models with automatic differentation using jax
 
 ------------
 Installation
 ------------
 
-The package is no yet available on pypi.
+**Important**: The package is no yet available on pypi.
+
 ..  and can be installed with: 
 
 .. .. code-block:: bash
    
 ..    pip install epi
 
-You can build the library from the newest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
+You can build the library from the latest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
 
 ------------
 How to start
 ------------
 
-| Derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-| You also need to define the parameter sampling limits and the central parameter. This is done by implementing the functions :py:meth:`~epi.core.model.Model.getParamSamplingLimits` and :py:meth:`~epi.core.model.Model.getCentralParam`.
-| The last requirement is to define the data and parameter Dimension, dataDim and paramDim.
+.. To use EPI, derive your model from :py:class:`epi.core.model.Model` and implement the abstract functions :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~epi.core.model.Model.data_dim` and :py:attr:`~epi.core.model.Model.param_dim` of your model.
+
+To use EPI, derive your model from the Model class and implement the abstract functions. Here's an example code snippet:
 
 .. code-block:: python
-   
-   # my_model.py
+    
+    # my_model.py
+    import jax.numpy as jnp
 
-   import jax.numpy as jnp
-   from epi.core.model import Model
+    from epi.core.model import Model
 
-   class MyModel(Model):
+    class MyModel(Model):
 
-      paramDim = N # The dimension of a parameter point
-      dataDim = M # The dimension of a data point
+        param_dim = N # The dimension of a parameter point
+        data_dim = M # The dimension of a data point
 
-      def forward(self, param):
-         return jnp.array(...)
+        def forward(self, param):
+            return jnp.array(...)
 
-      def getParamSamplingLimits(self):
-         return jnp.array([[-1.,1.], [-101.1, 13.4],...]) # [[UpperBound_dim1,LowerBound_dim1],...]
-
-      def getCentralParam(self):
-         return jnp.array([0.5, -30.0,...])
-
-      def jacobian(self, param):
-         return jnp.array(...)
+        def jacobian(self, param):
+            return jnp.array(...)
 
 To evaluate the model and infer the parameter distribution, call:
 
 .. code-block:: python
 
-   from epi.core.sampling import inference
-   from my_model import MyModel
+    from epi.core.inference import inference
 
-   model = MyModel()
-   inference(model=model, dataPath="my_data.csv")
+    from my_model import MyModel
 
-The file :file:`my_data.csv` has to contain the data in csv format with :code:`seperator=,` in the format
+    central_param = np.array([0.5, -1.5, ...])
+    param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
+
+    model = MyModel(central_param, param_limits)
+    inference(model=model, data="my_data.csv")
+
+The parameter :py:attr:`data` can be a numpy-2d-array or a PathLike object that points to a CSV file. In the example shown above, the CSV file :file:`my_data.csv` should contain the data in the following format:
 
 .. code-block:: text
-   
-   # my_data.csv
 
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
-   ...
-   datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
+    ...
+    datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-which corresponds to a matrix with the shape `nSamples x dataDim`.
-The parameter dataPath defaults to `Data/<ModelName>/<ModelName>Data.csv`. The other parameters `numRuns`, `numWalkers`, `numSteps`, `numProcesses` have fixed defaults. The results are written to three files:
+This corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. For more available options and parameters for the :py:mod:`~epi.core.inference` method, please refer to the API documentation.
+Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
-* `./Applications/<ModelName>/OverallParams.csv`
-* `./Applications/<ModelName>/OverallSimResults.csv`
-* `./Applications/<ModelName>/OverallDensityEvals.csv`
+The results are stored in the following locations
 
-and contain the sampled parameters, the corresponding data points obtained from the model forward pass and the corresponding density evaluation.
+* :file:`./Applications/<ModelName>/.../OverallParams.csv`
+* :file:`./Applications/<ModelName>/.../OverallSimResults.csv`
+* :file:`./Applications/<ModelName>/.../OverallDensityEvals.csv`
+
+These files contain the sampled parameters, the corresponding data points obtained from the model forward pass, and the corresponding density evaluation.
 
 .. note::
    
    Please read the documentation for our :doc:`Examples </examples>`.
-
-.. TODO: move this ?
-
-.. You can also derive your model from
-
-.. * :py:class:`~epi.core.model.JaxModel`: The jacobian of your forward method is automatically calculated. Use jax.numpy instead of numpy for the forward method implementation!
-.. * :py:class:`~epi.core.model.SBMLModel`: The complete model is derived from the given sbml file. You don't need to define the Model manually.
-
-.. Optionally you can also inherit, and implement the abstract functions from
-
-.. * :py:class:`~epi.core.model.ArtificialModelInterface`: This allows you to check if the inversion algorithm is working for your model using the function :py:meth:`~epi.core.model.Model.test`.
-   
-.. * :py:class:`~epi.core.model.VisualizationModelInterface`: This allows you to plot the results of the data inference using the function :py:meth:`~epi.core.model.Model.plot`.
-
-.. .. warning:: TODO: The functions plot and test may not exist yet!!!
