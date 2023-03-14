@@ -43,6 +43,8 @@ You can build the library from the latest source code by following the [Developm
 To use EPI, derive your model from the `Model` class and implement the abstract functions. Here's an example code snippet:
 
 ```python
+# my_model.py
+
 import jax.numpy as jnp
 
 from epi.core.model import Model
