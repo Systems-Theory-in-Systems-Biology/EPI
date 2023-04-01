@@ -158,9 +158,9 @@ def run_dense_grid_evaluation(
 
     result_manager.save_overall(
         slice,
-        results[:, 0 : data.shape[1]],
-        results[:, data.shape[1] : data.shape[1] + slice.shape[0]],
-        results[:, data.shape[1] + slice.shape[0] :],
+        results[:, 0 : slice.shape[0]],
+        results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
+        results[:, slice.shape[0] + data.shape[1] :],
     )
 
 
