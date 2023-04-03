@@ -374,7 +374,12 @@ def inference_sparse_grid(
     slices: typing.List[np.ndarray],
     num_processes: int,
     numLevels: int = 5,
-):
+) -> typing.Tuple[
+    typing.Dict[str, np.ndarray],
+    typing.Dict[str, np.ndarray],
+    typing.Dict[str, np.ndarray],
+    ResultManager,
+]:
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
@@ -383,14 +388,19 @@ def inference_sparse_grid(
       num_processes(int): number of processes to use for parallel evaluation of the model.
       numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
+    Returns:
+        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
+        evaluations for each slice and the result manager used for the inference.
+
     """
 
     logger.warning(
         "The inference_sparse_grid function is not tested and not recommended for use."
     )
-
-    # Load data, data standard deviations and model characteristics for the specified model.
     data_stdevs = calc_kernel_width(data)
+
+    # create the return dictionaries
+    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
 
     for slice in slices:
         # build the sparse grid over [0,1]^param_dim
@@ -439,3 +449,17 @@ def inference_sparse_grid(
             results[:, data.shape[1] : data.shape[1] + slice.shape[0]],
             results[:, data.shape[1] + slice.shape[0] :],
         )
+        slice_name = result_manager.get_slice_name(slice)
+        overall_params[slice_name] = results[:, 0 : data.shape[1]]
+        overall_sim_results[slice_name] = results[
+            :, data.shape[1] : data.shape[1] + slice.shape[0]
+        ]
+        overall_density_evals[slice_name] = results[
+            :, data.shape[1] + slice.shape[0] :
+        ]
+    return (
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
+        result_manager,
+    )
