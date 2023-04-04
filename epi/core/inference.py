@@ -1,7 +1,7 @@
 import os
 import pathlib
 from enum import Enum
-from typing import Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 import jax.numpy as jnp
 import numpy as np
@@ -32,7 +32,12 @@ def inference(
     result_manager: ResultManager = None,
     continue_sampling: bool = False,
     **kwargs,
-) -> None:
+) -> Tuple[
+    Dict[str, np.ndarray],
+    Dict[str, np.ndarray],
+    Dict[str, np.ndarray],
+    ResultManager,
+]:
     """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
@@ -47,6 +52,8 @@ def inference(
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
+        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
+        evaluations for each slice and the result manager used for the inference.
 
     """
 
@@ -70,7 +77,7 @@ def inference(
     result_manager.create_application_folder_structure(model, slices)
 
     if inference_type == InferenceType.DENSE_GRID:
-        inference_dense_grid(
+        return inference_dense_grid(
             model=model,
             data=data,
             result_manager=result_manager,
@@ -79,7 +86,7 @@ def inference(
             **kwargs,
         )
     elif inference_type == InferenceType.MCMC:
-        inference_mcmc(
+        return inference_mcmc(
             model=model,
             data=data,
             result_manager=result_manager,
@@ -88,7 +95,7 @@ def inference(
             **kwargs,
         )
     elif inference_type == InferenceType.SPARSE_GRID:
-        inference_sparse_grid(
+        return inference_sparse_grid(
             model=model,
             data=data,
             result_manager=result_manager,

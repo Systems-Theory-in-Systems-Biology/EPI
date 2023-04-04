@@ -1,6 +1,6 @@
 from enum import Enum
 from multiprocessing import Pool
-from typing import Union
+from typing import Dict, Tuple, Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
@@ -80,7 +80,7 @@ def run_dense_grid_evaluation(
     dense_grid_type: DenseGridType,
     num_processes: int,
     load_balancing_safety_faktor: int,
-) -> None:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """This function runs a dense grid evaluation for the given model and data.
 
     Args:
@@ -94,6 +94,10 @@ def run_dense_grid_evaluation(
         load_balancing_safety_faktor(int): Split the grid into num_processes * load_balancing_safety_faktor chunks.
             This will ensure that each process can be loaded with a similar amount of work if the run time difference between the evaluations
             does not exceed the load_balancing_safety_faktor. (Default value = 4)
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the corresponding simulation results, the corresponding density
+        evaluations for the given slice.
 
     Raises:
         ValueError: If the dimension of the numbers of grid points does not match the number of parameters in the slice.
@@ -162,6 +166,11 @@ def run_dense_grid_evaluation(
         results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
         results[:, slice.shape[0] + data.shape[1] :],
     )
+    return (
+        results[:, 0 : slice.shape[0]],
+        results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
+        results[:, slice.shape[0] + data.shape[1] :],
+    )
 
 
 def inference_dense_grid(
@@ -173,7 +182,12 @@ def inference_dense_grid(
     num_grid_points: Union[int, list[np.ndarray]] = 10,
     dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     load_balancing_safety_faktor: int = 4,
-) -> None:
+) -> Tuple[
+    Dict[str, np.ndarray],
+    Dict[str, np.ndarray],
+    Dict[str, np.ndarray],
+    ResultManager,
+]:
     """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
 
     Args:
@@ -184,6 +198,10 @@ def inference_dense_grid(
         num_processes (int): The number of processes to be used for the inference.
         num_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
         load_balancing_safety_faktor (int, optional): Split the grid into num_processes * load_balancing_safety_faktor chunks. Defaults to 4.
+
+    Returns:
+        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
+        evaluations for each slice and the result manager used for the inference.
 
     Raises:
         TypeError: If the num_grid_points argument has the wrong type.
@@ -200,8 +218,16 @@ def inference_dense_grid(
         raise TypeError(
             f"The num_grid_points argument has to be either an int or a list of arrays. The passed argument was of type {type(num_grid_points)}"
         )
+    # create the return dictionaries
+    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
+
     for slice, n_points in zip(slices, num_grid_points):
-        run_dense_grid_evaluation(
+        slice_name = result_manager.get_slice_name(slice)
+        (
+            overall_params[slice_name],
+            overall_sim_results[slice_name],
+            overall_density_evals[slice_name],
+        ) = run_dense_grid_evaluation(
             model=model,
             data=data,
             slice=slice,
@@ -211,3 +237,9 @@ def inference_dense_grid(
             num_processes=num_processes,
             load_balancing_safety_faktor=load_balancing_safety_faktor,
         )
+    return (
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
+        result_manager,
+    )

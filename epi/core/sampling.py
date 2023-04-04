@@ -163,6 +163,7 @@ def run_emcee_sampling(
 
     Returns:
         typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
+        TODO check: are those really log probabilities?
 
     """
 
@@ -337,7 +338,12 @@ def inference_mcmc(
     num_walkers: int = 10,
     num_steps: int = 2500,
     calc_walker_acceptance_bool: bool = False,
-) -> None:
+) -> typing.Tuple[
+    typing.Dict[str, np.ndarray],
+    typing.Dict[str, np.ndarray],
+    typing.Dict[str, np.ndarray],
+    ResultManager,
+]:
     """This function runs a MCMC sampling for the given model and data.
 
     Args:
@@ -351,10 +357,21 @@ def inference_mcmc(
         num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
         calc_walker_acceptance_bool (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
 
+    Returns:
+        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
+        evaluations for each slice and the result manager used for the inference.
+
     """
+    # create the return dictionaries
+    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
 
     for slice in slices:
-        run_emcee_sampling(
+        slice_name = result_manager.get_slice_name(slice)
+        (
+            overall_params[slice_name],
+            overall_sim_results[slice_name],
+            overall_density_evals[slice_name],
+        ) = run_emcee_sampling(
             model=model,
             data=data,
             slice=slice,
@@ -364,9 +381,17 @@ def inference_mcmc(
             num_steps=num_steps,
             num_processes=num_processes,
         )
+
         if calc_walker_acceptance_bool:
             num_burn_in_steps = int(num_steps * 0.01)
             acceptance = calc_walker_acceptance(
                 model, slice, num_walkers, num_burn_in_steps, result_manager
             )
             logger.info(f"Acceptance rate for slice {slice}: {acceptance}")
+
+    return (
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
+        result_manager,
+    )
