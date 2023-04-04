@@ -119,12 +119,52 @@ class Stock(JaxModel):
                 x = iteration(x, param)
             return x
 
-        x = jnp.zeros(2)
-        time_course = [
-            repetition(x, param, n)
-            for n in [1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 4, 1, 1, 1, 3]
-        ]
-        return jnp.array([x[0] for x in time_course])
+        x0 = jnp.zeros(2)
+        x1 = repetition(x0, param, 1)
+        x2 = repetition(x1, param, 1)
+        x3 = repetition(x2, param, 1)
+        x4 = repetition(x3, param, 1)
+        x5 = repetition(x4, param, 3)
+        x6 = repetition(x5, param, 1)
+        x7 = repetition(x6, param, 1)
+        x8 = repetition(x7, param, 1)
+        x9 = repetition(x8, param, 1)
+        x10 = repetition(x9, param, 3)
+        x11 = repetition(x10, param, 1)
+        x12 = repetition(x11, param, 1)
+        x13 = repetition(x12, param, 1)
+        x14 = repetition(x13, param, 1)
+        x15 = repetition(x14, param, 4)
+        x16 = repetition(x15, param, 1)
+        x17 = repetition(x16, param, 1)
+        x18 = repetition(x17, param, 1)
+        x19 = repetition(x18, param, 3)
+
+        timeCourse = jnp.array(
+            [
+                x1,
+                x2,
+                x3,
+                x4,
+                x5,
+                x6,
+                x7,
+                x8,
+                x9,
+                x10,
+                x11,
+                x12,
+                x13,
+                x14,
+                x15,
+                x16,
+                x17,
+                x18,
+                x19,
+            ]
+        )
+
+        return timeCourse[:, 0]
 
 
 class StockArtificial(Stock, ArtificialModelInterface):
