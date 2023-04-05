@@ -1,7 +1,7 @@
-epi.core.transformations module
+epipy.core.transformations module
 ===============================
 
-.. automodule:: epi.core.transformations
+.. automodule:: epipy.core.transformations
    :members:
    :undoc-members:
    :show-inheritance:

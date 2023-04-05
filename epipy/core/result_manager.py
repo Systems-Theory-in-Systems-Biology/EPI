@@ -8,8 +8,8 @@ import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
 
-from epi import logger
-from epi.core.model import Model
+from epipy import logger
+from epipy.core.model import Model
 
 
 class ResultManager:

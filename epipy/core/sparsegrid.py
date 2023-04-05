@@ -14,11 +14,11 @@ from multiprocessing import Pool
 
 import numpy as np
 
-from epi import logger
-from epi.core.kde import calc_kernel_width
-from epi.core.model import Model
-from epi.core.result_manager import ResultManager
-from epi.core.transformations import eval_log_transformed_density
+from epipy import logger
+from epipy.core.kde import calc_kernel_width
+from epipy.core.model import Model
+from epipy.core.result_manager import ResultManager
+from epipy.core.transformations import eval_log_transformed_density
 
 
 def basis_1d(

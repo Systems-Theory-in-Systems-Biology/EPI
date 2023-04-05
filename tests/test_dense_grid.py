@@ -4,10 +4,10 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from epi.core.dense_grid import DenseGridType
-from epi.core.inference import InferenceType, inference
-from epi.core.model import Model
-from epi.examples.stock import StockArtificial
+from epipy.core.dense_grid import DenseGridType
+from epipy.core.inference import InferenceType, inference
+from epipy.core.model import Model
+from epipy.examples.stock import StockArtificial
 
 # Parametrize the test to run for each inference type
 

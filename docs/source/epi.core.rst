@@ -1,4 +1,4 @@
-epi.core package
+epipy.core package
 ================
 
 Submodules
@@ -7,19 +7,19 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   Dense Grid<epi.core.dense_grid>
-   Inference<epi.core.inference>
-   KDE<epi.core.kde>
-   Model<epi.core.model>
-   Result Manager<epi.core.result_manager>
-   Sampling<epi.core.sampling>
-   Sparse Grid<epi.core.sparsegrid>
-   Transformations<epi.core.transformations>
+   Dense Grid<epipy.core.dense_grid>
+   Inference<epipy.core.inference>
+   KDE<epipy.core.kde>
+   Model<epipy.core.model>
+   Result Manager<epipy.core.result_manager>
+   Sampling<epipy.core.sampling>
+   Sparse Grid<epipy.core.sparsegrid>
+   Transformations<epipy.core.transformations>
 
 Module contents
 ---------------
 
-.. automodule:: epi.core
+.. automodule:: epipy.core
    :members:
    :undoc-members:
    :show-inheritance:

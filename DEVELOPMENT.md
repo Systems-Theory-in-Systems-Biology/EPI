@@ -40,7 +40,7 @@
     sudo apt install pybind11-dev
     ```
 
-- Install epi:
+- Install epipy:
 
   ```bash
   poetry install --with=dev
@@ -103,7 +103,7 @@ coverage html
 
 ### Profiling with scalene
 
-You can profile epi with scalene (or gprofile) using the commands:
+You can profile epipy with scalene (or gprofile) using the commands:
 
 ```bash
 python3 -m pip install -U scalene
@@ -180,7 +180,7 @@ poetry publish -r testpypi
 Test this with
 
 ```bash
-python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epi
+python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps epipy
 ```
 
 ### Deployment with PyPi
@@ -200,7 +200,7 @@ poetry publish --build
 Test this with
 
 ```bash
-pip install epi
+pip install epipy
 ```
 
 ## Jax with CUDA

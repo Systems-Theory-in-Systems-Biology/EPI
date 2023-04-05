@@ -1,7 +1,7 @@
-epi.core.sampling module
+epipy.core.sampling module
 ========================
 
-.. automodule:: epi.core.sampling
+.. automodule:: epipy.core.sampling
    :members:
    :undoc-members:
    :show-inheritance:

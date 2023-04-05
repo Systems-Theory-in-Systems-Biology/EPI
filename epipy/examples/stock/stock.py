@@ -4,22 +4,11 @@ import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
 
-from epi import logger
-from epi.core.model import ArtificialModelInterface, JaxModel
+from epipy import logger
+from epipy.core.model import ArtificialModelInterface, JaxModel
+
 
 # Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022
-TICKERS = [
-    "ETF",
-    "Index1",
-    "Index2",
-    "Mutual",
-    "Stocks1",
-    "Stocks2",
-    "Stocks3",
-    "ETF50",  # First 50 tickers from ETF. Just for testing
-]
-
-
 class Stock(JaxModel):
     """Model simulating stock data."""
 

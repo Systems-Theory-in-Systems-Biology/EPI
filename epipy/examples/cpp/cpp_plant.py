@@ -1,7 +1,7 @@
 import numpy as np
 
-from epi.core.model import ArtificialModelInterface, Model
-from epi.examples.cpp import cpp_model
+from epipy.core.model import ArtificialModelInterface, Model
+from epipy.examples.cpp import cpp_model
 
 
 class CppPlant(Model, ArtificialModelInterface):

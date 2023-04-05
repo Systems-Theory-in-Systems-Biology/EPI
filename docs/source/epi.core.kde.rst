@@ -1,7 +1,7 @@
-epi.core.kde module
+epipy.core.kde module
 ===================
 
-.. automodule:: epi.core.kde
+.. automodule:: epipy.core.kde
    :members:
    :undoc-members:
    :show-inheritance:

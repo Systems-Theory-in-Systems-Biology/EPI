@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 from matplotlib import cm
 
-from epi.core.dense_grid import generate_regular_grid
-from epi.core.kde import calc_kernel_width, eval_kde_cauchy, eval_kde_gauss
+from epipy.core.dense_grid import generate_regular_grid
+from epipy.core.kde import calc_kernel_width, eval_kde_cauchy, eval_kde_gauss
 
 
 def kernel_estimators():
@@ -39,7 +39,7 @@ def test_calc_kernel_width():
 
 @pytest.mark.xfail(reason="Not implemented yet, contains false values")
 def test_kde_gauss():
-    from epi.core.kde import eval_kde_gauss
+    from epipy.core.kde import eval_kde_gauss
 
     data = np.array([[0.0], [2.0]])
     data_stdevs = calc_kernel_width(data)

@@ -1,7 +1,7 @@
-epi.jax\_extension module
+epipy.jax\_extension module
 =========================
 
-.. automodule:: epi.jax_extension
+.. automodule:: epipy.jax_extension
    :members:
    :undoc-members:
    :show-inheritance:

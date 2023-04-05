@@ -1,7 +1,7 @@
-epi.core.sparsegrid module
+epipy.core.sparsegrid module
 ==========================
 
-.. automodule:: epi.core.sparsegrid
+.. automodule:: epipy.core.sparsegrid
    :members:
    :undoc-members:
    :show-inheritance:

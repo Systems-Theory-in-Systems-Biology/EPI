@@ -2,7 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit
 
-from epi.core.model import ArtificialModelInterface, JaxModel, Model
+from epipy.core.model import ArtificialModelInterface, JaxModel, Model
 
 
 class JaxPlant(JaxModel, ArtificialModelInterface):

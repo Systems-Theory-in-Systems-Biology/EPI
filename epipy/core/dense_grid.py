@@ -5,10 +5,10 @@ from typing import Dict, Tuple, Union
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
-from epi.core.model import Model
-from epi.core.result_manager import ResultManager
-from epi.core.sampling import calc_kernel_width
-from epi.core.transformations import evaluate_density
+from epipy.core.model import Model
+from epipy.core.result_manager import ResultManager
+from epipy.core.sampling import calc_kernel_width
+from epipy.core.transformations import evaluate_density
 
 
 class DenseGridType(Enum):

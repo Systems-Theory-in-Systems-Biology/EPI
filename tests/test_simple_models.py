@@ -7,10 +7,10 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
-from epi.core.inference import InferenceType, inference
-from epi.core.kde import calc_kernel_width, eval_kde_gauss
-from epi.core.transformations import evaluate_density
-from epi.examples.simple_models import Exponential, Linear, LinearODE
+from epipy.core.inference import InferenceType, inference
+from epipy.core.kde import calc_kernel_width, eval_kde_gauss
+from epipy.core.transformations import evaluate_density
+from epipy.examples.simple_models import Exponential, Linear, LinearODE
 
 
 def test_transformationLinear():

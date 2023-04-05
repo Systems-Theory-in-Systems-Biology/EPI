@@ -4,5 +4,5 @@ EPI
 .. toctree::
    :maxdepth: 4
 
-   epi
+   epipy
    tests

@@ -1,4 +1,4 @@
-epi package
+epipy package
 ===========
 
 Subpackages
@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   Core<epi.core>
+   Core<epipy.core>
 
 Submodules
 ----------
@@ -15,12 +15,12 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   Jax Extension<epi.jax_extension>
+   Jax Extension<epipy.jax_extension>
 
 Module contents
 ---------------
 
-.. automodule:: epi
+.. automodule:: epipy
    :members:
    :undoc-members:
    :show-inheritance:

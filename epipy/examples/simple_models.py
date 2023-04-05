@@ -3,7 +3,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from epi.core.model import ArtificialModelInterface, JaxModel
+from epipy.core.model import ArtificialModelInterface, JaxModel
 
 
 class Linear(JaxModel, ArtificialModelInterface):

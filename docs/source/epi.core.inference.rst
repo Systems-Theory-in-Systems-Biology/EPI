@@ -1,7 +1,7 @@
-epi.core.inference module
+epipy.core.inference module
 =========================
 
-.. automodule:: epi.core.inference
+.. automodule:: epipy.core.inference
    :members:
    :undoc-members:
    :show-inheritance:

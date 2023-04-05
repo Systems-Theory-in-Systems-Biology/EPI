@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-from epi.core.model import ArtificialModelInterface, SBMLModel
+from epipy.core.model import ArtificialModelInterface, SBMLModel
 
 
 class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
@@ -22,7 +22,7 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
         **kwargs,
     ) -> None:
         sbml_file = importlib.resources.path(
-            "epi.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"
+            "epipy.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"
         )
         param_names = ["A", "B"]
         super().__init__(

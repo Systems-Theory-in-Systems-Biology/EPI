@@ -4,8 +4,8 @@ import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
 
-from epi import logger
-from epi.core.model import ArtificialModelInterface, JaxModel
+from epipy import logger
+from epipy.core.model import ArtificialModelInterface, JaxModel
 
 
 class Corona(JaxModel):

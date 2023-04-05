@@ -1,7 +1,7 @@
-epi.core.model module
+epipy.core.model module
 =====================
 
-.. automodule:: epi.core.model
+.. automodule:: epipy.core.model
    :members:
    :undoc-members:
    :show-inheritance:

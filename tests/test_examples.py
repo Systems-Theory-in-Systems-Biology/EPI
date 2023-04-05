@@ -6,11 +6,11 @@ import importlib
 
 import pytest
 
-from epi.core.inference import InferenceType, inference
-from epi.core.model import Model
+from epipy.core.inference import InferenceType, inference
+from epipy.core.model import Model
 
 cpp_plant_example = pytest.param(
-    ("epi.examples.cpp.cpp_plant", "CppPlant"),
+    ("epipy.examples.cpp.cpp_plant", "CppPlant"),
     marks=pytest.mark.xfail(
         True,
         reason="XFAIL means that the Cpp Library for the plant model ist not compiled yet",
@@ -21,22 +21,22 @@ cpp_plant_example = pytest.param(
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        ("epi.examples.stock", "Stock", "ETF50.csv"),
-        ("epi.examples.stock", "StockArtificial"),
-        ("epi.examples.corona", "Corona", "CoronaData.csv"),
-        ("epi.examples.corona", "CoronaArtificial"),
-        ("epi.examples.temperature", "Temperature", "TemperatureData.csv"),
-        ("epi.examples.temperature", "TemperatureArtificial"),
+        ("epipy.examples.stock", "Stock", "ETF50.csv"),
+        ("epipy.examples.stock", "StockArtificial"),
+        ("epipy.examples.corona", "Corona", "CoronaData.csv"),
+        ("epipy.examples.corona", "CoronaArtificial"),
+        ("epipy.examples.temperature", "Temperature", "TemperatureData.csv"),
+        ("epipy.examples.temperature", "TemperatureArtificial"),
         (
-            "epi.examples.temperature",
+            "epipy.examples.temperature",
             "TemperatureWithFixedParams",
             "TemperatureData.csv",
         ),
         cpp_plant_example,
-        ("epi.examples.cpp.python_reference_plants", "ExternalPlant"),
-        ("epi.examples.cpp.python_reference_plants", "JaxPlant"),
-        ("epi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-        ("epi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+        ("epipy.examples.cpp.python_reference_plants", "ExternalPlant"),
+        ("epipy.examples.cpp.python_reference_plants", "JaxPlant"),
+        ("epipy.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+        ("epipy.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
     ]:
         yield example
 

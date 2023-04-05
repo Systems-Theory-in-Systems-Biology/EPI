@@ -1,7 +1,7 @@
 <!-- # Euler Parameter Inference -->
 <h1></h1>
 
-![EPI](epi.png "logo")
+![EPI](https://github.com/Systems-Theory-in-Systems-Biology/EPI/blob/main/epi.png?raw=True "logo")
 
 <!-- The badges we want to display -->
 [![pages-build-deployment](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment)
@@ -33,7 +33,7 @@ EPI supports
 **IMPORTANT**: The package is not yet available on pypi.
 
 <!-- ```text
-pip install epi
+pip install epipy
 ``` -->
 
 You can build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
@@ -47,7 +47,7 @@ To use EPI, derive your model from the `Model` class and implement the abstract 
 
 import jax.numpy as jnp
 
-from epi.core.model import Model
+from epipy.core.model import Model
 
 class MyModel(Model):
 
@@ -64,7 +64,7 @@ class MyModel(Model):
 To evaluate the model and infer the parameter distribution, call:
 
 ```python
-from epi.sampling import inference
+from epipy.sampling import inference
 
 from my_model import MyModel
 
@@ -85,7 +85,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epi.core.html#module-epi.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
+This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epipy.core.html#module-epipy.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
 The results are stored in the following location:
 

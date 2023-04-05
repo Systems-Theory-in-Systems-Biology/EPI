@@ -9,7 +9,7 @@ import numpy as np
 from jax import jacrev, jit, vmap
 
 import amici
-from epi.jax_extension import value_and_jacrev
+from epipy.jax_extension import value_and_jacrev
 
 
 class Model(ABC):
@@ -67,13 +67,13 @@ class Model(ABC):
 
     @abstractmethod
     def jacobian(self, param: np.ndarray) -> np.ndarray:
-        """Evaluates the jacobian of the :func:`~epi.core.model.Model.forward` method.
+        """Evaluates the jacobian of the :func:`~epipy.core.model.Model.forward` method.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~epipy.core.model.Model.forward` method with respect to the parameters.
 
         """
         raise NotImplementedError
@@ -82,13 +82,13 @@ class Model(ABC):
         self, param: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-        it simply calls :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian`.
+        it simply calls :func:`~epipy.core.model.Model.forward` and :func:`~epipy.core.model.Model.jacobian`.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~epipy.core.model.Model.forward` method with respect to the parameters.
 
         """
 
@@ -106,7 +106,7 @@ class Model(ABC):
 
 class ArtificialModelInterface(ABC):
     """By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
-    and the corresponding artificial data dataset, which can be used to compare the results from epi with the ground truth.
+    and the corresponding artificial data dataset, which can be used to compare the results from epipy with the ground truth.
     The comparison can be done using the plotEmceeResults.
 
     """
@@ -239,7 +239,7 @@ class JaxModel(Model):
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~epi.core.model.Model.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~epipy.core.model.Model.forward` method with respect to the parameters.
 
         """
         return type(self).bw(param)
@@ -247,7 +247,7 @@ class JaxModel(Model):
     def forward_and_jacobian(
         self, param: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epi.core.model.Model.forward` and :func:`~epi.core.model.Model.jacobian` methods separately.
+        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~epipy.core.model.Model.forward` and :func:`~epipy.core.model.Model.jacobian` methods separately.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.

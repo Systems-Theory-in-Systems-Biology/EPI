@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epi`.
+This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`epipy`.
 The tutorial is divided in four sections:
 
 0. :ref:`Introduction`
@@ -10,7 +10,7 @@ The tutorial is divided in four sections:
 3. :ref:`Inference`
 
 .. .. note::
-..     The tutorial is based on the :py:class:`epi.examples.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
+..     The tutorial is based on the :py:class:`epipy.examples.temperature.Temperature` example model and uses the data in :file:`Data/TemperatureData.csv`.
 ..     Everything needed will be provided in the tutorial.
 
 Let's start!
@@ -49,7 +49,7 @@ From this data distribution the EPI algorithm derives the parameter distribution
     :width: 800
     :alt: The cycle described before as image.
 
-With this picture in mind, we can start to implement the temperature problem in epi.
+With this picture in mind, we can start to implement the temperature problem in epipy.
 
 
 
@@ -74,9 +74,9 @@ It has 455 datapoints with two dimensions each. Nonuniform data is not supported
 Define your model
 -----------------
 
-Next you need to define your model. The most basic way is to derive from the :py:class:`epi.core.model.Model` base class.
+Next you need to define your model. The most basic way is to derive from the :py:class:`epipy.core.model.Model` base class.
 
-.. literalinclude:: ../../../epi/examples/temperature/temperature.py
+.. literalinclude:: ../../../epipy/examples/temperature/temperature.py
   :language: python
   :pyobject: Temperature
 
@@ -87,10 +87,10 @@ Of course, you also need the imports:
     import importlib
     import jax.numpy as jnp
     import numpy as np
-    from epi.core.model import Model
+    from epipy.core.model import Model
 
-A model inhereting from :py:class:`~epi.core.model.Model` must implement the methods :py:meth:`~epi.core.model.Model.forward` and :py:meth:`~epi.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~epi.core.model.Model.getcentral_param` and :py:meth:`~epi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inhereting from :py:class:`~epipy.core.model.Model` must implement the methods :py:meth:`~epipy.core.model.Model.forward` and :py:meth:`~epipy.core.model.Model.jacobian`.
+In addition it must provide the methods :py:meth:`~epipy.core.model.Model.getcentral_param` and :py:meth:`~epipy.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
@@ -123,7 +123,7 @@ Now we can now use EPI to infer the parameter distribution from the data.
 
 .. code-block:: python
 
-    from epi.core.inference import inference
+    from epipy.core.inference import inference
 
     model = Temperature()
     inference(model, data = "TemperatureData.csv")
@@ -131,7 +131,7 @@ Now we can now use EPI to infer the parameter distribution from the data.
 Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
 You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/<run_nam>/<slice_name>/OverallSimResults.csv`.
-The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :py:func:`~epi.core.inference.inference` function.
+The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :py:func:`~epipy.core.inference.inference` function.
 
 .. .. code-block:: python
 
@@ -159,4 +159,4 @@ The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :
 
 .. .. code-block:: bash
 
-..     pip install epi
+..     pip install epipy
