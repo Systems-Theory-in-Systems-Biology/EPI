@@ -17,6 +17,12 @@ All notable changes to this project will be documented in this file.
 
 - Bug in module B that caused a crash
 
+## [0.1.3] - 2022-04-05
+
+### Changed
+
+- Updated dependencies
+
 ## [0.1.2] - 2022-04-05
 
 ### Fixed
