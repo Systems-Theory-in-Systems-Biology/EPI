@@ -1,4 +1,4 @@
-epipy.core package
+eulerpi.core package
 ================
 
 Submodules
@@ -7,19 +7,19 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   Dense Grid<epipy.core.dense_grid>
-   Inference<epipy.core.inference>
-   KDE<epipy.core.kde>
-   Model<epipy.core.model>
-   Result Manager<epipy.core.result_manager>
-   Sampling<epipy.core.sampling>
-   Sparse Grid<epipy.core.sparsegrid>
-   Transformations<epipy.core.transformations>
+   Dense Grid<eulerpi.core.dense_grid>
+   Inference<eulerpi.core.inference>
+   KDE<eulerpi.core.kde>
+   Model<eulerpi.core.model>
+   Result Manager<eulerpi.core.result_manager>
+   Sampling<eulerpi.core.sampling>
+   Sparse Grid<eulerpi.core.sparsegrid>
+   Transformations<eulerpi.core.transformations>
 
 Module contents
 ---------------
 
-.. automodule:: epipy.core
+.. automodule:: eulerpi.core
    :members:
    :undoc-members:
    :show-inheritance:

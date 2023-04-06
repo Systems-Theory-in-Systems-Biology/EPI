@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-from epipy.core.model import ArtificialModelInterface, SBMLModel
+from eulerpi.core.model import ArtificialModelInterface, SBMLModel
 
 
 class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
@@ -19,7 +19,7 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         **kwargs,
     ) -> None:
         sbml_file = importlib.resources.path(
-            "epipy.examples.sbml", "sbml_menten_model.xml"
+            "eulerpi.examples.sbml", "sbml_menten_model.xml"
         )
         param_names = ["Km", "kcat"]
         super().__init__(

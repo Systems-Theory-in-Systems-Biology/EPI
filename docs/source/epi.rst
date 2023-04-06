@@ -1,4 +1,4 @@
-epipy package
+eulerpi package
 ===========
 
 Subpackages
@@ -7,7 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   Core<epipy.core>
+   Core<eulerpi.core>
 
 Submodules
 ----------
@@ -15,12 +15,12 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   Jax Extension<epipy.jax_extension>
+   Jax Extension<eulerpi.jax_extension>
 
 Module contents
 ---------------
 
-.. automodule:: epipy
+.. automodule:: eulerpi
    :members:
    :undoc-members:
    :show-inheritance:

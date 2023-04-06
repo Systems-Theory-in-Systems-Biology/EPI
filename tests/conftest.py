@@ -22,4 +22,4 @@ def pytest_sessionstart(session):
 
     import logging
 
-    logging.getLogger("epipy").setLevel(LOGGING_LEVEL)
+    logging.getLogger("eulerpi").setLevel(LOGGING_LEVEL)

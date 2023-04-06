@@ -5,9 +5,9 @@ import importlib
 
 import pytest
 
-from epipy.core.inference import inference
-from epipy.core.model import Model
-from epipy.examples.temperature import TemperatureWithFixedParams
+from eulerpi.core.inference import inference
+from eulerpi.core.model import Model
+from eulerpi.examples.temperature import TemperatureWithFixedParams
 
 
 def temp_name(low_T, high_T):
@@ -36,7 +36,7 @@ def test_fixed_params(temperatures):
     """ """
     model: Model = TemperatureWithFixedParams(*temperatures)
     data = importlib.resources.path(
-        "epipy.examples.temperature", "TemperatureData.csv"
+        "eulerpi.examples.temperature", "TemperatureData.csv"
     )
 
     run_name = temp_name(*temperatures)

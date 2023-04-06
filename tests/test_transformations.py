@@ -2,9 +2,9 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from epipy.core.kde import calc_kernel_width, eval_kde_gauss
-from epipy.core.model import ArtificialModelInterface, JaxModel
-from epipy.core.transformations import calc_gram_determinant
+from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
+from eulerpi.core.model import ArtificialModelInterface, JaxModel
+from eulerpi.core.transformations import calc_gram_determinant
 
 
 def test_calc_gram_determinant():
@@ -50,7 +50,7 @@ class X2Model(JaxModel, ArtificialModelInterface):
 
 
 def test_evaluate_density(caplog):
-    from epipy.core.transformations import evaluate_density
+    from eulerpi.core.transformations import evaluate_density
 
     param = X2Model.CENTRAL_PARAM
     x2_model = X2Model()
@@ -87,7 +87,7 @@ def test_evaluate_density(caplog):
     param = np.array([2.1])
     # Other arguments would change too, but shouldn't matter for this test
     # set logger level to debug to see the warning
-    from epipy import logger
+    from eulerpi import logger
 
     logger.setLevel("INFO")
     density, _ = evaluate_density(param, x2_model, data, data_stdevs, slice)

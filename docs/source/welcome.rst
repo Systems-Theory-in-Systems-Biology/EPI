@@ -45,7 +45,7 @@ The package is available on pypi and can be installed with:
 
 .. code-block:: bash
    
-   pip install epipy
+   pip install eulerpi
 
 Make sure that you have the following C++ libraries installed:
 
@@ -59,7 +59,7 @@ You can also build the library from the latest source code by following the :doc
 How to start
 ------------
 
-.. To use EPI, derive your model from :py:class:`epipy.core.model.Model` and implement the abstract functions :py:meth:`~epipy.core.model.Model.forward` and :py:meth:`~epipy.core.model.Model.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~epipy.core.model.Model.data_dim` and :py:attr:`~epipy.core.model.Model.param_dim` of your model.
+.. To use EPI, derive your model from :py:class:`eulerpi.core.model.Model` and implement the abstract functions :py:meth:`~eulerpi.core.model.Model.forward` and :py:meth:`~eulerpi.core.model.Model.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~eulerpi.core.model.Model.data_dim` and :py:attr:`~eulerpi.core.model.Model.param_dim` of your model.
 
 To use EPI, derive your model from the Model class and implement the abstract functions. Here's an example code snippet:
 
@@ -68,7 +68,7 @@ To use EPI, derive your model from the Model class and implement the abstract fu
     # my_model.py
     import jax.numpy as jnp
 
-    from epipy.core.model import Model
+    from eulerpi.core.model import Model
 
     class MyModel(Model):
 
@@ -85,7 +85,7 @@ To evaluate the model and infer the parameter distribution, call:
 
 .. code-block:: python
 
-    from epipy.core.inference import inference
+    from eulerpi.core.inference import inference
 
     from my_model import MyModel
 
@@ -105,7 +105,7 @@ The parameter :py:attr:`data` can be a numpy-2d-array or a PathLike object that 
     ...
     datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-This corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. For more available options and parameters for the :py:mod:`~epipy.core.inference` method, please refer to the API documentation.
+This corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. For more available options and parameters for the :py:mod:`~eulerpi.core.inference` method, please refer to the API documentation.
 Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
 The results are stored in the following locations

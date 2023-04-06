@@ -17,6 +17,12 @@ All notable changes to this project will be documented in this file.
 
 - Bug in module B that caused a crash
 
+## [0.1.5] - 2022-04-06
+
+### Changed
+
+- Renamed epipy to eulerpi
+
 ## [0.1.4] - 2022-04-06
 
 ### Changed
