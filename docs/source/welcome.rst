@@ -41,15 +41,19 @@ EPI supports
 Installation
 ------------
 
-**Important**: The package is no yet available on pypi.
+The package is available on pypi and can be installed with: 
 
-..  and can be installed with: 
-
-.. .. code-block:: bash
+.. code-block:: bash
    
-..    pip install epipy
+   pip install epipy
 
-You can build the library from the latest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
+Make sure that you have the following C++ libraries installed:
+
+```bash
+sudo apt install -y swig libblas-dev libatlas-base-dev
+```
+
+You can also build the library from the latest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
 
 ------------
 How to start
