@@ -72,7 +72,16 @@ class Corona(JaxModel):
 
 
 class CoronaArtificial(Corona, ArtificialModelInterface):
-    param_limits = np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])
+    PARAM_LIMITS = np.array([[-2.5, -1.0], [-0.75, 0.75], [0.0, 1.5]])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = Corona.CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
 
     def generate_artificial_params(self, num_samples):
         lower_bound = np.array([-1.9, -0.1, 0.6])
