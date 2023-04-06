@@ -9,7 +9,6 @@
 """
 
 import typing
-from functools import partial
 
 import numpy as np
 from schwimmbad import MultiPool as Pool
@@ -18,7 +17,7 @@ from eulerpi import logger
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.transformations import eval_log_transformed_density
+from eulerpi.core.transformations import evaluate_density
 
 
 def basis_1d(
@@ -373,7 +372,7 @@ def inference_sparse_grid(
     result_manager: ResultManager,
     slices: typing.List[np.ndarray],
     num_processes: int,
-    numLevels: int = 5,
+    num_levels: int = 5,
 ) -> typing.Tuple[
     typing.Dict[str, np.ndarray],
     typing.Dict[str, np.ndarray],
@@ -386,7 +385,7 @@ def inference_sparse_grid(
       model(Model): The model describing the mapping from parameters to data.
       data(np.ndarray): The data to be used for inference.
       num_processes(int): number of processes to use for parallel evaluation of the model.
-      numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
+      num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     Returns:
         Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
@@ -404,7 +403,7 @@ def inference_sparse_grid(
 
     for slice in slices:
         # build the sparse grid over [0,1]^param_dim
-        grid = SparseGrid(slice.shape[0], numLevels)
+        grid = SparseGrid(slice.shape[0], num_levels)
 
         # get the model's parameter limits
         param_limits = model.param_limits
@@ -419,28 +418,23 @@ def inference_sparse_grid(
             (grid.n_points, slice.shape[0] + model.data_dim + 1)
         )
 
+        global evaluate_on_sparse_grid
+
+        def evaluate_on_sparse_grid(params):
+            return evaluate_density(params, model, data, data_stdevs, slice)
+
         # Create a pool of worker processes
         pool = Pool(processes=num_processes)
 
         # evaluate the probability density transformation for all sparse grid points in parallel
         parResults = pool.map(
-            partial(
-                eval_log_transformed_density,
-                model=model,
-                data=data,
-                data_stdevs=data_stdevs,
-                slice=slice,
-            ),
+            evaluate_on_sparse_grid,
             scaledSparseGridPoints,
         )
 
         # close the worker pool
         pool.close()
         pool.join()
-
-        # extract the parameter, simulation result and transformed density evaluation
-        for i in range(grid.n_points):
-            results[i, :] = parResults[i][1]
 
         # save the results
         result_manager.save_overall(

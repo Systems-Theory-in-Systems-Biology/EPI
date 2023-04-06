@@ -130,8 +130,7 @@ def run_dense_grid_evaluation(
     # Define a function which evaluates the density for a given grid chunk
     global evaluate_on_grid_chunk  # Needed to make this function pickleable
 
-    def evaluate_on_grid_chunk(args):
-        grid_chunk, model, data, data_stdevs, slice = args
+    def evaluate_on_grid_chunk(grid_chunk):
         # Init the result array
         evaluation_results = np.zeros(
             (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
@@ -149,10 +148,7 @@ def run_dense_grid_evaluation(
     for i, result in enumerate(
         pool.imap(
             evaluate_on_grid_chunk,
-            [
-                (grid_chunks[i], model, data, data_stdevs, slice)
-                for i in range(len(grid_chunks))
-            ],
+            grid_chunks,
         )
     ):
         results[grid_chunks_cumsum[i] : grid_chunks_cumsum[i + 1]] = result
