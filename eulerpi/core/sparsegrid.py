@@ -10,9 +10,9 @@
 
 import typing
 from functools import partial
-from multiprocessing import Pool
 
 import numpy as np
+from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.kde import calc_kernel_width

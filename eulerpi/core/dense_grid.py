@@ -1,9 +1,9 @@
 from enum import Enum
-from multiprocessing import Pool
 from typing import Dict, Tuple, Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
+from schwimmbad import MultiPool as Pool
 
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager

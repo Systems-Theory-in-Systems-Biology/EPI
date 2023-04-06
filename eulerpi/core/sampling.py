@@ -17,7 +17,7 @@ from os import path
 
 import emcee
 import numpy as np
-from schwimmbad import MultiPool
+from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.kde import calc_kernel_width
@@ -69,7 +69,7 @@ def run_emcee_once(
         )
         return s
 
-    pool = MultiPool(processes=num_processes)
+    pool = Pool(processes=num_processes)
 
     # define a custom move policy
     movePolicy = [
