@@ -61,7 +61,8 @@ def get_example_name(example):
 
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)
-def test_examples(example):
+@pytest.mark.parametrize("inference_type", list(InferenceType))
+def test_examples(example, inference_type):
     """
 
     Args:
@@ -98,15 +99,21 @@ def test_examples(example):
                 data
             )  # Download the actual stock data from the ticker list data from the internet
 
-    # Run inference
-    num_steps = 100
-    num_walkers = 12  # We choose 12 because then we have enough walkers for all examples. The higher the dimensionality of the model, the more walkers are needed.
+    # Define kwargs for inference
+    kwargs = {}
+    kwargs["inference_type"] = inference_type
+    if inference_type == InferenceType.MCMC:
+        kwargs["num_walkers"] = max(4, model.param_dim * 2)
+        kwargs["num_steps"] = 10
+    elif inference_type == InferenceType.DENSE_GRID:
+        kwargs["num_grid_points"] = 3
+    elif inference_type == InferenceType.SPARSE_GRID:
+        kwargs["num_levels"] = 3
+
     inference(
         model,
         data,
-        inference_type=InferenceType.MCMC,
-        num_walkers=num_walkers,
-        num_steps=num_steps,
+        **kwargs,
     )
 
     # TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models
