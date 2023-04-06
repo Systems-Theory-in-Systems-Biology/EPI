@@ -334,7 +334,7 @@ def inference_mcmc(
     result_manager: ResultManager,
     slices: list[np.ndarray],
     num_processes: int,
-    num_runs: int = 2,
+    num_runs: int = 1,
     num_walkers: int = 10,
     num_steps: int = 2500,
     calc_walker_acceptance_bool: bool = False,
@@ -352,7 +352,7 @@ def inference_mcmc(
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
-        num_runs (int, optional): The number of runs to be used for the inference. Defaults to 2.
+        num_runs (int, optional): The number of runs to be used for the inference. Defaults to 1.
         num_walkers (int, optional): The number of walkers to be used for the inference. Defaults to 10.
         num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
         calc_walker_acceptance_bool (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
@@ -383,7 +383,7 @@ def inference_mcmc(
         )
 
         if calc_walker_acceptance_bool:
-            num_burn_in_steps = int(num_steps * 0.01)
+            num_burn_in_steps = int(num_steps * num_runs * 0.01)
             acceptance = calc_walker_acceptance(
                 model, slice, num_walkers, num_burn_in_steps, result_manager
             )
