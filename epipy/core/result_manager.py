@@ -60,7 +60,7 @@ class ResultManager:
 
         """
 
-        return "Slice_" + "Q".join([str(i) for i in slice])
+        return "Slice_" + "".join(["Q" + str(i) for i in slice])
 
     def get_slice_path(self, slice: np.ndarray) -> str:
         """Returns the path to the folder where the results for the given slice are stored.
