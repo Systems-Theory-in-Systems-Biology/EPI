@@ -4,8 +4,8 @@ import jax.numpy as jnp
 import numpy as np
 import yfinance as yf
 
-from epipy import logger
-from epipy.core.model import ArtificialModelInterface, JaxModel
+from eulerpi import logger
+from eulerpi.core.model import ArtificialModelInterface, JaxModel
 
 
 # Ticker source: https://investexcel.net/all-yahoo-finance-stock-tickers/#google_vignette, Date:27.10.2022

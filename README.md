@@ -30,13 +30,19 @@ EPI supports
 
 ## Installation
 
-**IMPORTANT**: The package is not yet available on pypi.
+The package is available on pypi and can be installed with:
 
-<!-- ```text
-pip install epipy
-``` -->
+```bash
+pip install eulerpi
+```
 
-You can build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
+Make sure that you have the following C++ libraries installed
+
+```bash
+sudo apt install -y swig libblas-dev libatlas-base-dev
+```
+
+You can also build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).
 
 ## Using the library
 
@@ -47,7 +53,7 @@ To use EPI, derive your model from the `Model` class and implement the abstract 
 
 import jax.numpy as jnp
 
-from epipy.core.model import Model
+from eulerpi.core.model import Model
 
 class MyModel(Model):
 
@@ -64,7 +70,7 @@ class MyModel(Model):
 To evaluate the model and infer the parameter distribution, call:
 
 ```python
-from epipy.sampling import inference
+from eulerpi.sampling import inference
 
 from my_model import MyModel
 
@@ -85,7 +91,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 ```
 
-This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/epipy.core.html#module-epipy.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
+This corresponds to a matrix with the shape `nSamples x data_dim`. For more available options and parameters for the `inference` method, please refer to the [api documentation](https://systems-theory-in-systems-biology.github.io/EPI/eulerpi.core.html#module-eulerpi.core.inference). Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
 The results are stored in the following location:
 

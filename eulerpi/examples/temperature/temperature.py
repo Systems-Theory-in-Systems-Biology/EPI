@@ -4,7 +4,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from epipy.core.model import ArtificialModelInterface, Model
+from eulerpi.core.model import ArtificialModelInterface, Model
 
 # from functools import partial
 # from jax import jit
@@ -43,7 +43,7 @@ class Temperature(Model):
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
     def generate_artificial_params(self, num_data_points: int = -1):
         paramPath = importlib.resources.path(
-            "epipy.examples.temperature", "TemperatureArtificialParams.csv"
+            "eulerpi.examples.temperature", "TemperatureArtificialParams.csv"
         )
         true_param_sample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
         return true_param_sample

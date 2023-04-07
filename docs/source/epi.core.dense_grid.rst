@@ -1,7 +1,7 @@
-epipy.core.dense\_grid module
+eulerpi.core.dense\_grid module
 ===========================
 
-.. automodule:: epipy.core.dense_grid
+.. automodule:: eulerpi.core.dense_grid
    :members:
    :undoc-members:
    :show-inheritance:

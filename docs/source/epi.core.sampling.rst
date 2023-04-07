@@ -1,7 +1,7 @@
-epipy.core.sampling module
+eulerpi.core.sampling module
 ========================
 
-.. automodule:: epipy.core.sampling
+.. automodule:: eulerpi.core.sampling
    :members:
    :undoc-members:
    :show-inheritance:

@@ -6,11 +6,11 @@ import importlib
 
 import pytest
 
-from epipy.core.inference import InferenceType, inference
-from epipy.core.model import Model
+from eulerpi.core.inference import InferenceType, inference
+from eulerpi.core.model import Model
 
 cpp_plant_example = pytest.param(
-    ("epipy.examples.cpp.cpp_plant", "CppPlant"),
+    ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
     marks=pytest.mark.xfail(
         True,
         reason="XFAIL means that the Cpp Library for the plant model ist not compiled yet",
@@ -21,22 +21,22 @@ cpp_plant_example = pytest.param(
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        ("epipy.examples.stock", "Stock", "ETF50.csv"),
-        ("epipy.examples.stock", "StockArtificial"),
-        ("epipy.examples.corona", "Corona", "CoronaData.csv"),
-        ("epipy.examples.corona", "CoronaArtificial"),
-        ("epipy.examples.temperature", "Temperature", "TemperatureData.csv"),
-        ("epipy.examples.temperature", "TemperatureArtificial"),
+        ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
+        ("eulerpi.examples.stock", "StockArtificial"),
+        ("eulerpi.examples.corona", "Corona", "CoronaData.csv"),
+        ("eulerpi.examples.corona", "CoronaArtificial"),
+        ("eulerpi.examples.temperature", "Temperature", "TemperatureData.csv"),
+        ("eulerpi.examples.temperature", "TemperatureArtificial"),
         (
-            "epipy.examples.temperature",
+            "eulerpi.examples.temperature",
             "TemperatureWithFixedParams",
             "TemperatureData.csv",
         ),
         cpp_plant_example,
-        ("epipy.examples.cpp.python_reference_plants", "ExternalPlant"),
-        ("epipy.examples.cpp.python_reference_plants", "JaxPlant"),
-        ("epipy.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-        ("epipy.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+        ("eulerpi.examples.cpp.python_reference_plants", "ExternalPlant"),
+        ("eulerpi.examples.cpp.python_reference_plants", "JaxPlant"),
+        ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+        ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
     ]:
         yield example
 

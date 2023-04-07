@@ -2,11 +2,11 @@ import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 
-from epipy.core.dense_grid import generate_regular_grid
-from epipy.core.inference import InferenceType, inference
-from epipy.core.kde import calc_kernel_width, eval_kde_gauss
-from epipy.core.result_manager import ResultManager
-from epipy.examples.simple_models import LinearODE
+from eulerpi.core.dense_grid import generate_regular_grid
+from eulerpi.core.inference import InferenceType, inference
+from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
+from eulerpi.core.result_manager import ResultManager
+from eulerpi.examples.simple_models import LinearODE
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...

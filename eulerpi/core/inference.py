@@ -6,11 +6,11 @@ from typing import Dict, Optional, Tuple, Union
 import jax.numpy as jnp
 import numpy as np
 
-from epipy.core.dense_grid import inference_dense_grid
-from epipy.core.model import Model
-from epipy.core.result_manager import ResultManager
-from epipy.core.sampling import inference_mcmc
-from epipy.core.sparsegrid import inference_sparse_grid
+from eulerpi.core.dense_grid import inference_dense_grid
+from eulerpi.core.model import Model
+from eulerpi.core.result_manager import ResultManager
+from eulerpi.core.sampling import inference_mcmc
+from eulerpi.core.sparsegrid import inference_sparse_grid
 
 
 # Define an enum for the inference types: DenseGrid, MCMC

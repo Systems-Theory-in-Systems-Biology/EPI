@@ -4,10 +4,10 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from epipy.core.dense_grid import DenseGridType
-from epipy.core.inference import InferenceType, inference
-from epipy.core.model import Model
-from epipy.examples.stock import StockArtificial
+from eulerpi.core.dense_grid import DenseGridType
+from eulerpi.core.inference import InferenceType, inference
+from eulerpi.core.model import Model
+from eulerpi.examples.stock import StockArtificial
 
 # Parametrize the test to run for each inference type
 

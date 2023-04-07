@@ -4,9 +4,9 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jit
 
-from epipy import logger
-from epipy.core.kde import eval_kde_gauss
-from epipy.core.model import Model
+from eulerpi import logger
+from eulerpi.core.kde import eval_kde_gauss
+from eulerpi.core.model import Model
 
 
 def evaluate_density(
