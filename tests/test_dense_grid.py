@@ -9,12 +9,11 @@ from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.model import Model
 from eulerpi.examples.stock import StockArtificial
 
+
 # Parametrize the test to run for each inference type
-
-
 @pytest.mark.parametrize(
     "dense_grid_type",
-    DenseGridType._member_map_.values(),
+    list(DenseGridType),
     ids=DenseGridType._member_names_,
 )
 def test_dense_grid(dense_grid_type):
@@ -39,4 +38,5 @@ def test_dense_grid(dense_grid_type):
         inference_type=InferenceType.DENSE_GRID,
         slices=slices,
         dense_grid_type=dense_grid_type,
+        num_grid_points=4,
     )
