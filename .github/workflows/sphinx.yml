@@ -42,7 +42,6 @@ jobs:
       - name: Build documentation
         run: |
           cd docs
-          mkdir build && cd build
           poetry run make html
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
