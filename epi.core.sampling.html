@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>epi.core.sampling module &mdash; EPI  documentation</title>
+  <title>eulerpi.core.sampling module &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -23,9 +23,7 @@
         <script src="_static/copybutton.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="epi.core.sparsegrid module" href="epi.core.sparsegrid.html" />
-    <link rel="prev" title="epi.core.result_manager module" href="epi.core.result_manager.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,45 +47,8 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API DOC</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="epi.html">epi package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="epi.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="epi.core.html">Core</a><ul class="current">
-<li class="toctree-l5 current"><a class="reference internal" href="epi.core.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l6"><a class="reference internal" href="epi.core.dense_grid.html">Dense Grid</a></li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.inference.html">Inference</a></li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.kde.html">KDE</a></li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.model.html">Model</a></li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.result_manager.html">Result Manager</a></li>
-<li class="toctree-l6 current"><a class="current reference internal" href="#">Sampling</a><ul>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.NUM_RUNS"><code class="docutils literal notranslate"><span class="pre">NUM_RUNS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.NUM_WALKERS"><code class="docutils literal notranslate"><span class="pre">NUM_WALKERS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.NUM_STEPS"><code class="docutils literal notranslate"><span class="pre">NUM_STEPS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.NUM_PROCESSES"><code class="docutils literal notranslate"><span class="pre">NUM_PROCESSES</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.calc_walker_acceptance"><code class="docutils literal notranslate"><span class="pre">calc_walker_acceptance()</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.concatenate_emcee_sampling_results"><code class="docutils literal notranslate"><span class="pre">concatenate_emcee_sampling_results()</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.inference_mcmc"><code class="docutils literal notranslate"><span class="pre">inference_mcmc()</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.run_emcee_once"><code class="docutils literal notranslate"><span class="pre">run_emcee_once()</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#epi.core.sampling.run_emcee_sampling"><code class="docutils literal notranslate"><span class="pre">run_emcee_sampling()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.sparsegrid.html">Sparse Grid</a></li>
-<li class="toctree-l6"><a class="reference internal" href="epi.core.transformations.html">Transformations</a></li>
-</ul>
-</li>
-<li class="toctree-l5"><a class="reference internal" href="epi.core.html#module-epi.core">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="epi.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="epi.html#module-epi">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API DOC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_material/tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Example Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/development.html">Development</a></li>
@@ -111,10 +72,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">EPI</a></li>
-          <li class="breadcrumb-item"><a href="epi.html">epi package</a></li>
-          <li class="breadcrumb-item"><a href="epi.core.html">epi.core package</a></li>
-      <li class="breadcrumb-item active">epi.core.sampling module</li>
+      <li class="breadcrumb-item active">eulerpi.core.sampling module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/epi.core.sampling.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -124,13 +82,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-epi.core.sampling">
-<span id="epi-core-sampling-module"></span><h1>epi.core.sampling module<a class="headerlink" href="#module-epi.core.sampling" title="Permalink to this heading"></a></h1>
-<p>Sampling methods for the EPI package.</p>
+  <section id="eulerpi-core-sampling-module">
+<h1>eulerpi.core.sampling module<a class="headerlink" href="#eulerpi-core-sampling-module" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-eulerpi.core.sampling"></span><p>Sampling methods for the EPI package.</p>
 <p>This module provides functions to handle the sampling in EPI. It is based on the emcee package.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="epi.core.sampling.NUM_RUNS">
-<span class="sig-name descname"><span class="pre">NUM_RUNS</span></span><a class="headerlink" href="#epi.core.sampling.NUM_RUNS" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_RUNS">
+<span class="sig-name descname"><span class="pre">NUM_RUNS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_RUNS" title="Permalink to this definition"></a></dt>
 <dd><p>Default number of runs of the emcee sampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -140,8 +98,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="epi.core.sampling.NUM_WALKERS">
-<span class="sig-name descname"><span class="pre">NUM_WALKERS</span></span><a class="headerlink" href="#epi.core.sampling.NUM_WALKERS" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_WALKERS">
+<span class="sig-name descname"><span class="pre">NUM_WALKERS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_WALKERS" title="Permalink to this definition"></a></dt>
 <dd><p>Default number of walkers in the emcee sampler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -151,8 +109,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="epi.core.sampling.NUM_STEPS">
-<span class="sig-name descname"><span class="pre">NUM_STEPS</span></span><a class="headerlink" href="#epi.core.sampling.NUM_STEPS" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_STEPS">
+<span class="sig-name descname"><span class="pre">NUM_STEPS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_STEPS" title="Permalink to this definition"></a></dt>
 <dd><p>Default number of steps each walker performs before storing the sub run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -162,8 +120,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="epi.core.sampling.NUM_PROCESSES">
-<span class="sig-name descname"><span class="pre">NUM_PROCESSES</span></span><a class="headerlink" href="#epi.core.sampling.NUM_PROCESSES" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_PROCESSES">
+<span class="sig-name descname"><span class="pre">NUM_PROCESSES</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_PROCESSES" title="Permalink to this definition"></a></dt>
 <dd><p>Default number of parallel threads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -173,18 +131,18 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="epi.core.sampling.calc_walker_acceptance">
-<span class="sig-name descname"><span class="pre">calc_walker_acceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_burn_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#epi.core.sampling.calc_walker_acceptance" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.calc_walker_acceptance">
+<span class="sig-name descname"><span class="pre">calc_walker_acceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_burn_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.sampling.calc_walker_acceptance" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the acceptance ratio for each individual walker of the emcee chain.
 This is especially important to find “zombie” walkers, that are never moving.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><em>Model</em></a>) – The model for which the acceptance ratio should be calculated</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model for which the acceptance ratio should be calculated</p></li>
 <li><p><strong>slice</strong> (<em>np.ndarray</em>) – slice for which the acceptance ratio should be calculated</p></li>
 <li><p><strong>num_walkers</strong> (<em>int</em>) – number of walkers in the emcee chain</p></li>
 <li><p><strong>num_burn_samples</strong> (<em>int</em>) – number of samples that were ignored at the beginning of each chain</p></li>
-<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager to load the results from</p></li>
+<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager to load the results from</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -197,8 +155,8 @@ This is especially important to find “zombie” walkers, that are never moving
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="epi.core.sampling.concatenate_emcee_sampling_results">
-<span class="sig-name descname"><span class="pre">concatenate_emcee_sampling_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#epi.core.sampling.concatenate_emcee_sampling_results" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.concatenate_emcee_sampling_results">
+<span class="sig-name descname"><span class="pre">concatenate_emcee_sampling_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.sampling.concatenate_emcee_sampling_results" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.</dt><dd><p>These files are later used for result visualization.</p>
 </dd>
@@ -206,8 +164,8 @@ This is especially important to find “zombie” walkers, that are never moving
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><em>Model</em></a>) – The model for which the results should be concatenated</p></li>
-<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager to load the results from</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model for which the results should be concatenated</p></li>
+<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager to load the results from</p></li>
 <li><p><strong>slice</strong> (<em>np.ndarray</em>) – slice for which the results should be concatenated</p></li>
 </ul>
 </dd>
@@ -221,15 +179,15 @@ This is especially important to find “zombie” walkers, that are never moving
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="epi.core.sampling.inference_mcmc">
-<span class="sig-name descname"><span class="pre">inference_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_walker_acceptance_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#epi.core.sampling.inference_mcmc" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.inference_mcmc">
+<span class="sig-name descname"><span class="pre">inference_mcmc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_walker_acceptance_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.sampling.inference_mcmc" title="Permalink to this definition"></a></dt>
 <dd><p>This function runs a MCMC sampling for the given model and data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><em>Model</em></a>) – The model describing the mapping from parameters to data.</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model describing the mapping from parameters to data.</p></li>
 <li><p><strong>data</strong> (<em>np.ndarray</em>) – The data to be used for the inference.</p></li>
-<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – The result manager to be used for the inference.</p></li>
+<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – The result manager to be used for the inference.</p></li>
 <li><p><strong>slices</strong> (<em>np.ndarray</em>) – A list of slices to be used for the inference.</p></li>
 <li><p><strong>num_processes</strong> (<em>int</em>) – The number of processes to be used for the inference.</p></li>
 <li><p><strong>num_runs</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of runs to be used for the inference. Defaults to 2.</p></li>
@@ -238,17 +196,24 @@ This is especially important to find “zombie” walkers, that are never moving
 <li><p><strong>calc_walker_acceptance_bool</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The parameter samples, the corresponding simulation results, the corresponding density
+evaluations for each slice and the result manager used for the inference.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[<em>Dict</em>[str, np.ndarray], <em>Dict</em>[str, np.ndarray], <em>Dict</em>[str, np.ndarray], <a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager">ResultManager</a>]</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="epi.core.sampling.run_emcee_once">
-<span class="sig-name descname"><span class="pre">run_emcee_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_stdevs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_walker_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#epi.core.sampling.run_emcee_once" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.run_emcee_once">
+<span class="sig-name descname"><span class="pre">run_emcee_once</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_stdevs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_walker_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#eulerpi.core.sampling.run_emcee_once" title="Permalink to this definition"></a></dt>
 <dd><p>Run the emcee particle swarm sampler once.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><em>Model</em></a>) – The model which will be sampled</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model which will be sampled</p></li>
 <li><p><strong>data</strong> (<em>np.ndarray</em>) – data</p></li>
 <li><p><strong>data_stdevs</strong> (<em>np.ndarray</em>) – kernel width for the data</p></li>
 <li><p><strong>slice</strong> (<em>np.ndarray</em>) – slice of the parameter space which will be sampled</p></li>
@@ -268,8 +233,8 @@ This is especially important to find “zombie” walkers, that are never moving
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="epi.core.sampling.run_emcee_sampling">
-<span class="sig-name descname"><span class="pre">run_emcee_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#epi.core.sampling.run_emcee_sampling" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.sampling.run_emcee_sampling">
+<span class="sig-name descname"><span class="pre">run_emcee_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.sampling.run_emcee_sampling" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.</dt><dd><p>Inital values are not stored in the chain and each file contains &lt;num_steps&gt; blocks of size num_walkers.</p>
 </dd>
@@ -277,10 +242,10 @@ This is especially important to find “zombie” walkers, that are never moving
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><em>Model</em></a>) – The model which will be sampled</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model which will be sampled</p></li>
 <li><p><strong>data</strong> (<em>np.ndarray</em>) – data</p></li>
 <li><p><strong>slice</strong> (<em>np.ndarray</em>) – slice of the parameter space which will be sampled</p></li>
-<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#epi.core.result_manager.ResultManager" title="epi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager which will store the results</p></li>
+<li><p><strong>result_manager</strong> (<a class="reference internal" href="epi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><em>ResultManager</em></a>) – ResultManager which will store the results</p></li>
 <li><p><strong>num_processes</strong> (<em>int</em>) – number of parallel threads.</p></li>
 <li><p><strong>num_runs</strong> (<em>int</em>) – number of stored sub runs.</p></li>
 <li><p><strong>num_walkers</strong> (<em>int</em>) – number of particles in the particle swarm sampler.</p></li>
@@ -288,7 +253,8 @@ This is especially important to find “zombie” walkers, that are never moving
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Array with all params, array with all data, array with all log probabilities</p>
+<dd class="field-even"><p>Array with all params, array with all data, array with all log probabilities
+TODO check: are those really log probabilities?</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>Tuple</em>[np.ndarray, np.ndarray, np.ndarray]</p>
@@ -301,10 +267,7 @@ This is especially important to find “zombie” walkers, that are never moving
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="epi.core.result_manager.html" class="btn btn-neutral float-left" title="epi.core.result_manager module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="epi.core.sparsegrid.html" class="btn btn-neutral float-right" title="epi.core.sparsegrid module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

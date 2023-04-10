@@ -2,14 +2,14 @@ C++ Model
 ---------
 Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python :py:class:`~epi.core.model.Model` class.
+call C++ code from your python :py:class:`~eulerpi.core.model.Model` class.
 It is primarily intended for fast implementations of the `forward` and `jacobian` method.
 
 Specialities
 ____________
 
 * Calling C++ Code: Calls external c++ code using pybind11
-* Performance Comparison: The file :file:`epi/examples/cpp/python_reference_plants.py` includes
+* Performance Comparison: The file :file:`eulerpi/examples/cpp/python_reference_plants.py` includes
   python models implementing the same mapping. You can compare the performance of the different approaches.
 
 Preparation
@@ -25,13 +25,13 @@ ___________
 C++ Model Definition
 ____________________
 
-.. literalinclude:: ../../../epi/examples/cpp/cpp_model.hpp
+.. literalinclude:: ../../../eulerpi/examples/cpp/cpp_model.hpp
   :language: c++
 
 Wrapping the C++ Code
 _____________________
 
-.. literalinclude:: ../../../epi/examples/cpp/wrapper.cpp
+.. literalinclude:: ../../../eulerpi/examples/cpp/wrapper.cpp
   :language: c++
 
 The example code is inconsistent in the following way:
@@ -53,7 +53,7 @@ ___________
 
 .. code-block:: bash
 
-    cd /epi/examples/cpp/
+    cd /eulerpi/examples/cpp/
     mkdir build && cd build
     cmake ..
     make -j
@@ -61,7 +61,7 @@ ___________
 Python Side Model
 _________________
 
-.. literalinclude:: ../../../epi/examples/cpp/cpp_plant.py
+.. literalinclude:: ../../../eulerpi/examples/cpp/cpp_plant.py
     :language: python
 
 You can use the cpp example model as template for your own C++ Model.

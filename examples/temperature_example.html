@@ -98,7 +98,7 @@
              
   <section id="temperature-model">
 <h1>Temperature Model<a class="headerlink" href="#temperature-model" title="Permalink to this heading"></a></h1>
-<p>The temperature model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/temperature/temperature.py</span></code>.
+<p>The temperature model is contained in <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/temperature/temperature.py</span></code>.
 The model <span class="math notranslate nohighlight">\(y(q)=60 \cos(q)-30=s(q)\)</span> describes the temperature for a place on the earth <span class="math notranslate nohighlight">\(y\)</span> by using the latitude coordinates <span class="math notranslate nohighlight">\(q\)</span>.
 The jacobian <span class="math notranslate nohighlight">\({\frac{dy}{dq}}(q_i)=-60 \sin(q_i)\)</span> can be calculated analytically.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -137,7 +137,7 @@ The jacobian <span class="math notranslate nohighlight">\({\frac{dy}{dq}}(q_i)=-
 <li><p>Additional fixed parameters: The model includes fixed parameters <code class="code docutils literal notranslate"><span class="pre">self.low_T=30.0</span></code> and <code class="code docutils literal notranslate"><span class="pre">self.high_T=30.0</span></code>.
 These fixed parameters are passed to the forward function separately. You can create models with different parameters by
 creating several model objects.</p>
-<p>The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">run_name</span></code> of the <a class="reference internal" href="../epi.core.inference.html#epi.core.inference.inference" title="epi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
+<p>The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">run_name</span></code> of the <a class="reference internal" href="../epi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
 </li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TemperatureWithFixedParams</span><span class="p">(</span><span class="n">Temperature</span><span class="p">):</span>
@@ -172,7 +172,7 @@ creating several model objects.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">TemperatureWithFixedParams</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-        <span class="s2">&quot;epi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
+        <span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
     <span class="p">)</span>
 
     <span class="n">run_name</span> <span class="o">=</span> <span class="n">temp_name</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>

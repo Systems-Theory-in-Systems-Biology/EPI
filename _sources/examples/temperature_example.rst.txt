@@ -1,10 +1,10 @@
 Temperature Model
 -----------------
-The temperature model is contained in :file:`epi/examples/temperature/temperature.py`.
+The temperature model is contained in :file:`eulerpi/examples/temperature/temperature.py`.
 The model :math:`y(q)=60 \cos(q)-30=s(q)` describes the temperature for a place on the earth :math:`y` by using the latitude coordinates :math:`q`.
 The jacobian :math:`{\frac{dy}{dq}}(q_i)=-60 \sin(q_i)` can be calculated analytically.
 
-.. literalinclude:: ../../../epi/examples/temperature/temperature.py
+.. literalinclude:: ../../../eulerpi/examples/temperature/temperature.py
   :language: python
   :pyobject: Temperature
 
@@ -15,9 +15,9 @@ ____________
   These fixed parameters are passed to the forward function separately. You can create models with different parameters by
   creating several model objects.
 
-  The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute :py:attr:`run_name` of the :py:func:`~epi.core.inference.inference` function.
+  The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute :py:attr:`run_name` of the :py:func:`~eulerpi.core.inference.inference` function.
 
-.. literalinclude:: ../../../epi/examples/temperature/temperature.py
+.. literalinclude:: ../../../eulerpi/examples/temperature/temperature.py
   :language: python
   :pyobject: TemperatureWithFixedParams
 
@@ -28,5 +28,5 @@ ____________
 
 .. note::
 
-  The functions :py:meth:`~epi.examples.temperature.temperature.TemperatureWithFixedParams.calc_forward` is not strictly necessary.
+  The functions :py:meth:`~eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.calc_forward` is not strictly necessary.
   However it can help to make it work with jax.

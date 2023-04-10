@@ -1,7 +1,7 @@
-epi.jax\_extension module
+eulerpi.jax\_extension module
 =========================
 
-.. automodule:: epi.jax_extension
+.. automodule:: eulerpi.jax_extension
    :members:
    :undoc-members:
    :show-inheritance:

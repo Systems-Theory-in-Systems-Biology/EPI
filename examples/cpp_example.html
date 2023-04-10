@@ -104,13 +104,13 @@
 <h1>C++ Model<a class="headerlink" href="#c-model" title="Permalink to this heading"></a></h1>
 <p>Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
+call C++ code from your python <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
 It is primarily intended for fast implementations of the <cite>forward</cite> and <cite>jacobian</cite> method.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Calling C++ Code: Calls external c++ code using pybind11</p></li>
-<li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">epi/examples/cpp/python_reference_plants.py</span></code> includes
+<li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/cpp/python_reference_plants.py</span></code> includes
 python models implementing the same mapping. You can compare the performance of the different approaches.</p></li>
 </ul>
 </section>
@@ -227,7 +227,7 @@ numpy 1d/2d arrays will be used.</p>
 </section>
 <section id="compilation">
 <h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/epi/examples/cpp/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/eulerpi/examples/cpp/
 mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
 cmake<span class="w"> </span>..
 make<span class="w"> </span>-j
@@ -238,8 +238,8 @@ make<span class="w"> </span>-j
 <h2>Python Side Model<a class="headerlink" href="#python-side-model" title="Permalink to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">epi.examples.cpp</span> <span class="kn">import</span> <span class="n">cpp_model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.cpp</span> <span class="kn">import</span> <span class="n">cpp_model</span>
 
 
 <span class="k">class</span> <span class="nc">CppPlant</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>

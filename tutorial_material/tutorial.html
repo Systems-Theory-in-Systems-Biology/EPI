@@ -93,7 +93,7 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
-<p>This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">epi</span></code>.
+<p>This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">eulerpi</span></code>.
 The tutorial is divided in four sections:</p>
 <ol class="arabic simple" start="0">
 <li><p><a class="reference internal" href="#introduction"><span class="std std-ref">Introduction</span></a></p></li>
@@ -115,7 +115,7 @@ To solve the inverse problem, EPI uses the multi-dimension transformation formul
 EPI start with discrete data points as input and derives a continous distribution using Kernel Density Estimation (KDE) techniques.
 From this data distribution the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.</p>
 <a class="reference internal image-reference" href="../_images/real_data.png"><img alt="The cycle described before as image." src="../_images/real_data.png" style="width: 800px;" /></a>
-<p>With this picture in mind, we can start to implement the temperature problem in epi.</p>
+<p>With this picture in mind, we can start to implement the temperature problem in eulerpi.</p>
 </section>
 <section id="define-your-data">
 <h2>Define your data<a class="headerlink" href="#define-your-data" title="Permalink to this heading"></a></h2>
@@ -133,7 +133,7 @@ It has 455 datapoints with two dimensions each. Nonuniform data is not supported
 </section>
 <section id="define-your-model">
 <h2>Define your model<a class="headerlink" href="#define-your-model" title="Permalink to this heading"></a></h2>
-<p>Next you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">epi.core.model.Model</span></code></a> base class.</p>
+<p>Next you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.model.Model</span></code></a> base class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
@@ -168,10 +168,10 @@ It has 455 datapoints with two dimensions each. Nonuniform data is not supported
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
 </pre></div>
 </div>
-<p>A model inhereting from <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model" title="epi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> must implement the methods <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.forward" title="epi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
+<p>A model inhereting from <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> must implement the methods <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
 In addition it must provide the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">getcentral_param()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code> to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.</p>
 <div class="admonition important">
@@ -196,7 +196,7 @@ Additionally, JaxModel will use the jit compiler to speed up the calculation of 
 <section id="inference">
 <h2>Inference<a class="headerlink" href="#inference" title="Permalink to this heading"></a></h2>
 <p>Now we can now use EPI to infer the parameter distribution from the data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">epi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">Temperature</span><span class="p">()</span>
 <span class="n">inference</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">)</span>
@@ -205,7 +205,7 @@ Additionally, JaxModel will use the jit compiler to speed up the calculation of 
 <p>Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
 You can find them in the folder <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/</span></code>. The final results are stored in the file <code class="file docutils literal notranslate"><span class="pre">Applications/Temperature/&lt;run_nam&gt;/&lt;slice_name&gt;/OverallSimResults.csv</span></code>.
-The <code class="docutils literal notranslate"><span class="pre">slice_name</span></code> results from the optional parameter <code class="xref py py-attr docutils literal notranslate"><span class="pre">slice</span></code> of the <a class="reference internal" href="../epi.core.inference.html#epi.core.inference.inference" title="epi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
+The <code class="docutils literal notranslate"><span class="pre">slice_name</span></code> results from the optional parameter <code class="xref py py-attr docutils literal notranslate"><span class="pre">slice</span></code> of the <a class="reference internal" href="../epi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This tutorial is also available as a jupyter notebook: <a class="reference download internal" download="" href="../_downloads/b26f650c0461a419ef5723fe36ef909e/tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Temperature</span> <span class="pre">Tutorial</span></code></a>.</p>

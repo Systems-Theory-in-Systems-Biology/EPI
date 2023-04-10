@@ -97,14 +97,14 @@
              
   <section id="corona-ode-model">
 <h1>Corona ODE Model<a class="headerlink" href="#corona-ode-model" title="Permalink to this heading"></a></h1>
-<p>A corona ode model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/corona/corona.py</span></code>.</p>
+<p>A corona ode model is contained in <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/corona/corona.py</span></code>.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>ODE solver: To solve the ODE problem the jax based ode solver library <code class="code docutils literal notranslate"><span class="pre">diffrax</span></code> is used: <a class="reference external" href="https://github.com/patrick-kidger/diffrax">https://github.com/patrick-kidger/diffrax</a>.</p></li>
-<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
-which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
-<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
+<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
+which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
+<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
 This usually results in a significant execution speedup. It also allows to run your model on the gpu.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Corona</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>

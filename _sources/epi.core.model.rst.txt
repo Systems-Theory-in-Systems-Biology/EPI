@@ -1,7 +1,7 @@
-epi.core.model module
+eulerpi.core.model module
 =====================
 
-.. automodule:: epi.core.model
+.. automodule:: eulerpi.core.model
    :members:
    :undoc-members:
    :show-inheritance:

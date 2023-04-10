@@ -1,7 +1,7 @@
-epi.core.kde module
+eulerpi.core.kde module
 ===================
 
-.. automodule:: epi.core.kde
+.. automodule:: eulerpi.core.kde
    :members:
    :undoc-members:
    :show-inheritance:

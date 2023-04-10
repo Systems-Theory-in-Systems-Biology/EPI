@@ -97,15 +97,15 @@
              
   <section id="stock-data-model">
 <h1>Stock Data Model<a class="headerlink" href="#stock-data-model" title="Permalink to this heading"></a></h1>
-<p>A high-dimensional stock data model is contained in <code class="file docutils literal notranslate"><span class="pre">epi/examples/stock/stock.py</span></code>.</p>
+<p>A high-dimensional stock data model is contained in <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/stock/stock.py</span></code>.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>External Data Source: The model loads stock data from the web.</p></li>
 <li><p>High-Dimensional: The model has a high number of dimensions: data_dim = 19, param_dim = 6. The samples emcee strongly recommended to use at least 12 walkers for this model.</p></li>
-<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
-which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#epi.core.model.Model.jacobian" title="epi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
-<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#epi.core.model.JaxModel" title="epi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
+<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
+which automatically calculates sets <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
+<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
 This usually results in a significant execution speedup. It also allows to run your model on the gpu.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Stock</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
@@ -207,12 +207,52 @@ This usually results in a significant execution speedup. It also allows to run y
                 <span class="n">x</span> <span class="o">=</span> <span class="n">iteration</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">x</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">time_course</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">repetition</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="p">]</span>
-        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">time_course</span><span class="p">])</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x3</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x4</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x5</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x4</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">x6</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x5</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x7</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x6</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x8</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x7</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x9</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x8</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x10</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x9</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">x11</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x10</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x12</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x11</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x13</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x12</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x14</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x13</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x15</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x14</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">x16</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x15</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x17</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x16</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x18</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x17</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x19</span> <span class="o">=</span> <span class="n">repetition</span><span class="p">(</span><span class="n">x18</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">timeCourse</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">x1</span><span class="p">,</span>
+                <span class="n">x2</span><span class="p">,</span>
+                <span class="n">x3</span><span class="p">,</span>
+                <span class="n">x4</span><span class="p">,</span>
+                <span class="n">x5</span><span class="p">,</span>
+                <span class="n">x6</span><span class="p">,</span>
+                <span class="n">x7</span><span class="p">,</span>
+                <span class="n">x8</span><span class="p">,</span>
+                <span class="n">x9</span><span class="p">,</span>
+                <span class="n">x10</span><span class="p">,</span>
+                <span class="n">x11</span><span class="p">,</span>
+                <span class="n">x12</span><span class="p">,</span>
+                <span class="n">x13</span><span class="p">,</span>
+                <span class="n">x14</span><span class="p">,</span>
+                <span class="n">x15</span><span class="p">,</span>
+                <span class="n">x16</span><span class="p">,</span>
+                <span class="n">x17</span><span class="p">,</span>
+                <span class="n">x18</span><span class="p">,</span>
+                <span class="n">x19</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">timeCourse</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>

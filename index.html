@@ -109,8 +109,15 @@
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
-<p><strong>Important</strong>: The package is no yet available on pypi.</p>
-<p>You can build the library from the latest source code by following the <a class="reference internal" href="MarkdownLinks/development.html"><span class="doc">Development Quickstart Guide</span></a>.</p>
+<p>The package is available on pypi and can be installed with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>eulerpi
+</pre></div>
+</div>
+<p>Make sure that you have the following C++ libraries installed:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">-y</span> <span class="pre">swig</span> <span class="pre">libblas-dev</span> <span class="pre">libatlas-base-dev</span>
+<span class="pre">`</span></code></p>
+<p>You can also build the library from the latest source code by following the <a class="reference internal" href="MarkdownLinks/development.html"><span class="doc">Development Quickstart Guide</span></a>.</p>
 </section>
 <section id="how-to-start">
 <h2>How to start<a class="headerlink" href="#how-to-start" title="Permalink to this heading"></a></h2>
@@ -118,7 +125,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># my_model.py</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 
-<span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
 
 <span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
@@ -133,7 +140,7 @@
 </pre></div>
 </div>
 <p>To evaluate the model and infer the parameter distribution, call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">epi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
 
 <span class="kn">from</span> <span class="nn">my_model</span> <span class="kn">import</span> <span class="n">MyModel</span>
 
@@ -152,7 +159,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 </pre></div>
 </div>
-<p>This corresponds to a matrix with the shape <code class="xref py py-attr docutils literal notranslate"><span class="pre">nSamples</span></code> x <code class="xref py py-attr docutils literal notranslate"><span class="pre">data_dim</span></code>. For more available options and parameters for the <a class="reference internal" href="epi.core.inference.html#module-epi.core.inference" title="epi.core.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference</span></code></a> method, please refer to the API documentation.
+<p>This corresponds to a matrix with the shape <code class="xref py py-attr docutils literal notranslate"><span class="pre">nSamples</span></code> x <code class="xref py py-attr docutils literal notranslate"><span class="pre">data_dim</span></code>. For more available options and parameters for the <a class="reference internal" href="epi.core.inference.html#module-eulerpi.core.inference" title="eulerpi.core.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference</span></code></a> method, please refer to the API documentation.
 Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).</p>
 <p>The results are stored in the following locations</p>
 <ul class="simple">
@@ -169,7 +176,6 @@ Note that the inference can be done with grid-based methods (dense grids, sparse
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API DOC</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="epi.html">epi package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
 </ul>
 </li>
@@ -207,7 +213,12 @@ Note that the inference can be done with grid-based methods (dense grids, sparse
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/changelog.html">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#unreleased">[Unreleased]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#xx">[0.1.0] - 2022-03-xx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id1">[0.1.5] - 2022-04-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id3">[0.1.4] - 2022-04-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id5">[0.1.3] - 2022-04-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id7">[0.1.2] - 2022-04-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id9">[0.1.1] - 2022-04-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarkdownLinks/changelog.html#id11">[0.1.0] - 2022-04-05</a></li>
 </ul>
 </li>
 </ul>

@@ -97,9 +97,9 @@
              
   <section id="sbml-models">
 <h1>SBML Models<a class="headerlink" href="#sbml-models" title="Permalink to this heading"></a></h1>
-<p>The <a class="reference internal" href="../epi.core.model.html#epi.core.model.SBMLModel" title="epi.core.model.SBMLModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SBMLModel</span></code></a> loads a biological model from an external file written in the sbml standard format.
+<p>The <a class="reference internal" href="../epi.core.model.html#eulerpi.core.model.SBMLModel" title="eulerpi.core.model.SBMLModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SBMLModel</span></code></a> loads a biological model from an external file written in the sbml standard format.
 It generates the forward and jacobian method automatically and derives the parameter and data dimension from the sbml model.</p>
-<p>The two example models are included in <code class="file docutils literal notranslate"><span class="pre">epi/examples/sbml/</span></code>.</p>
+<p>The two example models are included in <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/sbml/</span></code>.</p>
 <section id="specialities">
 <h2>Specialities<a class="headerlink" href="#specialities" title="Permalink to this heading"></a></h2>
 <ul class="simple">
@@ -107,8 +107,8 @@ It generates the forward and jacobian method automatically and derives the param
 <li><p>No need to write any model code</p></li>
 </ul>
 <p>Here’s a code snippet to load your own sbml model and to do the parameter inference:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">epi.core.model</span> <span class="kn">import</span> <span class="n">SBMLModel</span>
-<span class="kn">from</span> <span class="nn">epi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">SBMLModel</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">SBMLModel</span><span class="p">(</span><span class="s1">&#39;model.xml&#39;</span><span class="p">,</span> <span class="n">central_param</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">param_limits</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]],</span> <span class="n">param_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">,</span> <span class="s1">&#39;k2&#39;</span><span class="p">])</span>
 <span class="n">model</span><span class="o">.</span><span class="n">inference</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
