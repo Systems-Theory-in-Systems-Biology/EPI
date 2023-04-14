@@ -1,4 +1,5 @@
 # TODO: Import Path from pathlib?
+import json
 import os
 import shutil
 from os import path
@@ -9,6 +10,8 @@ import seedir
 from seedir import FakeDir, FakeFile
 
 from eulerpi import logger
+from eulerpi.core.dense_grid_types import DenseGridType
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
 
 
@@ -271,14 +274,168 @@ class ResultManager:
             delimiter=",",
         )
 
+    def save_inference_information(
+        self,
+        slice: np.ndarray,
+        model: Model,
+        inference_type: InferenceType,
+        num_processes: int,
+        **kwargs,
+    ) -> None:
+        """Saves the information about the inference run.
+
+        Args:
+            slice(np.ndarray): The slice for which the results will be saved.
+            model(Model): The model for which the results will be saved.
+            inference_type(InferenceType): The type of inference that was performed.
+            num_processes(int): The number of processes that were used for the inference.
+            **kwargs: Additional information about the inference run.
+
+        Raises:
+            ValueError: If the inference type is unknown.
+
+        """
+        if inference_type == InferenceType.MCMC:
+            self.save_mcmc_information(slice, model, num_processes, **kwargs)
+        elif inference_type == InferenceType.DENSE_GRID:
+            self.save_dense_grid_information(
+                slice, model, num_processes, **kwargs
+            )
+        elif inference_type == InferenceType.SPARSE_GRID:
+            self.save_sparse_grid_information(
+                slice, model, num_processes, **kwargs
+            )
+        else:
+            raise ValueError("Unknown inference type.")
+
+    def save_mcmc_information(
+        self,
+        slice: np.ndarray,
+        model: Model,
+        num_processes: int,
+        num_runs: int,
+        num_walkers: int,
+        num_steps: int,
+        num_burn_in_samples: int,
+        thinning_factor: int,
+    ) -> None:
+        """Saves the information about the MCMC inference run.
+
+        Args:
+            slice(np.ndarray): The slice for which the results will be saved.
+            model(Model): The model for which the results will be saved.
+            num_processes(int): The number of processes that were used for the inference.
+            num_runs(int): The number of runs that were performed.
+            num_walkers(int): The number of walkers that were used.
+            num_steps(int): The number of steps that were performed.
+            num_burn_in_samples(int): The number of samples that were ignored.
+            thinning_factor(int): The thinning factor that was used to thin the Markov chain.
+
+        """
+        results_path = self.get_slice_path(slice)
+        # Save the information about the inference run in a json file.
+        with open(
+            results_path + "/inference_information.json", "w", encoding="utf-8"
+        ) as f:
+            json.dump(
+                {
+                    "model": model.name,
+                    "slice": str(slice),
+                    "inference_type": InferenceType.MCMC.name,
+                    "num_processes": num_processes,
+                    "num_runs": num_runs,
+                    "num_walkers": num_walkers,
+                    "num_steps": num_steps,
+                    "num_burn_in_samples": num_burn_in_samples,
+                    "thinning_factor": thinning_factor,
+                },
+                f,
+                ensure_ascii=False,
+                indent=4,
+            )
+
+    def save_dense_grid_information(
+        self,
+        slice: np.ndarray,
+        model: Model,
+        num_processes: int,
+        load_balancing_safety_faktor: int,
+        num_grid_points: np.ndarray,
+        dense_grid_type: DenseGridType,
+    ) -> None:
+        """Saves the information about the dense grid inference run.
+
+        Args:
+            slice(np.ndarray): The slice for which the results will be saved.
+            model(Model): The model for which the results will be saved.
+            num_processes(int): The number of processes that were used for the inference.
+            load_balancing_safety_faktor(int): The safety factor that was used for load balancing.
+            num_grid_points(np.ndarray): The number of grid points that were used.
+            dense_grid_type(DenseGridType): The type of dense grid that was used: either equidistant or chebyshev.
+
+        """
+        results_path = self.get_slice_path(slice)
+        # Save the information about the inference run in a json file.
+        with open(
+            results_path + "/inference_information.json", "w", encoding="utf-8"
+        ) as f:
+            json.dump(
+                {
+                    "model": model.name,
+                    "slice": str(slice),
+                    "inference_type": InferenceType.DENSE_GRID.name,
+                    "num_processes": num_processes,
+                    "load_balancing_safety_faktor": load_balancing_safety_faktor,
+                    "num_grid_points": np.array2string(num_grid_points),
+                    "dense_grid_type": dense_grid_type.name,
+                },
+                f,
+                ensure_ascii=False,
+                indent=4,
+            )
+
+    def save_sparse_grid_information(
+        self,
+        slice: np.ndarray,
+        model: Model,
+        num_processes: int,
+        num_levels: int,
+    ) -> None:
+        """Saves the information about the sparse grid inference run.
+
+        Args:
+            slice(np.ndarray): The slice for which the results will be saved.
+            model(Model): The model for which the results will be saved.
+            num_processes(int): The number of processes that were used for the inference.
+            num_levels(int): The number of sparse grid levels that were used.
+
+        """
+        results_path = self.get_slice_path(slice)
+        # Save the information about the inference run in a json file.
+        with open(
+            results_path + "/inference_information.json", "w", encoding="utf-8"
+        ) as f:
+            json.dump(
+                {
+                    "model": model.name,
+                    "slice": str(slice),
+                    "inference_type": InferenceType.SPARSE_GRID.name,
+                    "num_processes": num_processes,
+                    "num_levels": num_levels,
+                },
+                f,
+                ensure_ascii=False,
+                indent=4,
+            )
+
     def load_sim_results(
-        self, slice: np.ndarray, num_burn_samples: int, occurrence: int
+        self, slice: np.ndarray, num_burn_in_samples: int, occurrence: int
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Load the files generated by the EPI algorithm through sampling
 
         Args:
             slice(np.ndarray): Slice for which the results will be loaded
-            num_burn_samples(int): Ignore the first samples of each chain
+            num_burn_in_samples(int): Ignore the first samples of each chain
             occurrence(int): step of sampling from chains
 
         Returns:
@@ -290,15 +447,15 @@ class ResultManager:
         density_evals = np.loadtxt(
             results_path + "/overall_density_evals.csv",
             delimiter=",",
-        )[num_burn_samples::occurrence]
+        )[num_burn_in_samples::occurrence]
         sim_results = np.loadtxt(
             results_path + "/overall_sim_results.csv",
             delimiter=",",
             ndmin=2,
-        )[num_burn_samples::occurrence, :]
+        )[num_burn_in_samples::occurrence, :]
         param_chain = np.loadtxt(
             results_path + "/overall_params.csv",
             delimiter=",",
             ndmin=2,
-        )[num_burn_samples::occurrence, :]
-        return density_evals, sim_results, param_chain
+        )[num_burn_in_samples::occurrence, :]
+        return param_chain, sim_results, density_evals

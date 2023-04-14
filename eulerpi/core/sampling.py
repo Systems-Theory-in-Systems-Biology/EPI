@@ -20,6 +20,7 @@ import numpy as np
 from schwimmbad import MultiPool
 
 from eulerpi import logger
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
@@ -147,8 +148,8 @@ def run_emcee_sampling(
     num_runs: int,
     num_walkers: int,
     num_steps: int,
-    num_burn_in_samples: typing.Optional[int] = None,
-    thinning_factor: typing.Optional[int] = None,
+    num_burn_in_samples: int,
+    thinning_factor: int,
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
        Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
@@ -162,20 +163,14 @@ def run_emcee_sampling(
         num_runs (int): number of stored sub runs.
         num_walkers (int): number of particles in the particle swarm sampler.
         num_steps (int): number of samples each particle performs before storing the sub run.
-        num_burn_in_samples (int, optional): number of samples to be discarded as burn-in. Defaults to None means a burn in of 10% of the total number of samples.
-        thinning_factor (int, optional): thinning factor for the samples. Defaults to None means no thinning.
+        num_burn_in_samples (int): number of samples to be discarded as burn-in.
+        thinning_factor (int): thinning factor for the samples.
 
     Returns:
         typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
         TODO check: are those really log probabilities?
 
     """
-    # Set default values for burn in and thinning factor
-    if num_burn_in_samples is None:
-        num_burn_in_samples = int(num_runs * num_walkers * num_steps * 0.1)
-    if thinning_factor is None:
-        thinning_factor = 1
-
     # Calculate the standard deviation of the data for each dimension
     data_stdevs = calc_kernel_width(data)
     sampling_dim = slice.shape[0]
@@ -299,7 +294,7 @@ def calc_walker_acceptance(
     model: Model,
     slice: np.ndarray,
     num_walkers: int,
-    num_burn_samples: int,
+    num_burn_in_samples: int,
     result_manager: ResultManager,
 ):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
@@ -309,7 +304,7 @@ def calc_walker_acceptance(
         model (Model): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
         num_walkers (int): number of walkers in the emcee chain
-        num_burn_samples (int): number of samples that were ignored at the beginning of each chain
+        num_burn_in_samples (int): number of samples that were ignored at the beginning of each chain
         result_manager (ResultManager): ResultManager to load the results from
 
     Returns:
@@ -322,7 +317,7 @@ def calc_walker_acceptance(
         result_manager.get_slice_path(slice) + "/overall_params.csv",
         delimiter=",",
         ndmin=2,
-    )[num_burn_samples:, :]
+    )[num_burn_in_samples:, :]
 
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
@@ -383,6 +378,12 @@ def inference_mcmc(
         evaluations for each slice and the result manager used for the inference.
 
     """
+    # Set default values for burn in and thinning factor
+    if num_burn_in_samples is None:
+        num_burn_in_samples = int(num_runs * num_walkers * num_steps * 0.1)
+    if thinning_factor is None:
+        thinning_factor = 1
+
     # create the return dictionaries
     overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
 
@@ -403,6 +404,17 @@ def inference_mcmc(
             num_burn_in_samples=num_burn_in_samples,
             thinning_factor=thinning_factor,
             num_processes=num_processes,
+        )
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.MCMC,
+            num_processes=num_processes,
+            num_runs=num_runs,
+            num_walkers=num_walkers,
+            num_steps=num_steps,
+            num_burn_in_samples=num_burn_in_samples,
+            thinning_factor=thinning_factor,
         )
 
         if calc_walker_acceptance_bool:
