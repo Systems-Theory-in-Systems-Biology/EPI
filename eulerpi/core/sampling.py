@@ -71,15 +71,15 @@ def run_emcee_once(
 
     pool = MultiPool(processes=num_processes)
 
-    # define a custom move policy
-    movePolicy = [
-        (emcee.moves.WalkMove(), 0.1),
-        (emcee.moves.StretchMove(), 0.1),
-        (
-            emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
-            0.8,
-        ),
-    ]
+    # define a custom move policy if needed
+    # movePolicy = [
+    #    (emcee.moves.WalkMove(), 0.1),
+    #    (emcee.moves.StretchMove(), 0.1),
+    #    (
+    #        emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
+    #        0.8,
+    #    ),
+    #]
     # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
     sampling_dim = slice.shape[0]
 
@@ -91,7 +91,7 @@ def run_emcee_once(
             # eval_log_transformed_density,
             work,
             pool=pool,
-            moves=movePolicy,
+            # moves=movePolicy,
             # args=[model, data, data_stdevs, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
