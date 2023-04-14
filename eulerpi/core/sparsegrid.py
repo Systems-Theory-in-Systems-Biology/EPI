@@ -15,6 +15,7 @@ from multiprocessing import Pool
 import numpy as np
 
 from eulerpi import logger
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
@@ -373,7 +374,7 @@ def inference_sparse_grid(
     result_manager: ResultManager,
     slices: typing.List[np.ndarray],
     num_processes: int,
-    numLevels: int = 5,
+    num_levels: int = 5,
 ) -> typing.Tuple[
     typing.Dict[str, np.ndarray],
     typing.Dict[str, np.ndarray],
@@ -386,7 +387,7 @@ def inference_sparse_grid(
       model(Model): The model describing the mapping from parameters to data.
       data(np.ndarray): The data to be used for inference.
       num_processes(int): number of processes to use for parallel evaluation of the model.
-      numLevels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
+      num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     Returns:
         Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
@@ -404,7 +405,7 @@ def inference_sparse_grid(
 
     for slice in slices:
         # build the sparse grid over [0,1]^param_dim
-        grid = SparseGrid(slice.shape[0], numLevels)
+        grid = SparseGrid(slice.shape[0], num_levels)
 
         # get the model's parameter limits
         param_limits = model.param_limits
@@ -457,6 +458,14 @@ def inference_sparse_grid(
         overall_density_evals[slice_name] = results[
             :, data.shape[1] + slice.shape[0] :
         ]
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.DENSE_GRID,
+            num_processes=num_processes,
+            num_levels=num_levels,
+        )
+
     return (
         overall_params,
         overall_sim_results,
