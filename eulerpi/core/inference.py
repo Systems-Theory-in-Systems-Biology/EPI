@@ -56,6 +56,9 @@ def inference(
             f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(data)}."
         )
 
+    # TODO Calculate Transformation to normalize data and normalize data, create transformation object
+    # TODO rename std_dev to kernel_width, adapt calculation of kernel width
+
     slices = slices or [
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
@@ -67,6 +70,7 @@ def inference(
         result_manager.delete_application_folder_structure(model, slices)
     result_manager.create_application_folder_structure(model, slices)
 
+    # TODO give transformation object to inference functions
     if inference_type == InferenceType.DENSE_GRID:
         return inference_dense_grid(
             model=model,
