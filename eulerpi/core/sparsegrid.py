@@ -413,21 +413,16 @@ def inference_sparse_grid(
             param_limits[slice, 1] - param_limits[slice, 0]
         )
 
-        # allocate Memory for the parameters, their simulation evaluation and their probability density
-        results = np.zeros(
-            (grid.n_points, slice.shape[0] + model.data_dim + 1)
-        )
-
         global evaluate_on_sparse_grid
 
         def evaluate_on_sparse_grid(params):
-            return evaluate_density(params, model, data, data_stdevs, slice)
+            return evaluate_density(params, model, data, data_stdevs, slice)[1]
 
         # Create a pool of worker processes
         pool = Pool(processes=num_processes)
 
         # evaluate the probability density transformation for all sparse grid points in parallel
-        parResults = pool.map(
+        results = pool.map(
             evaluate_on_sparse_grid,
             scaledSparseGridPoints,
         )
@@ -435,6 +430,9 @@ def inference_sparse_grid(
         # close the worker pool
         pool.close()
         pool.join()
+
+        # convert the results to a numpy array
+        results = np.concatenate(results)
 
         # save the results
         result_manager.save_overall(
