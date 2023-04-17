@@ -20,6 +20,7 @@ import numpy as np
 from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
@@ -63,6 +64,7 @@ def run_emcee_once(
 
     global work
 
+    # TODO Give transformation object to eval function
     def work(params):
         s = eval_log_transformed_density(
             params, model, data, data_stdevs, slice
@@ -71,15 +73,15 @@ def run_emcee_once(
 
     pool = Pool(processes=num_processes)
 
-    # define a custom move policy
-    movePolicy = [
-        (emcee.moves.WalkMove(), 0.1),
-        (emcee.moves.StretchMove(), 0.1),
-        (
-            emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
-            0.8,
-        ),
-    ]
+    # define a custom move policy if needed
+    # movePolicy = [
+    #    (emcee.moves.WalkMove(), 0.1),
+    #    (emcee.moves.StretchMove(), 0.1),
+    #    (
+    #        emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
+    #        0.8,
+    #    ),
+    # ]
     # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
     sampling_dim = slice.shape[0]
 
@@ -91,7 +93,7 @@ def run_emcee_once(
             # eval_log_transformed_density,
             work,
             pool=pool,
-            moves=movePolicy,
+            # moves=movePolicy,
             # args=[model, data, data_stdevs, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
@@ -147,6 +149,8 @@ def run_emcee_sampling(
     num_runs: int,
     num_walkers: int,
     num_steps: int,
+    num_burn_in_samples: int,
+    thinning_factor: int,
 ) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
        Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
@@ -160,13 +164,15 @@ def run_emcee_sampling(
         num_runs (int): number of stored sub runs.
         num_walkers (int): number of particles in the particle swarm sampler.
         num_steps (int): number of samples each particle performs before storing the sub run.
+        num_burn_in_samples (int): number of samples to be discarded as burn-in.
+        thinning_factor (int): thinning factor for the samples.
 
     Returns:
         typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
         TODO check: are those really log probabilities?
 
     """
-
+    # Calculate the standard deviation of the data for each dimension
     data_stdevs = calc_kernel_width(data)
     sampling_dim = slice.shape[0]
     central_param = model.central_param
@@ -221,9 +227,16 @@ def run_emcee_sampling(
         overall_density_evals,
     ) = concatenate_emcee_sampling_results(model, result_manager, slice)
     result_manager.save_overall(
-        slice, overall_params, overall_sim_results, overall_density_evals
+        slice,
+        overall_params[num_burn_in_samples::thinning_factor, :],
+        overall_sim_results[num_burn_in_samples::thinning_factor, :],
+        overall_density_evals[num_burn_in_samples::thinning_factor],
     )
-    return overall_params, overall_sim_results, overall_density_evals
+    return (
+        overall_params[num_burn_in_samples::thinning_factor, :],
+        overall_sim_results[num_burn_in_samples::thinning_factor, :],
+        overall_density_evals[num_burn_in_samples::thinning_factor],
+    )
 
 
 # TODO: Make this a method of the ResultManager? It uses the ResultManager to load the results and many hard coded paths.
@@ -282,7 +295,7 @@ def calc_walker_acceptance(
     model: Model,
     slice: np.ndarray,
     num_walkers: int,
-    num_burn_samples: int,
+    num_burn_in_samples: int,
     result_manager: ResultManager,
 ):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
@@ -292,7 +305,7 @@ def calc_walker_acceptance(
         model (Model): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
         num_walkers (int): number of walkers in the emcee chain
-        num_burn_samples (int): number of samples that were ignored at the beginning of each chain
+        num_burn_in_samples (int): number of samples that were ignored at the beginning of each chain
         result_manager (ResultManager): ResultManager to load the results from
 
     Returns:
@@ -305,7 +318,7 @@ def calc_walker_acceptance(
         result_manager.get_slice_path(slice) + "/overall_params.csv",
         delimiter=",",
         ndmin=2,
-    )[num_burn_samples:, :]
+    )[num_burn_in_samples:, :]
 
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
@@ -337,6 +350,8 @@ def inference_mcmc(
     num_runs: int = 1,
     num_walkers: int = 10,
     num_steps: int = 2500,
+    num_burn_in_samples: typing.Optional[int] = None,
+    thinning_factor: typing.Optional[int] = None,
     calc_walker_acceptance_bool: bool = False,
 ) -> typing.Tuple[
     typing.Dict[str, np.ndarray],
@@ -352,9 +367,11 @@ def inference_mcmc(
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
-        num_runs (int, optional): The number of runs to be used for the inference. Defaults to 1.
-        num_walkers (int, optional): The number of walkers to be used for the inference. Defaults to 10.
+        num_runs (int, optional): The number of runs to be used for the inference. For each run except the first, all walkers continue with the end position of the previous run - this parameter does not affect the number of Markov chains, but how often results for each chain are saved. Defaults to 1.
+        num_walkers (int, optional): The number of walkers to be used for the inference. Corresponds to the number of Markov chains. Defaults to 10.
         num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
+        num_burn_in_samples (int, optional): number of samples to be discarded as burn-in. Defaults to None means a burn in of 10% of the total number of samples.
+        thinning_factor (int, optional): thinning factor for the samples. Defaults to None means no thinning.
         calc_walker_acceptance_bool (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
 
     Returns:
@@ -362,6 +379,12 @@ def inference_mcmc(
         evaluations for each slice and the result manager used for the inference.
 
     """
+    # Set default values for burn in and thinning factor
+    if num_burn_in_samples is None:
+        num_burn_in_samples = int(num_runs * num_walkers * num_steps * 0.1)
+    if thinning_factor is None:
+        thinning_factor = 1
+
     # create the return dictionaries
     overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
 
@@ -379,7 +402,20 @@ def inference_mcmc(
             num_runs=num_runs,
             num_walkers=num_walkers,
             num_steps=num_steps,
+            num_burn_in_samples=num_burn_in_samples,
+            thinning_factor=thinning_factor,
             num_processes=num_processes,
+        )
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.MCMC,
+            num_processes=num_processes,
+            num_runs=num_runs,
+            num_walkers=num_walkers,
+            num_steps=num_steps,
+            num_burn_in_samples=num_burn_in_samples,
+            thinning_factor=thinning_factor,
         )
 
         if calc_walker_acceptance_bool:

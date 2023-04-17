@@ -14,6 +14,7 @@ import numpy as np
 from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
@@ -449,6 +450,14 @@ def inference_sparse_grid(
         overall_density_evals[slice_name] = results[
             :, data.shape[1] + slice.shape[0] :
         ]
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.DENSE_GRID,
+            num_processes=num_processes,
+            num_levels=num_levels,
+        )
+
     return (
         overall_params,
         overall_sim_results,

@@ -1,5 +1,4 @@
 import importlib
-from typing import Optional
 
 import numpy as np
 
@@ -18,7 +17,6 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
         self,
         central_param: np.ndarray = CENTRAL_PARAM,
         param_limits: np.ndarray = PARAM_LIMITS,
-        name: Optional[str] = None,
         **kwargs,
     ) -> None:
         sbml_file = importlib.resources.path(
@@ -30,9 +28,6 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
             central_param,
             param_limits,
             param_names,
-            1.0,
-            False,
-            name,
             **kwargs,
         )
 

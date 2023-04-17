@@ -49,7 +49,9 @@ def evaluate_density(
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
         sim_res, jac = model.forward_and_jacobian(fullParam)
 
-        # Evaluate the data density in the simulation result.
+        # TODO transform sim res and use transformed simres below
+
+        # Evaluate the data density in the simulation result. # TODO scale with determinant transformation matrix
         densityEvaluation = eval_kde_gauss(data, sim_res, data_stdevs)
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
@@ -89,6 +91,7 @@ def eval_log_transformed_density(
             : sampler_results (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
+    # TODO give transformation object to evaluation function
     trafo_density_evaluation, evaluation_results = evaluate_density(
         param, model, data, data_stdevs, slice
     )

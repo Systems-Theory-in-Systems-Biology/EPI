@@ -1,25 +1,16 @@
 import os
 import pathlib
-from enum import Enum
 from typing import Dict, Optional, Tuple, Union
 
 import jax.numpy as jnp
 import numpy as np
 
 from eulerpi.core.dense_grid import inference_dense_grid
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
-
-
-# Define an enum for the inference types: DenseGrid, MCMC
-class InferenceType(Enum):
-    """The type of inference to be used."""
-
-    DENSE_GRID = 0  #: The dense grid inference uses a dense grid to evaluate the joint distribution.
-    MCMC = 1  #: The MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
-    SPARSE_GRID = 2  #: The sparse grid inference uses a sparse grid to evaluate the joint distribution. It is not tested and not recommended.
 
 
 def inference(
@@ -65,6 +56,9 @@ def inference(
             f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(data)}."
         )
 
+    # TODO Calculate Transformation to normalize data and normalize data, create transformation object
+    # TODO rename std_dev to kernel_width, adapt calculation of kernel width
+
     slices = slices or [
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
@@ -76,6 +70,7 @@ def inference(
         result_manager.delete_application_folder_structure(model, slices)
     result_manager.create_application_folder_structure(model, slices)
 
+    # TODO give transformation object to inference functions
     if inference_type == InferenceType.DENSE_GRID:
         return inference_dense_grid(
             model=model,

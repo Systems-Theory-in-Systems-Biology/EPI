@@ -1,21 +1,15 @@
-from enum import Enum
 from typing import Dict, Tuple, Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 from schwimmbad import MultiPool as Pool
 
+from eulerpi.core.dense_grid_types import DenseGridType
+from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import calc_kernel_width
 from eulerpi.core.transformations import evaluate_density
-
-
-class DenseGridType(Enum):
-    """The type of grid to be used."""
-
-    EQUIDISTANT = 0  #: The equidistant grid has the same distance between two grid points in each dimension.
-    CHEBYSHEV = 1  #: The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.
 
 
 def generate_chebyshev_grid(
@@ -225,6 +219,15 @@ def inference_dense_grid(
             dense_grid_type=dense_grid_type,
             num_processes=num_processes,
             load_balancing_safety_faktor=load_balancing_safety_faktor,
+        )
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.DENSE_GRID,
+            num_processes=num_processes,
+            load_balancing_safety_faktor=load_balancing_safety_faktor,
+            num_grid_points=n_points,
+            dense_grid_type=dense_grid_type,
         )
     return (
         overall_params,

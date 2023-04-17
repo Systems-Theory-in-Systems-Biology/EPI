@@ -17,6 +17,10 @@ All notable changes to this project will be documented in this file.
 
 - Bug in module B that caused a crash
 
+### Changed
+
+- Now using default emcee move policy during MCMC sampling to improve convergence speed
+
 ## [0.1.5] - 2022-04-06
 
 ### Changed
