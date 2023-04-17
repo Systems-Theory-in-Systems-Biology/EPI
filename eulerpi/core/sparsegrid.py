@@ -9,17 +9,16 @@
 """
 
 import typing
-from functools import partial
-from multiprocessing import Pool
 
 import numpy as np
+from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
 from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.transformations import eval_log_transformed_density
+from eulerpi.core.transformations import evaluate_density
 
 
 def basis_1d(
@@ -415,23 +414,17 @@ def inference_sparse_grid(
             param_limits[slice, 1] - param_limits[slice, 0]
         )
 
-        # allocate Memory for the parameters, their simulation evaluation and their probability density
-        results = np.zeros(
-            (grid.n_points, slice.shape[0] + model.data_dim + 1)
-        )
+        global evaluate_on_sparse_grid
+
+        def evaluate_on_sparse_grid(params):
+            return evaluate_density(params, model, data, data_stdevs, slice)[1]
 
         # Create a pool of worker processes
         pool = Pool(processes=num_processes)
 
         # evaluate the probability density transformation for all sparse grid points in parallel
-        parResults = pool.map(
-            partial(
-                eval_log_transformed_density,
-                model=model,
-                data=data,
-                data_stdevs=data_stdevs,
-                slice=slice,
-            ),
+        results = pool.map(
+            evaluate_on_sparse_grid,
             scaledSparseGridPoints,
         )
 
@@ -439,9 +432,8 @@ def inference_sparse_grid(
         pool.close()
         pool.join()
 
-        # extract the parameter, simulation result and transformed density evaluation
-        for i in range(grid.n_points):
-            results[i, :] = parResults[i][1]
+        # convert the results to a numpy array
+        results = np.concatenate(results)
 
         # save the results
         result_manager.save_overall(

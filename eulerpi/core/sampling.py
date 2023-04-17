@@ -17,7 +17,7 @@ from os import path
 
 import emcee
 import numpy as np
-from schwimmbad import MultiPool
+from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
@@ -71,7 +71,7 @@ def run_emcee_once(
         )
         return s
 
-    pool = MultiPool(processes=num_processes)
+    pool = Pool(processes=num_processes)
 
     # define a custom move policy if needed
     # movePolicy = [
@@ -347,7 +347,7 @@ def inference_mcmc(
     result_manager: ResultManager,
     slices: list[np.ndarray],
     num_processes: int,
-    num_runs: int = 2,
+    num_runs: int = 1,
     num_walkers: int = 10,
     num_steps: int = 2500,
     num_burn_in_samples: typing.Optional[int] = None,
@@ -367,7 +367,7 @@ def inference_mcmc(
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
-        num_runs (int, optional): The number of runs to be used for the inference. For each run except the first, all walkers continue with the end position of the previous run - this parameter does not affect the number of Markov chains, but how often results for each chain are saved. Defaults to 2.
+        num_runs (int, optional): The number of runs to be used for the inference. For each run except the first, all walkers continue with the end position of the previous run - this parameter does not affect the number of Markov chains, but how often results for each chain are saved. Defaults to 1.
         num_walkers (int, optional): The number of walkers to be used for the inference. Corresponds to the number of Markov chains. Defaults to 10.
         num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
         num_burn_in_samples (int, optional): number of samples to be discarded as burn-in. Defaults to None means a burn in of 10% of the total number of samples.
@@ -419,7 +419,7 @@ def inference_mcmc(
         )
 
         if calc_walker_acceptance_bool:
-            num_burn_in_steps = int(num_steps * 0.01)
+            num_burn_in_steps = int(num_steps * num_runs * 0.01)
             acceptance = calc_walker_acceptance(
                 model, slice, num_walkers, num_burn_in_steps, result_manager
             )

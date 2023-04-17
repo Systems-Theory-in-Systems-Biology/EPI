@@ -19,7 +19,8 @@ def integrate(z, x, y):
 # TODO: Generalize, currently only works for dense vs mcmc
 def test_inference_mcmc_dense_exact(
     num_data_points=1000,
-    num_steps=3000,
+    num_steps=1500,
+    num_runs=2,  # Please keep this higher than 1. This tests is also responsible for testing whether the MCMC sampler and result_manager can concatenate multiple runs.
     num_grid_points=50,
 ):
     # define the model
@@ -41,10 +42,11 @@ def test_inference_mcmc_dense_exact(
                 inference_type,
                 result_manager=result_manager,
                 num_steps=num_steps,
+                num_runs=num_runs,
             )
             # Take every second sample and skip the first 5% of the chain
             results[inference_type] = result_manager.load_sim_results(
-                full_slice, num_steps // 20, 2
+                full_slice, num_steps * num_runs // 20, 2
             )
         elif InferenceType(inference_type) == InferenceType.DENSE_GRID:
             inference(

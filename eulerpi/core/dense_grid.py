@@ -1,8 +1,8 @@
-from multiprocessing import Pool
 from typing import Dict, Tuple, Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
+from schwimmbad import MultiPool as Pool
 
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
@@ -117,15 +117,11 @@ def run_dense_grid_evaluation(
     grid_chunks = np.array_split(
         grid, num_processes * load_balancing_safety_faktor
     )
-    # Calc cumsum for indexing
-    grid_chunks_cumsum = np.cumsum(
-        [0] + [grid_chunk.shape[0] for grid_chunk in grid_chunks]
-    )
+
     # Define a function which evaluates the density for a given grid chunk
     global evaluate_on_grid_chunk  # Needed to make this function pickleable
 
-    def evaluate_on_grid_chunk(args):
-        grid_chunk, model, data, data_stdevs, slice = args
+    def evaluate_on_grid_chunk(grid_chunk):
         # Init the result array
         evaluation_results = np.zeros(
             (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
@@ -139,20 +135,13 @@ def run_dense_grid_evaluation(
         return evaluation_results
 
     pool = Pool(processes=num_processes)
-    results = np.zeros((grid.shape[0], data.shape[1] + slice.shape[0] + 1))
-    for i, result in enumerate(
-        pool.imap(
-            evaluate_on_grid_chunk,
-            [
-                (grid_chunks[i], model, data, data_stdevs, slice)
-                for i in range(len(grid_chunks))
-            ],
-        )
-    ):
-        results[grid_chunks_cumsum[i] : grid_chunks_cumsum[i + 1]] = result
-
+    results = pool.map(
+        evaluate_on_grid_chunk,
+        grid_chunks,
+    )
     pool.close()
     pool.join()
+    results = np.concatenate(results)
 
     result_manager.save_overall(
         slice,

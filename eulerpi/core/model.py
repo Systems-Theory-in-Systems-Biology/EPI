@@ -295,7 +295,7 @@ class SBMLModel(Model):
         super().__init__(central_param, param_limits, name, **kwargs)
 
         model_name = self.name
-        model_dir = "./amici"
+        model_dir = "./amici/" + model_name
 
         # Generate python code
         if not skip_creation:
