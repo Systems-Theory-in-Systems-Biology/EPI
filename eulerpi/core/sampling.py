@@ -64,6 +64,7 @@ def run_emcee_once(
 
     global work
 
+    # TODO Give transformation object to eval function
     def work(params):
         s = eval_log_transformed_density(
             params, model, data, data_stdevs, slice
