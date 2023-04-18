@@ -239,7 +239,7 @@ class ResultManager:
         """Saves the results of all runs of the emcee particle swarm sampler for the given slice.
 
         Args:
-            slice(np.ndarray): The slice for which the results will be saved. TODO document dimensions of overall_params, overall_sim_results, overall_density_evals
+            slice(np.ndarray): The slice for which the results will be saved. # TODO document dimensions of overall_params, overall_sim_results, overall_density_evals
             overall_params(np.ndarray): The results of the sampler.
             overall_sim_results(np.ndarray): The results of the sampler.
             overall_density_evals(np.ndarray): The results of the sampler.

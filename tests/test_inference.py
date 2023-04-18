@@ -31,10 +31,12 @@ def test_inference_mcmc_dense_exact(
     data = model.generate_artificial_data(params)
 
     # run EPI with all inference types
-    results = {}
-    full_slice = np.arange(model.param_dim)
+    result_params, result_sim_res, result_densities = {}, {}, {}
+    full_slice = [np.arange(model.param_dim)]
     for inference_type in InferenceType._member_map_.values():
-        result_manager = ResultManager(model.name, str(inference_type))
+        result_manager = ResultManager(
+            model.name, str(inference_type), full_slice
+        )
         if InferenceType(inference_type) == InferenceType.MCMC:
             inference(
                 model,
@@ -45,7 +47,11 @@ def test_inference_mcmc_dense_exact(
                 num_runs=num_runs,
             )
             # Take every second sample and skip the first 5% of the chain
-            results[inference_type] = result_manager.load_sim_results(
+            (
+                result_params[inference_type],
+                result_sim_res[inference_type],
+                result_densities[inference_type],
+            ) = result_manager.load_inference_results(
                 full_slice, num_steps * num_runs // 20, 2
             )
         elif InferenceType(inference_type) == InferenceType.DENSE_GRID:
@@ -56,9 +62,11 @@ def test_inference_mcmc_dense_exact(
                 result_manager=result_manager,
                 num_grid_points=num_grid_points,
             )
-            results[inference_type] = result_manager.load_sim_results(
-                full_slice, 0, 1
-            )
+            (
+                result_params[inference_type],
+                result_sim_res[inference_type],
+                result_densities[inference_type],
+            ) = result_manager.load_inference_results(full_slice)
         else:
             # skip other inference types
             continue
@@ -107,13 +115,12 @@ def test_inference_mcmc_dense_exact(
     grid_2d = grid.reshape(num_grid_points, num_grid_points, model.param_dim)
     # grid = results[InferenceType.DENSE_GRID][2]
 
-    mcmc_params = results[InferenceType.MCMC][2]
-    mcmc_params_density = results[InferenceType.MCMC][0]
+    mcmc_params = result_params[InferenceType.MCMC]["Slice_Q0Q1"]
     mcmc_kde = eval_kde_gauss(
         mcmc_params, grid, calc_kernel_width(mcmc_params)
     )
 
-    dense_grid_pdf = results[InferenceType.DENSE_GRID][0]
+    dense_grid_pdf = result_densities[InferenceType.DENSE_GRID]["Slice_Q0Q1"]
 
     true_pdf_grid = true_pdf(grid)
     true_kde = eval_kde_gauss(params, grid, calc_kernel_width(params))
