@@ -63,12 +63,12 @@ def inference(
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
     result_manager = result_manager or ResultManager(
-        model.name, run_name
+        model.name, run_name, slices
     )  # If no result_manager is given, create one with default paths
 
     if not continue_sampling:
-        result_manager.delete_application_folder_structure(model, slices)
-    result_manager.create_application_folder_structure(model, slices)
+        result_manager.delete_application_folder_structure()
+    result_manager.create_application_folder_structure()
 
     # TODO give transformation object to inference functions
     if inference_type == InferenceType.DENSE_GRID:
