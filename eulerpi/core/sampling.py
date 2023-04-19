@@ -231,70 +231,20 @@ def run_emcee_sampling(
         overall_params,
         overall_sim_results,
         overall_density_evals,
-    ) = concatenate_emcee_sampling_results(model, result_manager, slice)
+    ) = result_manager.load_slice_inference_results(
+        slice, num_burn_in_samples, thinning_factor
+    )
     result_manager.save_overall(
         slice,
-        overall_params[num_burn_in_samples::thinning_factor, :],
-        overall_sim_results[num_burn_in_samples::thinning_factor, :],
-        overall_density_evals[num_burn_in_samples::thinning_factor],
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
     )
     return (
-        overall_params[num_burn_in_samples::thinning_factor, :],
-        overall_sim_results[num_burn_in_samples::thinning_factor, :],
-        overall_density_evals[num_burn_in_samples::thinning_factor],
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
     )
-
-
-# TODO: Make this a method of the ResultManager? It uses the ResultManager to load the results and many hard coded paths.
-def concatenate_emcee_sampling_results(
-    model: Model, result_manager: ResultManager, slice: np.ndarray
-) -> typing.Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Concatenate many sub runs of the emcee sampler to create 3 large files for sampled parameters, corresponding simulation results and density evaluations.
-        These files are later used for result visualization.
-
-    Args:
-        model (Model): The model for which the results should be concatenated
-        result_manager (ResultManager): ResultManager to load the results from
-        slice (np.ndarray): slice for which the results should be concatenated
-
-    Returns:
-        typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
-
-    """
-
-    # Count and print how many sub runs are ready to be merged.
-    num_existing_files = result_manager.count_emcee_sub_runs(slice)
-    logger.info(f"{num_existing_files} existing files found for concatenation")
-
-    densityFiles = (
-        result_manager.get_slice_path(slice)
-        + "/DensityEvals/density_evals_{}.csv"
-    )
-    sim_result_files = (
-        result_manager.get_slice_path(slice) + "/SimResults/sim_results_{}.csv"
-    )
-    paramFiles = result_manager.get_slice_path(slice) + "/Params/params_{}.csv"
-
-    overall_params = np.vstack(
-        [
-            np.loadtxt(paramFiles.format(i), delimiter=",", ndmin=2)
-            for i in range(num_existing_files)
-        ]
-    )
-    overall_sim_results = np.vstack(
-        [
-            np.loadtxt(sim_result_files.format(i), delimiter=",", ndmin=2)
-            for i in range(num_existing_files)
-        ]
-    )
-    overall_density_evals = np.hstack(
-        [
-            np.loadtxt(densityFiles.format(i), delimiter=",")
-            for i in range(num_existing_files)
-        ]
-    )
-
-    return overall_params, overall_sim_results, overall_density_evals
 
 
 def calc_walker_acceptance(
@@ -396,6 +346,17 @@ def inference_mcmc(
 
     for slice in slices:
         slice_name = result_manager.get_slice_name(slice)
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=InferenceType.MCMC,
+            num_processes=num_processes,
+            num_runs=num_runs,
+            num_walkers=num_walkers,
+            num_steps=num_steps,
+            num_burn_in_samples=num_burn_in_samples,
+            thinning_factor=thinning_factor,
+        )
         (
             overall_params[slice_name],
             overall_sim_results[slice_name],
@@ -411,17 +372,6 @@ def inference_mcmc(
             num_burn_in_samples=num_burn_in_samples,
             thinning_factor=thinning_factor,
             num_processes=num_processes,
-        )
-        result_manager.save_inference_information(
-            slice=slice,
-            model=model,
-            inference_type=InferenceType.MCMC,
-            num_processes=num_processes,
-            num_runs=num_runs,
-            num_walkers=num_walkers,
-            num_steps=num_steps,
-            num_burn_in_samples=num_burn_in_samples,
-            thinning_factor=thinning_factor,
         )
 
         if calc_walker_acceptance_bool:
