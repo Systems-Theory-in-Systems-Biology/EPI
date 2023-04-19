@@ -32,4 +32,4 @@ Please note/describe at least one tests that you ran to verify your changes.
 ## Checklist For Maintainers
 
 - [ ] Continuous Integration (CI) is successfully running
-- Do we want to release/tag a new version?
+- [ ] Do we want to release/tag a new version? [✔️ / ❌]
