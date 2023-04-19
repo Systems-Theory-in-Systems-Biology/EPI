@@ -1,5 +1,6 @@
 import inspect
 import os
+import tempfile
 from abc import ABC, abstractmethod
 from functools import partial
 from typing import Optional, Tuple, Union
@@ -294,45 +295,119 @@ class SBMLModel(Model):
     ) -> None:
         super().__init__(central_param, param_limits, name, **kwargs)
 
-        model_name = self.name
-        model_dir = "./amici/" + model_name
+        self.tEnd = tEnd
+
+        self.amici_model_name = self.name
+        self.amici_model_dir = "./amici/" + self.amici_model_name
 
         # Generate python code
         if not skip_creation:
             sbml_importer = amici.SbmlImporter(sbml_file)
-            sbml_importer.sbml2amici(model_name, model_dir)
+            sbml_importer.sbml2amici(
+                self.amici_model_name, self.amici_model_dir
+            )
 
         # Load the generated model
-        model_module = amici.import_model_module(model_name, model_dir)
-        model = model_module.getModel()
-        solver = model.getSolver()
+        self.load_amici_model_and_solver()
 
-        model.setTimepoints([tEnd])
-        model.requireSensitivitiesForAllParameters()
-        solver.setSensitivityMethod(amici.SensitivityMethod.forward)
-        solver.setSensitivityOrder(amici.SensitivityOrder.first)
+        self.param_names = param_names or self.amici_model.getParameterNames()
 
-        self.param_names = param_names or model.getParameterNames()
+    def load_amici_model_and_solver(self):
+        """Loads the AMICI model from the previously generated model."""
+        amici_model_module = amici.import_model_module(
+            self.amici_model_name, self.amici_model_dir
+        )
+        self.amici_model = amici_model_module.getModel()
+        self.amici_solver = self.amici_model.getSolver()
 
-        self.model = model
-        self.solver = solver
+        # TODO: Maybe this is redundant when using settings to hdf5
+        self.amici_model.setTimepoints([self.tEnd])
+        self.amici_model.requireSensitivitiesForAllParameters()
+        self.amici_solver.setSensitivityMethod(amici.SensitivityMethod.forward)
+        self.amici_solver.setSensitivityOrder(amici.SensitivityOrder.first)
 
     def forward(self, params):
         for i, param in enumerate(params):
-            self.model.setParameterByName(self.param_names[i], param)
-        rdata = amici.runAmiciSimulation(self.model, self.solver)
+            self.amici_model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
         return rdata.x[-1]
 
     def jacobian(self, params):
         for i, param in enumerate(params):
-            self.model.setParameterByName(self.param_names[i], param)
-        rdata = amici.runAmiciSimulation(self.model, self.solver)
+            self.amici_model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
         return rdata.sx[-1].T
 
     def forward_and_jacobian(
         self, params: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         for i, param in enumerate(params):
-            self.model.setParameterByName(self.param_names[i], param)
-        rdata = amici.runAmiciSimulation(self.model, self.solver)
+            self.amici_model.setParameterByName(self.param_names[i], param)
+        rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
         return rdata.x[-1], rdata.sx[-1].T
+
+    # Allow the model to be pickled
+    def __getstate__(self):
+        # Create a copy of the object's state
+        state = self.__dict__.copy()
+
+        # Save the amici solver settings to
+        _fd, _file = tempfile.mkstemp()
+        try:
+            # write amici solver settings to file
+            try:
+                amici.writeSolverSettingsToHDF5(self.amici_solver, _file)
+            except AttributeError as e:
+                e.args += (
+                    "Pickling the SBMLModel requires an AMICI "
+                    "installation with HDF5 support.",
+                )
+                raise
+            # read in byte stream
+            with open(_fd, "rb", closefd=False) as f:
+                state["amici_solver_settings"] = f.read()
+        finally:
+            # close file descriptor and remove temporary file
+            os.close(_fd)
+            os.remove(_file)
+
+        state["amici_model_settings"] = amici.get_model_settings(
+            self.amici_model
+        )
+
+        # Remove the unpicklable entries.
+        del state["amici_model"]
+        del state["amici_solver"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
+        # Restore amici model and solver
+        self.load_amici_model_and_solver()
+
+        _fd, _file = tempfile.mkstemp()
+        try:
+            # write solver settings to temporary file
+            with open(_fd, "wb", closefd=False) as f:
+                f.write(state["amici_solver_settings"])
+            # read in solver settings
+            try:
+                amici.readSolverSettingsFromHDF5(_file, self.amici_solver)
+            except AttributeError as err:
+                if not err.args:
+                    err.args = ("",)
+                err.args += (
+                    "Unpickling an AmiciObjective requires an AMICI "
+                    "installation with HDF5 support.",
+                )
+                raise
+        finally:
+            # close file descriptor and remove temporary file
+            os.close(_fd)
+            os.remove(_file)
+
+        amici.set_model_settings(
+            self.amici_model,
+            state["amici_model_settings"],
+        )
