@@ -1,8 +1,8 @@
 """Test pickling of the various classes in the package."""
 
 import importlib
+import pickle
 
-import dill as pickle
 import numpy as np
 import pytest
 
