@@ -13,11 +13,11 @@ Attributes:
 """
 
 import typing
+from multiprocessing import get_context
 from os import path
 
 import emcee
 import numpy as np
-from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
@@ -33,6 +33,33 @@ from eulerpi.core.transformations import eval_log_transformed_density
 # sampler_results = samplerBlob.reshape(
 #     num_walkers * num_steps, sampling_dim + data_dim + 1
 # )
+
+
+# TODO Give transformation object to eval function
+def evaluate_sample(
+    param: np.ndarray,
+    model: Model,
+    data: np.ndarray,
+    data_stdevs: np.ndarray,
+    slice: np.ndarray,
+) -> typing.Tuple[float, np.ndarray]:
+    """Evaluate the log transformed density at the given parameter values.
+
+    Args:
+        param (np.ndarray): parameter values
+        model (Model): The model which will be sampled
+        data (np.ndarray): data
+        data_stdevs (np.ndarray): kernel width for the data
+        slice (np.ndarray): slice of the parameter space which will be sampled
+
+    Returns:
+        typing.Tuple[float, np.ndarray]: log transformed density and the sampler result
+    """
+
+    log_samplerresult = eval_log_transformed_density(
+        param, model, data, data_stdevs, slice
+    )
+    return log_samplerresult
 
 
 def run_emcee_once(
@@ -62,27 +89,8 @@ def run_emcee_once(
 
     """
 
-    global work
-
-    # TODO Give transformation object to eval function
-    def work(params):
-        s = eval_log_transformed_density(
-            params, model, data, data_stdevs, slice
-        )
-        return s
-
-    pool = Pool(processes=num_processes)
-
-    # define a custom move policy if needed
-    # movePolicy = [
-    #    (emcee.moves.WalkMove(), 0.1),
-    #    (emcee.moves.StretchMove(), 0.1),
-    #    (
-    #        emcee.moves.GaussianMove(0.00001, mode="sequential", factor=None),
-    #        0.8,
-    #    ),
-    # ]
-    # movePolicy = [(emcee.moves.GaussianMove(0.00001, mode='sequential', factor=None), 1.0)]
+    # Create a pool of worker processes
+    pool = get_context("spawn").Pool(processes=num_processes)
     sampling_dim = slice.shape[0]
 
     # Call the sampler for all parallel workers (possibly use arg moves = movePolicy)
@@ -90,11 +98,9 @@ def run_emcee_once(
         sampler = emcee.EnsembleSampler(
             num_walkers,
             sampling_dim,
-            # eval_log_transformed_density,
-            work,
+            evaluate_sample,
             pool=pool,
-            # moves=movePolicy,
-            # args=[model, data, data_stdevs, slice],
+            args=[model, data, data_stdevs, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
         final_walker_positions, _, _, _ = sampler.run_mcmc(

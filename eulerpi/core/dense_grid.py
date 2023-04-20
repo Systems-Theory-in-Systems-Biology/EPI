@@ -1,8 +1,10 @@
+import typing
+from itertools import repeat
+from multiprocessing import get_context
 from typing import Dict, Tuple, Union
 
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
-from schwimmbad import MultiPool as Pool
 
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
@@ -65,6 +67,36 @@ def generate_regular_grid(
         return mesh
 
 
+def evaluate_on_grid_chunk(
+    args: typing.Tuple[np.ndarray, Model, np.ndarray, np.ndarray, np.ndarray]
+) -> np.ndarray:
+    """Define a function which evaluates the density for a given grid chunk. The input args contains the grid chunk, the model, the data, the data_stdevs and the slice.
+
+    Args:
+        grid_chunk(np.ndarray): The grid chunk contains the grid points (parameter vectors) for which the density should be evaluated.
+        model(Model): The model used for the inference.
+        data(np.ndarray): The data points used for the inference.
+        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
+        slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
+
+    Returns:
+        np.ndarray: The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the simulation results in the second columns and the density evaluations in the last columns.
+    """
+    grid_chunk, model, data, data_stdevs, slice = args
+
+    # Init the result array
+    evaluation_results = np.zeros(
+        (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
+    )
+    # Evaluate the grid points
+    for i, gridPoint in enumerate(grid_chunk):
+        density, param_sim_res_density = evaluate_density(
+            gridPoint, model, data, data_stdevs, slice
+        )
+        evaluation_results[i] = param_sim_res_density
+    return evaluation_results
+
+
 def run_dense_grid_evaluation(
     model: Model,
     data: np.ndarray,
@@ -118,27 +150,15 @@ def run_dense_grid_evaluation(
         grid, num_processes * load_balancing_safety_faktor
     )
 
-    # Define a function which evaluates the density for a given grid chunk
-    global evaluate_on_grid_chunk  # Needed to make this function pickleable
-
-    def evaluate_on_grid_chunk(grid_chunk):
-        # Init the result array
-        evaluation_results = np.zeros(
-            (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
-        )
-        # Evaluate the grid points
-        for i, gridPoint in enumerate(grid_chunk):
-            density, param_sim_res_density = evaluate_density(
-                gridPoint, model, data, data_stdevs, slice
-            )
-            evaluation_results[i] = param_sim_res_density
-        return evaluation_results
-
-    pool = Pool(processes=num_processes)
-    results = pool.map(
-        evaluate_on_grid_chunk,
+    pool = get_context("spawn").Pool(processes=num_processes)
+    tasks = zip(
         grid_chunks,
+        repeat(model),
+        repeat(data),
+        repeat(data_stdevs),
+        repeat(slice),
     )
+    results = pool.map(evaluate_on_grid_chunk, tasks)
     pool.close()
     pool.join()
     results = np.concatenate(results)

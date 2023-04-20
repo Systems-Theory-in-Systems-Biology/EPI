@@ -9,9 +9,10 @@
 """
 
 import typing
+from itertools import repeat
+from multiprocessing import get_context
 
 import numpy as np
-from schwimmbad import MultiPool as Pool
 
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
@@ -367,6 +368,26 @@ class Subspace(object):
                     )
 
 
+def evaluate_on_sparse_grid(
+    args: typing.Tuple[np.ndarray, Model, np.ndarray, np.ndarray, np.ndarray]
+) -> np.ndarray:
+    """This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.
+
+    Args:
+        params (np.ndarray): The parameters to be evaluated.
+        model(Model): The model used for the inference.
+        data(np.ndarray): The data points used for the inference.
+        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
+        slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
+
+    Returns:
+        np.ndarray: The density values for the given params.
+    """
+
+    params, model, data, data_stdevs, slice = args
+    return evaluate_density(params, model, data, data_stdevs, slice)[1]
+
+
 def inference_sparse_grid(
     model: Model,
     data: np.ndarray,
@@ -414,18 +435,20 @@ def inference_sparse_grid(
             param_limits[slice, 1] - param_limits[slice, 0]
         )
 
-        global evaluate_on_sparse_grid
-
-        def evaluate_on_sparse_grid(params):
-            return evaluate_density(params, model, data, data_stdevs, slice)[1]
-
         # Create a pool of worker processes
-        pool = Pool(processes=num_processes)
+        pool = get_context("spawn").Pool(processes=num_processes)
+        tasks = zip(
+            scaledSparseGridPoints,
+            repeat(model),
+            repeat(data),
+            repeat(data_stdevs),
+            repeat(slice),
+        )
 
         # evaluate the probability density transformation for all sparse grid points in parallel
         results = pool.map(
             evaluate_on_sparse_grid,
-            scaledSparseGridPoints,
+            tasks,
         )
 
         # close the worker pool
@@ -433,7 +456,10 @@ def inference_sparse_grid(
         pool.join()
 
         # convert the results to a numpy array
-        results = np.concatenate(results)
+        # Take care! The results here are for single points, therefore we cant use np.concatenate
+        results = np.vstack(results)
+
+        print(results.shape)
 
         # save the results
         result_manager.save_overall(
