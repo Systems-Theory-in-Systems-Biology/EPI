@@ -33,3 +33,4 @@ Please note/describe at least one tests that you ran to verify your changes.
 
 - [ ] Continuous Integration (CI) is successfully running
 - [ ] Do we want to release/tag a new version? [✔️ / ❌]
+  - [ ] If yes, add a release to the changelog and set the new version in pyproject.toml. After the merge, tag the release!
