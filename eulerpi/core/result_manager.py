@@ -440,9 +440,26 @@ class ResultManager:
                 )
                 overall_params = np.concatenate((overall_params, params))
 
+        # create mask for thinning and burn in
+        thinning_and_burn_in_mask = np.concatenate(
+            (
+                np.full(num_burn_in_samples, False),
+                (
+                    (
+                        np.arange(
+                            overall_params.shape[0] - num_burn_in_samples
+                        )
+                        // inference_information["num_walkers"]
+                    )
+                    % thinning_factor
+                    == 0
+                ),
+            )
+        )
+
         # thin and burn in
         return (
-            overall_params[num_burn_in_samples::thinning_factor, :],
-            overall_sim_results[num_burn_in_samples::thinning_factor, :],
-            overall_density_evals[num_burn_in_samples::thinning_factor],
+            overall_params[thinning_and_burn_in_mask, :],
+            overall_sim_results[thinning_and_burn_in_mask, :],
+            overall_density_evals[thinning_and_burn_in_mask],
         )
