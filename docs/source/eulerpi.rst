@@ -1,5 +1,5 @@
 eulerpi package
-===========
+===============
 
 Subpackages
 -----------

@@ -1,7 +1,7 @@
-eulerpi.core.transformations module
+eulerpi.core.dense\_grid module
 ===============================
 
-.. automodule:: eulerpi.core.transformations
+.. automodule:: eulerpi.core.dense_grid
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,5 +1,5 @@
 eulerpi.core.model module
-=====================
+=========================
 
 .. automodule:: eulerpi.core.model
    :members:
