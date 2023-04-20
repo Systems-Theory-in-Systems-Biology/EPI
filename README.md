@@ -39,7 +39,7 @@ pip install eulerpi
 Make sure that you have the following C++ libraries installed
 
 ```bash
-sudo apt install -y swig libblas-dev libatlas-base-dev
+sudo apt install -y swig libblas-dev libatlas-base-dev libhdf5-dev
 ```
 
 You can also build the library from the latest source code by following the [Development Quickstart Guide](./DEVELOPMENT.md#quickstart).

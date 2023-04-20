@@ -52,6 +52,7 @@ jobs:
           sudo apt install -y swig
           sudo apt install -y libblas-dev
           sudo apt install -y libatlas-base-dev
+          sudo apt install -y libhdf5-dev
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3

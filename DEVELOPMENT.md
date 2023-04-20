@@ -30,6 +30,7 @@
     sudo apt install swig
     sudo apt install libblas-dev
     sudo apt install libatlas-base-dev
+    sudo apt install libhdf5-dev
     ```
   
   - For cpp:
