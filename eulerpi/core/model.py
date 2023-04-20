@@ -275,12 +275,12 @@ class SBMLModel(Model):
     @property
     def param_dim(self):
         """The number of parameters of the model."""
-        return len(self.model.getParameterIds())
+        return len(self.amici_model.getParameterIds())
 
     @property
     def data_dim(self):
         """The number of observables of the model."""
-        return len(self.model.getObservableIds())
+        return len(self.amici_model.getObservableIds())
 
     def __init__(
         self,
