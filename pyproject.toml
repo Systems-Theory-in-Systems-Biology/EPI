@@ -29,7 +29,6 @@ tqdm = "^4.65.0"
 seedir = "^0.4.2"
 yfinance = "^0.2.14"
 amici = "^0.16.1"
-schwimmbad = "^0.3.2"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.2"

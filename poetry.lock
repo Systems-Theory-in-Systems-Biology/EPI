@@ -2635,21 +2635,6 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
-name = "schwimmbad"
-version = "0.3.2"
-description = "A common interface for parallel processing pools."
-category = "main"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "schwimmbad-0.3.2.tar.gz", hash = "sha256:d453b735fcd0d4a5c5a6e18af2f72f678358f7614db3b78b6cd38d6b07debc9f"},
-]
-
-[package.extras]
-docs = ["alabaster", "emcee"]
-test = ["dill", "joblib", "mpi4py", "numpy", "pytest", "pytest-astropy", "pytest-cov"]
-
-[[package]]
 name = "scipy"
 version = "1.9.3"
 description = "Fundamental algorithms for scientific computing in Python"
@@ -3264,4 +3249,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "f677996ab0ed28a8b2056cfa34ca16359f4f9814c843622001db7836ca068f60"
+content-hash = "46018b13253accb694e509dc818843706aa6541c3f7d935e3c6fa8de88c44281"
