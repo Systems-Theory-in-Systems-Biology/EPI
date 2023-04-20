@@ -137,7 +137,7 @@ The jacobian <span class="math notranslate nohighlight">\({\frac{dy}{dq}}(q_i)=-
 <li><p>Additional fixed parameters: The model includes fixed parameters <code class="code docutils literal notranslate"><span class="pre">self.low_T=30.0</span></code> and <code class="code docutils literal notranslate"><span class="pre">self.high_T=30.0</span></code>.
 These fixed parameters are passed to the forward function separately. You can create models with different parameters by
 creating several model objects.</p>
-<p>The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">run_name</span></code> of the <a class="reference internal" href="../epi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
+<p>The best way to seperate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">run_name</span></code> of the <a class="reference internal" href="../eulerpi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference()</span></code></a> function.</p>
 </li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TemperatureWithFixedParams</span><span class="p">(</span><span class="n">Temperature</span><span class="p">):</span>

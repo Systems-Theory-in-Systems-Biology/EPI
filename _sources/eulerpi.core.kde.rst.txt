@@ -1,5 +1,5 @@
 eulerpi.core.kde module
-===================
+=======================
 
 .. automodule:: eulerpi.core.kde
    :members:

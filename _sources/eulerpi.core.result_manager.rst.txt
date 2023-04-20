@@ -1,5 +1,5 @@
 eulerpi.core.result\_manager module
-===============================
+===================================
 
 .. automodule:: eulerpi.core.result_manager
    :members:

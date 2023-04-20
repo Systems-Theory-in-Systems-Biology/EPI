@@ -88,12 +88,12 @@
 <p>Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.</p>
 <a class="reference external image-reference" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment"><img alt="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg" src="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/pages/pages-build-deployment/badge.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml"><img alt="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg" src="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/sphinx.yml/badge.svg" /></a>
-<a class="reference external image-reference" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml"><img alt="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg" src="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml"><img alt="pytest" src="https://img.shields.io/github/actions/workflow/status/Systems-Theory-in-Systems-Biology/EPI/ci.yml?label=pytest&amp;logo=pytest" /></a>
 <a class="reference external image-reference" href="https://flake8.pycqa.org/"><img alt="https://img.shields.io/badge/flake8-checked-blue.svg" src="https://img.shields.io/badge/flake8-checked-blue.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/psf/black"><img alt="https://img.shields.io/badge/code%20style-black-000000.svg" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
 <a class="reference external image-reference" href="./LICENSE.md"><img alt="https://img.shields.io/badge/License-MIT-yellow.svg" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
 <a class="reference external image-reference" href="https://www.python.org/"><img alt="https://img.shields.io/badge/python-3.10-purple.svg" src="https://img.shields.io/badge/python-3.10-purple.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/eulerpi/"><img alt="https://img.shields.io/pypi/v/eulerpi" src="https://img.shields.io/pypi/v/eulerpi" /></a>
 </section>
 <section id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this heading"></a></h1>
@@ -156,7 +156,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 </pre></div>
 </div>
-<p>This corresponds to a matrix with the shape <code class="xref py py-attr docutils literal notranslate"><span class="pre">nSamples</span></code> x <code class="xref py py-attr docutils literal notranslate"><span class="pre">data_dim</span></code>. For more available options and parameters for the <a class="reference internal" href="epi.core.inference.html#module-eulerpi.core.inference" title="eulerpi.core.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference</span></code></a> method, please refer to the API documentation.
+<p>This corresponds to a matrix with the shape <code class="xref py py-attr docutils literal notranslate"><span class="pre">nSamples</span></code> x <code class="xref py py-attr docutils literal notranslate"><span class="pre">data_dim</span></code>. For more available options and parameters for the <a class="reference internal" href="eulerpi.core.inference.html#module-eulerpi.core.inference" title="eulerpi.core.inference"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference</span></code></a> method, please refer to the API documentation.
 Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).</p>
 <p>The results are stored in the following locations</p>
 <ul class="simple">

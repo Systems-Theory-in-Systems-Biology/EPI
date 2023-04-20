@@ -1,7 +1,7 @@
-eulerpi.core.dense\_grid module
+tests.test\_pickling module
 ===========================
 
-.. automodule:: eulerpi.core.dense_grid
+.. automodule:: tests.test_pickling
    :members:
    :undoc-members:
    :show-inheritance:
