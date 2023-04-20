@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [Template]
 
 ### Added
 
@@ -17,9 +17,21 @@ All notable changes to this project will be documented in this file.
 
 - Bug in module B that caused a crash
 
+## [0.2.0]
+
 ### Changed
 
 - Now using default emcee move policy during MCMC sampling to improve convergence speed
+
+### Fixed
+
+- Fixed SwigPyObject pickling
+- Fixed dead lock for larger data sets and models
+
+### Added
+
+- ResultManager is saving meta data for inference
+- ResultManager uses saved meta data to load inference results
 
 ## [0.1.5] - 2022-04-06
 
