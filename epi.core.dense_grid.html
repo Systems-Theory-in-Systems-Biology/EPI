@@ -85,6 +85,29 @@
   <section id="eulerpi-core-dense-grid-module">
 <h1>eulerpi.core.dense_grid module<a class="headerlink" href="#eulerpi-core-dense-grid-module" title="Permalink to this heading"></a></h1>
 <span class="target" id="module-eulerpi.core.dense_grid"></span><dl class="py function">
+<dt class="sig sig-object py" id="eulerpi.core.dense_grid.evaluate_on_grid_chunk">
+<span class="sig-name descname"><span class="pre">evaluate_on_grid_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#eulerpi.core.dense_grid.evaluate_on_grid_chunk" title="Permalink to this definition"></a></dt>
+<dd><p>Define a function which evaluates the density for a given grid chunk. The input args contains the grid chunk, the model, the data, the data_stdevs and the slice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_chunk</strong> (<em>np.ndarray</em>) – The grid chunk contains the grid points (parameter vectors) for which the density should be evaluated.</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="epi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model used for the inference.</p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The data points used for the inference.</p></li>
+<li><p><strong>data_stdevs</strong> (<em>np.ndarray</em>) – The standard deviations of the data points. (Currently the kernel width, #TODO!)</p></li>
+<li><p><strong>slice</strong> (<em>np.ndarray</em>) – The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the simulation results in the second columns and the density evaluations in the last columns.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.dense_grid.generate_chebyshev_grid">
 <span class="sig-name descname"><span class="pre">generate_chebyshev_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_grid_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.dense_grid.generate_chebyshev_grid" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a grid with the given number of grid points for each dimension.</p>
