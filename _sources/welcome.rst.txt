@@ -50,7 +50,7 @@ The package is available on pypi and can be installed with:
 Make sure that you have the following C++ libraries installed:
 
 ```bash
-sudo apt install -y swig libblas-dev libatlas-base-dev
+sudo apt install -y swig libblas-dev libatlas-base-dev libhdf5-dev
 ```
 
 You can also build the library from the latest source code by following the :doc:`Development Quickstart Guide </MarkdownLinks/development>`.
