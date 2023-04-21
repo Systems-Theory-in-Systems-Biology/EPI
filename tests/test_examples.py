@@ -103,10 +103,26 @@ def test_examples(example, inference_type):
     elif inference_type == InferenceType.SPARSE_GRID:
         kwargs["num_levels"] = 3
 
-    inference(
+    params, sim_res, densities, result_manager = inference(
         model,
         data,
         **kwargs,
     )
+
+    # get all keys of the params dict
+    full_slice_str = list(params.keys())[0]
+
+    assert result_manager is not None
+
+    assert params.keys() == sim_res.keys() == densities.keys()
+    assert params[full_slice_str].shape[0] == sim_res[full_slice_str].shape[0]
+    assert (
+        params[full_slice_str].shape[0] == densities[full_slice_str].shape[0]
+    )
+
+    assert params[full_slice_str].shape[1] == model.param_dim
+    assert (
+        sim_res[full_slice_str].shape[1] == model.data_dim
+    )  # Take care, only valid for full slice
 
     # TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models
