@@ -28,7 +28,11 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
             **kwargs,
         )
 
-    # Overwrite the forward, jacobian, and forward_and_jacobian methods to remove the first variable which is not dependent on the parameters
+    # Overwrite the data_dim, forward, jacobian, and forward_and_jacobian methods to remove the first variable which is not dependent on the parameters
+    @property
+    def data_dim(self) -> int:
+        return 2
+
     def forward(self, params) -> np.ndarray:
         return super().forward(params)[1:]
 
