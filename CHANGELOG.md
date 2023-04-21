@@ -19,6 +19,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix sparse grid returning meaningless data
+- Fix menten data shape
+- Fix SBMLModel data_dim: Return states count instead of observables count
+
+### Added
+
+- Validating the shapes of the inference results
+
 ## [0.2.0] - 2023-04-20
 
 ### Changed
