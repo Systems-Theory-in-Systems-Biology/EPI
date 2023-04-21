@@ -280,7 +280,7 @@ class SBMLModel(Model):
     @property
     def data_dim(self):
         """The number of observables of the model."""
-        return len(self.amici_model.getObservableIds())
+        return len(self.amici_model.getStateIds())
 
     def __init__(
         self,
