@@ -281,7 +281,7 @@ class ResultManager:
                 num_runs(int): The number of runs that were performed. Only for mcmc inference.
                 num_walkers(int): The number of walkers that were used. Only for mcmc inference.
                 num_steps(int): The number of steps that were performed. Only for mcmc inference.
-                num_burn_in_samples(int): The number of samples that were ignored. Only for mcmc inference.
+                num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.
                 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
                 load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
                 num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.
@@ -327,7 +327,7 @@ class ResultManager:
 
         Args:
             slices(list[np.ndarray]): Slices for which the results will be loaded. Default is None and loads all slices.
-            num_burn_in_samples(int): Number of samples that will be ignored. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in each inference_information.json.
+            num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.
             thinning_factor(int): Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in each inference_information.json.
 
         Returns:
@@ -360,7 +360,7 @@ class ResultManager:
 
         Args:
             slice(np.ndarray): Slice for which the results will be loaded
-            num_burn_in_samples(int): Number of samples that will be ignored. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.
+            num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.
             thinning_factor(int): Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.
 
         Returns:
@@ -443,11 +443,16 @@ class ResultManager:
         # create mask for thinning and burn in
         thinning_and_burn_in_mask = np.concatenate(
             (
-                np.full(num_burn_in_samples, False),
+                np.full(
+                    num_burn_in_samples * inference_information["num_walkers"],
+                    False,
+                ),
                 (
                     (
                         np.arange(
-                            overall_params.shape[0] - num_burn_in_samples
+                            overall_params.shape[0]
+                            - num_burn_in_samples
+                            * inference_information["num_walkers"]
                         )
                         // inference_information["num_walkers"]
                     )
