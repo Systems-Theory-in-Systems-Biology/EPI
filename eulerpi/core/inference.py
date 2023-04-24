@@ -5,6 +5,7 @@ from typing import Dict, Optional, Tuple, Union
 import jax.numpy as jnp
 import numpy as np
 
+from eulerpi.core.data_transformation import DataTransformation
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
@@ -56,7 +57,10 @@ def inference(
             f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(data)}."
         )
 
-    # TODO Calculate Transformation to normalize data and normalize data, create transformation object
+    # Calculate Transformation to normalize data and normalize data, create transformation object
+    data_transformation = DataTransformation(data)
+    data = data_transformation.normalize(data)
+
     # TODO rename std_dev to kernel_width, adapt calculation of kernel width
 
     slices = slices or [
@@ -70,11 +74,11 @@ def inference(
         result_manager.delete_application_folder_structure()
     result_manager.create_application_folder_structure()
 
-    # TODO give transformation object to inference functions
     if inference_type == InferenceType.DENSE_GRID:
         return inference_dense_grid(
             model=model,
             data=data,
+            data_transformation=data_transformation,
             result_manager=result_manager,
             slices=slices,
             num_processes=num_processes,
@@ -84,6 +88,7 @@ def inference(
         return inference_mcmc(
             model=model,
             data=data,
+            data_transformation=data_transformation,
             result_manager=result_manager,
             slices=slices,
             num_processes=num_processes,
@@ -93,6 +98,7 @@ def inference(
         return inference_sparse_grid(
             model=model,
             data=data,
+            data_transformation=data_transformation,
             result_manager=result_manager,
             slices=slices,
             num_processes=num_processes,
