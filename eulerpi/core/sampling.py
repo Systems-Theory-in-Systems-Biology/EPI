@@ -164,7 +164,7 @@ def run_emcee_sampling(
         num_runs (int): number of stored sub runs.
         num_walkers (int): number of particles in the particle swarm sampler.
         num_steps (int): number of samples each particle performs before storing the sub run.
-        num_burn_in_samples (int): number of samples to be discarded as burn-in.
+        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
         thinning_factor (int): thinning factor for the samples.
 
     Returns:
@@ -255,7 +255,7 @@ def calc_walker_acceptance(
         model (Model): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
         num_walkers (int): number of walkers in the emcee chain
-        num_burn_in_samples (int): number of samples that were ignored at the beginning of each chain
+        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
         result_manager (ResultManager): ResultManager to load the results from
 
     Returns:
@@ -264,11 +264,13 @@ def calc_walker_acceptance(
     """
 
     # load the emcee parameter chain
-    params = np.loadtxt(
-        result_manager.get_slice_path(slice) + "/overall_params.csv",
-        delimiter=",",
-        ndmin=2,
-    )[num_burn_in_samples:, :]
+    (
+        params,
+        sim_res,
+        density_evals,
+    ) = result_manager.load_slice_inference_results(
+        slice, num_burn_in_samples, 1
+    )
 
     # calculate the number of steps each walker walked
     # subtract 1 because we count the steps between the parameters
@@ -302,7 +304,7 @@ def inference_mcmc(
     num_steps: int = 2500,
     num_burn_in_samples: typing.Optional[int] = None,
     thinning_factor: typing.Optional[int] = None,
-    calc_walker_acceptance_bool: bool = False,
+    get_walker_acceptance: bool = False,
 ) -> typing.Tuple[
     typing.Dict[str, np.ndarray],
     typing.Dict[str, np.ndarray],
@@ -322,7 +324,7 @@ def inference_mcmc(
         num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.
         num_burn_in_samples (int, optional): number of samples to be discarded as burn-in. Defaults to None means a burn in of 10% of the total number of samples.
         thinning_factor (int, optional): thinning factor for the samples. Defaults to None means no thinning.
-        calc_walker_acceptance_bool (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
+        get_walker_acceptance (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
 
     Returns:
         Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
@@ -368,7 +370,7 @@ def inference_mcmc(
             num_processes=num_processes,
         )
 
-        if calc_walker_acceptance_bool:
+        if get_walker_acceptance:
             num_burn_in_steps = int(num_steps * num_runs * 0.01)
             acceptance = calc_walker_acceptance(
                 model, slice, num_walkers, num_burn_in_steps, result_manager
