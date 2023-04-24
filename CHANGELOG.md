@@ -16,10 +16,13 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Bug in module B that caused a crash
+- Bug that caused thinning to be performed incorrectly.
 
 ### Changed
 
 - Now using default emcee move policy during MCMC sampling to improve convergence speed
+- Changed argument calc_walker_acceptance_bool to get_walker_acceptance
+- Changed meaning of argument num_burn_in_samples to refer to the number of samples burned per chain, not in total
 
 ## [0.1.5] - 2022-04-06
 
