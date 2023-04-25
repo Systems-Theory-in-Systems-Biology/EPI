@@ -15,6 +15,7 @@ from multiprocessing import get_context
 import numpy as np
 
 from eulerpi import logger
+from eulerpi.core.data_transformation import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
@@ -369,7 +370,14 @@ class Subspace(object):
 
 
 def evaluate_on_sparse_grid(
-    args: typing.Tuple[np.ndarray, Model, np.ndarray, np.ndarray, np.ndarray]
+    args: typing.Tuple[
+        np.ndarray,
+        Model,
+        np.ndarray,
+        DataTransformation,
+        np.ndarray,
+        np.ndarray,
+    ]
 ) -> np.ndarray:
     """This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.
 
@@ -377,6 +385,7 @@ def evaluate_on_sparse_grid(
         params (np.ndarray): The parameters to be evaluated.
         model(Model): The model used for the inference.
         data(np.ndarray): The data points used for the inference.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
         slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
 
@@ -384,13 +393,16 @@ def evaluate_on_sparse_grid(
         np.ndarray: The density values for the given params.
     """
 
-    params, model, data, data_stdevs, slice = args
-    return evaluate_density(params, model, data, data_stdevs, slice)[1]
+    params, model, data, data_transformation, data_stdevs, slice = args
+    return evaluate_density(
+        params, model, data, data_transformation, data_stdevs, slice
+    )[1]
 
 
 def inference_sparse_grid(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     result_manager: ResultManager,
     slices: typing.List[np.ndarray],
     num_processes: int,
@@ -404,10 +416,11 @@ def inference_sparse_grid(
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
-      model(Model): The model describing the mapping from parameters to data.
-      data(np.ndarray): The data to be used for inference.
-      num_processes(int): number of processes to use for parallel evaluation of the model.
-      num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
+        model(Model): The model describing the mapping from parameters to data.
+        data(np.ndarray): The data to be used for inference.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
+        num_processes(int): number of processes to use for parallel evaluation of the model.
+        num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     Returns:
         Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
@@ -441,6 +454,7 @@ def inference_sparse_grid(
             scaledSparseGridPoints,
             repeat(model),
             repeat(data),
+            repeat(data_transformation),
             repeat(data_stdevs),
             repeat(slice),
         )
