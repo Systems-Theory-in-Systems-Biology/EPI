@@ -20,6 +20,7 @@ import emcee
 import numpy as np
 
 from eulerpi import logger
+from eulerpi.core.data_transformation import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model
@@ -35,11 +36,11 @@ from eulerpi.core.transformations import eval_log_transformed_density
 # )
 
 
-# TODO Give transformation object to eval function
 def evaluate_sample(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> typing.Tuple[float, np.ndarray]:
@@ -49,6 +50,7 @@ def evaluate_sample(
         param (np.ndarray): parameter values
         model (Model): The model which will be sampled
         data (np.ndarray): data
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): kernel width for the data
         slice (np.ndarray): slice of the parameter space which will be sampled
 
@@ -57,7 +59,7 @@ def evaluate_sample(
     """
 
     log_samplerresult = eval_log_transformed_density(
-        param, model, data, data_stdevs, slice
+        param, model, data, data_transformation, data_stdevs, slice
     )
     return log_samplerresult
 
@@ -65,6 +67,7 @@ def evaluate_sample(
 def run_emcee_once(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
     initial_walker_positions: np.ndarray,
@@ -77,6 +80,7 @@ def run_emcee_once(
     Args:
         model (Model): The model which will be sampled
         data (np.ndarray): data
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): kernel width for the data
         slice (np.ndarray): slice of the parameter space which will be sampled
         initial_walker_positions (np.ndarray): initial parameter values for the walkers
@@ -100,7 +104,7 @@ def run_emcee_once(
             sampling_dim,
             evaluate_sample,
             pool=pool,
-            args=[model, data, data_stdevs, slice],
+            args=[model, data, data_transformation, data_stdevs, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
         final_walker_positions, _, _, _ = sampler.run_mcmc(
@@ -149,6 +153,7 @@ def run_emcee_once(
 def run_emcee_sampling(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     slice: np.ndarray,
     result_manager: ResultManager,
     num_processes: int,
@@ -164,6 +169,7 @@ def run_emcee_sampling(
     Args:
         model (Model): The model which will be sampled
         data (np.ndarray): data
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice (np.ndarray): slice of the parameter space which will be sampled
         result_manager (ResultManager): ResultManager which will store the results
         num_processes (int): number of parallel threads.
@@ -215,6 +221,7 @@ def run_emcee_sampling(
         sampler_results, final_walker_positions = run_emcee_once(
             model,
             data,
+            data_transformation,
             data_stdevs,
             slice,
             initial_walker_positions,
@@ -302,6 +309,7 @@ def calc_walker_acceptance(
 def inference_mcmc(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     result_manager: ResultManager,
     slices: list[np.ndarray],
     num_processes: int,
@@ -322,6 +330,7 @@ def inference_mcmc(
     Args:
         model (Model): The model describing the mapping from parameters to data.
         data (np.ndarray): The data to be used for the inference.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
@@ -366,6 +375,7 @@ def inference_mcmc(
         ) = run_emcee_sampling(
             model=model,
             data=data,
+            data_transformation=data_transformation,
             slice=slice,
             result_manager=result_manager,
             num_runs=num_runs,
