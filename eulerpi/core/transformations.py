@@ -5,6 +5,7 @@ import numpy as np
 from jax import jit
 
 from eulerpi import logger
+from eulerpi.core.data_transformation import DataTransformation
 from eulerpi.core.kde import eval_kde_gauss
 from eulerpi.core.model import Model
 
@@ -13,6 +14,7 @@ def evaluate_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
@@ -22,6 +24,7 @@ def evaluate_density(
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
@@ -49,13 +52,19 @@ def evaluate_density(
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
         sim_res, jac = model.forward_and_jacobian(fullParam)
 
-        # TODO transform sim res and use transformed simres below
+        # normalize sim_res
+        transformed_sim_res = data_transformation.normalize(sim_res)
 
-        # Evaluate the data density in the simulation result. # TODO scale with determinant transformation matrix
-        densityEvaluation = eval_kde_gauss(data, sim_res, data_stdevs)
+        # Evaluate the data density in the simulation result.
+        densityEvaluation = eval_kde_gauss(
+            data, transformed_sim_res, data_stdevs
+        )
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
-        correction = calc_gram_determinant(jac)
+        # Scale with the determinant of the transformation matrix.
+        correction = (
+            calc_gram_determinant(jac) * data_transformation.determinant
+        )
 
         # Multiply data density and correction factor.
         trafo_density_evaluation = densityEvaluation * correction
@@ -72,6 +81,7 @@ def eval_log_transformed_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
@@ -82,6 +92,7 @@ def eval_log_transformed_density(
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
 
@@ -91,9 +102,8 @@ def eval_log_transformed_density(
             : sampler_results (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
-    # TODO give transformation object to evaluation function
     trafo_density_evaluation, evaluation_results = evaluate_density(
-        param, model, data, data_stdevs, slice
+        param, model, data, data_transformation, data_stdevs, slice
     )
     if trafo_density_evaluation == 0:
         return -np.inf, evaluation_results
