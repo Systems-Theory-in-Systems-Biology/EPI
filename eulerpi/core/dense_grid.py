@@ -6,6 +6,7 @@ from typing import Dict, Tuple, Union
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
+from eulerpi.core.data_transformation import DataTransformation
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
@@ -68,7 +69,14 @@ def generate_regular_grid(
 
 
 def evaluate_on_grid_chunk(
-    args: typing.Tuple[np.ndarray, Model, np.ndarray, np.ndarray, np.ndarray]
+    args: typing.Tuple[
+        np.ndarray,
+        Model,
+        np.ndarray,
+        DataTransformation,
+        np.ndarray,
+        np.ndarray,
+    ]
 ) -> np.ndarray:
     """Define a function which evaluates the density for a given grid chunk. The input args contains the grid chunk, the model, the data, the data_stdevs and the slice.
 
@@ -76,13 +84,14 @@ def evaluate_on_grid_chunk(
         grid_chunk(np.ndarray): The grid chunk contains the grid points (parameter vectors) for which the density should be evaluated.
         model(Model): The model used for the inference.
         data(np.ndarray): The data points used for the inference.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
         slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
 
     Returns:
         np.ndarray: The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the simulation results in the second columns and the density evaluations in the last columns.
     """
-    grid_chunk, model, data, data_stdevs, slice = args
+    grid_chunk, model, data, data_transformation, data_stdevs, slice = args
 
     # Init the result array
     evaluation_results = np.zeros(
@@ -91,7 +100,7 @@ def evaluate_on_grid_chunk(
     # Evaluate the grid points
     for i, gridPoint in enumerate(grid_chunk):
         density, param_sim_res_density = evaluate_density(
-            gridPoint, model, data, data_stdevs, slice
+            gridPoint, model, data, data_transformation, data_stdevs, slice
         )
         evaluation_results[i] = param_sim_res_density
     return evaluation_results
@@ -100,6 +109,7 @@ def evaluate_on_grid_chunk(
 def run_dense_grid_evaluation(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     slice: np.ndarray,
     result_manager: ResultManager,
     num_grid_points: np.ndarray,
@@ -112,6 +122,7 @@ def run_dense_grid_evaluation(
     Args:
         model(Model): The model for which the evaluation should be performed.
         data(np.ndarray): The data for which the evaluation should be performed.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice(np.ndarray): The slice for which the evaluation should be performed.
         result_manager(ResultManager): The result manager that should be used to save the results.
         num_grid_points(np.ndarray): The number of grid points for each dimension.
@@ -155,6 +166,7 @@ def run_dense_grid_evaluation(
         grid_chunks,
         repeat(model),
         repeat(data),
+        repeat(data_transformation),
         repeat(data_stdevs),
         repeat(slice),
     )
@@ -179,6 +191,7 @@ def run_dense_grid_evaluation(
 def inference_dense_grid(
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     result_manager: ResultManager,
     slices: list[np.ndarray],
     num_processes: int,
@@ -196,6 +209,7 @@ def inference_dense_grid(
     Args:
         model (Model): The model describing the mapping from parameters to data.
         data (np.ndarray): The data to be used for the inference.
+        data_transformation (DataTransformation): The data transformation used to normalize the data.
         result_manager (ResultManager): The result manager to be used for the inference.
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
@@ -233,6 +247,7 @@ def inference_dense_grid(
         ) = run_dense_grid_evaluation(
             model=model,
             data=data,
+            data_transformation=data_transformation,
             slice=slice,
             result_manager=result_manager,
             num_grid_points=n_points,
