@@ -339,7 +339,7 @@ def inference_mcmc(
     """
     # Set default values for burn in and thinning factor
     if num_burn_in_samples is None:
-        num_burn_in_samples = int(num_runs * num_walkers * num_steps * 0.1)
+        num_burn_in_samples = int(num_runs * num_steps * 0.1)
     if thinning_factor is None:
         thinning_factor = 1
 
