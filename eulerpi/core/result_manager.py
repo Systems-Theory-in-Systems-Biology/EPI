@@ -446,19 +446,19 @@ class ResultManager:
         return (
             overall_params[
                 num_burn_in_samples
-                * num_walkers : thinning_factor
+                * num_walkers :: thinning_factor
                 * num_walkers,
                 :,
             ],
             overall_sim_results[
                 num_burn_in_samples
-                * num_walkers : thinning_factor
+                * num_walkers :: thinning_factor
                 * num_walkers,
                 :,
             ],
             overall_density_evals[
                 num_burn_in_samples
-                * num_walkers : thinning_factor
+                * num_walkers :: thinning_factor
                 * num_walkers
             ],
         )
