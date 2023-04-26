@@ -273,7 +273,7 @@ are stored for this model and slice. No files are deleted during this action.</p
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>slices</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – Slices for which the results will be loaded. Default is None and loads all slices.</p></li>
-<li><p><strong>num_burn_in_samples</strong> (<em>int</em>) – Number of samples that will be ignored. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in each inference_information.json.</p></li>
+<li><p><strong>num_burn_in_samples</strong> (<em>int</em>) – Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</p></li>
 <li><p><strong>thinning_factor</strong> (<em>int</em>) – Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in each inference_information.json.</p></li>
 </ul>
 </dd>
@@ -294,7 +294,7 @@ are stored for this model and slice. No files are deleted during this action.</p
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>slice</strong> (<em>np.ndarray</em>) – Slice for which the results will be loaded</p></li>
-<li><p><strong>num_burn_in_samples</strong> (<em>int</em>) – Number of samples that will be ignored. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</p></li>
+<li><p><strong>num_burn_in_samples</strong> (<em>int</em>) – Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</p></li>
 <li><p><strong>thinning_factor</strong> (<em>int</em>) – Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</p></li>
 </ul>
 </dd>
@@ -322,7 +322,7 @@ are stored for this model and slice. No files are deleted during this action.</p
 num_runs(int): The number of runs that were performed. Only for mcmc inference.
 num_walkers(int): The number of walkers that were used. Only for mcmc inference.
 num_steps(int): The number of steps that were performed. Only for mcmc inference.
-num_burn_in_samples(int): The number of samples that were ignored. Only for mcmc inference.
+num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.
 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
 load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
 num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.

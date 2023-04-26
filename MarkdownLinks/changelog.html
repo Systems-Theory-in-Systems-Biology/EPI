@@ -149,6 +149,7 @@
 <h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Bug in module B that caused a crash</p></li>
+<li><p>Bug that caused thinning to be performed incorrectly.</p></li>
 </ul>
 </section>
 </section>
@@ -178,6 +179,8 @@
 <h3>Changed<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Now using default emcee move policy during MCMC sampling to improve convergence speed</p></li>
+<li><p>Changed argument calc_walker_acceptance_bool to get_walker_acceptance</p></li>
+<li><p>Changed meaning of argument num_burn_in_samples to refer to the number of samples burned per chain, not in total</p></li>
 </ul>
 </section>
 <section id="id6">
