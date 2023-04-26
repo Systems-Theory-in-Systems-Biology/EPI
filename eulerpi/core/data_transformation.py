@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 
@@ -6,11 +6,11 @@ import numpy as np
 class DataTransformation:
     """Class for normalizing data. The data is normalized by subtracting the mean and multiplying by the inverse of the Cholesky decomposition of the covariance matrix."""
 
-    normalizing_matrix: np.ndarray
-    mean_vector: np.ndarray
+    normalizing_matrix: Union[np.ndarray, float]
+    mean_vector: Union[np.ndarray, float]
     determinant: float
 
-    def __init__(self, data: np.ndarray) -> None:
+    def __init__(self, data: Optional[np.ndarray] = None) -> None:
         """Initialize the DataTransformation object by calculating the mean vector and the normalizing matrix.
 
         Args:
@@ -26,15 +26,23 @@ class DataTransformation:
             )  # TODO check in Silverman if this makes sense
             self.determinant = np.linalg.det(self.normalizing_matrix)
 
-    def normalize(self, data: Union[float, np.ndarray]) -> np.ndarray:
+    def normalize(
+        self, data: Union[float, np.ndarray]
+    ) -> Union[float, np.ndarray]:
         """Normalize the given data.
 
         Args:
             data (Union[float, np.ndarray]): The data to be normalized. Columns correspond to different dimensions. Rows correspond to different observations.
 
         Returns:
-            np.ndarray: The normalized data.
+            Union[float, np.ndarray]: The normalized data.
         """
-        if data is np.ndarray:
-            return np.matmul(data - self.mean_vector, self.normalizing_matrix)
-        return (data - self.mean_vector) * self.normalizing_matrix
+        if isinstance(self.normalizing_matrix, np.ndarray):
+            if self.normalizing_matrix.ndim > 1:
+                return np.transpose(
+                    np.matmul(
+                        self.normalizing_matrix,
+                        np.transpose(data - self.mean_vector),
+                    )
+                )
+        return self.normalizing_matrix * (data - self.mean_vector)
