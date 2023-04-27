@@ -58,7 +58,7 @@ def inference(
         )
 
     # Calculate Transformation to normalize data and normalize data, create transformation object
-    data_transformation = DataTransformation(data)
+    data_transformation = DataTransformation.from_data(data)
     data = data_transformation.normalize(data)
 
     # TODO rename std_dev to kernel_width, adapt calculation of kernel width
