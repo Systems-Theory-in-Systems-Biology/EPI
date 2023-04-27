@@ -32,7 +32,7 @@ class DataIdentity(DataTransformation):
         return data
 
     def jacobian(self, data: jnp.ndarray) -> jnp.double:
-        return jnp.eye(data.shape[1])
+        return jnp.eye(data.shape[-1])
 
 
 class DataNormalizer(DataTransformation):
@@ -59,6 +59,10 @@ class DataNormalizer(DataTransformation):
         L = jnp.linalg.cholesky(jnp.atleast_2d(cov))
         instance.normalizing_matrix = jnp.linalg.inv(L)
         instance.determinant = jnp.linalg.det(instance.normalizing_matrix)
+
+        if instance.normalizing_matrix.shape == (1, 1):
+            instance.normalizing_matrix = instance.normalizing_matrix[0, 0]
+
         return instance
 
     @classmethod

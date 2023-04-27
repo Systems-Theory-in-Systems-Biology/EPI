@@ -2,6 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
+from eulerpi.core.data_transformation import DataIdentity
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.model import ArtificialModelInterface, JaxModel
 from eulerpi.core.transformations import calc_gram_determinant
@@ -60,26 +61,29 @@ def test_evaluate_density(caplog):
 
     # KDE has its own tests, so we can use it here to test the transformations
     data = np.array([[0.0], [2.0]])
+    data_transformation = DataIdentity()
     data_stdevs = calc_kernel_width(data)
     pure_density = eval_kde_gauss(data, sim_res, data_stdevs)
 
     # Test case 1: When the slice is one dimensional
     slice = np.array([0])
-    density, _ = evaluate_density(param, x2_model, data, data_stdevs, slice)
+    density, _ = evaluate_density(
+        param, x2_model, data, data_transformation, data_stdevs, slice
+    )
     assert density == pure_density * correction
 
     # Test case 2: When the slice is empty
     slice = np.array([])
     with pytest.raises(IndexError):
         density, _ = evaluate_density(
-            param, x2_model, data, data_stdevs, slice
+            param, x2_model, data, data_transformation, data_stdevs, slice
         )
 
     # Test case 3: When the slice is two dimensional, but the model is one dimensional
     slice = np.array([0, 1])
     with pytest.raises(IndexError):
         density, _ = evaluate_density(
-            param, x2_model, data, data_stdevs, slice
+            param, x2_model, data, data_transformation, data_stdevs, slice
         )
 
     # Test case 4: When the param is out of bounds
@@ -90,6 +94,8 @@ def test_evaluate_density(caplog):
     from eulerpi import logger
 
     logger.setLevel("INFO")
-    density, _ = evaluate_density(param, x2_model, data, data_stdevs, slice)
+    density, _ = evaluate_density(
+        param, x2_model, data, data_transformation, data_stdevs, slice
+    )
     assert density == 0.0
     assert "Parameters outside of predefined range" in caplog.text
