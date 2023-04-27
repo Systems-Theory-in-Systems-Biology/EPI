@@ -7,6 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   Data Transformation<eulerpi.core.data_transformation>
    Dense Grid<eulerpi.core.dense_grid>
    Dense Grid Types<eulerpi.core.dense_grid_types>
    Inference<eulerpi.core.inference>
