@@ -7,37 +7,43 @@ from jax import jit, tree_util
 class DataTransformation:
     """Class for normalizing data. The data is normalized by subtracting the mean and multiplying by the inverse of the Cholesky decomposition of the covariance matrix."""
 
-    normalizing_matrix: Union[jnp.ndarray, jnp.double]
-    mean_vector: Union[jnp.ndarray, jnp.double]
-    determinant: jnp.double
-
     def __init__(
         self,
-        data: Optional[jnp.ndarray] = None,
         normalizing_matrix: Optional[jnp.ndarray] = None,
         mean_vector: Optional[jnp.ndarray] = None,
         determinant: Optional[jnp.double] = None,
-    ) -> None:
-        """Initialize the DataTransformation object by calculating the mean vector and the normalizing matrix.
-
-        Args:
-            data (jnp.ndarray): The data to be normalized. Columns correspond to different dimensions. Rows correspond to different observations.
-        """
-        if mean_vector is None:
-            mean_vector = jnp.mean(data, axis=0)
-        self.mean_vector = mean_vector
-
-        if normalizing_matrix is None:
-            if data.shape[1] == 1:
-                normalizing_matrix = 1 / jnp.std(data)
-                determinant = normalizing_matrix
-            else:
-                normalizing_matrix = jnp.linalg.inv(
-                    jnp.linalg.cholesky(jnp.cov(data, rowvar=False))
-                )  # TODO check in Silverman if this makes sense
-                determinant = jnp.linalg.det(normalizing_matrix)
+    ):
         self.normalizing_matrix = normalizing_matrix
+        self.mean_vector = mean_vector
         self.determinant = determinant
+
+    @classmethod
+    def from_data(cls, data: jnp.ndarray) -> "DataTransformation":
+        """Initialize a DataTransformation object by calculating the mean vector, the normalizing matrix and the determinant from the given data."""
+        instance = cls()
+        instance.mean_vector = jnp.mean(data, axis=0)
+        cov = jnp.cov(data, rowvar=False)
+        L = jnp.linalg.cholesky(jnp.atleast_2d(cov))
+        instance.normalizing_matrix = jnp.linalg.inv(L)
+        instance.determinant = jnp.linalg.det(instance.normalizing_matrix)
+        return instance
+
+    @classmethod
+    def from_transformation(
+        cls,
+        mean_vector: jnp.ndarray,
+        normalizing_matrix: jnp.ndarray,
+        determinant: Optional[jnp.double] = None,
+    ) -> "DataTransformation":
+        """Initialize a DataTransformation object from the given mean vector, normalizing matrix and determinant."""
+        instance = cls()
+        instance.mean_vector = mean_vector
+        instance.normalizing_matrix = normalizing_matrix
+        if determinant is not None:
+            instance.determinant = determinant
+        else:
+            instance.determinant = jnp.linalg.det(normalizing_matrix)
+        return instance
 
     @jit
     def normalize(
@@ -51,22 +57,20 @@ class DataTransformation:
         Returns:
             Union[jnp.double, jnp.ndarray]: The normalized data.
         """
-        if isinstance(self.normalizing_matrix, jnp.ndarray):
-            if self.normalizing_matrix.ndim > 1:
-                return jnp.transpose(
-                    jnp.matmul(
-                        self.normalizing_matrix,
-                        jnp.transpose(data - self.mean_vector),
-                    )
-                )
-        return self.normalizing_matrix * (data - self.mean_vector)
+        # possible shapes
+        # normalizing matrix: (d, d)
+        # data: (n, d)
+        # data: (d)
+        # The correct output shape is (n, d) or (d) depending on the input shape.
+        return jnp.inner(data - self.mean_vector, self.normalizing_matrix)
 
     def _tree_flatten(self):
         """This function is used by JAX to flatten the object for JIT compilation."""
-        children = ()  # arrays / dynamic values
+        children = (
+            self.normalizing_matrix,
+            self.mean_vector,
+        )  # arrays / dynamic values
         aux_data = {
-            "normalizing_matrix": self.normalizing_matrix,
-            "mean_vector": self.mean_vector,
             "determinant": self.determinant,
         }  # static values
 
