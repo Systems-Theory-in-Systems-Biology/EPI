@@ -5,7 +5,7 @@ from typing import Dict, Optional, Tuple, Union
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.data_transformation import DataTransformation
+from eulerpi.core.data_transformation import DataNormalizer, DataTransformation
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
@@ -23,6 +23,7 @@ def inference(
     run_name: str = "default_run",
     result_manager: ResultManager = None,
     continue_sampling: bool = False,
+    data_transformation: Optional[DataTransformation] = None,
     **kwargs,
 ) -> Tuple[
     Dict[str, np.ndarray],
@@ -41,6 +42,7 @@ def inference(
         run_name(str): The name of the run. (Default value = "default_run")
         result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
         continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)
+        data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
@@ -58,8 +60,8 @@ def inference(
         )
 
     # Calculate Transformation to normalize data and normalize data, create transformation object
-    data_transformation = DataTransformation.from_data(data)
-    data = data_transformation.normalize(data)
+    data_transformation = DataNormalizer.from_data(data)
+    data = data_transformation.transform(data)
 
     # TODO rename std_dev to kernel_width, adapt calculation of kernel width
 
