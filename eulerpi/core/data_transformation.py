@@ -1,10 +1,41 @@
+from abc import ABC, abstractmethod
 from typing import Optional, Union
 
 import jax.numpy as jnp
 from jax import jit, tree_util
+from sklearn.decomposition import PCA
 
 
-class DataTransformation:
+class DataTransformation(ABC):
+    """Class for normalizing data. The data is normalized by subtracting the mean and multiplying by the inverse of the Cholesky decomposition of the covariance matrix."""
+
+    @abstractmethod
+    def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Transform the given data."""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Return the jacobian of the transformation at the given data point(s)."""
+        raise NotImplementedError()
+
+
+class DataIdentity(DataTransformation):
+    """The identity transformation. Does not change the data."""
+
+    def __init__(
+        self,
+    ):
+        super().__init__()
+
+    def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        return data
+
+    def jacobian(self, data: jnp.ndarray) -> jnp.double:
+        return jnp.eye(data.shape[1])
+
+
+class DataNormalizer(DataTransformation):
     """Class for normalizing data. The data is normalized by subtracting the mean and multiplying by the inverse of the Cholesky decomposition of the covariance matrix."""
 
     def __init__(
@@ -13,6 +44,8 @@ class DataTransformation:
         mean_vector: Optional[jnp.ndarray] = None,
         determinant: Optional[jnp.double] = None,
     ):
+        super().__init__()
+
         self.normalizing_matrix = normalizing_matrix
         self.mean_vector = mean_vector
         self.determinant = determinant
@@ -46,7 +79,7 @@ class DataTransformation:
         return instance
 
     @jit
-    def normalize(
+    def transform(
         self, data: Union[jnp.double, jnp.ndarray]
     ) -> Union[jnp.double, jnp.ndarray]:
         """Normalize the given data.
@@ -63,6 +96,9 @@ class DataTransformation:
         # data: (d)
         # The correct output shape is (n, d) or (d) depending on the input shape.
         return jnp.inner(data - self.mean_vector, self.normalizing_matrix)
+
+    def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        return self.normalizing_matrix
 
     def _tree_flatten(self):
         """This function is used by JAX to flatten the object for JIT compilation."""
@@ -83,7 +119,35 @@ class DataTransformation:
 
 
 tree_util.register_pytree_node(
-    DataTransformation,
-    DataTransformation._tree_flatten,
-    DataTransformation._tree_unflatten,
+    DataNormalizer,
+    DataNormalizer._tree_flatten,
+    DataNormalizer._tree_unflatten,
 )
+
+
+class DataPCA(DataTransformation):
+    """The DataPCA class can be used to transform the data using the Principal Component Analysis."""
+
+    def __init__(
+        self,
+        pca: Optional[PCA] = None,
+    ):
+        super().__init__()
+
+        self.pca = pca
+
+    @classmethod
+    def from_data(
+        cls, data: jnp.ndarray, n_components: Optional[int] = None
+    ) -> "DataTransformation":
+        """Initialize a DataTransformation object by calculating the mean vector, the normalizing matrix and the determinant from the given data."""
+        instance = cls()
+        instance.pca = PCA(n_components=n_components)
+        instance.pca.fit(data)
+        return instance
+
+    def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        return self.pca.transform(data)
+
+    def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        return self.pca.components_.T

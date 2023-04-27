@@ -14,9 +14,9 @@ def evaluate_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
-    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
+    data_transformation: DataTransformation = None,
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
 
@@ -53,7 +53,7 @@ def evaluate_density(
         sim_res, jac = model.forward_and_jacobian(fullParam)
 
         # normalize sim_res
-        transformed_sim_res = data_transformation.normalize(sim_res)
+        transformed_sim_res = data_transformation.transform(sim_res)
 
         # Evaluate the data density in the simulation result.
         densityEvaluation = eval_kde_gauss(
@@ -62,8 +62,8 @@ def evaluate_density(
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         # Scale with the determinant of the transformation matrix.
-        correction = (
-            calc_gram_determinant(jac) * data_transformation.determinant
+        correction = calc_gram_determinant(
+            data_transformation.jacobian(sim_res) @ jac
         )
 
         # Multiply data density and correction factor.
