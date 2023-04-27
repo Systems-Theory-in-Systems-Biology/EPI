@@ -14,9 +14,9 @@ def evaluate_density(
     param: np.ndarray,
     model: Model,
     data: np.ndarray,
+    data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
     slice: np.ndarray,
-    data_transformation: DataTransformation = None,
 ) -> Tuple[np.double, np.ndarray]:
     """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
 

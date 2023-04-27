@@ -7,6 +7,7 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
+from eulerpi.core.data_transformation import DataIdentity
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.transformations import evaluate_density
@@ -26,10 +27,11 @@ def test_transformationLinear():
     xMesh, yMesh = np.meshgrid(xGrid, yGrid)
 
     data = np.array([xMesh.flatten(), yMesh.flatten()]).T
+    data_transformation = DataIdentity()
 
     # define standard deviations according to silverman
     data_stdevs = calc_kernel_width(data)
-
+    data_transformation = DataIdentity()
     # Now plot the data Gaussian KDE
     KDEresolution = 25
 
@@ -75,6 +77,7 @@ def test_transformationLinear():
                 paramPoint,
                 model,
                 data,
+                data_transformation,
                 data_stdevs,
                 slice=np.arange(model.param_dim),
             )
@@ -103,6 +106,7 @@ def test_transformationExponential():
     trueParam = np.random.rand(num_data_points, 2) + 1
 
     data = vmap(model.forward, in_axes=0)(trueParam)
+    data_transformation = DataIdentity()
 
     # define standard deviations according to silverman
     data_stdevs = calc_kernel_width(data)
@@ -147,7 +151,12 @@ def test_transformationExponential():
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evaluate_density(
-                paramPoint, model, data, data_stdevs, slice=fullSlice
+                paramPoint,
+                model,
+                data,
+                data_transformation,
+                data_stdevs,
+                slice=fullSlice,
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
