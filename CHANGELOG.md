@@ -20,6 +20,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-04-27
+
+### Added
+
+- Added data normalization to improve numerics and performance in general
+
+### Fixed
+
+- Fixed grid results beeing unusable due to numerical issues
+
 ## [0.2.1] - 2023-04-21
 
 ### Fixed
