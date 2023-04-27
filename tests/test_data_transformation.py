@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from eulerpi.core.data_transformation import (
     DataIdentity,
@@ -39,7 +38,6 @@ def test_DataNormalizer():
         assert transformed_datapoint.shape == data[0].shape
 
 
-@pytest.mark.skip(reason="Not implemented yet.")
 def test_DataPCA():
     data1d = np.random.rand(100, 1)
     data2d = np.random.rand(100, 2)
