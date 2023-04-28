@@ -149,9 +149,7 @@ class DataNormalizer(DataTransformation):
             self.normalizing_matrix,
             self.mean_vector,
         )  # arrays / dynamic values
-        aux_data = {
-            "determinant": self.determinant,
-        }  # static values
+        aux_data = {}  # static values
 
         return (children, aux_data)
 
