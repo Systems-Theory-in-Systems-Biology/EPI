@@ -7,7 +7,8 @@ from eulerpi.core.model import ArtificialModelInterface, SBMLModel
 
 class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
     """The MentenModel is a simple model for the Michaelis-Menten enzyme kinetics.
-    It requires a few adaptations to the SBMLModel class to work with the inference, because the first output of the model does not depend on the parameters.
+    It requires a few adaptations to the SBMLModel class to work with the inference, because
+    the first output of the model does not depend on the parameters and the second output is linear dependent on the third output.
     See data_dim, forward, jacobian, forward_and_jacobian.
     """
 
@@ -29,22 +30,23 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
             central_param,
             param_limits,
             param_names,
+            skip_creation=True,
             **kwargs,
         )
 
     @property
     def data_dim(self) -> int:
-        return 2
+        return 1
 
     def forward(self, params) -> np.ndarray:
-        return super().forward(params)[1:]
+        return super().forward(params)[2:]
 
     def jacobian(self, params) -> np.ndarray:
-        return super().jacobian(params)[1:, :]
+        return super().jacobian(params)[2:, :]
 
     def forward_and_jacobian(self, params) -> np.ndarray:
         val, jac = super().forward_and_jacobian(params)
-        return val[1:], jac[1:, :]
+        return val[2:], jac[2:, :]
 
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:
         diff0 = 5.0
