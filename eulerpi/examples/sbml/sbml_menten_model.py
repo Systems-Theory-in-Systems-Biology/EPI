@@ -30,7 +30,6 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
             central_param,
             param_limits,
             param_names,
-            skip_creation=True,
             **kwargs,
         )
 
