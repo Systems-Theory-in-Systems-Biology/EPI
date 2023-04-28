@@ -16,7 +16,17 @@ class DataTransformation(ABC):
 
     @abstractmethod
     def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
-        """Return the jacobian of the transformation at the given data point(s)."""
+        """Calculate the jacobian of the transformation at the given data point(s).
+
+        Args:
+            data (jnp.ndarray): The data at which the jacobian should be evaluated.
+
+        Raises:
+            NotImplementedError: Raised if the jacobian is not implemented in the subclass.
+
+        Returns:
+            jnp.ndarray: The jacobian of the transformation at the given data point(s).
+        """
         raise NotImplementedError()
 
 
@@ -29,9 +39,25 @@ class DataIdentity(DataTransformation):
         super().__init__()
 
     def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Returns the data unchanged.
+
+        Args:
+            data (jnp.ndarray): The data which should be transformed.
+
+        Returns:
+            jnp.ndarray: The data unchanged.
+        """
         return data
 
-    def jacobian(self, data: jnp.ndarray) -> jnp.double:
+    def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Returns the identity matrix.
+
+        Args:
+            data (jnp.ndarray): The data at which the jacobian should be evaluated.
+
+        Returns:
+            jnp.ndarray: The identity matrix.
+        """
         return jnp.eye(data.shape[-1])
 
 
@@ -42,23 +68,33 @@ class DataNormalizer(DataTransformation):
         self,
         normalizing_matrix: Optional[jnp.ndarray] = None,
         mean_vector: Optional[jnp.ndarray] = None,
-        determinant: Optional[jnp.double] = None,
     ):
+        """Initialize a DataNormalizer object.
+
+        Args:
+            normalizing_matrix (Optional[jnp.ndarray], optional): The normalizing matrix. Defaults to None.
+            mean_vector (Optional[jnp.ndarray], optional): The mean / shift vector. Defaults to None.
+        """
         super().__init__()
 
         self.normalizing_matrix = normalizing_matrix
         self.mean_vector = mean_vector
-        self.determinant = determinant
 
     @classmethod
     def from_data(cls, data: jnp.ndarray) -> "DataTransformation":
-        """Initialize a DataTransformation object by calculating the mean vector, the normalizing matrix and the determinant from the given data."""
+        """Initialize a DataTransformation object by calculating the mean vector and normalizing matrix from the given data.
+
+        Args:
+            data (jnp.ndarray): The data from which to calculate the mean vector and normalizing matrix.
+
+        Returns:
+            DataTransformation: The initialized DataTransformation object.
+        """
         instance = cls()
         instance.mean_vector = jnp.mean(data, axis=0)
         cov = jnp.cov(data, rowvar=False)
         L = jnp.linalg.cholesky(jnp.atleast_2d(cov))
         instance.normalizing_matrix = jnp.linalg.inv(L)
-        instance.determinant = jnp.linalg.det(instance.normalizing_matrix)
 
         if instance.normalizing_matrix.shape == (1, 1):
             instance.normalizing_matrix = instance.normalizing_matrix[0, 0]
@@ -70,16 +106,19 @@ class DataNormalizer(DataTransformation):
         cls,
         mean_vector: jnp.ndarray,
         normalizing_matrix: jnp.ndarray,
-        determinant: Optional[jnp.double] = None,
     ) -> "DataTransformation":
-        """Initialize a DataTransformation object from the given mean vector, normalizing matrix and determinant."""
+        """Initialize a DataTransformation object from the given mean vector, normalizing matrix and determinant.
+
+        Args:
+            mean_vector (jnp.ndarray): The vector to shift the data by.
+            normalizing_matrix (jnp.ndarray): The matrix to multiply the data by.
+
+        Returns:
+            DataTransformation: The initialized DataTransformation object.
+        """
         instance = cls()
         instance.mean_vector = mean_vector
         instance.normalizing_matrix = normalizing_matrix
-        if determinant is not None:
-            instance.determinant = determinant
-        else:
-            instance.determinant = jnp.linalg.det(normalizing_matrix)
         return instance
 
     @jit
@@ -136,6 +175,11 @@ class DataPCA(DataTransformation):
         self,
         pca: Optional[PCA] = None,
     ):
+        """Initialize a DataPCA object.
+
+        Args:
+            pca (Optional[PCA], optional): The PCA object to be used for the transformation. Defaults to None.
+        """
         super().__init__()
 
         self.pca = pca
@@ -144,14 +188,38 @@ class DataPCA(DataTransformation):
     def from_data(
         cls, data: jnp.ndarray, n_components: Optional[int] = None
     ) -> "DataTransformation":
-        """Initialize a DataTransformation object by calculating the mean vector, the normalizing matrix and the determinant from the given data."""
+        """Initialize a DataPCA object by calculating the PCA from the given data.
+
+        Args:
+            data (jnp.ndarray): The data to be used for the PCA.
+            n_components (Optional[int], optional): The number of components to keep. If None is passed, min(n_samples,n_features) is used. Defaults to None.
+
+        Returns:
+            DataTransformation: The initialized DataPCA object.
+        """
         instance = cls()
         instance.pca = PCA(n_components=n_components)
         instance.pca.fit(data)
         return instance
 
     def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Transform the given data using the PCA.
+
+        Args:
+            data (jnp.ndarray): The data to be transformed.
+
+        Returns:
+            jnp.ndarray: The data projected onto and expressed in the basis of the principal components.
+        """
         return self.pca.transform(data)
 
     def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Return the jacobian of the pca transformation at the given data point(s).
+
+        Args:
+            data (jnp.ndarray): The data point(s) at which the jacobian should be evaluated.
+
+        Returns:
+            jnp.ndarray: The jacobian of the pca transformation at the given data point(s).
+        """
         return self.pca.components_.T
