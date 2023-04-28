@@ -50,7 +50,7 @@ def evaluate_density(
     # If the parameter is within the valid ranges...
     else:
         # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        sim_res, jac = model.forward_and_jacobian(fullParam)
+        sim_res, model_jac = model.forward_and_jacobian(fullParam)
 
         # normalize sim_res
         transformed_sim_res = data_transformation.transform(sim_res)
@@ -62,8 +62,11 @@ def evaluate_density(
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         # Scale with the determinant of the transformation matrix.
+        transformation_jac = data_transformation.jacobian(sim_res)
         correction = calc_gram_determinant(
-            data_transformation.jacobian(sim_res) @ jac
+            jnp.dot(
+                transformation_jac, model_jac
+            )  # We use dot, because matmul does not support scalars
         )
 
         # Multiply data density and correction factor.
