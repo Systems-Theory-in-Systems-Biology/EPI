@@ -8,6 +8,7 @@ from eulerpi.core.data_transformation import (
 
 
 def test_DataIdentity():
+    """Test whether the DataIdentity transformation does not change the data."""
     data0dim = np.random.rand()
     data1dim = np.random.rand(100)
     data2dim = np.random.rand(100, 2)
@@ -20,6 +21,7 @@ def test_DataIdentity():
 
 
 def test_DataNormalizer():
+    """Test whether the DataNormalizer transformation normalizes the data to zero mean and unit variance."""
     data1d = np.random.rand(100, 1)
     data2d = np.random.rand(100, 2)
     test_data = [(1, data1d), (2, data2d)]
@@ -39,6 +41,7 @@ def test_DataNormalizer():
 
 
 def test_DataPCA():
+    """Test whether the DataPCA transformation is able to run on data with different dimensions."""
     data1d = np.random.rand(100, 1)
     data2d = np.random.rand(100, 2)
     test_data = [(1, data1d), (2, data2d)]

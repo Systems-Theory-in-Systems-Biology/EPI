@@ -9,6 +9,7 @@ Submodules
 
    configuration<tests.conftest>
    Profiling<tests.profiling>
+   Test Data Transformation<tests.test_data_transformation>
    Test Dense Grid<tests.test_dense_grid>
    Test Examples<tests.test_examples>
    Test Fixed Params<tests.test_fixed_params>
