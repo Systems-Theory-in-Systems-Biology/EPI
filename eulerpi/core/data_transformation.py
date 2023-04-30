@@ -209,7 +209,9 @@ class DataPCA(DataTransformation):
         Returns:
             jnp.ndarray: The data projected onto and expressed in the basis of the principal components.
         """
-        return self.pca.transform(data)
+        return self.pca.transform(data.reshape(-1, data.shape[-1])).reshape(
+            -1, self.pca.n_components_
+        )
 
     def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
         """Return the jacobian of the pca transformation at the given data point(s).
@@ -220,4 +222,4 @@ class DataPCA(DataTransformation):
         Returns:
             jnp.ndarray: The jacobian of the pca transformation at the given data point(s).
         """
-        return self.pca.components_.T
+        return self.pca.components_
