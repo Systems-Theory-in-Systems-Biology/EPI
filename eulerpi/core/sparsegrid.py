@@ -473,20 +473,22 @@ def inference_sparse_grid(
         # Take care! The results here are for single points, therefore we cant use np.concatenate
         results = np.vstack(results)
 
+        data_dim = model.data_dim
+
         # save the results
         result_manager.save_overall(
             slice,
             results[:, 0 : slice.shape[0]],
-            results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
-            results[:, slice.shape[0] + data.shape[1] :],
+            results[:, slice.shape[0] : slice.shape[0] + data_dim],
+            results[:, slice.shape[0] + data_dim :],
         )
         slice_name = result_manager.get_slice_name(slice)
         overall_params[slice_name] = results[:, 0 : slice.shape[0]]
         overall_sim_results[slice_name] = results[
-            :, slice.shape[0] : slice.shape[0] + data.shape[1]
+            :, slice.shape[0] : slice.shape[0] + data_dim
         ]
         overall_density_evals[slice_name] = results[
-            :, slice.shape[0] + data.shape[1] :
+            :, slice.shape[0] + data_dim :
         ]
         result_manager.save_inference_information(
             slice=slice,

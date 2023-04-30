@@ -95,7 +95,7 @@ def evaluate_on_grid_chunk(
 
     # Init the result array
     evaluation_results = np.zeros(
-        (grid_chunk.shape[0], data.shape[1] + slice.shape[0] + 1)
+        (grid_chunk.shape[0], model.data_dim + slice.shape[0] + 1)
     )
     # Evaluate the grid points
     for i, gridPoint in enumerate(grid_chunk):
@@ -175,16 +175,18 @@ def run_dense_grid_evaluation(
     pool.join()
     results = np.concatenate(results)
 
+    data_dim = model.data_dim
+
     result_manager.save_overall(
         slice,
         results[:, 0 : slice.shape[0]],
-        results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
-        results[:, slice.shape[0] + data.shape[1] :],
+        results[:, slice.shape[0] : slice.shape[0] + data_dim],
+        results[:, slice.shape[0] + data_dim :],
     )
     return (
         results[:, 0 : slice.shape[0]],
-        results[:, slice.shape[0] : slice.shape[0] + data.shape[1]],
-        results[:, slice.shape[0] + data.shape[1] :],
+        results[:, slice.shape[0] : slice.shape[0] + data_dim],
+        results[:, slice.shape[0] + data_dim :],
     )
 
 

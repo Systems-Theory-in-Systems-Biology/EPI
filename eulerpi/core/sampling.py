@@ -128,7 +128,7 @@ def run_emcee_once(
     # TODO: Keep as 3d array?
     # Should have shape (num_steps, num_walkers, param_dim+data_dim+1)
     sampler_results = sampler.get_blobs()
-    data_dim = data.shape[1]
+    data_dim = model.data_dim
     sampler_results = sampler_results.reshape(
         num_steps * num_walkers, sampling_dim + data_dim + 1
     )
