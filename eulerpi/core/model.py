@@ -10,6 +10,7 @@ import numpy as np
 from jax import jacrev, jit, vmap
 
 import amici
+from eulerpi import logger
 from eulerpi.jax_extension import value_and_jacrev
 
 
@@ -307,10 +308,10 @@ class SBMLModel(Model):
                 self.amici_model_name, self.amici_model_dir
             )
 
+        self.param_names = param_names
+
         # Load the generated model
         self.load_amici_model_and_solver()
-
-        self.param_names = param_names or self.amici_model.getParameterNames()
 
     def load_amici_model_and_solver(self):
         """Loads the AMICI model from the previously generated model."""
@@ -322,7 +323,21 @@ class SBMLModel(Model):
 
         # TODO: Maybe this is redundant when using settings to hdf5
         self.amici_model.setTimepoints([self.tEnd])
-        self.amici_model.requireSensitivitiesForAllParameters()
+
+        if self.param_names is not None:
+            # We need the indices for setParameterList, not the ids or names
+            amici_param_indices = []
+            for i, param_id in enumerate(self.amici_model.getParameterIds()):
+                if param_id in self.param_names:
+                    amici_param_indices.append(i)
+                else:
+                    logger.warning(
+                        f"Parameter {param_id} is specified in the sbml file, but not in the passed parameter list. It will be ignored."
+                    )
+            self.amici_model.setParameterList(amici_param_indices)
+        else:
+            self.param_names = self.amici_model.getParameterIds()
+            self.amici_model.requireSensitivitiesForAllParameters()
         self.amici_solver.setSensitivityMethod(amici.SensitivityMethod.forward)
         self.amici_solver.setSensitivityOrder(amici.SensitivityOrder.first)
 
