@@ -64,39 +64,44 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#unreleased">[Unreleased]</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">[0.2.1] - 2023-04-21</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Fixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id3">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">[0.3.0] - 2023-04-27</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Fixed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">[0.2.0] - 2023-04-20</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Changed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">Fixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">[0.2.1] - 2023-04-21</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Fixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Added</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">[0.1.5] - 2023-04-06</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">[0.2.0] - 2023-04-20</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Changed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Fixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Added</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id10">[0.1.4] - 2023-04-06</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id11">Changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">[0.1.5] - 2023-04-06</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id12">[0.1.3] - 2023-04-05</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id13">Changed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">[0.1.4] - 2023-04-06</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id14">[0.1.2] - 2023-04-05</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id15">Fixed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">[0.1.3] - 2023-04-05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Changed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id16">[0.1.1] - 2023-04-05</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id17">Fixed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">[0.1.2] - 2023-04-05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">Fixed</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id18">[0.1.0] - 2023-04-05</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id19">Added</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id19">[0.1.1] - 2023-04-05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id20">Fixed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">[0.1.0] - 2023-04-05</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">Added</a></li>
 </ul>
 </li>
 </ul>
@@ -157,96 +162,114 @@
 <h2>[Unreleased]<a class="headerlink" href="#unreleased" title="Permalink to this heading"></a></h2>
 </section>
 <section id="id1">
-<h2>[0.2.1] - 2023-04-21<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>[0.3.0] - 2023-04-27<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <section id="id2">
-<h3>Fixed<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>Added<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added data normalization to improve numerics and performance in the inference method.</p></li>
+<li><p>Added possiblity to use no PCA transformation or completely custom transformation for inference.</p></li>
+<li><p>More tests to validate EPI</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Fixed<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed grid results beeing unusable due to numerical issues</p></li>
+<li><p>Fixed sbml models ignoring parameter_names argument</p></li>
+</ul>
+</section>
+</section>
+<section id="id4">
+<h2>[0.2.1] - 2023-04-21<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<section id="id5">
+<h3>Fixed<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Fix sparse grid returning meaningless data</p></li>
 <li><p>Fix menten data shape</p></li>
 <li><p>Fix SBMLModel data_dim: Return states count instead of observables count</p></li>
 </ul>
 </section>
-<section id="id3">
-<h3>Added<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<section id="id6">
+<h3>Added<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Validating the shapes of the inference results</p></li>
 </ul>
 </section>
 </section>
-<section id="id4">
-<h2>[0.2.0] - 2023-04-20<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
-<section id="id5">
-<h3>Changed<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<section id="id7">
+<h2>[0.2.0] - 2023-04-20<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<section id="id8">
+<h3>Changed<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Now using default emcee move policy during MCMC sampling to improve convergence speed</p></li>
 <li><p>Changed argument calc_walker_acceptance_bool to get_walker_acceptance</p></li>
 <li><p>Changed meaning of argument num_burn_in_samples to refer to the number of samples burned per chain, not in total</p></li>
 </ul>
 </section>
-<section id="id6">
-<h3>Fixed<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<section id="id9">
+<h3>Fixed<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Fixed SwigPyObject pickling</p></li>
 <li><p>Fixed dead lock for larger data sets and models</p></li>
 </ul>
 </section>
-<section id="id7">
-<h3>Added<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<section id="id10">
+<h3>Added<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>ResultManager is saving meta data for inference</p></li>
 <li><p>ResultManager uses saved meta data to load inference results</p></li>
 </ul>
 </section>
 </section>
-<section id="id8">
-<h2>[0.1.5] - 2023-04-06<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
-<section id="id9">
-<h3>Changed<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<section id="id11">
+<h2>[0.1.5] - 2023-04-06<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
+<section id="id12">
+<h3>Changed<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Renamed epipy to eulerpi</p></li>
 </ul>
 </section>
 </section>
-<section id="id10">
-<h2>[0.1.4] - 2023-04-06<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
-<section id="id11">
-<h3>Changed<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<section id="id13">
+<h2>[0.1.4] - 2023-04-06<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h2>
+<section id="id14">
+<h3>Changed<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Updated installation instructions</p></li>
 </ul>
 </section>
 </section>
-<section id="id12">
-<h2>[0.1.3] - 2023-04-05<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
-<section id="id13">
-<h3>Changed<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<section id="id15">
+<h2>[0.1.3] - 2023-04-05<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<section id="id16">
+<h3>Changed<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Updated dependencies</p></li>
 </ul>
 </section>
 </section>
-<section id="id14">
-<h2>[0.1.2] - 2023-04-05<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h2>
-<section id="id15">
-<h3>Fixed<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<section id="id17">
+<h2>[0.1.2] - 2023-04-05<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h2>
+<section id="id18">
+<h3>Fixed<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>removed <code class="docutils literal notranslate"><span class="pre">__pycache__</span></code>, <code class="docutils literal notranslate"><span class="pre">build</span></code> and <code class="docutils literal notranslate"><span class="pre">.so</span></code> from pypi</p></li>
 </ul>
 </section>
 </section>
-<section id="id16">
-<h2>[0.1.1] - 2023-04-05<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h2>
-<section id="id17">
-<h3>Fixed<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<section id="id19">
+<h2>[0.1.1] - 2023-04-05<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h2>
+<section id="id20">
+<h3>Fixed<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>fixed epi logo not showing on pypi</p></li>
 </ul>
 </section>
 </section>
-<section id="id18">
-<h2>[0.1.0] - 2023-04-05<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
-<section id="id19">
-<h3>Added<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<section id="id21">
+<h2>[0.1.0] - 2023-04-05<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<section id="id22">
+<h3>Added<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Initial release</p></li>
 </ul>

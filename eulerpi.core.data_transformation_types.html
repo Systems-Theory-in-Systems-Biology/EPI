@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eulerpi.core.dense_grid_types module &mdash; EPI  documentation</title>
+  <title>eulerpi.core.data_transformation_types module &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="eulerpi.core.inference module" href="eulerpi.core.inference.html" />
-    <link rel="prev" title="eulerpi.core.dense_grid module" href="eulerpi.core.dense_grid.html" /> 
+    <link rel="next" title="eulerpi.core.dense_grid module" href="eulerpi.core.dense_grid.html" />
+    <link rel="prev" title="eulerpi.core.data_transformation module" href="eulerpi.core.data_transformation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,16 +56,18 @@
 <li class="toctree-l4 current"><a class="reference internal" href="eulerpi.core.html">Core</a><ul class="current">
 <li class="toctree-l5 current"><a class="reference internal" href="eulerpi.core.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.data_transformation.html">Data Transformation</a></li>
-<li class="toctree-l6"><a class="reference internal" href="eulerpi.core.data_transformation_types.html">Data Transformation Types</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">Data Transformation Types</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.data_transformation_types.DataTransformationType"><code class="docutils literal notranslate"><span class="pre">DataTransformationType</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.data_transformation_types.DataTransformationType.Custom"><code class="docutils literal notranslate"><span class="pre">DataTransformationType.Custom</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.data_transformation_types.DataTransformationType.Identity"><code class="docutils literal notranslate"><span class="pre">DataTransformationType.Identity</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.data_transformation_types.DataTransformationType.Normalize"><code class="docutils literal notranslate"><span class="pre">DataTransformationType.Normalize</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.data_transformation_types.DataTransformationType.PCA"><code class="docutils literal notranslate"><span class="pre">DataTransformationType.PCA</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.dense_grid.html">Dense Grid</a></li>
-<li class="toctree-l6 current"><a class="current reference internal" href="#">Dense Grid Types</a><ul>
-<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.dense_grid_types.DenseGridType"><code class="docutils literal notranslate"><span class="pre">DenseGridType</span></code></a><ul>
-<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.dense_grid_types.DenseGridType.CHEBYSHEV"><code class="docutils literal notranslate"><span class="pre">DenseGridType.CHEBYSHEV</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.dense_grid_types.DenseGridType.EQUIDISTANT"><code class="docutils literal notranslate"><span class="pre">DenseGridType.EQUIDISTANT</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l6"><a class="reference internal" href="eulerpi.core.dense_grid_types.html">Dense Grid Types</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.inference.html">Inference</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.inference_types.html">Inference Types</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.kde.html">KDE</a></li>
@@ -114,9 +116,9 @@
           <li class="breadcrumb-item"><a href="modules.html">EPI</a></li>
           <li class="breadcrumb-item"><a href="eulerpi.html">eulerpi package</a></li>
           <li class="breadcrumb-item"><a href="eulerpi.core.html">eulerpi.core package</a></li>
-      <li class="breadcrumb-item active">eulerpi.core.dense_grid_types module</li>
+      <li class="breadcrumb-item active">eulerpi.core.data_transformation_types module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/eulerpi.core.dense_grid_types.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/eulerpi.core.data_transformation_types.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -124,24 +126,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-eulerpi.core.dense_grid_types">
-<span id="eulerpi-core-dense-grid-types-module"></span><h1>eulerpi.core.dense_grid_types module<a class="headerlink" href="#module-eulerpi.core.dense_grid_types" title="Permalink to this heading"></a></h1>
+  <section id="module-eulerpi.core.data_transformation_types">
+<span id="eulerpi-core-data-transformation-types-module"></span><h1>eulerpi.core.data_transformation_types module<a class="headerlink" href="#module-eulerpi.core.data_transformation_types" title="Permalink to this heading"></a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="eulerpi.core.dense_grid_types.DenseGridType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DenseGridType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.dense_grid_types.DenseGridType" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="eulerpi.core.data_transformation_types.DataTransformationType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataTransformationType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.data_transformation_types.DataTransformationType" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>The type of grid to be used.</p>
+<p>Defines the allowed DataTransformation types for the inference function.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.dense_grid_types.DenseGridType.CHEBYSHEV">
-<span class="sig-name descname"><span class="pre">CHEBYSHEV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#eulerpi.core.dense_grid_types.DenseGridType.CHEBYSHEV" title="Permalink to this definition"></a></dt>
-<dd><p>The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="eulerpi.core.data_transformation_types.DataTransformationType.Custom">
+<span class="sig-name descname"><span class="pre">Custom</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#eulerpi.core.data_transformation_types.DataTransformationType.Custom" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.dense_grid_types.DenseGridType.EQUIDISTANT">
-<span class="sig-name descname"><span class="pre">EQUIDISTANT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#eulerpi.core.dense_grid_types.DenseGridType.EQUIDISTANT" title="Permalink to this definition"></a></dt>
-<dd><p>The equidistant grid has the same distance between two grid points in each dimension.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="eulerpi.core.data_transformation_types.DataTransformationType.Identity">
+<span class="sig-name descname"><span class="pre">Identity</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#eulerpi.core.data_transformation_types.DataTransformationType.Identity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.core.data_transformation_types.DataTransformationType.Normalize">
+<span class="sig-name descname"><span class="pre">Normalize</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#eulerpi.core.data_transformation_types.DataTransformationType.Normalize" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.core.data_transformation_types.DataTransformationType.PCA">
+<span class="sig-name descname"><span class="pre">PCA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.core.data_transformation_types.DataTransformationType.PCA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -151,8 +161,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="eulerpi.core.dense_grid.html" class="btn btn-neutral float-left" title="eulerpi.core.dense_grid module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="eulerpi.core.inference.html" class="btn btn-neutral float-right" title="eulerpi.core.inference module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="eulerpi.core.data_transformation.html" class="btn btn-neutral float-left" title="eulerpi.core.data_transformation module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="eulerpi.core.dense_grid.html" class="btn btn-neutral float-right" title="eulerpi.core.dense_grid module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
