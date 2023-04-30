@@ -24,11 +24,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Added data normalization to improve numerics and performance in general
+- Added data normalization to improve numerics and performance in the inference method.
+- Added possiblity to use no PCA transformation or completely custom transformation for inference.
+- More tests to validate EPI
 
 ### Fixed
 
 - Fixed grid results beeing unusable due to numerical issues
+- Fixed sbml models ignoring parameter_names argument
 
 ## [0.2.1] - 2023-04-21
 
