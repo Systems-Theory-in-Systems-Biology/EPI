@@ -76,6 +76,26 @@ def test_examples(example, inference_type):
     ModelClass = getattr(module, className)
     model: Model = ModelClass()
 
+    # test the shapes
+    assert model.param_dim > 0
+    assert model.data_dim > 0
+    assert model.central_param.shape == (model.param_dim,)
+    assert model.param_limits.shape == (model.param_dim, 2)
+
+    model_forward = model.forward(model.central_param)
+    assert (
+        model_forward.shape == (1, model.data_dim)
+        or model_forward.shape == (model.data_dim,)
+        or model_forward.shape == ()
+    )
+
+    model_jac = model.jacobian(model.central_param)
+    assert (
+        model_jac.shape == (model.data_dim, model.param_dim)
+        or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
+        or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
+    )
+
     # generate artificial data if necessary
     if model.is_artificial():
         num_data_points = 100
