@@ -42,10 +42,22 @@ def test_DataNormalizer():
 
 def test_DataPCA():
     """Test whether the DataPCA transformation is able to run on data with different dimensions."""
-    data1d = np.random.rand(100, 1)
-    data2d = np.random.rand(100, 2)
-    test_data = [(1, data1d), (2, data2d)]
+    n_samples = 100
+    data1d = np.random.rand(n_samples, 1)
+    data2d = np.random.rand(n_samples, 2)
+    test_data = [(1, 1, data1d), (2, 2, data2d), (2, 1, data2d)]
 
-    for dim, data in test_data:
-        data_transformation = DataPCA.from_data(data)
+    for data_dim, pca_dim, data in test_data:
+        data_transformation = DataPCA.from_data(
+            data=data, n_components=pca_dim
+        )
         transformed_data = data_transformation.transform(data)
+
+        assert transformed_data.shape[0] == n_samples
+        assert transformed_data.shape[1] == pca_dim
+
+        transformed_datapoint = data_transformation.transform(data[0])
+        assert transformed_datapoint.shape == (1, pca_dim)
+
+        jacobian = data_transformation.jacobian(data[0])
+        assert jacobian.shape == (pca_dim, data_dim)

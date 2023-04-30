@@ -8,6 +8,7 @@ Submodules
    :maxdepth: 4
 
    Data Transformation<eulerpi.core.data_transformation>
+   Data Transformation Types<eulerpi.core.data_transformation_types>
    Dense Grid<eulerpi.core.dense_grid>
    Dense Grid Types<eulerpi.core.dense_grid_types>
    Inference<eulerpi.core.inference>
