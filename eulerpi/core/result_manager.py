@@ -220,9 +220,7 @@ class ResultManager:
         # Save the simulation results
         np.savetxt(
             results_path + "/SimResults/sim_results_" + str(run) + ".csv",
-            sampler_results[
-                :, sampling_dim : model.param_dim + model.data_dim
-            ],
+            sampler_results[:, sampling_dim : sampling_dim + model.data_dim],
             delimiter=",",
         )
 
