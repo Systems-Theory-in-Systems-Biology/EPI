@@ -434,29 +434,30 @@ class ResultManager:
                 param_dim = params.shape[1]
                 data_dim = sim_results.shape[1]
                 overall_density_evals = density_evals.reshape(
-                    num_steps, num_walkers, -1
+                    num_steps, num_walkers, 1
                 )
                 overall_sim_results = sim_results.reshape(
-                    num_steps, num_walkers, -1
+                    num_steps, num_walkers, data_dim
                 )
-                overall_params = params.reshape(num_steps, num_walkers, -1)
+                overall_params = params.reshape(
+                    num_steps, num_walkers, param_dim
+                )
             else:
                 overall_density_evals = np.concatenate(
                     (
                         overall_density_evals,
-                        density_evals.reshape(num_steps, num_walkers, -1),
+                        density_evals.reshape(num_steps, num_walkers, 1),
                     )
                 )
                 overall_sim_results = np.concatenate(
                     (
                         overall_sim_results,
-                        sim_results.reshape(num_steps, num_walkers, -1),
+                        sim_results.reshape(num_steps, num_walkers, data_dim),
                     )
                 )
                 overall_params = np.concatenate(
-                    (overall_params, params).reshape(
-                        num_steps, num_walkers, -1
-                    )
+                    overall_params,
+                    params.reshape(num_steps, num_walkers, param_dim),
                 )
 
         # thin and burn in
