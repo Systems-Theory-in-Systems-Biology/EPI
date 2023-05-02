@@ -245,6 +245,77 @@ def test_inference_mcmc_dense_exact(
     assert integral_dense_grid_pdf_error < threshold
 
 
+def test_thinning_and_burn_in():
+    """Test if the thinning and burn in works as expected"""
+
+    model = LinearODE()
+    # generate artificial data
+    params = model.generate_artificial_params(1000)
+    data = model.generate_artificial_data(params)
+
+    # run EPI with one trivial slice
+    slices = [np.array([0])]
+    num_steps = 1000
+    num_walkers = 4
+    num_runs = 2
+    num_burn_in_samples = 100
+    thinning_factor = 4
+
+    # MCMC inference
+    overall_params, sim_results, density_evals, result_manager = inference(
+        model=model,
+        data=data,
+        slices=slices,
+        inference_type=InferenceType.MCMC,
+        num_steps=num_steps,
+        num_walkers=num_walkers,
+        num_burn_in_samples=num_burn_in_samples,
+        thinning_factor=thinning_factor,
+        num_runs=num_runs,
+        run_name="test_thinning_and_burn_in",
+    )
+
+    # Check if the thinning and burn in results in the expected shapes
+    num_total_samples = (
+        num_steps * num_walkers * num_runs - num_walkers * num_burn_in_samples
+    ) // thinning_factor
+
+    assert overall_params["Slice_Q0"].shape[1] == slices[0].shape[0]
+    assert sim_results["Slice_Q0"].shape[1] == model.data_dim
+    assert density_evals["Slice_Q0"].shape[1] == 1
+    assert overall_params["Slice_Q0"].shape[0] == num_total_samples
+    assert sim_results["Slice_Q0"].shape[0] == num_total_samples
+    assert density_evals["Slice_Q0"].shape[0] == num_total_samples
+
+    # create some artificial runs to test the thinning and burn in
+    artificial_test_data_run = (
+        np.arange(num_walkers * num_steps) // thinning_factor
+    )
+    np.savetxt(
+        result_manager.get_slice_path(np.array([0])) + "/Params/params_0.csv",
+        artificial_test_data_run,
+        delimiter=",",
+    )
+    artificial_test_data_run += 1000
+    np.savetxt(
+        result_manager.get_slice_path(np.array([0])) + "/Params/params_1.csv",
+        artificial_test_data_run,
+        delimiter=",",
+    )
+
+    (
+        overall_params,
+        sim_results,
+        density_evals,
+    ) = result_manager.load_inference_results()
+    # check if the correct samples where burned and thinned
+    assert np.all(
+        (overall_params["Slice_Q0"] - num_burn_in_samples) % thinning_factor
+        == 0
+    )
+    assert np.all(overall_params["Slice_Q0"] >= num_burn_in_samples)
+
+
 # Run the inference if main
 if __name__ == "__main__":
     test_inference_mcmc_dense_exact()
