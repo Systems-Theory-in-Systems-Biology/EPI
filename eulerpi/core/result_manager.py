@@ -466,7 +466,7 @@ class ResultManager:
             ),
             overall_sim_results[
                 num_burn_in_samples::thinning_factor, :, :
-            ].reshape(-1, param_dim),
+            ].reshape(-1, data_dim),
             overall_density_evals[
                 num_burn_in_samples::thinning_factor, :, :
             ].reshape(-1, 1),
