@@ -411,6 +411,9 @@ class ResultManager:
         if thinning_factor is None:
             thinning_factor = inference_information["thinning_factor"]
 
+        num_steps = inference_information["num_steps"]
+        num_walkers = inference_information["num_walkers"]
+
         # load samples from raw chains
         for i in range(inference_information["num_runs"]):
             density_evals = np.loadtxt(
@@ -428,37 +431,43 @@ class ResultManager:
                 ndmin=2,
             )
             if i == 0:
-                overall_density_evals = density_evals
-                overall_sim_results = sim_results
-                overall_params = params
+                param_dim = params.shape[1]
+                data_dim = sim_results.shape[1]
+                overall_density_evals = density_evals.reshape(
+                    num_steps, num_walkers, -1
+                )
+                overall_sim_results = sim_results.reshape(
+                    num_steps, num_walkers, -1
+                )
+                overall_params = params.reshape(num_steps, num_walkers, -1)
             else:
                 overall_density_evals = np.concatenate(
-                    (overall_density_evals, density_evals)
+                    (
+                        overall_density_evals,
+                        density_evals.reshape(num_steps, num_walkers, -1),
+                    )
                 )
                 overall_sim_results = np.concatenate(
-                    (overall_sim_results, sim_results)
+                    (
+                        overall_sim_results,
+                        sim_results.reshape(num_steps, num_walkers, -1),
+                    )
                 )
-                overall_params = np.concatenate((overall_params, params))
-
-        num_walkers = inference_information["num_walkers"]
+                overall_params = np.concatenate(
+                    (overall_params, params).reshape(
+                        num_steps, num_walkers, -1
+                    )
+                )
 
         # thin and burn in
         return (
-            overall_params[
-                num_burn_in_samples
-                * num_walkers :: thinning_factor
-                * num_walkers,
-                :,
-            ],
+            overall_params[num_burn_in_samples::thinning_factor, :, :].reshape(
+                -1, param_dim
+            ),
             overall_sim_results[
-                num_burn_in_samples
-                * num_walkers :: thinning_factor
-                * num_walkers,
-                :,
-            ],
+                num_burn_in_samples::thinning_factor, :, :
+            ].reshape(-1, param_dim),
             overall_density_evals[
-                num_burn_in_samples
-                * num_walkers :: thinning_factor
-                * num_walkers
-            ],
+                num_burn_in_samples::thinning_factor, :, :
+            ].reshape(-1, 1),
         )
