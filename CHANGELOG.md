@@ -16,13 +16,15 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Bug in module B that caused a crash
-- Bug that caused thinning to be performed incorrectly.
 
 ## [Unreleased]
+
+## [0.3.1] - 2023-05-02
 
 ### Fixed
 
 - Bug in result manager causing burn-in and thinning to be performed on the wrong samples.
+- Bug in result manager that caused density evals to be saved as data samples for non-full slices.
 
 ## [0.3.0] - 2023-04-27
 
