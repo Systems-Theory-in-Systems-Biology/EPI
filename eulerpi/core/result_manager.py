@@ -456,8 +456,10 @@ class ResultManager:
                     )
                 )
                 overall_params = np.concatenate(
-                    overall_params,
-                    params.reshape(num_steps, num_walkers, param_dim),
+                    (
+                        overall_params,
+                        params.reshape(num_steps, num_walkers, param_dim),
+                    )
                 )
 
         # thin and burn in
