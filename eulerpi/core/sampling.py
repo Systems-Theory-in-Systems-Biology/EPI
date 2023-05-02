@@ -132,9 +132,6 @@ def run_emcee_once(
     sampler_results = sampler_results.reshape(
         num_steps * num_walkers, sampling_dim + data_dim + 1
     )
-    sampler_results = sampler_results.reshape(
-        num_walkers * num_steps, sampling_dim + data_dim + 1
-    )
 
     logger.info(
         f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"
