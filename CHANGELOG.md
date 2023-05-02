@@ -20,6 +20,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bug in result manager causing burn-in and thinning to be performed on the wrong samples.
+
 ## [0.3.0] - 2023-04-27
 
 ### Added
