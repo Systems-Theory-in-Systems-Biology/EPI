@@ -20,7 +20,7 @@ Here's a code snippet to load your own sbml model and to do the parameter infere
     from eulerpi.core.inference import inference
 
     model = SBMLModel('model.xml', central_param=[1.0, 1.0], param_limits=[[0.0, 2.0], [0.0, 2.0]], param_names=['k1', 'k2'])
-    model.inference(model, 'data.csv')
+    inference(model, 'data.csv')
 
 The attribute :py:attr:`~eulerpi.core.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.
 Per default it contains all parameters from the sbml model file.
