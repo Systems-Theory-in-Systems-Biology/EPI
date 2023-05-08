@@ -19,6 +19,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Updated the dependencies for python 3.11
+
 ### Fixed
 
 - Updated tutorial to be consistent with current state of the project
