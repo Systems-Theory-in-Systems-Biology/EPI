@@ -22,7 +22,7 @@ Euler Parameter Inference (EPI) is a Python package for inverse parameter infere
     :target: https://github.com/psf/black
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: ./LICENSE.md
-.. image:: https://img.shields.io/badge/python-3.10-purple.svg
+.. image:: https://img.shields.io/badge/python-3.11-purple.svg
     :target: https://www.python.org/
 .. image:: https://img.shields.io/pypi/v/eulerpi
     :target: https://pypi.org/project/eulerpi/

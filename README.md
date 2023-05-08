@@ -12,7 +12,7 @@
 [![flake8](https://img.shields.io/badge/flake8-checked-blue.svg)](https://flake8.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)
-[![Python](https://img.shields.io/badge/python-3.10-purple.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.11-purple.svg)](https://www.python.org/)
 ![PyPI](https://img.shields.io/pypi/v/eulerpi)
 
 Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
