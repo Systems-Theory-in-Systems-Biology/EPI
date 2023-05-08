@@ -19,6 +19,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated tutorial to be consistent with current state of the project
+
 ## [0.3.1] - 2023-05-02
 
 ### Fixed
