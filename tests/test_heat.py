@@ -36,11 +36,11 @@ def test_heat_model():
 
     # plot the KDE: draw the function
     fig, ax = plt.subplots(figsize=(3.8, 3.0))
-    im = ax.imshow(u, origin="lower", cmap=cmap, extent=extent, aspect=1)
+    im = ax.imshow(u.T, origin="lower", cmap=cmap, extent=extent, aspect=1)
 
     # draw the contour lines
     cset = ax.contour(
-        u,
+        u.T,
         np.arange(np.min(u), np.max(u), (np.max(u) - np.min(u)) / 8),
         linewidths=2,
         color="k",
