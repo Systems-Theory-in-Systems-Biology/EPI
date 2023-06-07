@@ -3,7 +3,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.model import JaxModel
+from eulerpi.core.model import ArtificialModelInterface, JaxModel
 
 
 class Heat(JaxModel):
@@ -74,7 +74,7 @@ class Heat(JaxModel):
         # define the boundary conditions
         u_top = jnp.ones((len(x), len(t)))
         u_bottom = jnp.zeros((len(x), len(t)))
-        u_left = jnp.zeros((len(y), len(t)))
+        u_left = jnp.ones((len(y), len(t)))
         u_right = jnp.zeros((len(y), len(t)))
 
         u = u.at[:, 0, :].set(u_bottom)
@@ -98,3 +98,27 @@ class Heat(JaxModel):
 
     def jacobian(self, param: np.ndarray) -> np.ndarray:
         pass
+
+
+class HeatArtificial(Heat, ArtificialModelInterface):
+
+    CENTRAL_PARAM = np.array([0.5])
+    PARAM_LIMITS = np.array([[0.0, 1.0]])
+
+    def __init__(
+        self,
+        central_param: np.ndarray = CENTRAL_PARAM,
+        param_limits: np.ndarray = PARAM_LIMITS,
+        name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(central_param, param_limits, name=name, **kwargs)
+
+    def generate_artificial_params(self, num_samples: int) -> np.ndarray:
+        lower_bound = self.param_limits[:, 0]
+        upper_bound = self.param_limits[:, 1]
+        true_param_sample = lower_bound + (
+            upper_bound - lower_bound
+        ) * np.random.rand(num_samples, self.param_dim)
+
+        return true_param_sample
