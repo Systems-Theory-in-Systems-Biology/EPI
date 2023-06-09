@@ -98,6 +98,7 @@ class Model(ABC):
 
     def param_is_within_domain(self, param: np.ndarray) -> bool:
         """Checks whether a parameter is within the parameter domain of the model.
+        Overwrite this function if your model has a more complex parameter domain than a box.
 
         Args:
             param(np.ndarray): The parameter to check.

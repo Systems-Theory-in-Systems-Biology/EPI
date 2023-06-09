@@ -19,6 +19,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Added a function to model to specify more complex parameter domains
+
 ### Fixed
 
 - Updated tutorial to be consistent with current state of the project
