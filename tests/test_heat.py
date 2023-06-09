@@ -11,7 +11,7 @@ def test_heat_model():
     heat_model = Heat()
 
     # test the model
-    u = heat_model.perform_simulation(np.array([0.5]))[:, :, -1]
+    u = heat_model.perform_simulation(np.array([0.5, 0.5, 0.25]))[:, :, -1]
 
     # build the grid
     y_1 = np.linspace(0, 1, 100)
