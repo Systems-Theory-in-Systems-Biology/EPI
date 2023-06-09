@@ -41,7 +41,11 @@ def evaluate_density(
     fullParam[slice] = param
 
     # Check if the tried parameter is within the just-defined bounds and return the lowest possible density if not.
-    if np.any((param < limits[slice, 0]) | (param > limits[slice, 1])):
+    if (
+        np.any(param < model.param_limits[slice, 0])
+        or np.any(param > model.param_limits[slice, 1])
+        or not model.param_is_within_domain(fullParam)
+    ):
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error

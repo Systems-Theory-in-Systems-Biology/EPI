@@ -96,6 +96,20 @@ class Model(ABC):
 
         return self.forward(param), self.jacobian(param)
 
+    def param_is_within_domain(self, param: np.ndarray) -> bool:
+        """Checks whether a parameter is within the parameter domain of the model.
+
+        Args:
+            param(np.ndarray): The parameter to check.
+
+        Returns:
+            bool: True if the parameter is within the limits.
+
+        """
+        return np.all(param >= self.param_limits[:, 0]) and np.all(
+            param <= self.param_limits[:, 1]
+        )
+
     def is_artificial(self) -> bool:
         """Determines whether the model provides artificial parameter and data sets.
 
