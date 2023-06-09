@@ -8,11 +8,11 @@ from eulerpi.core.model import ArtificialModelInterface, JaxModel
 
 class Heat(JaxModel):
 
-    param_dim = 1
+    param_dim = 3
     data_dim = 4
 
-    CENTRAL_PARAM = np.array([0.5])
-    PARAM_LIMITS = np.array([[0.0, 1.0]])
+    CENTRAL_PARAM = np.array([0.5, 0.5, 0.5])
+    PARAM_LIMITS = np.array([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]])
 
     def __init__(
         self,
@@ -58,7 +58,9 @@ class Heat(JaxModel):
         dx = plate_length[0] / num_grid_points
         dy = plate_length[1] / num_grid_points
         safety_factor = 1.25
-        dt = min(dx, dy) ** 2 / (safety_factor * 4 * self.PARAM_LIMITS[0, 1])
+        dt = min(dx, dy) ** 2 / (
+            safety_factor * 4 * jnp.max(self.PARAM_LIMITS[:, 1])
+        )
         x = jnp.linspace(0, 1, num_grid_points)
         y = jnp.linspace(0, 1, num_grid_points)
         t = jnp.arange(time_span[0], time_span[1] + dt, dt)
@@ -82,7 +84,7 @@ class Heat(JaxModel):
         u = u.at[0, :, :].set(u_left)
         u = u.at[-1, :, :].set(u_right)
 
-        # solve numerically
+        # solve numerically # TODO implement anisotropic
         for n in range(0, len(t) - 1):
             du_dx2 = (
                 u[2:, 1:-1, n] - 2 * u[1:-1, 1:-1, n] + u[:-2, 1:-1, n]
@@ -90,10 +92,18 @@ class Heat(JaxModel):
             du_dy2 = (
                 u[1:-1, 2:, n] - 2 * u[1:-1, 1:-1, n] + u[1:-1, :-2, n]
             ) / dy**2
+            du_dx_dy = (
+                u[2:, 2:, n] - u[2:, :-2, n] - u[:-2, 2:, n] + u[:-2, :-2, n]
+            ) / (4 * dx * dy)
             u = u.at[1:-1, 1:-1, n + 1].set(
-                param[0] * (du_dx2 + du_dy2) * dt + u[1:-1, 1:-1, n]
+                (
+                    param[0] * du_dx2
+                    + param[1] * du_dy2
+                    + 2 * param[2] * du_dx_dy
+                )
+                * dt
+                + u[1:-1, 1:-1, n]
             )
-
         return u
 
     def jacobian(self, param: np.ndarray) -> np.ndarray:
