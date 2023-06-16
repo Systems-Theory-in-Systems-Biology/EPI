@@ -19,9 +19,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Changed
+### Added
 
+- Added a new example model, a 2d heat conduction equation
 - Added a function to model to specify more complex parameter domains
+### Changed
 
 ### Fixed
 
