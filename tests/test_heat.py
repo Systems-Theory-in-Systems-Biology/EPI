@@ -2,7 +2,7 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eulerpi.examples.heat import Heat
+from eulerpi.examples.heat import Heat, HeatArtificial
 
 
 def test_heat_model():
@@ -57,3 +57,19 @@ def test_heat_model():
     ax.set_xlabel(r"$x_1$")
     ax.set_ylabel(r"$x_2$")
     plt.show()
+
+
+def test_heat_artificial():
+    """Test the artificial data generation of the heat model."""
+    # define the model
+    heat_model = HeatArtificial()
+    # generate some artificial params
+    artificial_params = heat_model.generate_artificial_params(20)
+    # check correct shape
+    assert artificial_params.shape == (20, 3)
+    # check that all params are within the domain
+    assert np.all(heat_model.param_is_within_domain(artificial_params.T))
+    # generate some artificial data
+    artificial_data = heat_model.generate_artificial_data(artificial_params)
+    # check correct shape
+    assert artificial_data.shape == (20, 5)
