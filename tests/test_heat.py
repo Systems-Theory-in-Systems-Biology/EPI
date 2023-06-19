@@ -19,8 +19,6 @@ def test_heat_model():
     Y_1, Y_2 = np.meshgrid(y_1, y_2)
     extent = [y_1[0], y_1[-1], y_2[0], y_2[-1]]
 
-    evaluation_points = np.vstack([Y_1.ravel(), Y_2.ravel()]).T
-
     # Define the color map
     colors = [
         "#762a83",
@@ -63,13 +61,14 @@ def test_heat_artificial():
     """Test the artificial data generation of the heat model."""
     # define the model
     heat_model = HeatArtificial()
+    n_params = 20
     # generate some artificial params
-    artificial_params = heat_model.generate_artificial_params(20)
+    artificial_params = heat_model.generate_artificial_params(n_params)
     # check correct shape
-    assert artificial_params.shape == (20, 3)
+    assert artificial_params.shape == (n_params, heat_model.param_dim)
     # check that all params are within the domain
     assert np.all(heat_model.param_is_within_domain(artificial_params.T))
     # generate some artificial data
     artificial_data = heat_model.generate_artificial_data(artificial_params)
     # check correct shape
-    assert artificial_data.shape == (20, 5)
+    assert artificial_data.shape == (n_params, heat_model.data_dim)
