@@ -2,6 +2,7 @@ from typing import Optional
 
 import jax.numpy as jnp
 import numpy as np
+from jax.lax import fori_loop
 
 from eulerpi.core.model import ArtificialModelInterface, JaxModel
 
@@ -23,9 +24,18 @@ class Heat(JaxModel):
     """
 
     param_dim = 3
-    data_dim = 4
+    data_dim = 5
+    evaluation_points = jnp.array(
+        [
+            [0.25, 0.25, 1],
+            [0.75, 0.25, 1],
+            [0.5, 0.5, 1],
+            [0.25, 0.75, 1],
+            [0.75, 0.75, 1],
+        ]
+    )
 
-    CENTRAL_PARAM = np.array([0.5, 0.5, 0.5])
+    CENTRAL_PARAM = np.array([1.5, 1.5, 0.5])
     PARAM_LIMITS = np.array([[1.0, 2.0], [1.0, 2.0], [0.0, 1.0]])
 
     def __init__(
@@ -44,18 +54,10 @@ class Heat(JaxModel):
         """
         super().__init__(central_param, param_limits, name=name, **kwargs)
 
-    def get_param_bounds(self) -> np.ndarray:
-        """Getter for the parameter limits.
-
-        Returns:
-            np.ndarray: An array containing the lower and upper limits for each parameter.
-        """
-        return self.param_limits
-
     @classmethod
     def forward(self, param: np.ndarray) -> np.ndarray:
         """Forward method for the heat model. Yields the solution of the anisotropic heat conduction equation at time :math:`\\t=0.1`
-        in five spacial points, which are arranged similar to the number "five" on a dice.
+        in five spatial points, which are arranged similar to the number "five" on a dice.
 
         Args:
             param (np.ndarray): Entries of the conductivity matrix: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`
@@ -67,21 +69,18 @@ class Heat(JaxModel):
 
         solution = self.perform_simulation(self, param)
         # return the solution at four evaluation points
-        eval_points = jnp.multiply(
-            jnp.array(
-                [
-                    [0.25, 0.25, 0.25],
-                    [0.25, 0.75, 0.25],
-                    [0.25, 0.25, 0.75],
-                    [0.25, 0.75, 0.75],
-                ]
-            ),
+        evaluation_indices = jnp.multiply(
+            self.evaluation_points,
             jnp.array(
                 [solution.shape[0], solution.shape[1], solution.shape[2]]
             ),
         ).astype(int)
         sim_res = jnp.array(
-            solution[eval_points[:, 0], eval_points[:, 1], eval_points[:, 2]]
+            solution[
+                evaluation_indices[:, 0],
+                evaluation_indices[:, 1],
+                evaluation_indices[:, 2],
+            ]
         )
         return sim_res
 
@@ -115,6 +114,10 @@ class Heat(JaxModel):
         num_grid_points = 20
         dx = plate_length[0] / num_grid_points
         dy = plate_length[1] / num_grid_points
+
+        # determine the time step size: this uses the stability condition for the explicit Euler method and parabolic problems, where
+        # dt <= dx * dy / safety_factor * (4 * kappa), where kappa is the thermal conductivity and safety_factor >= 1.
+        # Using the maximum of the thermal conductivity here is necess
         safety_factor = 1.25
         dt = min(dx, dy) ** 2 / (
             safety_factor * 4 * np.max(self.PARAM_LIMITS[:, 1])
@@ -143,7 +146,8 @@ class Heat(JaxModel):
         u = u.at[-1, :, :].set(u_right)
 
         # solve numerically
-        for n in range(0, len(t) - 1):
+        # body function for the for loop:
+        def integrate_time_step(n, u):
             du_dx2 = (
                 u[2:, 1:-1, n] - 2 * u[1:-1, 1:-1, n] + u[:-2, 1:-1, n]
             ) / dx**2
@@ -162,6 +166,9 @@ class Heat(JaxModel):
                 * dt
                 + u[1:-1, 1:-1, n]
             )
+            return u
+
+        u = fori_loop(0, len(t) - 1, integrate_time_step, u)
         return u
 
     def jacobian(self, param: np.ndarray) -> np.ndarray:
@@ -170,7 +177,7 @@ class Heat(JaxModel):
 
 class HeatArtificial(Heat, ArtificialModelInterface):
 
-    CENTRAL_PARAM = np.array([0.5, 0.5, 0.5])
+    CENTRAL_PARAM = np.array([1.5, 1.5, 0.5])
     PARAM_LIMITS = np.array([[1.0, 2.0], [1.0, 2.0], [0.0, 1.0]])
 
     def __init__(
