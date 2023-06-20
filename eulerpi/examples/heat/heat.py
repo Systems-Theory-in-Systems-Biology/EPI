@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import jax.numpy as jnp
@@ -116,12 +117,18 @@ class Heat(JaxModel):
         dy = plate_length[1] / num_grid_points
 
         # determine the time step size: this uses the stability condition for the explicit Euler method and parabolic problems, where
-        # dt <= dx * dy / safety_factor * (4 * kappa), where kappa is the thermal conductivity and safety_factor >= 1.
-        # Using the maximum of the thermal conductivity here is necess
-        safety_factor = 1.25
-        dt = min(dx, dy) ** 2 / (
-            safety_factor * 4 * np.max(self.PARAM_LIMITS[:, 1])
+        # dt <= dx * dy / safety_factor * (4 * kappa_max), where kappa_max is the maximum eigenvalue of the thermal conductivity matrix and safety_factor >= 1.
+        trace_kappa = self.PARAM_LIMITS[0, 1] + self.PARAM_LIMITS[1, 1]
+        det_kappa = (
+            self.PARAM_LIMITS[0, 1] * self.PARAM_LIMITS[1, 1]
+            - self.PARAM_LIMITS[2, 1] ** 2
         )
+        # Compute the maximum eigenvalue of the thermal conductivity matrix using trace and determinant:
+        kappa_max = 0.5 * (
+            trace_kappa + math.sqrt(trace_kappa**2 - 4 * det_kappa)
+        )
+        safety_factor = 1.25
+        dt = min(dx, dy) ** 2 / (safety_factor * 4 * kappa_max)
         x = jnp.linspace(0, 1, num_grid_points)
         y = jnp.linspace(0, 1, num_grid_points)
         t = jnp.arange(time_span[0], time_span[1] + dt, dt)
