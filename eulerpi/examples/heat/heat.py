@@ -1,11 +1,42 @@
-import math
 from typing import Optional
 
+import diffrax
 import jax.numpy as jnp
 import numpy as np
-from jax.lax import fori_loop
 
 from eulerpi.core.model import ArtificialModelInterface, JaxModel
+
+
+def heat_rhs(t: float, u: jnp.ndarray, args: tuple | list) -> jnp.ndarray:
+    """Right hand side of the heat equation.
+
+    Args:
+        t (float): time at which the right hand side is evaluated
+        u (jnp.ndarray): current solution of the heat equation
+        args (tuple | list): tuple of the form (dx, dy, param) with dx, dy the spatial discretization and param the thermal conductivity matrix, given as a vector of length 3 with param[0] = kappa_11, param[1] = kappa_22, param[2] = kappa_12
+
+    Returns:
+        jnp.ndarray: right hand side of the heat equation
+    """
+    dx = args[0]
+    dy = args[1]
+    param = args[2]
+
+    # use the central difference scheme to approximate the derivatives. Gradient preserves the size of the array by using one-sided differences. We throw away the boundary points later.
+    du_dx = jnp.gradient(u, dx, axis=0)
+    du_dy = jnp.gradient(u, dy, axis=1)
+    du_dx2 = jnp.gradient(du_dx, dx, axis=0)
+    du_dy2 = jnp.gradient(du_dy, dy, axis=1)
+    du_dx_dy = jnp.gradient(du_dx, dy, axis=1)
+
+    # compute the right hand side of the heat equation
+    rhs = jnp.zeros(u.shape)
+    rhs = rhs.at[1:-1, 1:-1].set(
+        param[0] * du_dx2[1:-1, 1:-1]
+        + param[1] * du_dy2[1:-1, 1:-1]
+        + 2 * param[2] * du_dx_dy[1:-1, 1:-1]
+    )
+    return rhs
 
 
 class Heat(JaxModel):
@@ -19,20 +50,23 @@ class Heat(JaxModel):
     and
     .. math::
         u(0, y, t) = 1, \\quad u(1, y, t) = 0, \\quad u(x, 0, t) = 1, \\quad u(x, 1, t) = 0
-    with the thermal conductivity matrix :math:`\\kappa` and the temperature :math:`u`.
+    with the symmetric positive definite thermal conductivity matrix :math:`\\kappa` and the temperature :math:`u`.
     Inference is performed on the entries of :math:`\\kappa`: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`.
-    Spatial discretization uses a finite difference scheme with a uniform grid, time stepping is done using the explicit Euler method.
     """
 
+    t_end = 0.1
+    plate_length = jnp.array([1.0, 1.0])
+
     param_dim = 3
-    data_dim = 5
+    data_dim = 5  # The values of the heat equation solution at five points are observed. See evaluation_points.
+
     evaluation_points = jnp.array(
         [
-            [0.25, 0.25, 1],
-            [0.75, 0.25, 1],
-            [0.5, 0.5, 1],
-            [0.25, 0.75, 1],
-            [0.75, 0.75, 1],
+            [0.25, 0.25],
+            [0.75, 0.25],
+            [0.5, 0.5],
+            [0.25, 0.75],
+            [0.75, 0.75],
         ]
     )
 
@@ -56,7 +90,7 @@ class Heat(JaxModel):
         super().__init__(central_param, param_limits, name=name, **kwargs)
 
     @classmethod
-    def forward(self, param: np.ndarray) -> np.ndarray:
+    def forward(cls, param: np.ndarray) -> np.ndarray:
         """Forward method for the heat model. Yields the solution of the anisotropic heat conduction equation at time :math:`\\t=0.1`
         in five spatial points, which are arranged similar to the number "five" on a dice.
 
@@ -68,22 +102,21 @@ class Heat(JaxModel):
         in five spacial points, which are arranged similar to the number "five" on a dice.
         """
 
-        solution = self.perform_simulation(self, param)
-        # return the solution at four evaluation points
+        solution = cls.perform_simulation(kappa=param)
+
+        # the indices of the wanted evaluation points
         evaluation_indices = jnp.multiply(
-            self.evaluation_points,
-            jnp.array(
-                [solution.shape[0], solution.shape[1], solution.shape[2]]
-            ),
+            cls.evaluation_points,
+            jnp.array(solution.shape),
         ).astype(int)
-        sim_res = jnp.array(
+
+        solution_at_evaluation_points = jnp.array(
             solution[
                 evaluation_indices[:, 0],
                 evaluation_indices[:, 1],
-                evaluation_indices[:, 2],
             ]
         )
-        return sim_res
+        return solution_at_evaluation_points
 
     def param_is_within_domain(self, param: np.ndarray) -> bool:
         """Checks whether a parameter is within the parameter domain of the model.
@@ -98,88 +131,63 @@ class Heat(JaxModel):
         """
         return param[0] * param[1] > param[2] ** 2
 
-    def perform_simulation(self, param: np.ndarray) -> np.ndarray:
+    @classmethod
+    def perform_simulation(cls, kappa: np.ndarray) -> np.ndarray:
         """Performs a simulation of the heat equation with the given parameters.
 
         Args:
-            param (np.ndarray): Entries of the conductivity matrix: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`
+            kappa (np.ndarray): Entries of the conductivity matrix: kappa[0] = :math:`\\kappa_{11}`, kappa[1] = :math:`\\kappa_{22}`, kapp[2] = :math:`\\kappa_{12}`
 
         Returns:
-            np.ndarray: An array containing the solution of the anisotropic heat conduction equation, where the first two indices correspond to the x and y coordinates, respectively, and the third index corresponds to the time.
+            np.ndarray: An array containing the solution of the anisotropic heat conduction equation, where the first two indices correspond to the x and y coordinates, respectively. The time is fixed to the class variable t_end.
         """
-        # set up physical properties
-        time_span = np.array([0, 0.1])
-        plate_length = np.array([1, 1])
+        # import os
+        # os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"]="false"
 
-        # define the grid
+        # The grid
         num_grid_points = 20
-        dx = plate_length[0] / num_grid_points
-        dy = plate_length[1] / num_grid_points
+        x = jnp.linspace(0, cls.plate_length[0], num_grid_points)
+        y = jnp.linspace(0, cls.plate_length[1], num_grid_points)
+        dx = cls.plate_length[0] / num_grid_points
+        dy = cls.plate_length[1] / num_grid_points
 
-        # determine the time step size: this uses the stability condition for the explicit Euler method and parabolic problems, where
-        # dt <= dx * dy / safety_factor * (4 * kappa_max), where kappa_max is the maximum eigenvalue of the thermal conductivity matrix and safety_factor >= 1.
-        trace_kappa = self.PARAM_LIMITS[0, 1] + self.PARAM_LIMITS[1, 1]
-        det_kappa = (
-            self.PARAM_LIMITS[0, 1] * self.PARAM_LIMITS[1, 1]
-            - self.PARAM_LIMITS[2, 1] ** 2
-        )
-        # Compute the maximum eigenvalue of the thermal conductivity matrix using trace and determinant:
-        kappa_max = 0.5 * (
-            trace_kappa + math.sqrt(trace_kappa**2 - 4 * det_kappa)
-        )
-        safety_factor = 1.25
-        dt = min(dx, dy) ** 2 / (safety_factor * 4 * kappa_max)
-        x = jnp.linspace(0, 1, num_grid_points)
-        y = jnp.linspace(0, 1, num_grid_points)
-        t = jnp.arange(time_span[0], time_span[1] + dt, dt)
-        t = t.at[-1].set(time_span[1])
-
-        # initial solution
-        u = jnp.empty((len(x), len(y), len(t)))
-
-        # define the initial condition
-        u_init = jnp.zeros((len(x), len(y)))
-        u = u.at[:, :, 0].set(u_init)
-
-        # define the boundary conditions
-        u_top = jnp.ones((len(x), len(t)))
-        u_bottom = jnp.zeros((len(x), len(t)))
-        u_left = jnp.ones((len(y), len(t)))
-        u_right = jnp.zeros((len(y), len(t)))
-
-        u = u.at[:, 0, :].set(u_bottom)
-        u = u.at[:, -1, :].set(u_top)
-        u = u.at[0, :, :].set(u_left)
-        u = u.at[-1, :, :].set(u_right)
-
-        # solve numerically
-        # body function for the for loop:
-        def integrate_time_step(n, u):
-            du_dx2 = (
-                u[2:, 1:-1, n] - 2 * u[1:-1, 1:-1, n] + u[:-2, 1:-1, n]
-            ) / dx**2
-            du_dy2 = (
-                u[1:-1, 2:, n] - 2 * u[1:-1, 1:-1, n] + u[1:-1, :-2, n]
-            ) / dy**2
-            du_dx_dy = (
-                u[2:, 2:, n] - u[2:, :-2, n] - u[:-2, 2:, n] + u[:-2, :-2, n]
-            ) / (4 * dx * dy)
-            u = u.at[1:-1, 1:-1, n + 1].set(
-                (
-                    param[0] * du_dx2
-                    + param[1] * du_dy2
-                    + 2 * param[2] * du_dx_dy
-                )
-                * dt
-                + u[1:-1, 1:-1, n]
+        def stable_time_step(dx, dy, kappa):
+            trace_kappa = kappa[0] + kappa[1]
+            det_kappa = kappa[0] * kappa[1] - kappa[2] ** 2
+            # Compute the maximum eigenvalue of the thermal conductivity matrix using trace and determinant:
+            kappa_max = 0.5 * (
+                trace_kappa + jnp.sqrt(trace_kappa**2 - 4 * det_kappa)
             )
-            return u
+            safety_factor = 1.25
+            dt = jnp.minimum(dx, dy) ** 2 / (safety_factor * 4 * kappa_max)
+            return dt
 
-        u = fori_loop(0, len(t) - 1, integrate_time_step, u)
+        dt0 = stable_time_step(dx, dy, kappa)
+        u0 = jnp.zeros((len(x), len(y)))
+        # Set boundary conditions
+        u0 = u0.at[0, :].set(jnp.ones(len(y)))  # left
+        u0 = u0.at[-1, :].set(jnp.zeros(len(y)))  # right
+        u0 = u0.at[:, 0].set(jnp.zeros(len(x)))  # bottom
+        u0 = u0.at[:, -1].set(jnp.ones(len(x)))  # top
+
+        # perform the time integration using diffrax
+        term = diffrax.ODETerm(heat_rhs)
+        solver = diffrax.Heun()
+        saveat = diffrax.SaveAt(t0=False, t1=True)
+        stepsize_controller = diffrax.PIDController(rtol=1e-5, atol=1e-5)
+        sol = diffrax.diffeqsolve(
+            term,
+            solver,
+            t0=0.0,
+            t1=cls.t_end,
+            dt0=dt0,
+            saveat=saveat,
+            y0=u0,
+            stepsize_controller=stepsize_controller,
+            args=(dx, dy, kappa),
+        )
+        u = sol.ys[-1]  # The solution at the final time
         return u
-
-    def jacobian(self, param: np.ndarray) -> np.ndarray:
-        pass
 
 
 class HeatArtificial(Heat, ArtificialModelInterface):

@@ -1,3 +1,4 @@
+import jax.numpy as jnp
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +12,7 @@ def test_heat_model():
     heat_model = Heat()
 
     # test the model
-    u = heat_model.perform_simulation(np.array([0.5, 0.5, 0.25]))[:, :, -1]
+    u = heat_model.perform_simulation(kappa=jnp.array([0.5, 0.5, 0.25]))
 
     # build the grid
     y_1 = np.linspace(0, 1, 100)
@@ -39,7 +40,8 @@ def test_heat_model():
     # draw the contour lines
     cset = ax.contour(
         u.T,
-        np.arange(np.min(u), np.max(u), (np.max(u) - np.min(u)) / 8),
+        np.arange(0, 1, 0.1),
+        # np.arange(np.min(u), np.max(u), (np.max(u) - np.min(u)) / 8),
         linewidths=2,
         color="k",
         extent=extent,
@@ -72,3 +74,26 @@ def test_heat_artificial():
     artificial_data = heat_model.generate_artificial_data(artificial_params)
     # check correct shape
     assert artificial_data.shape == (n_params, heat_model.data_dim)
+
+
+# TODO: possbly we should check this for all models in test_examples.py?
+# This test specifically exists because we had problems with the backpropagation in the heat model, where we received only zeros.
+def test_heat_jacobian():
+    model = HeatArtificial()
+    h = 1e-3
+    res = model.forward(model.central_param)
+    res1 = model.forward(model.central_param + np.array([h, 0, 0]))
+    res2 = model.forward(model.central_param + np.array([0, h, 0]))
+    res3 = model.forward(model.central_param + np.array([0, 0, h]))
+    jac = model.jacobian(model.central_param)
+
+    # compare with finite differences
+    jac_fd = np.zeros((model.data_dim, model.param_dim))
+    jac_fd[:, 0] = (res1 - res) / h
+    jac_fd[:, 1] = (res2 - res) / h
+    jac_fd[:, 2] = (res3 - res) / h
+    assert np.allclose(jac, jac_fd, atol=1e-3)
+
+    # Assert that the jacobian is not zero and that norm is larger than the same tolerance
+    assert not np.allclose(jac, 0, atol=1e-5)
+    assert np.linalg.norm(jac) > 1e-5

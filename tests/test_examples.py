@@ -4,6 +4,7 @@ Test the instantiation, data loading / data generation and the inference for the
 
 import importlib
 
+import jax.numpy as jnp
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
@@ -23,6 +24,7 @@ def Examples():
     for example in [
         ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
         ("eulerpi.examples.stock", "StockArtificial"),
+        ("eulerpi.examples.heat", "HeatArtificial"),
         ("eulerpi.examples.corona", "Corona", "CoronaData.csv"),
         ("eulerpi.examples.corona", "CoronaArtificial"),
         ("eulerpi.examples.temperature", "Temperature", "TemperatureData.csv"),
@@ -95,6 +97,7 @@ def test_examples(example, inference_type):
         or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
         or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
     )
+    assert model_jac.shape[1] == jnp.linalg.matrix_rank(model_jac)
 
     # generate artificial data if necessary
     if model.is_artificial():
