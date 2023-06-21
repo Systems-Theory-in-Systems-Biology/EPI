@@ -14,7 +14,7 @@
 
   <details>
   <summary>Should I choose https or ssh?</summary>
-  You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, not this repository. </details>
+  You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case, you have to clone your fork, not this repository. </details>
 
 - Install [poetry](https://python-poetry.org/docs/):
   
@@ -57,7 +57,7 @@
 
 ## Maintaining the repository
 
-Here are the most important infos on how to maintain this repository.
+Here are the most important information on how to maintain this repository.
 
 ### Dependency Management with Poetry
 
@@ -66,7 +66,7 @@ We use poetry as build system, for the dependency management and the virtual env
 ---
 **IMPORTANT**
 
-Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively you can run commands with `poetry run <yourcommand>`.
+Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively, you can run commands with `poetry run <yourcommand>`.
 
 ---
 
@@ -155,16 +155,16 @@ We use the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format for t
 We use [Semantic Versioning](https://semver.org/). A version number is composed of three parts: major.minor.patch
 
 1. The major version should be incremented when you make incompatible changes.
-2. The minor version should be incremented when you add new functionality in a backwards-compatible manner.
-3. The patch version should be incremented when you make backwards-compatible bug fixes.
+2. The minor version should be incremented when you add new functionality in a backward-compatible manner.
+3. The patch version should be incremented when you make backward-compatible bug fixes.
 
-Every time a new version is tagged, a GitHub Action workflow is trigger which builds and uploads the version to pypi.
+Every time a new version is tagged, a GitHub Action workflow is triggered which builds and uploads the version to pypi.
 
 Please update the version number in the `pyproject.toml` file before tagging the version.
 
 ### Test Deployment with TestPyPi
 
-You have to setup testpypi once:
+You have to set-up testpypi once:
 
 ```bash
 poetry config repositories.testpypi https://test.pypi.org/legacy/
@@ -186,7 +186,7 @@ python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps euler
 
 ### Deployment with PyPi
   
-You have to setup pypi once:
+You have to set-up pypi once:
 
 ```bash
 poetry config pypi-token.pypi pypi-your-token-here
@@ -206,7 +206,7 @@ pip install eulerpi
 
 ## Jax with CUDA
 
-[Jax can be run with cuda on the gpu](https://github.com/google/jax#pip-installation-gpu-cuda). However you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)
+[Jax can be run with cuda on the gpu](https://github.com/google/jax#pip-installation-gpu-cuda). However, you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)
 
 I used the following tricks to get it running:
 
@@ -239,7 +239,7 @@ for file in lib*.so; do
 done
 ```
 
-It can happen that old code is executed due to the generated pycache. For example an old version of cuda or cudnn could be used. If you believe that this is happening:
+It can happen that old code is executed due to the generated pycache. For example, an old version of cuda or cudnn could be used. If you believe that this is happening:
 
 ```bash
 pip install pyclean

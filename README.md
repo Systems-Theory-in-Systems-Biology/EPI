@@ -15,11 +15,11 @@
 [![Python](https://img.shields.io/badge/python-3.10-purple.svg)](https://www.python.org/)
 ![PyPI](https://img.shields.io/pypi/v/eulerpi)
 
-Euler Parameter Inference (EPI) is a Python package for inverse parameter inference. It provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In the case of a one-to-one mapping, this is the true underlying distribution.
+Eulerian Parameter Inference (EPI) is a powerful and novel method for inverse model parameter inference. The eulerpi package provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In case the model describes a one-to-one mapping between parameters and simulation results, the inferred parameter distribution is the true underlying distribution.
 
 ## Documentation
 
-The full documentation to this software, including a detailed tutorial on how to use EPI and the api documentation, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
+The full documentation of this software, including a detailed tutorial on how to use EPI and the api documentation, can be found under [Documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/).
 
 ## Features
 
@@ -27,7 +27,7 @@ EPI supports
 
 - SBML ode models
 - User provided models
-- Models with automatic differentation using jax
+- Models with automatic differentiation using jax
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # Citation
 
-To cite EPI in publications, please use:
+To cite Eulerian Parameter Inference (EPI) in publications, please use:
 
 V. Wagner et al. An inverse transformation algorithm to infer parameter distributions from population snapshot data. IFAC FOSBE 2022, accepted and presented.
 

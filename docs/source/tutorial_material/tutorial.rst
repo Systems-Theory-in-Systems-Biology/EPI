@@ -1,8 +1,8 @@
 Tutorial
 ========
 
-This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed :code:`eulerpi`.
-The tutorial is divided in four sections:
+This tutorial provides a full walk-through on how to apply Eulerian Parameter Inference (EPI) to an example problem. We only assume that you already installed :code:`eulerpi`.
+The tutorial is divided into four sections:
 
 0. :ref:`Introduction`
 1. :ref:`Define your data`
@@ -17,7 +17,7 @@ Let's start!
 
 Introduction
 ------------
-EPI is an algorithm to infere a parameter distribution :math:`Q` satisfying :math:`Y = s(Q)` given a (discrete) data probability distribution :math:`y_i \sim Y`
+Eulerian Parameter Inference is an algorithm to infer a parameter distribution :math:`Q` satisfying :math:`Y = s(Q)` given a (discrete) data probability distribution :math:`y_i \sim Y`
 and a model implementing the mapping :math:`s: Q \to Y`. The (forward) model describes the mapping from the parameter points :math:`q_i` to the data points :math:`y_i`.
 
 In the following we will look at temperature data over the globe and a model for the dependence of the temperature :math:`y_i` on the latitude :math:`q_i`.
@@ -39,9 +39,9 @@ To solve the inverse problem, EPI uses the multi-dimension transformation formul
   :alt: The (forward) transformation rule applied to our model
 
 
-In the real world, problems with a known continous data distribution are very sparse. Instead, we often rely on discrete measurements.
-EPI start with discrete data points as input and derives a continous distribution using Kernel Density Estimation (KDE) techniques.
-From this data distribution the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.
+In the real world, problems with a known continuous data distribution are very sparse. Instead, we often rely on discrete measurements.
+EPI starts with discrete data points as input and derives a continuous distribution using Kernel Density Estimation (KDE) techniques.
+From this data distribution, the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.
 
 .. It does this using the inverse of the multi-dimensional transformation formula, sampling techniques and the KDE again. 
 
@@ -66,15 +66,15 @@ Your data needs to be stored in a :file:`.csv` file in the following format:
     ...
     datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-Each of the lines defines a N dimensional datapoint. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPI.
+Each of the lines defines an N-dimensional data point. The :file:`.csv` file will be loaded into an :math:`\mathrm{R}^{M \times N}` numpy matrix in EPI.
 
-In the following we will use the example data :file:`TemperatureData.csv`. You can download it here: :download:`Download Temperature Data<TemperatureData.csv>`.
-It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPI.
+In the following, we will use the example data :file:`TemperatureData.csv`. You can download it here: :download:`Download Temperature Data<TemperatureData.csv>`.
+It has 455 data points with two dimensions each. Nonuniform data is not supported in EPI.
 
 Define your model
 -----------------
 
-Next you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.core.model.Model` base class.
+Next, you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.core.model.Model` base class.
 
 .. literalinclude:: ../../../eulerpi/examples/temperature/temperature.py
   :language: python
@@ -89,18 +89,18 @@ Of course, you also need the imports:
     import numpy as np
     from eulerpi.core.model import Model
 
-A model inhereting from :py:class:`~eulerpi.core.model.Model` must implement the methods :py:meth:`~eulerpi.core.model.Model.forward` and :py:meth:`~eulerpi.core.model.Model.jacobian`.
-In addition it must provide the methods :py:meth:`~eulerpi.core.model.Model.getcentral_param` and :py:meth:`~eulerpi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inheriting from :py:class:`~eulerpi.core.model.Model` must implement the methods :py:meth:`~eulerpi.core.model.Model.forward` and :py:meth:`~eulerpi.core.model.Model.jacobian`.
+In addition, it must provide the methods :py:meth:`~eulerpi.core.model.Model.getcentral_param` and :py:meth:`~eulerpi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
     
     If you use jax_ to calculate the forward evaluation of your model, you can get the jacobian using :code:`jax.jacrev(self.forward)`.
-    In all other cases you have to provide the jacobian using your own implementation.
+    In all other cases, you have to provide the jacobian using your own implementation.
 
 .. note::
 
-    If you define your forward method using jax and as class method, you can also inherit from `JaxModel` and the jacobian will be provided for you.
+    If you define your forward method using jax and as a class method, you can also inherit from `JaxModel` and the jacobian will be provided for you.
     Additionally, JaxModel will use the jit compiler to speed up the calculation of your jacobian but also of your forward call.
 
 .. warning::
@@ -138,7 +138,7 @@ The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :
 ..     model.plot(plot_type="spyder")
 ..     model.plot(plot_type="standard")
 
-.. As last step you can plot the results using the builtin plotting functionality.
+.. As the last step, you can plot the results using the built-in plotting functionality.
 .. You can choose between a spider-web representation and a standard plot.
 .. The standard plot is only working for one or two-dimensional parameters and data.
 
@@ -151,7 +151,7 @@ The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :
 .. Preparation
 .. -----------
 
-.. Create a folder for your project and  package, if you haven't done it yet.
+.. Create a folder for your project and package, if you haven't done it yet.
 
 .. .. code-block:: bash
 
