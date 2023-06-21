@@ -114,7 +114,7 @@
 </div>
 <details>
 <summary>Should I choose https or ssh?</summary>
-You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case you have to clone your fork, not this repository. </details>
+You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case, you have to clone your fork, not this repository. </details>
 </li>
 <li><p>Install <a class="reference external" href="https://python-poetry.org/docs/">poetry</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
@@ -155,13 +155,13 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 </section>
 <section id="maintaining-the-repository">
 <h2>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Permalink to this heading"></a></h2>
-<p>Here are the most important infos on how to maintain this repository.</p>
+<p>Here are the most important information on how to maintain this repository.</p>
 <section id="dependency-management-with-poetry">
 <h3>Dependency Management with Poetry<a class="headerlink" href="#dependency-management-with-poetry" title="Permalink to this heading"></a></h3>
 <p>We use poetry as build system, for the dependency management and the virtual environment. During the <a class="reference internal" href="#quickstart"><span class="std std-doc">Quickstart</span></a> we installed all dependencies into the virtual environment, therefore:</p>
 <hr class="docutils" />
 <p><strong>IMPORTANT</strong></p>
-<p>Run all commands in the next section in the poetry shell. It can be started with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code>. Alternatively you can run commands with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">&lt;yourcommand&gt;</span></code>.</p>
+<p>Run all commands in the next section in the poetry shell. It can be started with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code>. Alternatively, you can run commands with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">&lt;yourcommand&gt;</span></code>.</p>
 <hr class="docutils" />
 <p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">package_name</span></code> to add the library/package with the name <code class="docutils literal notranslate"><span class="pre">package_name</span></code> as dependencie to your project. Use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">package_name</span></code> to add <code class="docutils literal notranslate"><span class="pre">package_name</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependencies. You can have arbitrary group names.</p>
 <p>For more information read the <a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">Poetry Documentation</a>.</p>
@@ -234,15 +234,15 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 <p>We use <a class="reference external" href="https://semver.org/">Semantic Versioning</a>. A version number is composed of three parts: major.minor.patch</p>
 <ol class="arabic simple">
 <li><p>The major version should be incremented when you make incompatible changes.</p></li>
-<li><p>The minor version should be incremented when you add new functionality in a backwards-compatible manner.</p></li>
-<li><p>The patch version should be incremented when you make backwards-compatible bug fixes.</p></li>
+<li><p>The minor version should be incremented when you add new functionality in a backward-compatible manner.</p></li>
+<li><p>The patch version should be incremented when you make backward-compatible bug fixes.</p></li>
 </ol>
-<p>Every time a new version is tagged, a GitHub Action workflow is trigger which builds and uploads the version to pypi.</p>
+<p>Every time a new version is tagged, a GitHub Action workflow is triggered which builds and uploads the version to pypi.</p>
 <p>Please update the version number in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file before tagging the version.</p>
 </section>
 <section id="test-deployment-with-testpypi">
 <h3>Test Deployment with TestPyPi<a class="headerlink" href="#test-deployment-with-testpypi" title="Permalink to this heading"></a></h3>
-<p>You have to setup testpypi once:</p>
+<p>You have to set-up testpypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>repositories.testpypi<span class="w"> </span>https://test.pypi.org/legacy/
 poetry<span class="w"> </span>config<span class="w"> </span>http-basic.testpypi<span class="w"> </span>__token__<span class="w"> </span>pypi-your-api-token-here
 </pre></div>
@@ -259,7 +259,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </section>
 <section id="deployment-with-pypi">
 <h3>Deployment with PyPi<a class="headerlink" href="#deployment-with-pypi" title="Permalink to this heading"></a></h3>
-<p>You have to setup pypi once:</p>
+<p>You have to set-up pypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>pypi-token.pypi<span class="w"> </span>pypi-your-token-here
 </pre></div>
 </div>
@@ -275,7 +275,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </section>
 <section id="jax-with-cuda">
 <h2>Jax with CUDA<a class="headerlink" href="#jax-with-cuda" title="Permalink to this heading"></a></h2>
-<p><a class="reference external" href="https://github.com/google/jax#pip-installation-gpu-cuda">Jax can be run with cuda on the gpu</a>. However you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)</p>
+<p><a class="reference external" href="https://github.com/google/jax#pip-installation-gpu-cuda">Jax can be run with cuda on the gpu</a>. However, you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)</p>
 <p>I used the following tricks to get it running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># for cuda toolkit</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">CUDA_HOME</span><span class="o">=</span>/usr/local/cuda
@@ -303,7 +303,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 <span class="k">done</span>
 </pre></div>
 </div>
-<p>It can happen that old code is executed due to the generated pycache. For example an old version of cuda or cudnn could be used. If you believe that this is happening:</p>
+<p>It can happen that old code is executed due to the generated pycache. For example, an old version of cuda or cudnn could be used. If you believe that this is happening:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyclean
 py3clean<span class="w"> </span>.
 </pre></div>

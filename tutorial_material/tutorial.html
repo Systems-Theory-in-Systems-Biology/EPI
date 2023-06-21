@@ -93,8 +93,8 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
-<p>This tutorial provides a full walk-through on how to apply EPI to a example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">eulerpi</span></code>.
-The tutorial is divided in four sections:</p>
+<p>This tutorial provides a full walk-through on how to apply Eulerian Parameter Inference (EPI) to an example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">eulerpi</span></code>.
+The tutorial is divided into four sections:</p>
 <ol class="arabic simple" start="0">
 <li><p><a class="reference internal" href="#introduction"><span class="std std-ref">Introduction</span></a></p></li>
 <li><p><a class="reference internal" href="#define-your-data"><span class="std std-ref">Define your data</span></a></p></li>
@@ -104,16 +104,16 @@ The tutorial is divided in four sections:</p>
 <p>Let’s start!</p>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
-<p>EPI is an algorithm to infere a parameter distribution <span class="math notranslate nohighlight">\(Q\)</span> satisfying <span class="math notranslate nohighlight">\(Y = s(Q)\)</span> given a (discrete) data probability distribution <span class="math notranslate nohighlight">\(y_i \sim Y\)</span>
+<p>Eulerian Parameter Inference is an algorithm to infer a parameter distribution <span class="math notranslate nohighlight">\(Q\)</span> satisfying <span class="math notranslate nohighlight">\(Y = s(Q)\)</span> given a (discrete) data probability distribution <span class="math notranslate nohighlight">\(y_i \sim Y\)</span>
 and a model implementing the mapping <span class="math notranslate nohighlight">\(s: Q \to Y\)</span>. The (forward) model describes the mapping from the parameter points <span class="math notranslate nohighlight">\(q_i\)</span> to the data points <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
 <p>In the following we will look at temperature data over the globe and a model for the dependence of the temperature <span class="math notranslate nohighlight">\(y_i\)</span> on the latitude <span class="math notranslate nohighlight">\(q_i\)</span>.</p>
 <p><a class="reference internal" href="../_images/EarthTemperature.png"><img alt="The model mapping the latitude :math:`q_i` to the temperature :math:`y_i`" src="../_images/EarthTemperature.png" style="width: 450px;" /></a></p>
 <p>The goal is to derive the parameter distribution <span class="math notranslate nohighlight">\(\Phi_Q\)</span> from the data distribution <span class="math notranslate nohighlight">\(\Phi_Y\)</span>. This is the inverse of what our (forward) model is providing.
 To solve the inverse problem, EPI uses the multi-dimension transformation formula:</p>
 <p><a class="reference internal" href="../_images/EarthTemperature_solved.png"><img alt="The (forward) transformation rule applied to our model" src="../_images/EarthTemperature_solved.png" style="width: 450px;" /></a></p>
-<p>In the real world, problems with a known continous data distribution are very sparse. Instead, we often rely on discrete measurements.
-EPI start with discrete data points as input and derives a continous distribution using Kernel Density Estimation (KDE) techniques.
-From this data distribution the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.</p>
+<p>In the real world, problems with a known continuous data distribution are very sparse. Instead, we often rely on discrete measurements.
+EPI starts with discrete data points as input and derives a continuous distribution using Kernel Density Estimation (KDE) techniques.
+From this data distribution, the EPI algorithm derives the parameter distribution. To close the cycle between the data and parameters, we can again sample from this distribution and use the forward model to get a discrete distribution of the parameters.</p>
 <a class="reference internal image-reference" href="../_images/real_data.png"><img alt="The cycle described before as image." src="../_images/real_data.png" style="width: 800px;" /></a>
 <p>With this picture in mind, we can start to implement the temperature problem in eulerpi.</p>
 </section>
@@ -127,13 +127,13 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 </pre></div>
 </div>
-<p>Each of the lines defines a N dimensional datapoint. The <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file will be loaded into an <span class="math notranslate nohighlight">\(\mathrm{R}^{M \times N}\)</span> numpy matrix in EPI.</p>
-<p>In the following we will use the example data <code class="file docutils literal notranslate"><span class="pre">TemperatureData.csv</span></code>. You can download it here: <a class="reference download internal" download="" href="../_downloads/090dff47c31e511d0522cc9cc0cdb502/TemperatureData.csv"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Temperature</span> <span class="pre">Data</span></code></a>.
-It has 455 datapoints with two dimensions each. Nonuniform data is not supported in EPI.</p>
+<p>Each of the lines defines an N-dimensional data point. The <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file will be loaded into an <span class="math notranslate nohighlight">\(\mathrm{R}^{M \times N}\)</span> numpy matrix in EPI.</p>
+<p>In the following, we will use the example data <code class="file docutils literal notranslate"><span class="pre">TemperatureData.csv</span></code>. You can download it here: <a class="reference download internal" download="" href="../_downloads/090dff47c31e511d0522cc9cc0cdb502/TemperatureData.csv"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Temperature</span> <span class="pre">Data</span></code></a>.
+It has 455 data points with two dimensions each. Nonuniform data is not supported in EPI.</p>
 </section>
 <section id="define-your-model">
 <h2>Define your model<a class="headerlink" href="#define-your-model" title="Permalink to this heading"></a></h2>
-<p>Next you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.model.Model</span></code></a> base class.</p>
+<p>Next, you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.model.Model</span></code></a> base class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
 
@@ -171,17 +171,17 @@ It has 455 datapoints with two dimensions each. Nonuniform data is not supported
 <span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
 </pre></div>
 </div>
-<p>A model inhereting from <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> must implement the methods <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
-In addition it must provide the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">getcentral_param()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code> to provide the sampling algorithm with sensible starting values and boundary values.
+<p>A model inheriting from <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> must implement the methods <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
+In addition, it must provide the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">getcentral_param()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code> to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>If you use <a class="reference external" href="https://jax.readthedocs.io/en/latest/index.html">jax</a> to calculate the forward evaluation of your model, you can get the jacobian using <code class="code docutils literal notranslate"><span class="pre">jax.jacrev(self.forward)</span></code>.
-In all other cases you have to provide the jacobian using your own implementation.</p>
+In all other cases, you have to provide the jacobian using your own implementation.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you define your forward method using jax and as class method, you can also inherit from <cite>JaxModel</cite> and the jacobian will be provided for you.
+<p>If you define your forward method using jax and as a class method, you can also inherit from <cite>JaxModel</cite> and the jacobian will be provided for you.
 Additionally, JaxModel will use the jit compiler to speed up the calculation of your jacobian but also of your forward call.</p>
 </div>
 <div class="admonition warning">
