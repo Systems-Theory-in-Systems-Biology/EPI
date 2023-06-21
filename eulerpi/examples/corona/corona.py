@@ -26,12 +26,6 @@ class Corona(JaxModel):
     ) -> None:
         super().__init__(central_param, param_limits, name=name, **kwargs)
 
-    def get_data_bounds(self):
-        return np.array([[0.0, 4.0], [0.0, 40.0], [0.0, 80.0], [0.0, 3.5]])
-
-    def get_param_bounds(self):
-        return np.array([[-3.5, -0.5], [-1.0, 2.0], [-1.0, 2.0]])
-
     @classmethod
     def forward(cls, log_param):
         param = jnp.power(10, log_param)
