@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # Contributing to EPI
 
-First off, thanks for taking the time to contribute! ❤️
+First off, thanks for taking the time to contribute to the Eulerian Parameter Inference project! ❤️
 
 All types of contributions are encouraged and valued. See the [Table of Contents](#table-of-contents) for different ways to help and details about how this project handles them. Please make sure to read the relevant section before making your contribution. It will make it a lot easier for us maintainers and smooth out the experience for all involved. The community looks forward to your contributions. 🎉
 
@@ -56,7 +56,7 @@ A good bug report shouldn't leave others needing to chase you up for more inform
 - Make sure that you are using the latest version.
 - Determine if your bug is really a bug and not an error on your side e.g. using incompatible environment components/versions (Make sure that you have read the [documentation](https://Systems-Theory-in-Systems-Biology.github.io/EPI/). If you are looking for support, you might want to check [this section](#i-have-a-question)).
 - To see if other users have experienced (and potentially already solved) the same issue you are having, check if there is not already a bug report existing for your bug or error in the [bug tracker](https://github.com/Systems-Theory-in-Systems-Biology/EPI/issues?q=label%3Abug).
-- Also make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
+- Also, make sure to search the internet (including Stack Overflow) to see if users outside of the GitHub community have discussed the issue.
 - Collect information about the bug:
   - Stack trace (Traceback)
   - OS, Platform and Version (Windows, Linux, macOS, x86, ARM)
@@ -101,8 +101,8 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/System
 
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
 - Provide a **step-by-step description of the suggested enhancement** in as many details as possible.
-- **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
-- You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux. <!-- this should only be included if the project has a GUI -->
+- **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point, you can also tell which alternatives do not work for you.
+- You may want to **include screenshots and animated GIFs** which help you demonstrate the steps or point out the part to which the suggestion is related. You can use [this tool](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and [this tool](https://github.com/colinkeenan/silentcast) or [this tool](https://github.com/GNOME/byzanz) on Linux. <!-- this should only be included if the project has a GUI -->
 - **Explain why this enhancement would be useful** to most EPI users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
 
 <!-- You might want to create an issue template for enhancement suggestions that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
@@ -113,25 +113,25 @@ Improvements on our library are always welcome. Please read the development guid
 
 ### Improving The Documentation
 <!-- Updating, improving and correcting the documentation -->
-Commenting currently undocumented functions, correcting outdated comments or adding type hints is always welcome.
+Commenting on currently undocumented functions, correcting outdated comments or adding type hints is always welcome.
 
 ## Styleguides
 
-### Code styl
+### Code style
 
 Please remember to run ```pre-commit install``` once during your repository setup to check and adapt your changes to our code style automatically.
 
 ### Commit Messages
 
-Please use sensible, short and concise commit messages in active voice, e. g.: \
+Please use sensible, short and concise commit messages in active voice, e.g.: \
 *Add unit test for KDE*
 
-Feel free to include  types like [docs], [build], [fix], ... e. g.: \
+Feel free to include  types like [docs], [build], [fix], ... e.g.: \
 *[test] Add unit test for KDE*
 
 ## Join The Project Team
 
-If you are interested in working on this project for a longer time, implement a larger feature or need help, feel free to contact:
+If you are interested in working on this project for a longer time, implementing a larger feature or need help, feel free to contact:
 
 [Vincent Wagner](mailto:vincent.wagner@ist.uni-stuttgart.de) or [Sebastian Höpfl](mailto:sebastian.hoepfl@ist.uni-stuttgart.de)
 
