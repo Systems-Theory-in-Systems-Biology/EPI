@@ -19,11 +19,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+
+## [0.4.0]
+
 ### Added
 
 - Added a new example model, a 2d heat conduction equation
 - Added a function to model to specify more complex parameter domains
 ### Changed
+
+- Removed old functions from corona model
 
 ### Fixed
 
