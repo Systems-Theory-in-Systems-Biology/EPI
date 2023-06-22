@@ -53,8 +53,17 @@ def evaluate_density(
 
     # If the parameter is within the valid ranges...
     else:
-        # Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
-        sim_res, model_jac = model.forward_and_jacobian(fullParam)
+        # Try evaluating the model for the given parameters. Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.
+        try:
+            sim_res, model_jac = model.forward_and_jacobian(fullParam)
+        except Exception as e:
+            logger.error(
+                "Error while evaluating model and its jacobian."
+                "The program will continue, but the density will be set to 0."
+                f"The parameter that caused the error is: {fullParam}"
+                f"The error message is: {e}"
+            )
+            return 0, np.zeros(slice.shape[0] + model.data_dim + 1)
 
         # normalize sim_res
         transformed_sim_res = data_transformation.transform(sim_res)
