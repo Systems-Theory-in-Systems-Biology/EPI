@@ -99,9 +99,7 @@ def test_examples(example, inference_type):
         or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
     )
     # check rank of jacobian
-    assert jnp.linalg.matrix_rank(model_jac) == jnp.min(
-        jnp.array(model_jac.shape)
-    )  # TODO: If it holds data_dim >= param_dim, this should be param_dim
+    assert jnp.linalg.matrix_rank(model_jac) == model.param_dim
 
     # generate artificial data if necessary
     if model.is_artificial():
