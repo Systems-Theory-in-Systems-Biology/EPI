@@ -174,7 +174,9 @@ class Heat(JaxModel):
         term = diffrax.ODETerm(heat_rhs)
         solver = diffrax.Heun()
         saveat = diffrax.SaveAt(t0=False, t1=True)
-        stepsize_controller = diffrax.PIDController(rtol=1e-5, atol=1e-5)
+        stepsize_controller = diffrax.PIDController(
+            rtol=1e-5, atol=1e-5, dtmax=dt0
+        )
         sol = diffrax.diffeqsolve(
             term,
             solver,
