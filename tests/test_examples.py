@@ -81,6 +81,7 @@ def test_examples(example, inference_type):
     # test the shapes
     assert model.param_dim > 0
     assert model.data_dim > 0
+    assert model.data_dim >= model.param_dim
     assert model.central_param.shape == (model.param_dim,)
     assert model.param_limits.shape == (model.param_dim, 2)
 
@@ -97,7 +98,10 @@ def test_examples(example, inference_type):
         or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
         or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
     )
-    assert model_jac.shape[1] == jnp.linalg.matrix_rank(model_jac)
+    # check rank of jacobian
+    assert jnp.linalg.matrix_rank(model_jac) == jnp.min(
+        jnp.array(model_jac.shape)
+    )  # TODO: If it holds data_dim >= param_dim, this should be param_dim
 
     # generate artificial data if necessary
     if model.is_artificial():
