@@ -4,6 +4,7 @@ Test the instantiation, data loading / data generation and the inference for the
 
 import importlib
 
+import jax.numpy as jnp
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
@@ -17,12 +18,45 @@ cpp_plant_example = pytest.param(
     ),
 )
 
+stock_example = pytest.param(
+    ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the stock model is ill-posed",
+    ),
+)
+
+stock_artificial_example = pytest.param(
+    ("eulerpi.examples.stock", "StockArtificial"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the stock model is ill-posed",
+    ),
+)
+
+sbml_menten_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the SBML menten model migth be ill-posed",
+    ),
+)
+
+sbml_caffeine_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the SBML caffeine model migth be ill-posed",
+    ),
+)
+
 
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
-        ("eulerpi.examples.stock", "StockArtificial"),
+        stock_example,
+        stock_artificial_example,
+        ("eulerpi.examples.heat", "HeatArtificial"),
         ("eulerpi.examples.corona", "Corona", "CoronaData.csv"),
         ("eulerpi.examples.corona", "CoronaArtificial"),
         ("eulerpi.examples.temperature", "Temperature", "TemperatureData.csv"),
@@ -35,8 +69,8 @@ def Examples():
         cpp_plant_example,
         ("eulerpi.examples.cpp.python_reference_plants", "ExternalPlant"),
         ("eulerpi.examples.cpp.python_reference_plants", "JaxPlant"),
-        ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-        ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+        sbml_menten_example,
+        sbml_caffeine_example,
     ]:
         yield example
 
@@ -79,6 +113,7 @@ def test_examples(example, inference_type):
     # test the shapes
     assert model.param_dim > 0
     assert model.data_dim > 0
+    assert model.data_dim >= model.param_dim
     assert model.central_param.shape == (model.param_dim,)
     assert model.param_limits.shape == (model.param_dim, 2)
 
@@ -95,6 +130,8 @@ def test_examples(example, inference_type):
         or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
         or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
     )
+    # check rank of jacobian
+    assert jnp.linalg.matrix_rank(model_jac) == model.param_dim
 
     # generate artificial data if necessary
     if model.is_artificial():

@@ -19,9 +19,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+
+## [0.4.0]
+
+### Added
+
+- Added a new example model, a 2d heat conduction equation
+- Added a function to model to specify more complex parameter domains
+### Changed
+
+- Removed old functions from corona model
+- Temporarily removed stock and sbml models from test examples
+
 ### Fixed
 
 - Updated tutorial to be consistent with current state of the project
+- Fixed bug in dense grid generation causing parameter limits to be applied inconsistently when using slices
 
 ## [0.3.1] - 2023-05-02
 

@@ -16,7 +16,9 @@ from eulerpi.core.transformations import evaluate_density
 
 
 def generate_chebyshev_grid(
-    num_grid_points: np.ndarray, limits: np.ndarray, flatten=False
+    num_grid_points: np.ndarray,
+    limits: np.ndarray,
+    flatten=False,
 ) -> Union[np.ndarray, list[np.ndarray]]:
     """Generate a grid with the given number of grid points for each dimension.
 
@@ -43,7 +45,9 @@ def generate_chebyshev_grid(
 
 
 def generate_regular_grid(
-    num_grid_points: np.ndarray, limits: np.ndarray, flatten=False
+    num_grid_points: np.ndarray,
+    limits: np.ndarray,
+    flatten=False,
 ) -> Union[np.ndarray, list[np.ndarray]]:
     """Generate a grid with the given number of grid points for each dimension.
 
@@ -146,8 +150,10 @@ def run_dense_grid_evaluation(
         raise ValueError(
             f"The dimension of the numbers of grid points {num_grid_points} does not match the number of parameters in the slice {slice}"
         )
-    limits = model.param_limits
-    data_stdevs = calc_kernel_width(data)
+    if model.param_limits.ndim == 1:
+        limits = model.param_limits
+    else:
+        limits = model.param_limits[slice, :]
 
     if dense_grid_type == DenseGridType.CHEBYSHEV:
         grid = generate_chebyshev_grid(num_grid_points, limits, flatten=True)
@@ -156,6 +162,7 @@ def run_dense_grid_evaluation(
     else:
         raise ValueError(f"Unknown grid type: {dense_grid_type}")
 
+    data_stdevs = calc_kernel_width(data)
     # Split the grid into chunks that can be evaluated by each process
     grid_chunks = np.array_split(
         grid, num_processes * load_balancing_safety_faktor

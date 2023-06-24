@@ -19,7 +19,7 @@ class Model(ABC):
 
     Args:
         central_param(np.ndarray): The central parameter for the model. (Default value = None)
-        param_limits(np.ndarray): The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)
+        param_limits(np.ndarray): Box limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). The parameter limits are used as limits as well as for the movement policy for MCMC sampling, and as boundaries for the grid when using grid-based inference. Overwrite the function param_is_within_domain if the domain is more complex than a box - the grid will still be build based on param_limits, but actual model evaluations only take place within the limits specified in param_is_within_domain. (Default value = None)
         name(str): The name of the model. The class name is used if no name is given. (Default value = None)
     """
 
@@ -95,6 +95,19 @@ class Model(ABC):
         """
 
         return self.forward(param), self.jacobian(param)
+
+    def param_is_within_domain(self, param: np.ndarray) -> bool:
+        """Checks whether a parameter is within the parameter domain of the model.
+        Overwrite this function if your model has a more complex parameter domain than a box. The param_limits are checked automatically.
+
+        Args:
+            param(np.ndarray): The parameter to check.
+
+        Returns:
+            bool: True if the parameter is within the limits.
+
+        """
+        return True
 
     def is_artificial(self) -> bool:
         """Determines whether the model provides artificial parameter and data sets.
