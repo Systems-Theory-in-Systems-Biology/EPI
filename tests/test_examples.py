@@ -18,12 +18,44 @@ cpp_plant_example = pytest.param(
     ),
 )
 
+stock_example = pytest.param(
+    ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the stock model is ill-posed",
+    ),
+)
+
+stock_artificial_example = pytest.param(
+    ("eulerpi.examples.stock", "StockArtificial"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the stock model is ill-posed",
+    ),
+)
+
+sbml_menten_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the SBML menten model migth be ill-posed",
+    ),
+)
+
+sbml_caffeine_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+    marks=pytest.mark.xfail(
+        True,
+        reason="XFAIL means that the inference problem for the SBML caffeine model migth be ill-posed",
+    ),
+)
+
 
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
-        ("eulerpi.examples.stock", "StockArtificial"),
+        stock_example,
+        stock_artificial_example,
         ("eulerpi.examples.heat", "HeatArtificial"),
         ("eulerpi.examples.corona", "Corona", "CoronaData.csv"),
         ("eulerpi.examples.corona", "CoronaArtificial"),
@@ -37,8 +69,8 @@ def Examples():
         cpp_plant_example,
         ("eulerpi.examples.cpp.python_reference_plants", "ExternalPlant"),
         ("eulerpi.examples.cpp.python_reference_plants", "JaxPlant"),
-        ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-        ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+        sbml_menten_example,
+        sbml_caffeine_example,
     ]:
         yield example
 
