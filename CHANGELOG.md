@@ -29,10 +29,12 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Removed old functions from corona model
+- Temporarily removed stock and sbml models from test examples
 
 ### Fixed
 
 - Updated tutorial to be consistent with current state of the project
+- Fixed bug in dense grid generation causing parameter limits to be applied inconsistently when using slices
 
 ## [0.3.1] - 2023-05-02
 
