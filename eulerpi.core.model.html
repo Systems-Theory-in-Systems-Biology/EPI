@@ -80,6 +80,7 @@
 <li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">Model.forward_and_jacobian()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.is_artificial"><code class="docutils literal notranslate"><span class="pre">Model.is_artificial()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.jacobian"><code class="docutils literal notranslate"><span class="pre">Model.jacobian()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.param_is_within_domain"><code class="docutils literal notranslate"><span class="pre">Model.param_is_within_domain()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.data_dim"><code class="docutils literal notranslate"><span class="pre">Model.data_dim</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#eulerpi.core.model.Model.param_dim"><code class="docutils literal notranslate"><span class="pre">Model.param_dim</span></code></a></li>
 </ul>
@@ -280,7 +281,7 @@ E.g. for: class CoronaArtificial(Corona)</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>central_param</strong> (<em>np.ndarray</em>) – The central parameter for the model. (Default value = None)</p></li>
-<li><p><strong>param_limits</strong> (<em>np.ndarray</em>) – The limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). (Default value = None)</p></li>
+<li><p><strong>param_limits</strong> (<em>np.ndarray</em>) – Box limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). The parameter limits are used as limits as well as for the movement policy for MCMC sampling, and as boundaries for the grid when using grid-based inference. Overwrite the function param_is_within_domain if the domain is more complex than a box - the grid will still be build based on param_limits, but actual model evaluations only take place within the limits specified in param_is_within_domain. (Default value = None)</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – The name of the model. The class name is used if no name is given. (Default value = None)</p></li>
 </ul>
 </dd>
@@ -347,6 +348,24 @@ it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.fo
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.core.model.Model.param_is_within_domain">
+<span class="sig-name descname"><span class="pre">param_is_within_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#eulerpi.core.model.Model.param_is_within_domain" title="Permalink to this definition"></a></dt>
+<dd><p>Checks whether a parameter is within the parameter domain of the model.
+Overwrite this function if your model has a more complex parameter domain than a box. The param_limits are checked automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the parameter is within the limits.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
