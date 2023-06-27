@@ -109,7 +109,7 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/System
 
 ### Your First Code Contribution
 
-Improvements on our library are always welcome. Please read the development guide from our documentation to get started.
+Improvements on our library are always welcome. Please read the [development guide](https://systems-theory-in-systems-biology.github.io/EPI/MarkdownLinks/development.html) from our documentation to get started.
 
 ### Improving The Documentation
 <!-- Updating, improving and correcting the documentation -->
