@@ -342,7 +342,7 @@ class SBMLModel(Model):
         self.amici_solver = self.amici_model.getSolver()
 
         # TODO: Maybe this is redundant when using settings to hdf5
-        self.amici_model.setTimepoints(times)
+        self.amici_model.setTimepoints(self.time)
 
         if self.param_names is not None:
             # We need the indices for setParameterList, not the ids or names
