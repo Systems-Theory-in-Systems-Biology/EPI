@@ -115,7 +115,10 @@ It generates the forward and jacobian method automatically and derives the param
 <span class="n">param_limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]])</span>
 <span class="n">param_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">,</span> <span class="s1">&#39;k2&#39;</span><span class="p">]</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">SBMLModel</span><span class="p">(</span><span class="s1">&#39;model.xml&#39;</span><span class="p">,</span> <span class="n">central_param</span><span class="o">=</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="o">=</span><span class="n">param_limits</span><span class="p">,</span> <span class="n">param_names</span><span class="o">=</span><span class="n">param_names</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SBMLModel</span><span class="p">(</span><span class="s1">&#39;model.xml&#39;</span><span class="p">,</span>
+                  <span class="n">central_param</span><span class="o">=</span><span class="n">central_param</span><span class="p">,</span>
+                  <span class="n">param_limits</span><span class="o">=</span><span class="n">param_limits</span><span class="p">,</span>
+                  <span class="n">param_names</span><span class="o">=</span><span class="n">param_names</span><span class="p">)</span>
 <span class="n">inference</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

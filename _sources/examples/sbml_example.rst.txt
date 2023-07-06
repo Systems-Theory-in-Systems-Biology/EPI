@@ -24,7 +24,10 @@ Here's a code snippet to load your own sbml model and to do the parameter infere
     param_limits = np.array([[0.0, 2.0], [0.0, 2.0]])
     param_names = ['k1', 'k2']
 
-    model = SBMLModel('model.xml', central_param=central_param, param_limits=param_limits, param_names=param_names)
+    model = SBMLModel('model.xml',
+                      central_param=central_param,
+                      param_limits=param_limits,
+                      param_names=param_names)
     inference(model, 'data.csv')
 
 The attribute :py:attr:`~eulerpi.core.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.
