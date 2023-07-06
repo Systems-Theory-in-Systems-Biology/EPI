@@ -15,6 +15,7 @@ ____________
 Here's a code snippet to load your own sbml model and to do the parameter inference:
 
 .. code-block:: python
+
     import numpy as np
     from eulerpi.core.model import SBMLModel
     from eulerpi.core.inference import inference
