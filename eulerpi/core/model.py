@@ -280,7 +280,7 @@ class SBMLModel(Model):
     Args:
         sbml_file(str): The path to the SBML model file.
         param_names(list): A list of parameter names. If None the parameter names are extracted from the SBML model.
-        tEnd(float): The end time of the simulation. (Default value = 1.0)
+        time(list): List of measurement time points, this is where the ODE is evaluated and compared to the data
         skip_creation(bool): If True the model is not created againg based on the SBML file. Instead the model is loaded from a previously created model. (Default value = False)
         central_param(np.ndarray): The central parameter for the model
         param_limits(np.ndarray): The parameter limits for the model
@@ -299,26 +299,33 @@ class SBMLModel(Model):
     def __init__(
         self,
         sbml_file: str,
+        time: list,
         central_param: np.ndarray,
         param_limits: np.ndarray,
         param_names=None,
-        tEnd=1.0,
         skip_creation: bool = False,
         name: Optional[str] = None,
         **kwargs,
     ) -> None:
         super().__init__(central_param, param_limits, name, **kwargs)
 
-        self.tEnd = tEnd
+        self.time = time
 
         self.amici_model_name = self.name
         self.amici_model_dir = "./amici/" + self.amici_model_name
+        
+        # TODO test if observables are mandatory
+        observables = {
+        'observable_x1': {'name': 'y_obs', 'formula': 'y'}, 
+        }
 
         # Generate python code
         if not skip_creation:
             sbml_importer = amici.SbmlImporter(sbml_file)
             sbml_importer.sbml2amici(
-                self.amici_model_name, self.amici_model_dir
+                self.amici_model_name,
+                self.amici_model_dir,
+                observables=observables
             )
 
         self.param_names = param_names
@@ -335,7 +342,7 @@ class SBMLModel(Model):
         self.amici_solver = self.amici_model.getSolver()
 
         # TODO: Maybe this is redundant when using settings to hdf5
-        self.amici_model.setTimepoints([self.tEnd])
+        self.amici_model.setTimepoints(times)
 
         if self.param_names is not None:
             # We need the indices for setParameterList, not the ids or names
@@ -356,23 +363,23 @@ class SBMLModel(Model):
 
     def forward(self, params):
         for i, param in enumerate(params):
-            self.amici_model.setParameterByName(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[-1]
+        return rdata.x[0]
 
     def jacobian(self, params):
         for i, param in enumerate(params):
-            self.amici_model.setParameterByName(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.sx[-1].T
+        return rdata.sx[0].T
 
     def forward_and_jacobian(
         self, params: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         for i, param in enumerate(params):
-            self.amici_model.setParameterByName(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[-1], rdata.sx[-1].T
+        return rdata.x[0], rdata.sx[0].T # rdata.x[-1], rdata.sx[-1].T
 
     # Allow the model to be pickled
     def __getstate__(self):
