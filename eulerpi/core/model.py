@@ -388,7 +388,7 @@ class SBMLModel(Model):
 
         # Save the amici solver settings to
         _fd, _file = tempfile.mkstemp()
-        """
+
         try:
             # write amici solver settings to file
             try:
@@ -414,7 +414,6 @@ class SBMLModel(Model):
         # Remove the unpicklable entries.
         del state["amici_model"]
         del state["amici_solver"]
-        """
         return state
 
     def __setstate__(self, state):
