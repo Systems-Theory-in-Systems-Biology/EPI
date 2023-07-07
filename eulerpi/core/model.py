@@ -316,7 +316,7 @@ class SBMLModel(Model):
         
         # TODO test if observables are mandatory
         observables = {
-            'observable_x1': {'name': 'y_obs', 'formula': 'y'}, 
+            "observable_x1": {"name": "y_obs", "formula": "y"}, 
         }
 
         # Generate python code
