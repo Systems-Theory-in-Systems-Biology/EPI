@@ -46,6 +46,13 @@ We will then take care of the issue as soon as possible.
 
 When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
+## How to install the current main branch directly?
+To install the current main branch version you can use git in your conda environment:
+```pip install git+https://github.com/Systems-Theory-in-Systems-Biology/EPI```
+
+like this you can also install feature-branches.
+Please be aware that these versions are under development and the double-checked versions are published on pypi.
+
 ### Reporting Bugs
 
 <!-- omit in toc -->
