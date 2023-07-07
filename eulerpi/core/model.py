@@ -313,7 +313,7 @@ class SBMLModel(Model):
 
         self.amici_model_name = self.name
         self.amici_model_dir = "./amici/" + self.amici_model_name
-        
+
         # TODO test if observables are mandatory
         observables = {
             "observable_x1": {"name": "y_obs", "formula": "y"}, 
