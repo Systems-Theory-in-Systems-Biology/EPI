@@ -316,7 +316,7 @@ class SBMLModel(Model):
         
         # TODO test if observables are mandatory
         observables = {
-        'observable_x1': {'name': 'y_obs', 'formula': 'y'}, 
+            'observable_x1': {'name': 'y_obs', 'formula': 'y'}, 
         }
 
         # Generate python code
@@ -325,7 +325,7 @@ class SBMLModel(Model):
             sbml_importer.sbml2amici(
                 self.amici_model_name,
                 self.amici_model_dir,
-                observables=observables
+                observables=observables,
             )
 
         self.param_names = param_names
