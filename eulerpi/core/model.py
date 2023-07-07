@@ -379,7 +379,7 @@ class SBMLModel(Model):
         for i, param in enumerate(params):
             self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[0], rdata.sx[0].T # rdata.x[-1], rdata.sx[-1].T
+        return rdata.x[0], rdata.sx[0].T
 
     # Allow the model to be pickled
     def __getstate__(self):
