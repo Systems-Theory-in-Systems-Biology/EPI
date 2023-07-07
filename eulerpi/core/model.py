@@ -289,7 +289,7 @@ class SBMLModel(Model):
     @property
     def param_dim(self):
         """The number of parameters of the model."""
-        return len(self.amici_model.getParameterIds())
+        return len(self.param_names)  # len(self.amici_model.getParameterIds())
 
     @property
     def data_dim(self):
