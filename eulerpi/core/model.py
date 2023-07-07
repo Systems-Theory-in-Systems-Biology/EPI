@@ -406,7 +406,7 @@ class SBMLModel(Model):
             # close file descriptor and remove temporary file
             os.close(_fd)
             os.remove(_file)
-        """
+        
         state["amici_model_settings"] = amici.get_model_settings(
             self.amici_model
         )
@@ -414,7 +414,7 @@ class SBMLModel(Model):
         # Remove the unpicklable entries.
         del state["amici_model"]
         del state["amici_solver"]
-        
+        """
         return state
 
     def __setstate__(self, state):
