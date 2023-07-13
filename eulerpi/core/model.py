@@ -289,6 +289,7 @@ class SBMLModel(Model):
     @property
     def param_dim(self):
         """The number of parameters of the model."""
+        print(len(self.param_names))
         return len(self.param_names)  # len(self.amici_model.getParameterIds())
 
     @property
@@ -360,18 +361,19 @@ class SBMLModel(Model):
             self.amici_model.requireSensitivitiesForAllParameters()
         self.amici_solver.setSensitivityMethod(amici.SensitivityMethod.forward)
         self.amici_solver.setSensitivityOrder(amici.SensitivityOrder.first)
+        self.amici_solver.setAbsoluteTolerance(1e-10)
 
     def forward(self, params):
         for i, param in enumerate(params):
             self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[0]
+        return rdata.x[:, 0]
 
     def jacobian(self, params):
         for i, param in enumerate(params):
             self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.sx[0].T
+        return rdata.sx[:,:,0]
 
     def forward_and_jacobian(
         self, params: np.ndarray
@@ -379,7 +381,7 @@ class SBMLModel(Model):
         for i, param in enumerate(params):
             self.amici_model.setParameterById(self.param_names[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[0], rdata.sx[0].T
+        return rdata.x[:, 0], rdata.sx[:,:,0]
 
     # Allow the model to be pickled
     def __getstate__(self):
