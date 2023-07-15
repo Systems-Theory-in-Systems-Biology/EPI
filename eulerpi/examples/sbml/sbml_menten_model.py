@@ -24,28 +24,19 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         sbml_file = importlib.resources.path(
             "eulerpi.examples.sbml", "sbml_menten_model.xml"
         )
-        param_names = ["Km", "kcat"]
+        timepoints = np.array([0.5, 1.0, 2.0])
+        param_ids = ["Km", "kcat"]
+        state_ids = ["s1"]
+
         super().__init__(
             sbml_file,
+            timepoints,
             central_param,
             param_limits,
-            param_names,
+            param_ids,
+            state_ids=state_ids,
             **kwargs,
         )
-
-    @property
-    def data_dim(self) -> int:
-        return 1
-
-    def forward(self, params) -> np.ndarray:
-        return super().forward(params)[2:]
-
-    def jacobian(self, params) -> np.ndarray:
-        return super().jacobian(params)[2:, :]
-
-    def forward_and_jacobian(self, params) -> np.ndarray:
-        val, jac = super().forward_and_jacobian(params)
-        return val[2:], jac[2:, :]
 
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:
         diff0 = 5.0

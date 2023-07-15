@@ -10,7 +10,6 @@ import numpy as np
 from jax import jacrev, jit, vmap
 
 import amici
-from eulerpi import logger
 from eulerpi.jax_extension import value_and_jacrev
 
 
@@ -279,46 +278,65 @@ class SBMLModel(Model):
 
     Args:
         sbml_file(str): The path to the SBML model file.
-        param_names(list): A list of parameter names. If None the parameter names are extracted from the SBML model.
-        time(list): List of measurement time points, this is where the ODE is evaluated and compared to the data
+        param_ids(list): A list of ids of parameter, which will be estimated during the inference. If None all parameter ids are extracted from the SBML model.
+        state_ids(list): A list of state ids, for which data will be given during the inference. If None all state ids are extracted from the SBML model.
+        timepoints(list): List of measurement time points, this is where the sbml model is evaluated and compared to the data
         skip_creation(bool): If True the model is not created againg based on the SBML file. Instead the model is loaded from a previously created model. (Default value = False)
         central_param(np.ndarray): The central parameter for the model
         param_limits(np.ndarray): The parameter limits for the model
     """
 
+    @staticmethod
+    def indices_from_ids(ids: list, all_ids: list) -> list:
+        """Returns the indices of the ids in the all_ids list.
+
+        Args:
+            ids(list): The ids for which the indices should be returned.
+            all_ids(list): The list of all ids.
+
+        Returns:
+            list: The indices of the ids in the all_ids list.
+
+        Throws:
+            ValueError: If one of the ids is not in the all_ids list.
+
+        """
+        indices = []
+        for id in ids:
+            try:
+                indices.append(all_ids.index(id))
+            except ValueError:
+                raise ValueError(
+                    f"Parameter / State id '{id}' is not in the list of the relevant ids {all_ids}"
+                )
+        return indices
+
     @property
     def param_dim(self):
         """The number of parameters of the model."""
-        print(len(self.param_names))
-        return len(self.param_names)  # len(self.amici_model.getParameterIds())
+        return len(self.param_ids)
 
     @property
     def data_dim(self):
-        """The number of observables of the model."""
-        return len(self.amici_model.getStateIds())
+        """The dimension of a data point returned by the model."""
+        return len(self.state_ids) * len(self.timepoints)
 
     def __init__(
         self,
         sbml_file: str,
-        time: list,
+        timepoints: list,
         central_param: np.ndarray,
         param_limits: np.ndarray,
-        param_names=None,
+        param_ids: Optional[list] = None,
+        state_ids: Optional[list] = None,
         skip_creation: bool = False,
         name: Optional[str] = None,
         **kwargs,
     ) -> None:
         super().__init__(central_param, param_limits, name, **kwargs)
 
-        self.time = time
-
         self.amici_model_name = self.name
         self.amici_model_dir = "./amici/" + self.amici_model_name
-
-        # TODO test if observables are mandatory
-        observables = {
-            "observable_x1": {"name": "y_obs", "formula": "y"},
-        }
 
         # Generate python code
         if not skip_creation:
@@ -326,13 +344,21 @@ class SBMLModel(Model):
             sbml_importer.sbml2amici(
                 self.amici_model_name,
                 self.amici_model_dir,
-                observables=observables,
             )
 
-        self.param_names = param_names
-
         # Load the generated model
+        self.timepoints = timepoints
         self.load_amici_model_and_solver()
+
+        self.param_ids = param_ids or self.amici_model.getParametersIds()
+        self.state_ids = state_ids or self.amici_model.getStateIds()
+        self.param_indices = self.indices_from_ids(
+            self.param_ids, self.amici_model.getParameterIds()
+        )
+        self.state_indices = self.indices_from_ids(
+            self.state_ids, self.amici_model.getStateIds()
+        )
+        self.setSensitivities()
 
     def load_amici_model_and_solver(self):
         """Loads the AMICI model from the previously generated model."""
@@ -342,46 +368,48 @@ class SBMLModel(Model):
         self.amici_model = amici_model_module.getModel()
         self.amici_solver = self.amici_model.getSolver()
 
-        # TODO: Maybe this is redundant when using settings to hdf5
-        self.amici_model.setTimepoints(self.time)
+        self.amici_model.setTimepoints(self.timepoints)
+        self.amici_solver.setAbsoluteTolerance(1e-10)
 
-        if self.param_names is not None:
-            # We need the indices for setParameterList, not the ids or names
-            amici_param_indices = []
-            for i, param_id in enumerate(self.amici_model.getParameterIds()):
-                if param_id in self.param_names:
-                    amici_param_indices.append(i)
-                else:
-                    logger.warning(
-                        f"Parameter {param_id} is specified in the sbml file, but not in the passed parameter list. It will be ignored."
-                    )
-            self.amici_model.setParameterList(amici_param_indices)
-        else:
-            self.param_names = self.amici_model.getParameterIds()
+    def setSensitivities(self):
+        if self.param_ids == self.amici_model.getParameterIds():
             self.amici_model.requireSensitivitiesForAllParameters()
+        else:
+            self.amici_model.setParameterList(self.param_indices)
+
         self.amici_solver.setSensitivityMethod(amici.SensitivityMethod.forward)
         self.amici_solver.setSensitivityOrder(amici.SensitivityOrder.first)
-        self.amici_solver.setAbsoluteTolerance(1e-10)
 
     def forward(self, params):
         for i, param in enumerate(params):
-            self.amici_model.setParameterById(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_ids[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[:, 0]
+        return rdata.x[:, self.state_indices].reshape(self.data_dim)
 
     def jacobian(self, params):
         for i, param in enumerate(params):
-            self.amici_model.setParameterById(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_ids[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.sx[:,:,0]
+        return (
+            rdata.sx[:, :, self.state_indices]
+            .transpose(1, 0, 2)
+            .reshape(self.param_dim, self.data_dim)
+            .T
+        )
 
     def forward_and_jacobian(
         self, params: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         for i, param in enumerate(params):
-            self.amici_model.setParameterById(self.param_names[i], param)
+            self.amici_model.setParameterById(self.param_ids[i], param)
         rdata = amici.runAmiciSimulation(self.amici_model, self.amici_solver)
-        return rdata.x[:, 0], rdata.sx[:,:,0]
+        return (
+            rdata.x[:, self.state_indices].reshape(self.data_dim),
+            rdata.sx[:, :, self.state_indices]
+            .transpose(1, 0, 2)
+            .reshape(self.param_dim, self.data_dim)
+            .T,
+        )
 
     # Allow the model to be pickled
     def __getstate__(self):
@@ -408,7 +436,7 @@ class SBMLModel(Model):
             # close file descriptor and remove temporary file
             os.close(_fd)
             os.remove(_file)
-        
+
         state["amici_model_settings"] = amici.get_model_settings(
             self.amici_model
         )
@@ -423,6 +451,7 @@ class SBMLModel(Model):
 
         # Restore amici model and solver
         self.load_amici_model_and_solver()
+        self.setSensitivities()
 
         _fd, _file = tempfile.mkstemp()
         try:
