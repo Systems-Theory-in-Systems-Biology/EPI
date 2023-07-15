@@ -19,6 +19,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Added support for for sbml models to select parameters and species used in the inference
+- Added support for evaluating sbml models at multiple time points
+
+### Changed
+
+- Switched from using parameter names to using parameter ids in the sbml model
 
 ## [0.4.0]
 
@@ -26,6 +34,7 @@ All notable changes to this project will be documented in this file.
 
 - Added a new example model, a 2d heat conduction equation
 - Added a function to model to specify more complex parameter domains
+
 ### Changed
 
 - Removed old functions from corona model

@@ -24,17 +24,17 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         sbml_file = importlib.resources.path(
             "eulerpi.examples.sbml", "sbml_menten_model.xml"
         )
-        timepoints = np.array([0.5, 1.0, 2.0])
+        timepoints = np.array([0.5, 1.0])
         param_ids = ["Km", "kcat"]
         state_ids = ["s1"]
 
         super().__init__(
             sbml_file,
-            timepoints,
             central_param,
             param_limits,
+            timepoints,
             param_ids,
-            state_ids=state_ids,
+            state_ids,
             **kwargs,
         )
 

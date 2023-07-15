@@ -24,9 +24,9 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
 
         super().__init__(
             sbml_file,
-            timepoints,
             central_param,
             param_limits,
+            timepoints,
             param_ids,
             **kwargs,
         )

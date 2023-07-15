@@ -324,9 +324,9 @@ class SBMLModel(Model):
     def __init__(
         self,
         sbml_file: str,
-        timepoints: list,
         central_param: np.ndarray,
         param_limits: np.ndarray,
+        timepoints: list,
         param_ids: Optional[list] = None,
         state_ids: Optional[list] = None,
         skip_creation: bool = False,

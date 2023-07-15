@@ -73,7 +73,20 @@ def get_example_name(example):
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)
 def test_model_requirements(example):
-    """Test the requirements of the inference for the example models."""
+    """Perform a simple sanity check on the model. It tests the following:
+    - The model has a positive parameter dimension
+    - The model has a positive data dimension
+    - The model has a valid combination of parameter and data dimension
+    - The central parameter has the correct shape
+    - The parameter limits have the correct shape
+    - The model can be instantiated
+    - The model forward pass can be calculated
+    - The model jacobi matrix can be calculated
+    - The return values of the forward pass and the jacobi matrix have the correct shape
+
+    Args:
+        example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)
+    """
 
     # extract example parameters from tuple
     try:
