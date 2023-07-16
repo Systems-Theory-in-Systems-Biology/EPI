@@ -56,7 +56,6 @@ class Heat(JaxModel):
 
     t_end = 0.1
     plate_length = jnp.array([1.0, 1.0])
-    num_grid_points = 20
 
     param_dim = 3
     data_dim = 5  # The values of the heat equation solution at five points are observed. See evaluation_points.
@@ -159,10 +158,11 @@ class Heat(JaxModel):
         # os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"]="false"
 
         # The grid
-        x = jnp.linspace(0, cls.plate_length[0], cls.num_grid_points)
-        y = jnp.linspace(0, cls.plate_length[1], cls.num_grid_points)
-        dx = cls.plate_length[0] / cls.num_grid_points
-        dy = cls.plate_length[1] / cls.num_grid_points
+        num_grid_points = 20
+        x = jnp.linspace(0, cls.plate_length[0], num_grid_points)
+        y = jnp.linspace(0, cls.plate_length[1], num_grid_points)
+        dx = cls.plate_length[0] / num_grid_points
+        dy = cls.plate_length[1] / num_grid_points
 
         def stable_time_step(dx, dy, kappa):
             trace_kappa = kappa[0] + kappa[1]
