@@ -56,6 +56,7 @@ class Heat(JaxModel):
 
     t_end = 0.1
     plate_length = jnp.array([1.0, 1.0])
+    num_grid_points = 20
 
     param_dim = 3
     data_dim = 5  # The values of the heat equation solution at five points are observed. See evaluation_points.
@@ -104,17 +105,31 @@ class Heat(JaxModel):
 
         solution = cls.perform_simulation(kappa=param)
 
-        # the indices of the wanted evaluation points
-        evaluation_indices = jnp.multiply(
-            cls.evaluation_points,
-            jnp.array(solution.shape),
-        ).astype(int)
+        # linearly interpolate the solution at the evaluation points, use own interpolation function as jax doesn't support scipy.interpolate.interp2d and doesn't provide a 2d interpolation function
+        x = jnp.linspace(0, cls.plate_length[0], cls.num_grid_points)
+        y = jnp.linspace(0, cls.plate_length[1], cls.num_grid_points)
+        X, Y = jnp.meshgrid(x, y)
 
-        solution_at_evaluation_points = jnp.array(
-            solution[
-                evaluation_indices[:, 0],
-                evaluation_indices[:, 1],
-            ]
+        # compute the indices between which the evaluation points lie
+        x_indices = jnp.searchsorted(x, cls.evaluation_points[:, 0]) - 1
+        y_indices = jnp.searchsorted(y, cls.evaluation_points[:, 1]) - 1
+        dx = cls.plate_length[0] / cls.num_grid_points
+        dy = cls.plate_length[1] / cls.num_grid_points
+
+        # interpolate the solution at the evaluation points
+        solution_at_evaluation_points = (1 / (dx * dy)) * (
+            solution[x_indices, y_indices]
+            * (x[x_indices + 1] - cls.evaluation_points[:, 0])
+            * (y[y_indices + 1] - cls.evaluation_points[:, 1])
+            + solution[x_indices + 1, y_indices]
+            * (cls.evaluation_points[:, 0] - x[x_indices])
+            * (y[y_indices + 1] - cls.evaluation_points[:, 1])
+            + solution[x_indices, y_indices + 1]
+            * (x[x_indices + 1] - cls.evaluation_points[:, 0])
+            * (cls.evaluation_points[:, 1] - y[y_indices])
+            + solution[x_indices + 1, y_indices + 1]
+            * (cls.evaluation_points[:, 0] - x[x_indices])
+            * (cls.evaluation_points[:, 1] - y[y_indices])
         )
         return solution_at_evaluation_points
 
@@ -145,11 +160,10 @@ class Heat(JaxModel):
         # os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"]="false"
 
         # The grid
-        num_grid_points = 20
-        x = jnp.linspace(0, cls.plate_length[0], num_grid_points)
-        y = jnp.linspace(0, cls.plate_length[1], num_grid_points)
-        dx = cls.plate_length[0] / num_grid_points
-        dy = cls.plate_length[1] / num_grid_points
+        x = jnp.linspace(0, cls.plate_length[0], cls.num_grid_points)
+        y = jnp.linspace(0, cls.plate_length[1], cls.num_grid_points)
+        dx = cls.plate_length[0] / cls.num_grid_points
+        dy = cls.plate_length[1] / cls.num_grid_points
 
         def stable_time_step(dx, dy, kappa):
             trace_kappa = kappa[0] + kappa[1]
