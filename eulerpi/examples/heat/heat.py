@@ -108,7 +108,6 @@ class Heat(JaxModel):
         # linearly interpolate the solution at the evaluation points, use own interpolation function as jax doesn't support scipy.interpolate.interp2d and doesn't provide a 2d interpolation function
         x = jnp.linspace(0, cls.plate_length[0], cls.num_grid_points)
         y = jnp.linspace(0, cls.plate_length[1], cls.num_grid_points)
-        X, Y = jnp.meshgrid(x, y)
 
         # compute the indices between which the evaluation points lie
         x_indices = jnp.searchsorted(x, cls.evaluation_points[:, 0]) - 1
