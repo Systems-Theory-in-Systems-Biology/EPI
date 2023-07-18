@@ -112,7 +112,7 @@ def run_emcee_once(
         )
     except ValueError as e:
         # If the message equals "Probability function returned NaN."
-        if str(e) == "Probability function returned NaN.":
+        if "Probability function returned NaN" in str(e):
             raise ValueError(
                 "Probability function returned NaN. "
                 "You possibly have to exclude data dimensions which do not depend on the paramaters. "
