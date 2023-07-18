@@ -20,15 +20,19 @@ Here's a code snippet to load your own sbml model and to do the parameter infere
     from eulerpi.core.model import SBMLModel
     from eulerpi.core.inference import inference
 
-    central_param = np.array([1.0, 1.0])  # initial guess, evaluation must have nonzero density
-    param_limits = np.array([[0.0, 2.0], [0.0, 2.0]])
-    param_names = ['k1', 'k2']
+    # This line is needed for multiprocessing in python
+    if __name__ == "__main__":
+        central_param = np.array([1.0, 1.0])  # initial guess, evaluation must have nonzero density
+        param_limits = np.array([[0.0, 2.0], [0.0, 2.0]])
+        param_ids = ['k1', 'k2']
+        timepoints = np.array([1.0])
 
-    model = SBMLModel('model.xml',
-                      central_param=central_param,
-                      param_limits=param_limits,
-                      param_names=param_names)
-    inference(model, 'data.csv')
+        model = SBMLModel(sbml_file='model.xml',
+                        central_param=central_param,
+                        param_limits=param_limits,
+                        timepoints=timepoints,
+                        param_ids=param_ids)
+        inference(model, 'data.csv')
 
 The attribute :py:attr:`~eulerpi.core.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.
 Per default it contains all parameters from the sbml model file.

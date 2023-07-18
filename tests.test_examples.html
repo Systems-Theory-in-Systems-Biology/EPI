@@ -62,6 +62,7 @@
 <li class="toctree-l5"><a class="reference internal" href="#tests.test_examples.Examples"><code class="docutils literal notranslate"><span class="pre">Examples()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#tests.test_examples.get_example_name"><code class="docutils literal notranslate"><span class="pre">get_example_name()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="#tests.test_examples.test_examples"><code class="docutils literal notranslate"><span class="pre">test_examples()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tests.test_examples.test_model_requirements"><code class="docutils literal notranslate"><span class="pre">test_model_requirements()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_fixed_params.html">Test Fixed Params</a></li>
@@ -138,12 +139,33 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.test_examples.test_examples">
 <span class="sig-name descname"><span class="pre">test_examples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.test_examples" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Test the inference for the example models.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>example</strong> (<em>Tuple</em><em>[</em><em>str</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em>) – The example which should be tested. The tuple contains the module location, the class name and the number of walkers.</p>
 </dd>
 </dl>
 <p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_examples.test_model_requirements">
+<span class="sig-name descname"><span class="pre">test_model_requirements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_examples.test_model_requirements" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a simple sanity check on the model. It tests the following:
+- The model has a positive parameter dimension
+- The model has a positive data dimension
+- The model has a valid combination of parameter and data dimension
+- The central parameter has the correct shape
+- The parameter limits have the correct shape
+- The model can be instantiated
+- The model forward pass can be calculated
+- The model jacobi matrix can be calculated
+- The return values of the forward pass and the jacobi matrix have the correct shape</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>example</strong> – Tuple of the form (module_location, className, dataFileName) or (module_location, className)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
