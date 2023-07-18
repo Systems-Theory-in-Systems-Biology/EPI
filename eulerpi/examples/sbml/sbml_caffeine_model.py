@@ -7,9 +7,6 @@ from eulerpi.core.model import ArtificialModelInterface, SBMLModel
 
 class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
 
-    param_dim = 2
-    data_dim = 1
-
     CENTRAL_PARAM = np.array([1.0, 1.0])
     PARAM_LIMITS = np.array([[0.0, 2.0], [0.0, 2.0]])
 
@@ -22,12 +19,15 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
         sbml_file = importlib.resources.path(
             "eulerpi.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"
         )
-        param_names = ["A", "B"]
+        param_ids = ["A", "B"]
+        timepoints = np.array([0.5, 1.0])
+
         super().__init__(
             sbml_file,
             central_param,
             param_limits,
-            param_names,
+            timepoints,
+            param_ids,
             **kwargs,
         )
 

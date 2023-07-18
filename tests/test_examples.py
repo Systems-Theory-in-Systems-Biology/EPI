@@ -34,22 +34,6 @@ stock_artificial_example = pytest.param(
     ),
 )
 
-sbml_menten_example = pytest.param(
-    ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-    marks=pytest.mark.xfail(
-        True,
-        reason="XFAIL means that the inference problem for the SBML menten model migth be ill-posed",
-    ),
-)
-
-sbml_caffeine_example = pytest.param(
-    ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
-    marks=pytest.mark.xfail(
-        True,
-        reason="XFAIL means that the inference problem for the SBML caffeine model migth be ill-posed",
-    ),
-)
-
 
 def Examples():
     """Provides the list of examples to the parametrized test"""
@@ -69,8 +53,8 @@ def Examples():
         cpp_plant_example,
         ("eulerpi.examples.cpp.python_reference_plants", "ExternalPlant"),
         ("eulerpi.examples.cpp.python_reference_plants", "JaxPlant"),
-        sbml_menten_example,
-        sbml_caffeine_example,
+        ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+        ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
     ]:
         yield example
 
@@ -88,9 +72,102 @@ def get_example_name(example):
 
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)
+def test_model_requirements(example):
+    """Perform a simple sanity check on the model. It tests the following:
+    - The model has a positive parameter dimension
+    - The model has a positive data dimension
+    - The model has a valid combination of parameter and data dimension
+    - The central parameter has the correct shape
+    - The parameter limits have the correct shape
+    - The model can be instantiated
+    - The model forward pass can be calculated
+    - The model jacobi matrix can be calculated
+    - The return values of the forward pass and the jacobi matrix have the correct shape
+
+    Args:
+        example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)
+    """
+
+    # extract example parameters from tuple
+    try:
+        module_location, className, dataFileName = example
+    except ValueError:
+        module_location, className = example
+        dataFileName = None
+
+    # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
+    module = importlib.import_module(module_location)
+    ModelClass = getattr(module, className)
+    model: Model = ModelClass()
+
+    # test the shapes
+    assert (
+        model.param_dim > 0
+    ), f"Model {model} has a non-positive parameter dimension"
+    assert (
+        model.data_dim > 0
+    ), f"Model {model} has a non-positive data dimension"
+    assert model.data_dim >= model.param_dim, (
+        f"Model {model} has a data dimension smaller than the parameter dimension. "
+        "This is not supported by the inference."
+    )
+    assert model.central_param.shape == (model.param_dim,), (
+        f"Model {model} has a central parameter with the wrong shape. "
+        f"Expected {(model.param_dim,)}, got {model.central_param.shape}"
+    )
+    assert model.param_limits.shape == (model.param_dim, 2), (
+        f"Model {model} has parameter limits with the wrong shape. "
+        f"Expected {(model.param_dim, 2)}, got {model.param_limits.shape}"
+    )
+
+    model_forward = model.forward(model.central_param)
+    assert (
+        model_forward.shape == (1, model.data_dim)
+        or model_forward.shape == (model.data_dim,)
+        or model_forward.shape == ()
+    ), (
+        f"Model {model} has a forward function with the wrong shape. "
+        f"Expected {(1, model.data_dim)}, {(model.data_dim,)} or {()}, got {model_forward.shape}"
+    )
+
+    model_jac = model.jacobian(model.central_param)
+    assert (
+        model_jac.shape == (model.data_dim, model.param_dim)
+        or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
+        or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
+    ), (
+        f"Model {model} has a jacobian function with the wrong shape. "
+        f"Expected {(model.data_dim, model.param_dim)}, {(model.param_dim,)} or {(model.data_dim,)}, got {model_jac.shape}"
+    )
+    # check rank of jacobian
+    assert jnp.linalg.matrix_rank(model_jac) == model.param_dim, (
+        f"The Jacobian of the model {model} does not have full rank. This is a requirement for the inference. "
+        "Please check the model implementation."
+    )
+
+    fw, jc = model.forward_and_jacobian(model.central_param)
+    assert fw.shape == model_forward.shape, (
+        f"The shape {fw.shape} of the forward function extracted from the forward_and_jacobian function does not match the shape {model_forward.shape} of the forward function. "
+        "Please check the model implementation."
+    )
+    assert jc.shape == model_jac.shape, (
+        f"The shape {jc.shape} of the jacobian extracted from the forward_and_jacobian function does not match the shape {model_jac.shape} of the jacobian. "
+        "Please check the model implementation."
+    )
+    assert jnp.allclose(fw, model_forward), (
+        f"The forward function of the model {model} does not match the forward function extracted from the forward_and_jacobian function. "
+        "Please check the model implementation."
+    )
+    assert jnp.allclose(jc, model_jac), (
+        f"The jacobian of the model {model} does not match the jacobian extracted from the forward_and_jacobian function. "
+        "Please check the model implementation."
+    )
+
+
+@pytest.mark.parametrize("example", Examples(), ids=get_example_name)
 @pytest.mark.parametrize("inference_type", list(InferenceType))
 def test_examples(example, inference_type):
-    """
+    """Test the inference for the example models.
 
     Args:
       example(Tuple[str, str, int]): The example which should be tested. The tuple contains the module location, the class name and the number of walkers.
@@ -109,29 +186,6 @@ def test_examples(example, inference_type):
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
     model: Model = ModelClass()
-
-    # test the shapes
-    assert model.param_dim > 0
-    assert model.data_dim > 0
-    assert model.data_dim >= model.param_dim
-    assert model.central_param.shape == (model.param_dim,)
-    assert model.param_limits.shape == (model.param_dim, 2)
-
-    model_forward = model.forward(model.central_param)
-    assert (
-        model_forward.shape == (1, model.data_dim)
-        or model_forward.shape == (model.data_dim,)
-        or model_forward.shape == ()
-    )
-
-    model_jac = model.jacobian(model.central_param)
-    assert (
-        model_jac.shape == (model.data_dim, model.param_dim)
-        or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
-        or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
-    )
-    # check rank of jacobian
-    assert jnp.linalg.matrix_rank(model_jac) == model.param_dim
 
     # generate artificial data if necessary
     if model.is_artificial():

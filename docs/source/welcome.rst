@@ -89,11 +89,13 @@ To evaluate the model and infer the parameter distribution, call:
 
     from my_model import MyModel
 
-    central_param = np.array([0.5, -1.5, ...])
-    param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
+    # This line is needed for multiprocessing in python
+    if __name__ == "__main__":
+        central_param = np.array([0.5, -1.5, ...])
+        param_limits = np.array([[0.0, 1.0], [-3.0, 0.0], ...])
 
-    model = MyModel(central_param, param_limits)
-    inference(model=model, data="my_data.csv")
+        model = MyModel(central_param, param_limits)
+        inference(model=model, data="my_data.csv")
 
 The parameter :py:attr:`data` can be a numpy-2d-array or a PathLike object that points to a CSV file. In the example shown above, the CSV file :file:`my_data.csv` should contain the data in the following format:
 

@@ -125,8 +125,10 @@ Now we can now use EPI to infer the parameter distribution from the data.
 
     from eulerpi.core.inference import inference
 
-    model = Temperature()
-    inference(model, data = "TemperatureData.csv")
+    # This line is needed for multiprocessing in python
+    if __name__ == "__main__":
+        model = Temperature()
+        inference(model, data = "TemperatureData.csv")
 
 Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
