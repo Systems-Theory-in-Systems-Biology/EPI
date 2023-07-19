@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import jax.numpy as jnp
+import torch
 from jax import jit, tree_util
 from sklearn.decomposition import PCA
 
@@ -229,3 +230,131 @@ class DataPCA(DataTransformation):
             jnp.ndarray: The jacobian of the pca transformation at the given data point(s).
         """
         return self.pca.components_
+
+
+class DataAutoencoder(DataTransformation):
+    def __init__(
+        self,
+        autoencoder: Optional[torch.nn.Module] = None,
+        device: Optional[torch.device] = None,
+        latent_dim: Optional[int] = None,
+    ) -> None:
+        super().__init__()
+
+        self.autoencoder = autoencoder
+
+    @classmethod
+    def from_data(
+        cls, data: jnp.ndarray, latent_dim: int, n_epochs=100, batch_size=2
+    ) -> "DataTransformation":
+        """Initialize a DataAutoencoder object by calculating the PCA from the given data.
+
+        Args:
+            data (jnp.ndarray): The data to be used for the PCA.
+            latent_dim (int): The number of dimensions of the latent space.
+
+        Returns:
+            DataTransformation: The initialized DataAutoencoder object.
+        """
+        instance = cls()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        autoencoder = Autoencoder(data.shape[-1], latent_dim).to(device)
+        optimizer = torch.optim.Adam(
+            autoencoder.parameters(), lr=1e-3, weight_decay=1e-5
+        )
+        criterion = torch.nn.MSELoss()
+        # Define transformation from numpy to torch, use DataLoader to batch and shuffle the data
+        data_torch = torch.from_numpy(data).float()
+        data_loader = torch.utils.data.DataLoader(
+            data_torch, batch_size=batch_size, shuffle=True
+        )
+        # Train the autoencoder
+        for epoch in range(n_epochs):
+            for batch_features in data_loader:
+                # load it to the active device
+                batch_features = batch_features.to(device)
+                # reset the gradients back to zero
+                # PyTorch accumulates gradients on subsequent backward passes
+                optimizer.zero_grad()
+                # compute reconstructions
+                outputs = autoencoder(batch_features)
+                # compute training reconstruction loss
+                train_loss = criterion(outputs, batch_features)
+                # compute accumulated gradients
+                train_loss.backward()
+                # perform parameter update based on current gradients
+                optimizer.step()
+
+        instance.latent_dim = latent_dim
+        instance.device = device
+        instance.autoencoder = autoencoder
+        return instance
+
+    def transform(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Transform the given data using the Autoencoder.
+
+        Args:
+            data (jnp.ndarray): The data to be transformed.
+
+        Returns:
+            jnp.ndarray: The data expressed / approximated in the latent space.
+        """
+        data_torch = torch.from_numpy(data).float().to(self.device)
+        return self.autoencoder.encode(data_torch).detach().cpu().numpy()
+
+    def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Return the jacobian of the neural network transformation to the latent space."""
+        data_torch = torch.from_numpy(data).float().to(self.device)
+        data_torch.requires_grad_(True)
+        jac = torch.autograd.functional.jacobian(
+            self.autoencoder.encode, data_torch
+        )
+        return jac.detach().cpu().numpy()
+
+    def transform_and_jacobian(self, data: jnp.ndarray) -> Tuple:
+        """Return the jacobian of the neural network transformation to the latent space."""
+
+        data_torch = torch.from_numpy(data).float().to(self.device)
+        data_torch.requires_grad_(True)
+        z = self.autoencoder.encode(data_torch)
+        jac = torch.autograd.functional.jacobian(
+            self.autoencoder.encode, data_torch
+        )
+        return z.detach().cpu().numpy(), jac.detach().cpu().numpy()
+
+    def encode_decode(self, data: jnp.ndarray) -> jnp.ndarray:
+        """Go to the latent space and back to the original space.
+
+        Args:
+            data (jnp.ndarray): The data to be encoded and decoded.
+
+        Returns:
+            jnp.ndarray: The reconstructed data.
+        """
+        data_torch = torch.from_numpy(data).float().to(self.device)
+        return self.autoencoder(data_torch).detach().cpu().numpy()
+
+
+class Autoencoder(torch.nn.Module):
+    def __init__(self, input_dim, latent_dim):
+        super().__init__()
+        self.encoder = torch.nn.Sequential(
+            torch.nn.Linear(input_dim, input_dim // 2),
+            torch.nn.ReLU(),
+            torch.nn.Linear(input_dim // 2, latent_dim),
+        )
+        self.decoder = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim, input_dim // 2),
+            torch.nn.ReLU(),
+            torch.nn.Linear(input_dim // 2, input_dim),
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)
+        return self.decoder(z)
+
+    def encode(self, x):
+        return self.encoder(x)
+
+    def decode(self, z):
+        return self.decoder(z)

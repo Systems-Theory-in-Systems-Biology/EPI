@@ -1,6 +1,7 @@
 import numpy as np
 
 from eulerpi.core.data_transformation import (
+    DataAutoencoder,
     DataIdentity,
     DataNormalizer,
     DataPCA,
@@ -61,3 +62,39 @@ def test_DataPCA():
 
         jacobian = data_transformation.jacobian(data[0])
         assert jacobian.shape == (pca_dim, data_dim)
+
+
+def test_DataAutoencoder():
+    random_data = np.random.rand(1000, 4)
+    n_samples, data_dim = random_data.shape
+    latent_dim = data_dim // 2
+    data_transformation = DataAutoencoder.from_data(
+        data=random_data, latent_dim=latent_dim, batch_size=10
+    )
+
+    transformed_data = data_transformation.transform(random_data)
+    assert transformed_data.shape == (
+        n_samples,
+        latent_dim,
+    ), "Transformed data shape does not match expected dimension"
+
+    transformed_datapoint = data_transformation.transform(random_data[0])
+    assert transformed_datapoint.shape == (
+        latent_dim,
+    ), "Shape of transformed datapoint does not match expected dimension"
+
+    jacobian = data_transformation.jacobian(random_data[0])
+    assert jacobian.shape == (latent_dim, data_dim)
+
+    # randomly select three datapoints and see how well the autoencoder reconstructs them
+    random_indices = np.random.choice(n_samples, size=3, replace=False)
+    random_datapoints = random_data[random_indices]
+    reconstructed_datapoints = data_transformation.encode_decode(
+        random_datapoints
+    )
+    print(f"The original datapoints are:\n{random_datapoints}")
+    print(f"The reconstructed datapoints are:\n{reconstructed_datapoints}")
+    print(
+        f"Relative Reconstruction error: {np.linalg.norm(random_datapoints - reconstructed_datapoints)/np.linalg.norm(random_datapoints)}"
+    )
+    print(f"The mean of the data is: {np.mean(random_data, axis=0)}")
