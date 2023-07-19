@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 from typing import Dict, Optional, Tuple, Union
@@ -6,6 +7,7 @@ import jax.numpy as jnp
 import numpy as np
 import psutil
 
+from eulerpi import logger
 from eulerpi.core.data_transformation import (
     DataIdentity,
     DataNormalizer,
@@ -33,6 +35,7 @@ def inference(
     data_transformation: DataTransformationType = DataTransformationType.Normalize,
     custom_data_transformation: Optional[DataTransformation] = None,
     n_components_pca: Optional[int] = None,
+    logging_level: int = logging.INFO,
     **kwargs,
 ) -> Tuple[
     Dict[str, np.ndarray],
@@ -54,6 +57,7 @@ def inference(
         data_transformation(DataTransformationType): The type of data transformation to use. (Default value = DataTransformationType.Normalize)
         custom_data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)
         n_components_pca(int, optional): If using the PCA as data_transformation, selects how many dimensions are kept in the pca. Per default the number of dimensions equals the dimension of the parameter space. (Default value = None)
+        logging_level(int, optional): The logging level to be used for the inference. (Default value = logging.INFO)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
@@ -61,6 +65,16 @@ def inference(
         evaluations for each slice and the result manager used for the inference.
 
     """
+
+    # Log the start of the inference and the most important parameters
+    logger.setLevel(logging_level)
+    logger.info("Starting inference.")
+    logger.info(f"Model: {model.name}")
+    logger.info(f"Data dimension: {model.data_dim}")
+    logger.info(f"Parameter dimension: {model.param_dim}")
+    logger.info(f"Slices: {slices}")
+    logger.info(f"Number of processes: {num_processes}")
+    logger.info(f"Data transformation: {data_transformation}")
 
     # Load data from file if necessary
     if isinstance(data, (str, os.PathLike, pathlib.Path)):

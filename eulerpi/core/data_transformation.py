@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import jax.numpy as jnp
 from jax import jit, tree_util
 from sklearn.decomposition import PCA
+
+from eulerpi import logger
 
 
 class DataTransformation(ABC):
@@ -28,6 +30,20 @@ class DataTransformation(ABC):
             jnp.ndarray: The jacobian of the transformation at the given data point(s).
         """
         raise NotImplementedError()
+
+    def transform_and_jacobian(
+        self, data: jnp.ndarray
+    ) -> Tuple[jnp.ndarray, jnp.ndarray]:
+        """Transform the given data and calculate the jacobian of the transformation at the given data point(s).
+
+        Args:
+            data (jnp.ndarray): The data at which the jacobian should be evaluated.
+
+        Returns:
+            Tuple[jnp.ndarray, jnp.ndarray]: The transformed data and the jacobian of the transformation at the given data point(s).
+        """
+
+        return self.transform(data), self.jacobian(data)
 
 
 class DataIdentity(DataTransformation):
@@ -92,10 +108,26 @@ class DataNormalizer(DataTransformation):
         """
         instance = cls()
         instance.mean_vector = jnp.mean(data, axis=0)
-        cov = jnp.cov(data, rowvar=False)
-        L = jnp.linalg.cholesky(jnp.atleast_2d(cov))
+        cov = jnp.atleast_2d(jnp.cov(data, rowvar=False))
+        L = jnp.linalg.cholesky(cov)
         instance.normalizing_matrix = jnp.linalg.inv(L)
 
+        # check whether cov matrix is positive definite, or really badly conditioned
+        eigenvalues, eigenvectors = jnp.linalg.eigh(cov)
+        problematic_dimensions = jnp.where(eigenvalues < 1e-10)[0]
+
+        if jnp.linalg.det(cov) < 1e-10:
+            raise ValueError(
+                "The covariance matrix is not positive definite. Consider using a different data transformation or adapting the data dimensions you are using.\n"
+                f"The problematic eigenvectors are {eigenvectors[problematic_dimensions]}."
+            )
+        if jnp.linalg.cond(instance.normalizing_matrix) > 1e10:
+            logger.warning(
+                "The normalizing matrix is badly conditioned. Consider using a different data transformation or adapting the data dimensions you are using."
+                f"The problematic eigenvectors are {eigenvectors[problematic_dimensions]}."
+            )
+
+        # If the the normalizing matrix is 1x1, we can just use the scalar value
         if instance.normalizing_matrix.shape == (1, 1):
             instance.normalizing_matrix = instance.normalizing_matrix[0, 0]
 

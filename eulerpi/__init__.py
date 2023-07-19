@@ -1,19 +1,21 @@
 import logging
 
-DEBUGFORMATTER = "%(filename)s:%(name)s:%(funcName)s:%(lineno)d: %(message)s"
+DEBUGFORMATTER = (
+    "%(levelname)s:%(filename)s:%(name)s:%(funcName)s:%(lineno)d: %(message)s"
+)
 """Debug file formatter."""
 
-INFOFORMATTER = "%(message)s"
+INFOFORMATTER = "%(levelname)s:%(message)s"
 """Log file and stream output formatter."""
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.INFO)
 
 # defines the stream handler
 _ch = logging.StreamHandler()  # creates the handler
-_ch.setLevel(logging.WARNING)  # sets the handler info
+_ch.setLevel(logging.DEBUG)  # sets the handler info
 _ch.setFormatter(
-    logging.Formatter(DEBUGFORMATTER)
+    logging.Formatter(INFOFORMATTER)
 )  # sets the handler formatting
 
 # adds the handler to the global variable: log

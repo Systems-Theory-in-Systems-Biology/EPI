@@ -34,8 +34,6 @@ def evaluate_density(
             : vector containing the parameter, the simulation result and the density
     """
 
-    limits = model.param_limits
-
     # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
     fullParam = model.central_param
     fullParam[slice] = param
@@ -58,10 +56,10 @@ def evaluate_density(
             sim_res, model_jac = model.forward_and_jacobian(fullParam)
         except Exception as e:
             logger.error(
-                "Error while evaluating model and its jacobian."
-                "The program will continue, but the density will be set to 0."
-                f"The parameter that caused the error is: {fullParam}"
-                f"The error message is: {e}"
+                "Error while evaluating model and its jacobian. "
+                "The program will continue, but the density will be set to 0. "
+                f"The parameter that caused the error is:\n{fullParam}\n"
+                f"The error message is:\n{e}"
             )
             return 0, np.zeros(slice.shape[0] + model.data_dim + 1)
 
@@ -76,11 +74,24 @@ def evaluate_density(
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         # Scale with the determinant of the transformation matrix.
         transformation_jac = data_transformation.jacobian(sim_res)
-        correction = calc_gram_determinant(
-            jnp.dot(
-                transformation_jac, model_jac
-            )  # We use dot, because matmul does not support scalars
-        )
+        try:
+            correction = calc_gram_determinant(
+                jnp.dot(
+                    transformation_jac, model_jac
+                )  # We use dot, because matmul does not support scalars
+            )
+        except Exception as e:
+            # If the correction factor is not finite, return 0 instead to not affect the sampling.
+            correction = 0.0
+            logger.error(
+                f"{str(e)} "
+                "The program will continue, but the density for this sample will be set to 0. "
+                f"The parameter that caused the error is:\n{fullParam}\n"
+            )
+            logger.info(
+                f"The model jacobian is: {model_jac}\n"
+                f"The jacobian of the transformation is:\n{transformation_jac}\n"
+            )
 
         # Multiply data density and correction factor.
         trafo_density_evaluation = densityEvaluation * correction
@@ -136,12 +147,15 @@ def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
     Returns:
         jnp.double: The pseudo-determinant of the jacobian
 
+    Raises:
+        ValueError: If the gram determinant is not finite.
+
     """
     correction = _calc_gram_determinant(jac)
-    # If the correction factor is not finite, return 0 instead to not affect the sampling.
     if not jnp.isfinite(correction):
-        correction = 0.0
-        logger.warning("Invalid value encountered for correction factor")
+        raise ValueError(
+            "The correction factor (gram determinant) calculated for the jacobian is not finite."
+        )
     return correction
 
 
