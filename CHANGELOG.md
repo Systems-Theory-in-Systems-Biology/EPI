@@ -27,6 +27,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Switched from using parameter names to using parameter ids in the sbml model
+- Change spatial discretization of heat model example to proper second order central differences
+- Change the initial walker position generation of the emcee sampler
 
 ## [0.4.0]
 
