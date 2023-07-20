@@ -21,6 +21,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+### Changed
+
+### Fixed
+
+
+## [0.5.0] - 2023-07-20
+
+### Added
+
 - Added support for for sbml models to select parameters and species used in the inference
 - Added support for evaluating sbml models at multiple time points
 
@@ -30,7 +39,7 @@ All notable changes to this project will be documented in this file.
 - Change spatial discretization of heat model example to proper second order central differences
 - Change the initial walker position generation of the emcee sampler
 
-## [0.4.0]
+## [0.4.0] - 2023-06-24
 
 ### Added
 
