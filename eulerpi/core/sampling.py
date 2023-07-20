@@ -185,10 +185,14 @@ def run_emcee_sampling(
     data_stdevs = calc_kernel_width(data)
     sampling_dim = slice.shape[0]
     central_param = model.central_param
+    param_limits = model.param_limits
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    # TODO Make random variation of initial walker positions dependent on sampling limits?
-    initial_walker_positions = central_param[slice] + 0.002 * (
+    # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
+    d_min = np.minimum(
+        central_param - param_limits[:, 0], param_limits[:, 1] - central_param
+    )
+    initial_walker_positions = central_param[slice] + d_min[slice] * (
         np.random.rand(num_walkers, sampling_dim) - 0.5
     )
 
