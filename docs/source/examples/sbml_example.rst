@@ -1,5 +1,5 @@
 SBML Models
-----------
+-----------
 The :py:class:`~eulerpi.core.model.SBMLModel` loads a biological model from an external file written in the sbml standard format.
 It generates the forward and jacobian method automatically and derives the parameter and data dimension from the sbml model.
 
