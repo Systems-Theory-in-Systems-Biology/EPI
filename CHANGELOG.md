@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Fix poetry.lock containing faulty version 1.6.8 of debugpy
 
 ## [0.5.0] - 2023-07-20
 
