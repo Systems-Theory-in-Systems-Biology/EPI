@@ -13,9 +13,11 @@ Submodules
    Test Dense Grid<tests.test_dense_grid>
    Test Examples<tests.test_examples>
    Test Fixed Params<tests.test_fixed_params>
+   Test Heat Model<tests.test_heat>
    Test Inference<tests.test_inference>
    Test Jax<tests.test_jax>
    Test KDE<tests.test_kde>
+   Test Logging<tests.test_logging>
    Test Pickling<tests.test_pickling>
    Test Simple Models<tests.test_simple_models>
    Test Slices<tests.test_slices>

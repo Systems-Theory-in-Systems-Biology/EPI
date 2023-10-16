@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tests.test_inference module &mdash; EPI  documentation</title>
+  <title>tests.test_heat module &mdash; EPI  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="tests.test_jax module" href="tests.test_jax.html" />
-    <link rel="prev" title="tests.test_heat module" href="tests.test_heat.html" /> 
+    <link rel="next" title="tests.test_inference module" href="tests.test_inference.html" />
+    <link rel="prev" title="tests.test_fixed_params module" href="tests.test_fixed_params.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,13 +59,13 @@
 <li class="toctree-l4"><a class="reference internal" href="tests.test_dense_grid.html">Test Dense Grid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_examples.html">Test Examples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_fixed_params.html">Test Fixed Params</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tests.test_heat.html">Test Heat Model</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Test Inference</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#tests.test_inference.integrate"><code class="docutils literal notranslate"><span class="pre">integrate()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#tests.test_inference.test_inference_mcmc_dense_exact"><code class="docutils literal notranslate"><span class="pre">test_inference_mcmc_dense_exact()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="#tests.test_inference.test_thinning_and_burn_in"><code class="docutils literal notranslate"><span class="pre">test_thinning_and_burn_in()</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Test Heat Model</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#tests.test_heat.test_heat_artificial"><code class="docutils literal notranslate"><span class="pre">test_heat_artificial()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tests.test_heat.test_heat_jacobian"><code class="docutils literal notranslate"><span class="pre">test_heat_jacobian()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tests.test_heat.test_heat_model"><code class="docutils literal notranslate"><span class="pre">test_heat_model()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="tests.test_inference.html">Test Inference</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_jax.html">Test Jax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_kde.html">Test KDE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tests.test_logging.html">Test Logging</a></li>
@@ -105,9 +105,9 @@
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="modules.html">EPI</a></li>
           <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
-      <li class="breadcrumb-item active">tests.test_inference module</li>
+      <li class="breadcrumb-item active">tests.test_heat module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/tests.test_inference.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/tests.test_heat.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -115,22 +115,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-tests.test_inference">
-<span id="tests-test-inference-module"></span><h1>tests.test_inference module<a class="headerlink" href="#module-tests.test_inference" title="Permalink to this heading"></a></h1>
+  <section id="module-tests.test_heat">
+<span id="tests-test-heat-module"></span><h1>tests.test_heat module<a class="headerlink" href="#module-tests.test_heat" title="Permalink to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.test_inference.integrate">
-<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_inference.integrate" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="tests.test_heat.test_heat_artificial">
+<span class="sig-name descname"><span class="pre">test_heat_artificial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_heat.test_heat_artificial" title="Permalink to this definition"></a></dt>
+<dd><p>Test the artificial data generation of the heat model.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_heat.test_heat_jacobian">
+<span class="sig-name descname"><span class="pre">test_heat_jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_heat.test_heat_jacobian" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.test_inference.test_inference_mcmc_dense_exact">
-<span class="sig-name descname"><span class="pre">test_inference_mcmc_dense_exact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_data_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_runs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_grid_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_inference.test_inference_mcmc_dense_exact" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tests.test_inference.test_thinning_and_burn_in">
-<span class="sig-name descname"><span class="pre">test_thinning_and_burn_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_inference.test_thinning_and_burn_in" title="Permalink to this definition"></a></dt>
-<dd><p>Test if the thinning and burn in works as expected</p>
+<dt class="sig sig-object py" id="tests.test_heat.test_heat_model">
+<span class="sig-name descname"><span class="pre">test_heat_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_heat.test_heat_model" title="Permalink to this definition"></a></dt>
+<dd><p>Test the heat model and plot the solution of a simple model problem.</p>
 </dd></dl>
 
 </section>
@@ -139,8 +140,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tests.test_heat.html" class="btn btn-neutral float-left" title="tests.test_heat module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tests.test_jax.html" class="btn btn-neutral float-right" title="tests.test_jax module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tests.test_fixed_params.html" class="btn btn-neutral float-left" title="tests.test_fixed_params module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_inference.html" class="btn btn-neutral float-right" title="tests.test_inference module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
