@@ -27,6 +27,7 @@ jobs:
         run: poetry --version
       - name: Install amici dependencies
         run: |
+          sudo apt update
           sudo apt install -y swig
           sudo apt install -y libblas-dev
           sudo apt install -y libatlas-base-dev
