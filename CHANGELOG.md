@@ -27,7 +27,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Fix poetry.lock containing faulty version 1.6.8 of debugpy
+- Fixed poetry.lock containing faulty version 1.6.8 of debugpy
+- Fixed github actions failing due to missing `sudo apt update`
 
 ## [0.5.0] - 2023-07-20
 
