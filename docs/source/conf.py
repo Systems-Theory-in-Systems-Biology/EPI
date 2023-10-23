@@ -80,6 +80,8 @@ myst_heading_anchors = 3
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+# To use the book theme, uncomment this line and comment the line above
+# It also requires to install the sphinx-book-theme package, see pyproject.toml dev-dependencies
 # html_theme = "sphinx_book_theme"
 
 html_logo = "../../epi.png"
