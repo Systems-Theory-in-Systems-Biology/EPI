@@ -13,13 +13,13 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script src="../_static/clipboard.min.js"></script>
-        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -100,9 +100,9 @@
            <div itemprop="articleBody">
              
   <section id="development">
-<h1>Development<a class="headerlink" href="#development" title="Permalink to this heading"></a></h1>
+<h1>Development<a class="headerlink" href="#development" title="Link to this heading"></a></h1>
 <section id="quickstart">
-<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h2>
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h2>
 <ul>
 <li><p>Clone the repository:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Systems-Theory-in-Systems-Biology/EPI.git
@@ -153,10 +153,10 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 </ul>
 </section>
 <section id="maintaining-the-repository">
-<h2>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Permalink to this heading"></a></h2>
+<h2>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Link to this heading"></a></h2>
 <p>Here are the most important information on how to maintain this repository.</p>
 <section id="dependency-management-with-poetry">
-<h3>Dependency Management with Poetry<a class="headerlink" href="#dependency-management-with-poetry" title="Permalink to this heading"></a></h3>
+<h3>Dependency Management with Poetry<a class="headerlink" href="#dependency-management-with-poetry" title="Link to this heading"></a></h3>
 <p>We use poetry as build system, for the dependency management and the virtual environment. During the <a class="reference external" href="#quickstart">Quickstart</a> we installed all dependencies into the virtual environment, therefore:</p>
 <hr class="docutils" />
 <p><strong>IMPORTANT</strong></p>
@@ -166,7 +166,7 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 <p>For more information read the <a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">Poetry Documentation</a>.</p>
 </section>
 <section id="code-quality-checks">
-<h3>Code quality checks<a class="headerlink" href="#code-quality-checks" title="Permalink to this heading"></a></h3>
+<h3>Code quality checks<a class="headerlink" href="#code-quality-checks" title="Link to this heading"></a></h3>
 <p>We use black, flake8, isort to maintain a common style and check the code. Please check your code install the pre-commit hook:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
 </pre></div>
@@ -187,7 +187,7 @@ coverage<span class="w"> </span>html
 </div>
 </section>
 <section id="profiling-with-scalene">
-<h3>Profiling with scalene<a class="headerlink" href="#profiling-with-scalene" title="Permalink to this heading"></a></h3>
+<h3>Profiling with scalene<a class="headerlink" href="#profiling-with-scalene" title="Link to this heading"></a></h3>
 <p>You can profile eulerpi with scalene (or gprofile) using the commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>scalene
 scalene<span class="w"> </span>tests/profiling.py
@@ -205,7 +205,7 @@ scalene<span class="w"> </span>tests/profiling.py
   ``` -->
 </section>
 <section id="documentation-with-sphinx">
-<h3>Documentation with Sphinx<a class="headerlink" href="#documentation-with-sphinx" title="Permalink to this heading"></a></h3>
+<h3>Documentation with Sphinx<a class="headerlink" href="#documentation-with-sphinx" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
 sphinx-apidoc<span class="w"> </span>-e<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span>source/<span class="w"> </span>../
 make<span class="w"> </span>html
@@ -216,7 +216,7 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 <p>A <a class="reference external" href="https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/WritingReST/CheatSheet.html">cheatsheet</a> for reStructuredText with Sphinx.</p>
 </section>
 <section id="hosting-with-github-pages">
-<h3>Hosting with GitHub Pages<a class="headerlink" href="#hosting-with-github-pages" title="Permalink to this heading"></a></h3>
+<h3>Hosting with GitHub Pages<a class="headerlink" href="#hosting-with-github-pages" title="Link to this heading"></a></h3>
 <p>To publish the documentation on github pages you probably have to change some settings in the <a class="reference external" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI">GitHub Repository</a></p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Settings -&gt; Code and automation -&gt; Pages -&gt; Build and Deployment:
 - Source: Deploy from a branch
@@ -225,11 +225,11 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 </div>
 </section>
 <section id="changelog">
-<h3>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading"></a></h3>
+<h3>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h3>
 <p>We use the <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a> format for the changelog. It should be updated with every pull request.</p>
 </section>
 <section id="versioning">
-<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h3>
+<h3>Versioning<a class="headerlink" href="#versioning" title="Link to this heading"></a></h3>
 <p>We use <a class="reference external" href="https://semver.org/">Semantic Versioning</a>. A version number is composed of three parts: major.minor.patch</p>
 <ol class="arabic simple">
 <li><p>The major version should be incremented when you make incompatible changes.</p></li>
@@ -240,7 +240,7 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 <p>Please update the version number in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file before tagging the version.</p>
 </section>
 <section id="test-deployment-with-testpypi">
-<h3>Test Deployment with TestPyPi<a class="headerlink" href="#test-deployment-with-testpypi" title="Permalink to this heading"></a></h3>
+<h3>Test Deployment with TestPyPi<a class="headerlink" href="#test-deployment-with-testpypi" title="Link to this heading"></a></h3>
 <p>You have to set-up testpypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>repositories.testpypi<span class="w"> </span>https://test.pypi.org/legacy/
 poetry<span class="w"> </span>config<span class="w"> </span>http-basic.testpypi<span class="w"> </span>__token__<span class="w"> </span>pypi-your-api-token-here
@@ -257,7 +257,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </div>
 </section>
 <section id="deployment-with-pypi">
-<h3>Deployment with PyPi<a class="headerlink" href="#deployment-with-pypi" title="Permalink to this heading"></a></h3>
+<h3>Deployment with PyPi<a class="headerlink" href="#deployment-with-pypi" title="Link to this heading"></a></h3>
 <p>You have to set-up pypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>pypi-token.pypi<span class="w"> </span>pypi-your-token-here
 </pre></div>
@@ -273,7 +273,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </section>
 </section>
 <section id="jax-with-cuda">
-<h2>Jax with CUDA<a class="headerlink" href="#jax-with-cuda" title="Permalink to this heading"></a></h2>
+<h2>Jax with CUDA<a class="headerlink" href="#jax-with-cuda" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="https://github.com/google/jax#pip-installation-gpu-cuda">Jax can be run with cuda on the gpu</a>. However, you need a recent nvidia-graphics-driver, the cuda-toolkit (cuda) and cudnn installed. Getting the versions right can cause headaches ;)</p>
 <p>I used the following tricks to get it running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># for cuda toolkit</span>

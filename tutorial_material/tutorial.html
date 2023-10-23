@@ -13,13 +13,13 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script src="../_static/clipboard.min.js"></script>
-        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
 <p>This tutorial provides a full walk-through on how to apply Eulerian Parameter Inference (EPI) to an example problem. We only assume that you already installed <code class="code docutils literal notranslate"><span class="pre">eulerpi</span></code>.
 The tutorial is divided into four sections:</p>
 <ol class="arabic simple" start="0">
@@ -102,7 +102,7 @@ The tutorial is divided into four sections:</p>
 </ol>
 <p>Let’s start!</p>
 <section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
 <p>Eulerian Parameter Inference is an algorithm to infer a parameter distribution <span class="math notranslate nohighlight">\(Q\)</span> satisfying <span class="math notranslate nohighlight">\(Y = s(Q)\)</span> given a (discrete) data probability distribution <span class="math notranslate nohighlight">\(y_i \sim Y\)</span>
 and a model implementing the mapping <span class="math notranslate nohighlight">\(s: Q \to Y\)</span>. The (forward) model describes the mapping from the parameter points <span class="math notranslate nohighlight">\(q_i\)</span> to the data points <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
 <p>In the following we will look at temperature data over the globe and a model for the dependence of the temperature <span class="math notranslate nohighlight">\(y_i\)</span> on the latitude <span class="math notranslate nohighlight">\(q_i\)</span>.</p>
@@ -117,7 +117,7 @@ From this data distribution, the EPI algorithm derives the parameter distributio
 <p>With this picture in mind, we can start to implement the temperature problem in eulerpi.</p>
 </section>
 <section id="define-your-data">
-<h2>Define your data<a class="headerlink" href="#define-your-data" title="Permalink to this heading"></a></h2>
+<h2>Define your data<a class="headerlink" href="#define-your-data" title="Link to this heading"></a></h2>
 <p>Your data needs to be stored in a <code class="file docutils literal notranslate"><span class="pre">.csv</span></code> file in the following format:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
@@ -131,7 +131,7 @@ datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 It has 455 data points with two dimensions each. Nonuniform data is not supported in EPI.</p>
 </section>
 <section id="define-your-model">
-<h2>Define your model<a class="headerlink" href="#define-your-model" title="Permalink to this heading"></a></h2>
+<h2>Define your model<a class="headerlink" href="#define-your-model" title="Link to this heading"></a></h2>
 <p>Next, you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.model.Model</span></code></a> base class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
@@ -193,7 +193,7 @@ Additionally, JaxModel will use the jit compiler to speed up the calculation of 
 </div>
 </section>
 <section id="inference">
-<h2>Inference<a class="headerlink" href="#inference" title="Permalink to this heading"></a></h2>
+<h2>Inference<a class="headerlink" href="#inference" title="Link to this heading"></a></h2>
 <p>Now we can now use EPI to infer the parameter distribution from the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
 
