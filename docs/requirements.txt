@@ -1,2 +1,2 @@
 # Install eulerpi and its dependencies so sphinx can generate the docs.
--e .[dev]
+-e .[dev, amici]

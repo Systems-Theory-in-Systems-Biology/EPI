@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import Model
+from eulerpi.core.model import Model, amici_available
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -34,6 +34,22 @@ stock_artificial_example = pytest.param(
     ),
 )
 
+menten_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
+    marks=pytest.mark.skipif(
+        not amici_available(),
+        reason="Amici not available, no SBML models can be tested",
+    ),
+)
+
+caffeine_example = pytest.param(
+    ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+    marks=pytest.mark.skipif(
+        not amici_available(),
+        reason="Amici not available, no SBML models can be tested",
+    ),
+)
+
 
 def Examples():
     """Provides the list of examples to the parametrized test"""
@@ -53,8 +69,8 @@ def Examples():
         cpp_plant_example,
         ("eulerpi.examples.cpp.python_reference_plants", "ExternalPlant"),
         ("eulerpi.examples.cpp.python_reference_plants", "JaxPlant"),
-        ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
-        ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
+        menten_example,
+        caffeine_example,
     ]:
         yield example
 

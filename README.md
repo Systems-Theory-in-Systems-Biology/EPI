@@ -37,6 +37,14 @@ The package is available on pypi and can be installed with:
 pip install eulerpi
 ```
 
+or
+
+```bash
+pip install eulerpi[sbml]
+```
+
+for the support of sbml models.
+
 Make sure that you have the following C++ libraries installed
 
 ```bash
