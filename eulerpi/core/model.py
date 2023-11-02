@@ -9,8 +9,19 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit, vmap
 
-import amici
 from eulerpi.jax_extension import value_and_jacrev
+
+amici_available = False
+try:
+    import amici
+
+    amici_available = True
+except ImportError:
+    pass
+
+
+def amici_available():
+    return amici_available
 
 
 class Model(ABC):
@@ -333,6 +344,13 @@ class SBMLModel(Model):
         name: Optional[str] = None,
         **kwargs,
     ) -> None:
+        if not amici_available:
+            raise ImportError(
+                "The SBMLModel class requires an AMICI installation. "
+                "Please install AMICI first."
+                "You can do this manually or install eulerpi with the [amici] extra: pip install eulerpi[amici]"
+            )
+
         super().__init__(central_param, param_limits, name, **kwargs)
 
         self.amici_model_name = self.name

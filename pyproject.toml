@@ -28,8 +28,11 @@ jaxlib = "^0.4.19"
 tqdm = "^4.66.0"
 seedir = "^0.4.2"
 yfinance = "^0.2.31"
-amici = "^0.16.1"
+amici = { version = "^0.16.1", optional = true }
 scikit-learn = "^1.3.1"
+
+[tool.poetry.extras]
+sbml = ["amici"]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.5.0"

@@ -23,7 +23,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
--Updated the dependencies to the latest possible versions
+- Updated the dependencies to the latest possible versions
+- Made the sbml model support optional using the extra `sbml`
 
 ### Fixed
 

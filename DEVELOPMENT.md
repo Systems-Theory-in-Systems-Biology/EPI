@@ -44,7 +44,7 @@
 - Install eulerpi:
 
   ```bash
-  poetry install --with=dev
+  poetry install --with=dev --extras=sbml
   ```
 
 - Run the tests:
@@ -201,7 +201,7 @@ poetry publish --build
 Test this with
 
 ```bash
-pip install eulerpi
+pip install eulerpi[sbml]
 ```
 
 ## Jax with CUDA
