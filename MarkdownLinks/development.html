@@ -140,7 +140,7 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 </ul>
 </li>
 <li><p>Install eulerpi:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="o">=</span>dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="o">=</span>dev<span class="w"> </span>--extras<span class="o">=</span>sbml
 </pre></div>
 </div>
 </li>
@@ -267,7 +267,7 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </pre></div>
 </div>
 <p>Test this with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>eulerpi
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>eulerpi<span class="o">[</span>sbml<span class="o">]</span>
 </pre></div>
 </div>
 </section>

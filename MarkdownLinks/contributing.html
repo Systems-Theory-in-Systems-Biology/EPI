@@ -129,7 +129,8 @@
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="#i-have-a-question">I Have a Question</a></p></li>
-<li><p><a class="reference external" href="#i-want-to-contribute">I Want To Contribute</a></p>
+<li><p><a class="reference external" href="#i-want-to-contribute">I Want To Contribute</a></p></li>
+<li><p><a class="reference external" href="#how-to-install-the-current-main-branch-directly">How to install the current main branch directly?</a></p>
 <ul>
 <li><p><a class="reference external" href="#reporting-bugs">Reporting Bugs</a></p></li>
 <li><p><a class="reference external" href="#suggesting-enhancements">Suggesting Enhancements</a></p></li>
@@ -139,7 +140,7 @@
 </li>
 <li><p><a class="reference external" href="#styleguides">Styleguides</a></p>
 <ul>
-<li><p><a class="reference external" href="#code-styl">Code styl</a></p></li>
+<li><p><a class="reference external" href="#code-style">Code style</a></p></li>
 <li><p><a class="reference external" href="#commit-messages">Commit Messages</a></p></li>
 </ul>
 </li>
@@ -170,8 +171,11 @@
 <section id="how-to-install-the-current-main-branch-directly">
 <h2>How to install the current main branch directly?<a class="headerlink" href="#how-to-install-the-current-main-branch-directly" title="Link to this heading"></a></h2>
 <p>To install the current main branch version you can use git in your conda environment:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/Systems-Theory-in-Systems-Biology/EPI</span></code></p>
-<p>like this you can also install feature-branches.
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;eulerpi</span> <span class="pre">&#64;</span> <span class="pre">git+https://github.com/Systems-Theory-in-Systems-Biology/EPI&#64;main&quot;</span></code>
+or
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;eulerpi[sbml]</span> <span class="pre">&#64;</span> <span class="pre">git+https://github.com/Systems-Theory-in-Systems-Biology/EPI&#64;main&quot;</span></code>
+for the sbml model support.</p>
+<p>Like this you can also install feature-branches.
 Please be aware that these versions are under development and the double-checked versions are published on pypi.</p>
 <section id="reporting-bugs">
 <h3>Reporting Bugs<a class="headerlink" href="#reporting-bugs" title="Link to this heading"></a></h3>
