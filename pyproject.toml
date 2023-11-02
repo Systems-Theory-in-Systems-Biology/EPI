@@ -16,6 +16,7 @@ exclude = ["**/__pycache__/*", "**/build/*", "**/*.so"]
 "Homepage" = "https://github.com/Systems-Theory-in-Systems-Biology/EPI"
 "Bug Tracker" = "https://github.com/Systems-Theory-in-Systems-Biology/EPI/issues"
 "Documentation" = "https://Systems-Theory-in-Systems-Biology.github.io/EPI/"
+"Changelog" = "https://Systems-Theory-in-Systems-Biology.github.io/EPI/MarkdownLinks/changelog.html"
 
 [tool.poetry.dependencies]
 python = "<3.13, >=3.9"
