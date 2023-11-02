@@ -23,6 +23,16 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+### Fixed
+
+## [0.6.0] - 2023-11-02
+
+Breaking changes: SBML support is now only available when install eulerpi with the "sbml" extra!
+
+### Added
+
+### Changed
+
 - Updated the dependencies to the latest possible versions
 - Made the sbml model support optional using the extra `sbml`
 
