@@ -72,8 +72,7 @@ testpaths = [
   "tests",
 ]
 norecursedirs = [
-    "swig",
-    "generated_sbml_model",
+    "generated_sbml_models",
     "Data",
     "Applications",
     "build",

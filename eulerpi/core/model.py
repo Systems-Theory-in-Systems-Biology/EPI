@@ -354,7 +354,9 @@ class SBMLModel(Model):
         super().__init__(central_param, param_limits, name, **kwargs)
 
         self.amici_model_name = self.name
-        self.amici_model_dir = "./amici_code_gen/" + self.amici_model_name
+        self.amici_model_dir = (
+            "./generated_sbml_models/" + self.amici_model_name
+        )
 
         # Generate python code
         if not skip_creation:
