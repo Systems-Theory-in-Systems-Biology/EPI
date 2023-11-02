@@ -1,4 +1,4 @@
-import importlib
+from importlib.resources import as_file, files
 
 import numpy as np
 
@@ -21,22 +21,21 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         param_limits: np.ndarray = PARAM_LIMITS,
         **kwargs,
     ) -> None:
-        sbml_file = importlib.resources.path(
-            "eulerpi.examples.sbml", "sbml_menten_model.xml"
-        )
         timepoints = np.array([0.5, 1.0])
         param_ids = ["Km", "kcat"]
         state_ids = ["s1"]
-
-        super().__init__(
-            sbml_file,
-            central_param,
-            param_limits,
-            timepoints,
-            param_ids,
-            state_ids,
-            **kwargs,
-        )
+        sbml_files = files(package="eulerpi.examples.sbml")
+        sbml_file_name = "sbml_menten_model.xml"
+        with as_file(sbml_files.joinpath(sbml_file_name)) as sbml_file:
+            super().__init__(
+                sbml_file,
+                central_param,
+                param_limits,
+                timepoints,
+                param_ids,
+                state_ids,
+                **kwargs,
+            )
 
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:
         diff0 = 5.0

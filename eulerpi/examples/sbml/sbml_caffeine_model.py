@@ -1,4 +1,4 @@
-import importlib
+from importlib.resources import as_file, files
 
 import numpy as np
 
@@ -16,20 +16,19 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
         param_limits: np.ndarray = PARAM_LIMITS,
         **kwargs,
     ) -> None:
-        sbml_file = importlib.resources.path(
-            "eulerpi.examples.sbml", "Caffeine_2Wks_Exponential_decay.xml"
-        )
         param_ids = ["A", "B"]
         timepoints = np.array([0.5, 1.0])
-
-        super().__init__(
-            sbml_file,
-            central_param,
-            param_limits,
-            timepoints,
-            param_ids,
-            **kwargs,
-        )
+        sbml_files = files(package="eulerpi.examples.sbml")
+        sbml_file_name = "Caffeine_2Wks_Exponential_decay.xml"
+        with as_file(sbml_files.joinpath(sbml_file_name)) as sbml_file:
+            super().__init__(
+                sbml_file,
+                central_param,
+                param_limits,
+                timepoints,
+                param_ids,
+                **kwargs,
+            )
 
     def generate_artificial_params(self, num_samples: int) -> np.ndarray:
         diff0 = 0.2
