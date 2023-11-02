@@ -134,6 +134,4 @@ dmypy.json
 # Project specific
 Data
 Applications
-amici
-swig
-generated_sbml_model
+generated_sbml_models
