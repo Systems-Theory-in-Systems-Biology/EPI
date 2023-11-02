@@ -50,9 +50,9 @@ When contributing to this project, you must agree that you have authored 100% of
 ## How to install the current main branch directly?
 
 To install the current main branch version you can use git in your conda environment:
-```pip install "eulerpi @ git+https://github.com/Systems-Theory-in-Systems-Biology/EPI"```
+```pip install "eulerpi @ git+https://github.com/Systems-Theory-in-Systems-Biology/EPI@main"```
 or
-```pip install "eulerpi[sbml] @ git+https://github.com/Systems-Theory-in-Systems-Biology/EPI"```
+```pip install "eulerpi[sbml] @ git+https://github.com/Systems-Theory-in-Systems-Biology/EPI@main"```
 for the sbml model support.
 
 Like this you can also install feature-branches.
