@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import Model, amici_available
+from eulerpi.core.model import Model, is_amici_available
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -37,7 +37,7 @@ stock_artificial_example = pytest.param(
 menten_example = pytest.param(
     ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
     marks=pytest.mark.skipif(
-        not amici_available(),
+        not is_amici_available(),
         reason="Amici not available, no SBML models can be tested",
     ),
 )
@@ -45,7 +45,7 @@ menten_example = pytest.param(
 caffeine_example = pytest.param(
     ("eulerpi.examples.sbml.sbml_caffeine_model", "CaffeineSBMLModel"),
     marks=pytest.mark.skipif(
-        not amici_available(),
+        not is_amici_available(),
         reason="Amici not available, no SBML models can be tested",
     ),
 )

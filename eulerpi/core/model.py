@@ -20,7 +20,7 @@ except ImportError:
     pass
 
 
-def amici_available():
+def is_amici_available():
     return amici_available
 
 
@@ -344,7 +344,7 @@ class SBMLModel(Model):
         name: Optional[str] = None,
         **kwargs,
     ) -> None:
-        if not amici_available:
+        if not is_amici_available():
             raise ImportError(
                 "The SBMLModel class requires an AMICI installation. "
                 "Please install AMICI first."
