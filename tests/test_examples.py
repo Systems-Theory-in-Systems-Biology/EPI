@@ -18,22 +18,6 @@ cpp_plant_example = pytest.param(
     ),
 )
 
-stock_example = pytest.param(
-    ("eulerpi.examples.stock", "Stock", "ETF50.csv"),
-    marks=pytest.mark.xfail(
-        True,
-        reason="XFAIL means that the inference problem for the stock model is ill-posed",
-    ),
-)
-
-stock_artificial_example = pytest.param(
-    ("eulerpi.examples.stock", "StockArtificial"),
-    marks=pytest.mark.xfail(
-        True,
-        reason="XFAIL means that the inference problem for the stock model is ill-posed",
-    ),
-)
-
 menten_example = pytest.param(
     ("eulerpi.examples.sbml.sbml_menten_model", "MentenSBMLModel"),
     marks=pytest.mark.skipif(
@@ -54,8 +38,6 @@ caffeine_example = pytest.param(
 def Examples():
     """Provides the list of examples to the parametrized test"""
     for example in [
-        stock_example,
-        stock_artificial_example,
         ("eulerpi.examples.heat", "HeatArtificial"),
         ("eulerpi.examples.corona", "Corona", "CoronaData.csv"),
         ("eulerpi.examples.corona", "CoronaArtificial"),
@@ -211,13 +193,6 @@ def test_examples(example, inference_type):
     else:
         assert dataFileName is not None
         data = importlib.resources.path(module_location, dataFileName)
-
-        if (
-            className == "Stock"
-        ):  # We check using string comparison because we dont want to statically import the Stock class
-            data, _, _ = model.download_data(
-                data
-            )  # Download the actual stock data from the ticker list data from the internet
 
     # Define kwargs for inference
     kwargs = {}

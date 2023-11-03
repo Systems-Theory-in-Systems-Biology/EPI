@@ -25,6 +25,15 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+## [0.7.0] - 2023-11-03
+
+Breaking changes: The stock model is removed from the available example models!
+You can copy the model and the data files from a previous version and import it as custom model if you need it.
+
+### Changed
+
+- Removed the stock model, because it does not fulfill the requirements for the EPI method
+
 ## [0.6.1] - 2023-11-02
 
 ### Added

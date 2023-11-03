@@ -8,7 +8,7 @@ from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference import inference
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
-from eulerpi.examples.stock import StockArtificial
+from eulerpi.examples.corona import CoronaArtificial
 
 
 # Parametrize the test to run for each inference type
@@ -19,7 +19,7 @@ from eulerpi.examples.stock import StockArtificial
 )
 def test_dense_grid(dense_grid_type):
     """ """
-    model: Model = StockArtificial()
+    model: Model = CoronaArtificial()
 
     # generate artificial data
     if model.is_artificial():
@@ -31,7 +31,7 @@ def test_dense_grid(dense_grid_type):
 
     slice1 = np.array([0])
     slice2 = np.array([1, 2])
-    slice3 = np.array([3, 4, 5])
+    slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
     inference(
         model,

@@ -10,12 +10,12 @@ import numpy as np
 
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.model import Model
-from eulerpi.examples.stock import StockArtificial
+from eulerpi.examples.corona import CoronaArtificial
 
 
 def profiling_with_slices(inference_type):
     """ """
-    model: Model = StockArtificial()
+    model: Model = CoronaArtificial()
 
     # generate artificial data
     num_data_points = 1000
@@ -24,7 +24,7 @@ def profiling_with_slices(inference_type):
 
     slice1 = np.array([0])
     slice2 = np.array([1, 2])
-    slice3 = np.array([3, 4, 5])
+    slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
     inference(
         model,
