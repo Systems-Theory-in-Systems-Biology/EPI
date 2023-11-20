@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Basic plotting function for sample results
+
 ### Changed
 
 ### Fixed
