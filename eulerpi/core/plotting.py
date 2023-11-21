@@ -220,23 +220,17 @@ def sample_violin_plot(
                 )
 
             # fill the violin envelopes
-            if i == 0:
-                ax.fill_betweenx(
-                    vertical_grid_1d[true_konfidence_index],
-                    true_left_bound_konf,
-                    true_right_bound_konf,
-                    color=colorOrig,
-                    label=r"$\Phi_\mathcal{" + variable_name + "}$",
-                    alpha=0.3,
-                )
-            else:
-                ax.fill_betweenx(
-                    vertical_grid_1d[true_konfidence_index],
-                    true_left_bound_konf,
-                    true_right_bound_konf,
-                    color=colorOrig,
-                    alpha=0.3,
-                )
+
+            ax.fill_betweenx(
+                vertical_grid_1d[true_konfidence_index],
+                true_left_bound_konf,
+                true_right_bound_konf,
+                color=colorOrig,
+                label=r"$\Phi_\mathcal{" + variable_name + "}$"
+                if i == 0
+                else "",
+                alpha=0.3,
+            )
 
             # draw arrows to show the width of the violin envelopes
             ax.arrow(
@@ -336,23 +330,16 @@ def sample_violin_plot(
                 color=colorAppr,
             )
 
-        if i == 0:
-            ax.fill_betweenx(
-                vertical_grid_1d[reconstructed_konfidence_index],
-                reconstructed_left_bound_konf,
-                reconstructed_right_bound_konf,
-                color=colorAppr,
-                label=r"$\Phi_{\hat{\mathcal{" + variable_name + "}}}$",
-                alpha=0.3,
-            )
-        else:
-            ax.fill_betweenx(
-                vertical_grid_1d[reconstructed_konfidence_index],
-                reconstructed_left_bound_konf,
-                reconstructed_right_bound_konf,
-                color=colorAppr,
-                alpha=0.3,
-            )
+        ax.fill_betweenx(
+            vertical_grid_1d[reconstructed_konfidence_index],
+            reconstructed_left_bound_konf,
+            reconstructed_right_bound_konf,
+            color=colorAppr,
+            label=r"$\Phi_{\hat{\mathcal{" + variable_name + "}}}$"
+            if i == 0
+            else "",
+            alpha=0.3,
+        )
 
         if not true_bool:
             # draw arrows to show the width of the violin envelopes
