@@ -48,9 +48,9 @@ def sample_violin_plot(
     plt.rcParams["mathtext.fontset"] = "dejavuserif"
 
     if (what_to_plot == "param") and (not artificial_bool):
-        reference_available = True
-    else:
         reference_available = False
+    else:
+        reference_available = True
 
     if what_to_plot == "param":
         dim = model.param_dim
@@ -103,26 +103,20 @@ def sample_violin_plot(
             delimiter=",",
         )
 
-        true_data_upper_percentile = np.percentile(
-            true_sample, 100.0 * credibility_level, axis=0
-        )
-        true_data_lower_percentile = np.percentile(
-            true_sample, 100.0 * (1 - credibility_level), axis=0
-        )
-
-        max_val = np.amax(true_data_upper_percentile)
-        min_val = np.amin(true_data_lower_percentile)
+        percentile_sample = np.copy(true_sample)
 
     else:
-        reconstructed_data_upper_percentile = np.percentile(
-            reconstructed_sample, 100.0 * credibility_level, axis=0
-        )
-        reconstructed_data_lower_percentile = np.percentile(
-            reconstructed_sample, 100.0 * (1 - credibility_level), axis=0
-        )
+        percentile_sample = np.copy(reconstructed_sample)
 
-        max_val = np.amax(reconstructed_data_upper_percentile)
-        min_val = np.amin(reconstructed_data_lower_percentile)
+    data_upper_percentile = np.percentile(
+        percentile_sample, 100.0 * credibility_level, axis=0
+    )
+    data_lower_percentile = np.percentile(
+        percentile_sample, 100.0 * (1 - credibility_level), axis=0
+    )
+
+    max_val = np.amax(data_upper_percentile)
+    min_val = np.amin(data_lower_percentile)
 
     # create single figure with variable width
     fig, ax = plt.subplots(figsize=(2 * dim, 6))
