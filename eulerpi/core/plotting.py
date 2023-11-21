@@ -48,9 +48,9 @@ def sample_violin_plot(
     plt.rcParams["mathtext.fontset"] = "dejavuserif"
 
     if (what_to_plot == "param") and (not artificial_bool):
-        true_bool = True
+        reference_available = True
     else:
-        true_bool = False
+        reference_available = False
 
     if what_to_plot == "param":
         dim = model.param_dim
@@ -93,7 +93,7 @@ def sample_violin_plot(
         reconstructed_sample = reconstructed_data_sample
 
     # determine upper and lower plot bounds according to the credibility levels and what to plot
-    if true_bool:
+    if reference_available:
         true_sample = np.loadtxt(
             "Data/"
             + model.name
@@ -154,7 +154,7 @@ def sample_violin_plot(
         )
 
         # in case there is a reference for the plotted qunatity avaialbe
-        if true_bool:
+        if reference_available:
             # cast to 2d array
             true_matrix = np.transpose(np.array([true_sample[:, i]]))
 
@@ -272,7 +272,7 @@ def sample_violin_plot(
             reconstructed_matrix, vertical_grid, scales
         )
 
-        if not true_bool:
+        if not reference_available:
             max_density = np.amax(reconstructed_KDE)
             max_density_argument = vertical_grid_1d[
                 np.argmax(reconstructed_KDE)
@@ -341,7 +341,7 @@ def sample_violin_plot(
             alpha=0.3,
         )
 
-        if not true_bool:
+        if not reference_available:
             # draw arrows to show the width of the violin envelopes
             ax.arrow(
                 np.amin(reconstructed_left_bound),
