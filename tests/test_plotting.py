@@ -11,9 +11,14 @@ from eulerpi.examples.corona import Corona
 
 def test_sample_plotting():
     """ """
+
+    np.random.seed(42)
     model = Corona()
 
-    data = np.loadtxt("Data/Corona/true_data_sample.csv", delimiter=",")
+    data = np.random.randn(1000, 4) * np.array([1, 5, 25, 2]) + np.array(
+        [1, 10, 40, 3]
+    )
+    print(data.shape)
 
     num_walkers = 10
     num_steps = 100
@@ -37,13 +42,14 @@ def test_sample_plotting():
 
     sample_violin_plot(
         model,
-        run_name,
+        run_name=run_name,
         what_to_plot="param",
         axis_labels=[r"$k_i$", r"$k_d", r"$k_r$"],
     )
     sample_violin_plot(
         model,
-        run_name,
+        reference_sample=data,
+        run_name=run_name,
         what_to_plot="data",
         axis_labels=[r"1", r"2", r"5", r"15 weeks"],
     )
