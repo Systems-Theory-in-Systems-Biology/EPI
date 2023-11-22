@@ -22,7 +22,7 @@ from eulerpi.core.result_manager import ResultManager
 
 def sample_violin_plot(
     model: Model,
-    reference_sample: Union[str, os.PathLike, np.ndarray] = None,
+    reference_sample: Union[str, os.PathLike, np.ndarray, None] = None,
     run_name: str = "default_run",
     what_to_plot: str = "param",
     credibility_level: float = 0.95,
@@ -66,7 +66,7 @@ def sample_violin_plot(
 
     else:
         raise ValueError(
-            "This function only supports plotting of model paramters (what_to_plot = 'param') or model outputs and date (what_to_plot = 'data')."
+            "This function only supports plotting of model parameters (what_to_plot = 'param') or model outputs and data (what_to_plot = 'data')."
         )
 
     color3 = np.array([45.0, 49.0, 66.0]) / 255.0
@@ -105,10 +105,10 @@ def sample_violin_plot(
 
     # determine upper and lower plot bounds according to the credibility levels and what to plot
     if reference_available:
-        percentile_sample = np.copy(reference_sample)
+        percentile_sample = reference_sample
 
     else:
-        percentile_sample = np.copy(reconstructed_sample)
+        percentile_sample = reconstructed_sample
 
     upper_percentile = np.percentile(
         percentile_sample, 100.0 * credibility_level, axis=0
