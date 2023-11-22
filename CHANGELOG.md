@@ -21,6 +21,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Basic plotting function for sample results
+- Test for the plotting function (based on Covid model)
+
 ### Changed
 
 ### Fixed
