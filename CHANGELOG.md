@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 
 - Basic plotting function for sample results
 - Test for the plotting function (based on Covid model)
+- Test for general models that runs a fast sampling-based inference and visualizes the output
+- Test for the Test of general models
 
 ### Changed
 
