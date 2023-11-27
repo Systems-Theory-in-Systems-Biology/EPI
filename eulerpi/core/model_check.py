@@ -6,7 +6,7 @@ from eulerpi.core.model import JaxModel, Model
 from eulerpi.core.plotting import sample_violin_plot
 
 
-def check_model(
+def full_model_check(
     model: Model,
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
