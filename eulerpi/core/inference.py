@@ -16,7 +16,7 @@ from eulerpi.core.data_transformation_types import DataTransformationType
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
-from eulerpi.core.model_ckeck import basic_model_check
+from eulerpi.core.model_check import basic_model_check
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
