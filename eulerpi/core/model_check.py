@@ -8,8 +8,18 @@ from eulerpi.core.plotting import sample_violin_plot
 
 
 def basic_model_check(model: Model) -> None:
+    """Check your model for basic functionality.
+    This includes a check of the parameter and data dimensions, shape of the central parameter and parameter limits, and functionality of the forward and jacobian functions.\n
 
-    print(f"Checking model {model.name} at location \n{model}.")
+    Args:
+        model(Model): The model describing the mapping from parameters to data.
+    Returns:
+        None
+    """
+
+    print(
+        f"Checking model {model.name} at location \n{model} \nfor basic functionality.\n"
+    )
 
     # test the shapes
     assert (
@@ -31,7 +41,7 @@ def basic_model_check(model: Model) -> None:
         f"Expected {(model.param_dim, 2)}, got {model.param_limits.shape}"
     )
 
-    print("Successfully checked shapes and dimensions of model attributes. \n")
+    print("Successfully checked shapes and dimensions of model attributes.\n")
     print(
         f"Evaluate model {model.name} and its jacobian in its central parameter \n{model.central_param}."
     )
@@ -81,17 +91,16 @@ def basic_model_check(model: Model) -> None:
     )
 
     print(
-        "Successfully checked model forward simulation and corresponding jacobian."
+        "Successfully checked model forward simulation and corresponding jacobian.\n"
     )
 
 
-def full_model_check(
+def inference_model_check(
     model: Model,
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
 ) -> None:
-    """Check your model in a quick run on an artificially created dataset.
-    We recommend to run this function for every new model you create.
+    """Check your model in a quick inference run on an artificially created dataset.
     It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.
 
     Args:
@@ -101,6 +110,10 @@ def full_model_check(
     Returns:
         None
     """
+
+    print(
+        f"Checking model {model.name} at location \n{model} \nfor inference functionality on artificially created data.\n"
+    )
 
     # create artificial parametrs similar to how we create initial walker positions for emcee sampling
 
@@ -123,6 +136,10 @@ def full_model_check(
             param_sample
         )
 
+    print(
+        f"Successfully created an artificial data set of size {num_data_points}.\n"
+    )
+
     # choose sensible values for the sampling hyper-parameters and print them
     num_inference_evaluations = num_model_evaluations - num_data_points
 
@@ -132,6 +149,7 @@ def full_model_check(
     num_burn_in_samples = num_walkers
     thinning_factor = int(np.ceil(num_walkers / 10))
 
+    print("Attempting inference with hyperparameters chosen as follows:")
     print(f"num_data_points: {num_data_points}")
     print(f"num_walkers: {num_walkers}")
     print(f"num_steps: {num_steps}")
@@ -154,6 +172,10 @@ def full_model_check(
         thinning_factor=thinning_factor,
     )
 
+    print(
+        f"Successfully finishes inference run with {num_walkers*num_steps} samples.\n"
+    )
+
     # plot the results
     sample_violin_plot(
         model,
@@ -169,3 +191,24 @@ def full_model_check(
         credibility_level=0.999,
         what_to_plot="data",
     )
+
+
+def full_model_check(
+    model: Model,
+    num_data_points: int = 1000,
+    num_model_evaluations: int = 11000,
+) -> None:
+    """Check your model for basic functionality and in a quick inference run on an artificially created dataset.
+    We recommend to run this function for every new model you create.
+    It runs the functions basic_model_check and inference_model_check to perform the checks.
+
+    Args:
+        model(Model): The model describing the mapping from parameters to data.
+        num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
+        num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
+    Returns:
+        None
+    """
+
+    basic_model_check(model)
+    inference_model_check(model, num_data_points, num_model_evaluations)
