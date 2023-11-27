@@ -4,11 +4,11 @@ Test the instantiation, data loading / data generation and the inference for the
 
 import importlib
 
-import jax.numpy as jnp
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.model import Model, is_amici_available
+from eulerpi.core.model_check import basic_model_check
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -98,68 +98,8 @@ def test_model_requirements(example):
     ModelClass = getattr(module, className)
     model: Model = ModelClass()
 
-    # test the shapes
-    assert (
-        model.param_dim > 0
-    ), f"Model {model} has a non-positive parameter dimension"
-    assert (
-        model.data_dim > 0
-    ), f"Model {model} has a non-positive data dimension"
-    assert model.data_dim >= model.param_dim, (
-        f"Model {model} has a data dimension smaller than the parameter dimension. "
-        "This is not supported by the inference."
-    )
-    assert model.central_param.shape == (model.param_dim,), (
-        f"Model {model} has a central parameter with the wrong shape. "
-        f"Expected {(model.param_dim,)}, got {model.central_param.shape}"
-    )
-    assert model.param_limits.shape == (model.param_dim, 2), (
-        f"Model {model} has parameter limits with the wrong shape. "
-        f"Expected {(model.param_dim, 2)}, got {model.param_limits.shape}"
-    )
-
-    model_forward = model.forward(model.central_param)
-    assert (
-        model_forward.shape == (1, model.data_dim)
-        or model_forward.shape == (model.data_dim,)
-        or model_forward.shape == ()
-    ), (
-        f"Model {model} has a forward function with the wrong shape. "
-        f"Expected {(1, model.data_dim)}, {(model.data_dim,)} or {()}, got {model_forward.shape}"
-    )
-
-    model_jac = model.jacobian(model.central_param)
-    assert (
-        model_jac.shape == (model.data_dim, model.param_dim)
-        or (model.data_dim == 1 and model_jac.shape == (model.param_dim,))
-        or (model.param_dim == 1 and model_jac.shape == (model.data_dim,))
-    ), (
-        f"Model {model} has a jacobian function with the wrong shape. "
-        f"Expected {(model.data_dim, model.param_dim)}, {(model.param_dim,)} or {(model.data_dim,)}, got {model_jac.shape}"
-    )
-    # check rank of jacobian
-    assert jnp.linalg.matrix_rank(model_jac) == model.param_dim, (
-        f"The Jacobian of the model {model} does not have full rank. This is a requirement for the inference. "
-        "Please check the model implementation."
-    )
-
-    fw, jc = model.forward_and_jacobian(model.central_param)
-    assert fw.shape == model_forward.shape, (
-        f"The shape {fw.shape} of the forward function extracted from the forward_and_jacobian function does not match the shape {model_forward.shape} of the forward function. "
-        "Please check the model implementation."
-    )
-    assert jc.shape == model_jac.shape, (
-        f"The shape {jc.shape} of the jacobian extracted from the forward_and_jacobian function does not match the shape {model_jac.shape} of the jacobian. "
-        "Please check the model implementation."
-    )
-    assert jnp.allclose(fw, model_forward), (
-        f"The forward function of the model {model} does not match the forward function extracted from the forward_and_jacobian function. "
-        "Please check the model implementation."
-    )
-    assert jnp.allclose(jc, model_jac), (
-        f"The jacobian of the model {model} does not match the jacobian extracted from the forward_and_jacobian function. "
-        "Please check the model implementation."
-    )
+    # Use the basic model check to assert all model attribute dimension requirements as well as forward simulations and the corresponding jacobian.
+    basic_model_check(model)
 
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)

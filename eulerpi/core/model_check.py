@@ -8,9 +8,16 @@ from eulerpi.core.plotting import sample_violin_plot
 
 
 def basic_model_check(model: Model) -> None:
-    """Check your model for basic functionality.
-    This includes a check of the parameter and data dimensions, shape of the central parameter and parameter limits, and functionality of the forward and jacobian functions.\n
-
+    """Perform a simple sanity check on the model. It tests the following:
+    - The model has a positive parameter dimension
+    - The model has a positive data dimension
+    - The model has a valid combination of parameter and data dimension
+    - The central parameter has the correct shape
+    - The parameter limits have the correct shape
+    - The model can be instantiated
+    - The model forward pass can be calculated
+    - The model jacobi matrix can be calculated
+    - The return values of the forward pass and the jacobi matrix have the correct shape
     Args:
         model(Model): The model describing the mapping from parameters to data.
     Returns:
