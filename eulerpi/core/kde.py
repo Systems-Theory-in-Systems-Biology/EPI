@@ -76,6 +76,26 @@ def eval_kde_gauss(
         / data.shape[0]
     )
 
+    """
+
+    .. code-block:: python
+
+        import jax.numpy as jnp
+        from eulerpi.core.transformations import eval_kde_gauss
+
+        # create 5 data points of dimension 2 and store them in a numpy 2D array
+        data = jnp.array([[0,0], [0,1], [1,0], [1,1]])
+
+        # we intend to evaluate the kernel density estimator at the point (0.5, 0.5)
+        evaluation_coordinates = jnp.array([[0.5, 0.5]])
+
+        # the dimension-specific kernel bandwidths are set to 1
+        scales = jnp.array([1,1])
+
+        kde_res = eval_kde_gauss(data, evaluation_coordinates, scales)
+
+    """
+
 
 @jit
 def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
