@@ -60,6 +60,32 @@ def inference(
         Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
         evaluations for each slice and the result manager used for the inference.
 
+
+    Inference with eulerpi only requires the model and the data.
+    The following example shows how to run inference for the Covid example model.
+
+    .. code-block:: python
+
+        import numpy as np
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.inference import inference
+
+        # generate 1000 artificial, 4D data points for the Covid example model
+        data_scales = np.array([1.0, 5.0, 35.0, 2.0])
+        data = (np.random.rand(1000, 4)+1.0)*data_scales
+
+        # run inference only specifying the model and the data
+        (param_sample_dict, sim_res_sample_dict, desities_dict, res_manager) = inference(Corona(), data)
+
+        # retrieve (for instance) the parameter samples by evaluating the parameter sample dictionary in the slice Q0Q1Q2
+        param_sample = param_sample_dict["Slice_Q0Q1Q2"]
+
+        # alternatively, you can use the result manager
+        param_sample, data_sample, density_evals = res_manager.load_slice_inference_results(slice = np.array([0,1,2]))
+
+    Of course, you can also specify additional parameters and import data from a file Data/Coronoa/data.csv.
+    Assume independent parameter dimensions.
+
     """
 
     # Load data from file if necessary
