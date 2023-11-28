@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Basic plotting function for sample results
-- Test for the plotting function (based on Covid model)
+- Users can now check the models they want to use with a basic functionality check and a quick inference check on artificial data.
 
 ### Changed
 
