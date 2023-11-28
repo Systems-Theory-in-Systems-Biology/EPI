@@ -15,7 +15,8 @@ from jax.scipy.stats import cauchy, norm
 def eval_kde_cauchy(
     data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
-    r"""Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
+    r"""
+    Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
     Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
     This is for example given for time-series data, where each evaluation time is one dimension of the data point.
     In the following formula x are the evaluation points (sim_res) and y is the data.
