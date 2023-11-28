@@ -68,6 +68,8 @@
 </ul>
 </li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.model.html">Model</a></li>
+<li class="toctree-l6"><a class="reference internal" href="eulerpi.core.model_check.html">Model Check</a></li>
+<li class="toctree-l6"><a class="reference internal" href="eulerpi.core.plotting.html">Plotting</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.result_manager.html">Result Manager</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.sampling.html">Sampling</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.sparsegrid.html">Sparse Grid</a></li>
@@ -194,11 +196,11 @@ While it is possible to define different standard deviations for different measu
 <dd class="field-odd"><p><em>Union</em>[jnp.double, jnp.ndarray]</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
+<p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
 
-<span class="c1"># create 5 data points of dimension 2 and store them in a numpy 2D array</span>
+<span class="c1"># create 4 data points of dimension 2 and store them in a numpy 2D array</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
 
 <span class="c1"># we intend to evaluate the kernel density estimator at the point (0.5, 0.5)</span>

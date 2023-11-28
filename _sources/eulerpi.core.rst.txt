@@ -15,6 +15,8 @@ Submodules
    Inference Types<eulerpi.core.inference_types>
    KDE<eulerpi.core.kde>
    Model<eulerpi.core.model>
+   Model Check<eulerpi.core.model_check>
+   Plotting<eulerpi.core.plotting>
    Result Manager<eulerpi.core.result_manager>
    Sampling<eulerpi.core.sampling>
    Sparse Grid<eulerpi.core.sparsegrid>
