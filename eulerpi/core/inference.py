@@ -16,7 +16,6 @@ from eulerpi.core.data_transformation_types import DataTransformationType
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
-from eulerpi.core.model_check import basic_model_check
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
@@ -34,7 +33,6 @@ def inference(
     data_transformation: DataTransformationType = DataTransformationType.Normalize,
     custom_data_transformation: Optional[DataTransformation] = None,
     n_components_pca: Optional[int] = None,
-    check_model: bool = True,
     **kwargs,
 ) -> Tuple[
     Dict[str, np.ndarray],
@@ -56,7 +54,6 @@ def inference(
         data_transformation(DataTransformationType): The type of data transformation to use. (Default value = DataTransformationType.Normalize)
         custom_data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)
         n_components_pca(int, optional): If using the PCA as data_transformation, selects how many dimensions are kept in the pca. Per default the number of dimensions equals the dimension of the parameter space. (Default value = None)
-        check_model(bool, optional): If True, the model is checked for basic functionality before attempting inference. (Default value = True)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
@@ -64,10 +61,6 @@ def inference(
         evaluations for each slice and the result manager used for the inference.
 
     """
-
-    # check model for basic functionality
-    if check_model:
-        basic_model_check(model)
 
     # Load data from file if necessary
     if isinstance(data, (str, os.PathLike, pathlib.Path)):

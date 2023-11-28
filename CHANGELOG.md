@@ -22,13 +22,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Basic plotting function for sample results
-- Test for the plotting function (based on Covid model)
-- Users can now check the models they want to use with a basic functionality check and a quick inference check on artificial data. The inference check also calls the basic functionality check.
-- Test for the model checks.
+- Users can now check the models they want to use with a basic functionality check and a quick inference check on artificial data.
 
 ### Changed
-
-- By default, each model is checked for basic functionality before attempting an inference run. However, this can be disabled using the argument check_model.
 
 ### Fixed
 
