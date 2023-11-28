@@ -196,7 +196,11 @@ While it is possible to define different standard deviations for different measu
 <dd class="field-odd"><p><em>Union</em>[jnp.double, jnp.ndarray]</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to always use 2D arrays as data, especially when the data dimension is only one.</p>
+<p>The data object should be shaped (#Samples, 1) and not (#Samples,).</p>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
 
