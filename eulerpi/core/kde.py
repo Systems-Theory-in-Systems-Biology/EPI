@@ -64,14 +64,13 @@ def eval_kde_gauss(
     Returns:
         typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
 
-    Example:
-
+    Examples:
         .. code-block:: python
 
             import jax.numpy as jnp
             from eulerpi.core.transformations import eval_kde_gauss
 
-            # create 5 data points of dimension 2 and store them in a numpy 2D array
+            # create 4 data points of dimension 2 and store them in a numpy 2D array
             data = jnp.array([[0,0], [0,1], [1,0], [1,1]])
 
             # we intend to evaluate the kernel density estimator at the point (0.5, 0.5)

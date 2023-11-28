@@ -18,7 +18,9 @@ Submodules
    Test Jax<tests.test_jax>
    Test KDE<tests.test_kde>
    Test Logging<tests.test_logging>
+   Test Model Check<tests.test_model_check>
    Test Pickling<tests.test_pickling>
+   Test Plotting<tests.test_plotting>
    Test Simple Models<tests.test_simple_models>
    Test Slices<tests.test_slices>
    Test Transformation<tests.test_transformations>
