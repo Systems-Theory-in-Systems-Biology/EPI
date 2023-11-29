@@ -31,6 +31,8 @@ class Model(ABC):
         central_param(np.ndarray): The central parameter for the model. (Default value = None)
         param_limits(np.ndarray): Box limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). The parameter limits are used as limits as well as for the movement policy for MCMC sampling, and as boundaries for the grid when using grid-based inference. Overwrite the function param_is_within_domain if the domain is more complex than a box - the grid will still be build based on param_limits, but actual model evaluations only take place within the limits specified in param_is_within_domain. (Default value = None)
         name(str): The name of the model. The class name is used if no name is given. (Default value = None)
+
+    Examples of model implementations can be found in the :doc:`Example Models </MarkdownLinks/example_models>`.
     """
 
     param_dim: Optional[
