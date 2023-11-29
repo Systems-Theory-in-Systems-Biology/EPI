@@ -75,16 +75,61 @@ def inference(
         data = (np.random.rand(1000, 4)+1.0)*data_scales
 
         # run inference only specifying the model and the data
-        (param_sample_dict, sim_res_sample_dict, desities_dict, res_manager) = inference(Corona(), data)
+        (param_sample_dict, sim_res_sample_dict, desities_dict, _) = inference(Corona(), data)
 
-        # retrieve (for instance) the parameter samples by evaluating the parameter sample dictionary in the slice Q0Q1Q2
+        # retrieve (for instance) the parameter samples by evaluating the parameter sample dictionary in the slice Q0Q1Q2 corresponding to all three joint parameter dimensions
         param_sample = param_sample_dict["Slice_Q0Q1Q2"]
 
-        # alternatively, you can use the result manager
-        param_sample, data_sample, density_evals = res_manager.load_slice_inference_results(slice = np.array([0,1,2]))
-
     Of course, you can also specify additional parameters and import data from a file Data/Coronoa/data.csv.
-    Assume independent parameter dimensions.
+    In addition, the result manager is a convenient and versatile interface to access the inference results.
+
+    .. code-block:: python
+
+        import numpy as np
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.inference import inference
+
+        # run inference with additional arguments
+        (_, _, _, res_manager) = inference(Corona(),
+                                        data = "pathto/data.csv", # load data from a csv file location
+                                        num_processes = 8, # use 8 processes in parallelization
+                                        run_name = "second_run", # specify the run
+                                        num_walkers = 50, # use 50 walkers during sampling
+                                        num_steps = 200, # each walker performs 200 steps
+                                        num_burn_in_samples = 20, # discard the first 20 steps of each walker
+                                        thinning_factor = 10) # only use every 10th sample to avoid autocorrelation
+
+        # use the result manager to retreive the inference results
+        param_sample, sim_res_sample, density_evals = res_manager.load_slice_inference_results(slice = np.array([0,1,2]))
+
+    Principle Compoonent Analysis (PCA) can be useful to reduce the dimension of the data space and is supported by eulerpi.
+    Grid based parameter density estimation is especially useful whenever parameter dimension can be assumed to be indepedent.
+    In the following example, we assume parameter dimension 2 to be independent from dimensions 0 and 1.
+    Therefore, we compute the joint density of dimensions 0 and 1 and the marginal density of dimension 2.
+    Please note, that specifying 30 grid points for a 2D density estimation results in 900 grid points in total.
+    The result manager is especially useful to access already computed inference results and only requires the model and run name.
+
+    .. code-block:: python
+
+        import numpy as np
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.inference import inference, InferenceType
+        from eulerpi.core.data_transformation_types import DataTransformationType
+        from eulerpi.core.result_manager import ResultManager
+
+        inference(Corona(),
+                data = "pathto/data.csv",
+                slices = [np.array([0,1]), np.array([2])], # specify joint and marginal parameter subdistributions we are interested in
+                inference_type = InferenceType.DENSE_GRID, # use dense grid inference
+                run_name = "grid_run",
+                data_transformation = DataTransformationType.PCA, # perform PCA on the data before inference
+                num_grid_points = 30) # use 30 grid points per parameter dimension
+
+        # initiate the result manager using the model and run name to retreive the inference results computed above and stored offline
+        grid_res_manager = ResultManager(model_name = Corona().name, run_name = "grid_run")
+
+        # load the inference results for the joint distribution of parameter dimensions 0 and 1
+        param_grid_dim01, sim_res_grid_dim01, density_evals_dim01 = grid_res_manager.load_slice_inference_results(slice = np.array([0,1]))
 
     """
 
