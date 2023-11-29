@@ -32,6 +32,43 @@ def evaluate_density(
         Tuple[np.double, np.ndarray]:
             : parameter density at the point param
             : vector containing the parameter, the simulation result and the density
+
+    .. code-block:: python
+
+        import numpy as np
+        from eulerpi.examples.heat import Heat
+        from eulerpi.core.kde import calc_kernel_width
+        from eulerpi.core.data_transformation import DataIdentity
+        from eulerpi.core.transformations import evaluate_density
+
+        # use the heat model
+        model = Heat()
+
+        # generate 1000 artificial, 5D data points for the Heat example model
+        data_mean = np.array([0.5, 0.1, 0.5, 0.9, 0.5])
+        data = np.random.randn(1000, 5)/25.0 + data_mean
+
+        # evaluating the parameter probabiltiy density at the central parameter of the Heat model
+        eval_param = model.central_param
+
+        # calculating the kernel widths for the data based on Silverman's rule of thumb
+        data_stdevs = calc_kernel_width(data)
+
+        # evaluate the three-variate joint density
+        slice = np.array([0,1,2])
+
+        (central_param_density, all_res) = evaluate_density(param = eval_param,
+                                                            model = model,
+                                                            data = data,
+                                                            data_transformation = DataIdentity(), # no data transformatio,
+                                                            data_stdevs = data_stdevs,
+                                                            slice = slice)
+
+        # all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:
+        eval_param = all_res[0:model.param_dim]
+        sim_result = all_res[model.param_dim:model.param_dim+model.data_dim]
+        central_param_density = all_res[-1]
+
     """
 
     limits = model.param_limits
@@ -157,6 +194,14 @@ def _calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
 
     Returns:
         jnp.double: The pseudo-determinant of the jacobian
+
+    .. code-block:: python
+
+        import jax.numpy as jnp
+        from eulerpi.core.transformations import calc_gram_determinant
+
+        jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
+        pseudo_det = calc_gram_determinant(jac)
 
     """
 
