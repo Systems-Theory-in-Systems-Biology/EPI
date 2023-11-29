@@ -22,6 +22,14 @@ def basic_model_check(model: Model) -> None:
         model(Model): The model describing the mapping from parameters to data.
     Returns:
         None
+
+    .. code-block:: python
+
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.model_check import basic_model_check
+
+        basic_model_check(Corona())
+
     """
 
     print(
@@ -116,6 +124,14 @@ def inference_model_check(
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
     Returns:
         None
+
+    .. code-block:: python
+
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.model_check import inference_model_check
+
+        inference_model_check(Corona())
+
     """
 
     print(
@@ -215,6 +231,14 @@ def full_model_check(
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
     Returns:
         None
+
+    .. code-block:: python
+
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.model_check import full_model_check
+
+        full_model_check(Corona())
+
     """
 
     basic_model_check(model)
