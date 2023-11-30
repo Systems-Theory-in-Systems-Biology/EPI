@@ -31,6 +31,8 @@ class Model(ABC):
         central_param(np.ndarray): The central parameter for the model. (Default value = None)
         param_limits(np.ndarray): Box limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). The parameter limits are used as limits as well as for the movement policy for MCMC sampling, and as boundaries for the grid when using grid-based inference. Overwrite the function param_is_within_domain if the domain is more complex than a box - the grid will still be build based on param_limits, but actual model evaluations only take place within the limits specified in param_is_within_domain. (Default value = None)
         name(str): The name of the model. The class name is used if no name is given. (Default value = None)
+
+    Examples of model implementations can be found in the :doc:`Example Models </examples>`.
     """
 
     param_dim: Optional[
@@ -74,6 +76,35 @@ class Model(ABC):
         Returns:
             np.ndarray: The data generated from the parameter.
 
+        .. code-block:: python
+
+            import numpy as np
+            from eulerpi.examples.heat import Heat
+            from eulerpi.core.model import JaxModel
+            from jax import vmap
+
+            # define a 3D example parameter for the heat model
+            example_param = np.array([1.4, 1.6, 0.5])
+
+            # the forward simulation is achieved by using the forward method of the model
+            sim_result = Heat().forward(example_param)
+
+            # in a more realistic scenario, we predefine the model and would like to perform the forward pass on multiple parameters at once
+            model = Heat()
+            multiple_params = np.array([[1.5, 1.5, 0.5],
+                                        [1.4, 1.4, 0.6],
+                                        [1.6, 1.6, 0.4],
+                                        model.central_param,
+                                        [1.5, 1.4, 0.4]])
+
+            # try to use jax vmap to perform the forward pass on multiple parameters at once
+            if isinstance(model, JaxModel):
+                multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)
+
+            # if the model is not a jax model, we can use numpy vectorize to perform the forward pass
+            else:
+                multiple_sim_results = np.vectorize(model.forward, signature="(n)->(m)")(multiple_params)
+
         """
         raise NotImplementedError
 
@@ -87,6 +118,36 @@ class Model(ABC):
         Returns:
             np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.core.model.Model.forward` method with respect to the parameters.
 
+        .. code-block:: python
+
+            import numpy as np
+            from eulerpi.examples.heat import Heat
+            from eulerpi.core.model import JaxModel
+            from jax import vmap
+
+            # define a 3D example parameter for the heat model
+            example_param = np.array([1.4, 1.6, 0.5])
+
+            sim_jacobian = Heat().jacobian(example_param)
+            print(sim_jacobian)
+
+            # Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
+            # This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.
+
+            model = Heat()
+            multiple_params = np.array([[1.5, 1.5, 0.5],
+                                        [1.4, 1.4, 0.6],
+                                        model.central_param,
+                                        [1.5, 1.4, 0.4]])
+
+            # try to use jax vmap for vectorization if possible
+            if isinstance(model, JaxModel):
+                multiple_sim_jacobians = vmap(model.jacobian, in_axes=0)(multiple_params)
+
+            # if the model is not a jax model, we can use numpy vectorize to vectorize
+            else:
+                multiple_sim_jacobians = np.vectorize(model.jacobian, signature="(n)->(m)")(multiple_params)
+
         """
         raise NotImplementedError
 
@@ -95,6 +156,7 @@ class Model(ABC):
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
         it simply calls :func:`~eulerpi.core.model.Model.forward` and :func:`~eulerpi.core.model.Model.jacobian`.
+        It can be vectorized in the same way as the forward and jacobian methods.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
