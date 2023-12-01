@@ -1,3 +1,8 @@
+"""Data transformations can be used to improve the performance of the inference function by improving the quality of the kernel density estimate.
+
+This module contains all predefined data transformations and an abstract base class for custom data transformations.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
