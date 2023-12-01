@@ -1,3 +1,5 @@
+"""Check models for implementation errors or test them in a quick inference run on an artificially created dataset."""
+
 import jax.numpy as jnp
 import numpy as np
 from jax import vmap
@@ -8,7 +10,10 @@ from eulerpi.core.plotting import sample_violin_plot
 
 
 def basic_model_check(model: Model) -> None:
-    """Perform a simple sanity check on the model. It tests the following:
+    """Perform a simple sanity check on the model.
+
+    It tests the following:
+
     - The model has a positive parameter dimension
     - The model has a positive data dimension
     - The model has a valid combination of parameter and data dimension
@@ -18,10 +23,13 @@ def basic_model_check(model: Model) -> None:
     - The model forward pass can be calculated
     - The model jacobi matrix can be calculated
     - The return values of the forward pass and the jacobi matrix have the correct shape
+    - The jacobi matrix has full rank
+
     Args:
         model(Model): The model describing the mapping from parameters to data.
-    Returns:
-        None
+
+    Raises:
+        AssertionError: Raised if any of the tests fails.
 
     .. code-block:: python
 
@@ -116,14 +124,13 @@ def inference_model_check(
     num_model_evaluations: int = 11000,
 ) -> None:
     """Check your model in a quick inference run on an artificially created dataset.
+
     It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
-    Returns:
-        None
 
     .. code-block:: python
 
@@ -229,8 +236,9 @@ def full_model_check(
         model(Model): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
-    Returns:
-        None
+
+    Raises:
+        AssertionError: Raised if any of the tests fails.
 
     .. code-block:: python
 
