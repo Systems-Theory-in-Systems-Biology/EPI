@@ -125,34 +125,51 @@
              
   <section id="module-eulerpi.core.model_check">
 <span id="eulerpi-core-model-check-module"></span><h1>eulerpi.core.model_check module<a class="headerlink" href="#module-eulerpi.core.model_check" title="Link to this heading"></a></h1>
+<p>Check a custom <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> for implementation errors or test them in a quick inference run on an artificially created dataset.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.model_check.basic_model_check">
 <span class="sig-name descname"><span class="pre">basic_model_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#eulerpi.core.model_check.basic_model_check" title="Link to this definition"></a></dt>
-<dd><p>Perform a simple sanity check on the model. It tests the following:
-- The model has a positive parameter dimension
-- The model has a positive data dimension
-- The model has a valid combination of parameter and data dimension
-- The central parameter has the correct shape
-- The parameter limits have the correct shape
-- The model can be instantiated
-- The model forward pass can be calculated
-- The model jacobi matrix can be calculated
-- The return values of the forward pass and the jacobi matrix have the correct shape
-:param model: The model describing the mapping from parameters to data.
-:type model: Model</p>
+<dd><p>Perform a simple sanity check on the model.</p>
+<p>It tests the following:</p>
+<ul class="simple">
+<li><p>The model has a positive parameter dimension</p></li>
+<li><p>The model has a positive data dimension</p></li>
+<li><p>The model has a valid combination of parameter and data dimension</p></li>
+<li><p>The central parameter has the correct shape</p></li>
+<li><p>The parameter limits have the correct shape</p></li>
+<li><p>The model can be instantiated</p></li>
+<li><p>The model forward pass can be calculated</p></li>
+<li><p>The model jacobi matrix can be calculated</p></li>
+<li><p>The return values of the forward pass and the jacobi matrix have the correct shape</p></li>
+<li><p>The jacobi matrix has full rank</p></li>
+</ul>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><em>Model</em></a>) – The model describing the mapping from parameters to data.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – Raised if any of the tests fails.</p>
+</dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>from eulerpi.examples.corona import Corona
+from eulerpi.core.model_check import basic_model_check</p>
+<p>basic_model_check(Corona())</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.model_check.full_model_check">
 <span class="sig-name descname"><span class="pre">full_model_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_data_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_model_evaluations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#eulerpi.core.model_check.full_model_check" title="Link to this definition"></a></dt>
-<dd><p>Check your model for basic functionality and in a quick inference run on an artificially created dataset.
+<dd><p>Perform all available checks on the model.</p>
+<p>Check your model for basic functionality and in a quick inference run on an artificially created dataset.
 We recommend to run this function for every new model you create.
-It runs the functions basic_model_check and inference_model_check to perform the checks.</p>
+It runs the functions <a class="reference internal" href="#eulerpi.core.model_check.basic_model_check" title="eulerpi.core.model_check.basic_model_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">basic_model_check</span></code></a> and <a class="reference internal" href="#eulerpi.core.model_check.inference_model_check" title="eulerpi.core.model_check.inference_model_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference_model_check</span></code></a> to perform the checks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -161,17 +178,27 @@ It runs the functions basic_model_check and inference_model_check to perform the
 <li><p><strong>num_model_evaluations</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of model evaluations to perform in the inference. (Default value = 11000)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – Raised if any of the tests fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>from eulerpi.examples.corona import Corona
+from eulerpi.core.model_check import full_model_check</p>
+<p>full_model_check(Corona())</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.model_check.inference_model_check">
 <span class="sig-name descname"><span class="pre">inference_model_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_data_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_model_evaluations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#eulerpi.core.model_check.inference_model_check" title="Link to this definition"></a></dt>
-<dd><p>Check your model in a quick inference run on an artificially created dataset.
-It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.</p>
+<dd><p>Check your model in a quick inference run on an artificially created dataset.</p>
+<p>It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -184,6 +211,13 @@ It produces a violin plot comparing the artificially created parameters and data
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>from eulerpi.examples.corona import Corona
+from eulerpi.core.model_check import inference_model_check</p>
+<p>inference_model_check(Corona())</p>
+</div></blockquote>
 </dd></dl>
 
 </section>

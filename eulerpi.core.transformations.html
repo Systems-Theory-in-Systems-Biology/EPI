@@ -125,31 +125,41 @@
              
   <section id="module-eulerpi.core.transformations">
 <span id="eulerpi-core-transformations-module"></span><h1>eulerpi.core.transformations module<a class="headerlink" href="#module-eulerpi.core.transformations" title="Link to this heading"></a></h1>
+<p>This module implements the random variable transformation of the EPI algorithm.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.transformations.calc_gram_determinant">
 <span class="sig-name descname"><span class="pre">calc_gram_determinant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="headerlink" href="#eulerpi.core.transformations.calc_gram_determinant" title="Link to this definition"></a></dt>
-<dd><p>Evaluate the pseudo-determinant of the jacobian (that serves as a correction term) in one specific parameter point.
-Returns 0 if the correction factor is not finite.</p>
+<dd><p>Evaluate the pseudo-determinant of the jacobian</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The pseudo-determinant of the model jacobian serves as a correction term in the <a class="reference internal" href="#eulerpi.core.transformations.evaluate_density" title="eulerpi.core.transformations.evaluate_density"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_density</span></code></a> function.
+Therefore this function returns 0 if the result is not finite.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>jac</strong> (<em>jnp.ndarray</em>) – The jacobian for which the pseudo determinant shall be calculated</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The pseudo-determinant of the jacobian</p>
+<dd class="field-even"><p>The pseudo-determinant of the jacobian. Returns 0 if the result is not finite.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>jnp.double</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import jax.numpy as jnp
+from eulerpi.core.transformations import calc_gram_determinant</p>
+<p>jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
+pseudo_det = calc_gram_determinant(jac)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.transformations.eval_log_transformed_density">
 <span class="sig-name descname"><span class="pre">eval_log_transformed_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_transformation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.data_transformation.html#eulerpi.core.data_transformation.DataTransformation" title="eulerpi.core.data_transformation.DataTransformation"><span class="pre">DataTransformation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_stdevs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.transformations.eval_log_transformed_density" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.</dt><dd><p>This function is intended to be used with the emcee sampler and can be implemented more efficiently at some points.</p>
-</dd>
-</dl>
+<dd><p>Calculate the logarithmical parameter density as backtransformed data density using the simulation model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -174,7 +184,7 @@ Returns 0 if the correction factor is not finite.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.transformations.evaluate_density">
 <span class="sig-name descname"><span class="pre">evaluate_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_transformation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.data_transformation.html#eulerpi.core.data_transformation.DataTransformation" title="eulerpi.core.data_transformation.DataTransformation"><span class="pre">DataTransformation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_stdevs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.transformations.evaluate_density" title="Link to this definition"></a></dt>
-<dd><p>Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.</p>
+<dd><p>Calculate the parameter density as backtransformed data density using the simulation model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -194,6 +204,38 @@ Returns 0 if the correction factor is not finite.</p>
 <dd class="field-odd"><p>Tuple[np.double, np.ndarray]</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.kde import calc_kernel_width
+from eulerpi.core.data_transformation import DataIdentity
+from eulerpi.core.transformations import evaluate_density</p>
+<p># use the heat model
+model = Heat()</p>
+<p># generate 1000 artificial, 5D data points for the Heat example model
+data_mean = np.array([0.5, 0.1, 0.5, 0.9, 0.5])
+data = np.random.randn(1000, 5)/25.0 + data_mean</p>
+<p># evaluating the parameter probabiltiy density at the central parameter of the Heat model
+eval_param = model.central_param</p>
+<p># calculating the kernel widths for the data based on Silverman’s rule of thumb
+data_stdevs = calc_kernel_width(data)</p>
+<p># evaluate the three-variate joint density
+slice = np.array([0,1,2])</p>
+<dl class="simple">
+<dt>(central_param_density, all_res) = evaluate_density(param = eval_param,</dt><dd><p>model = model,
+data = data,
+data_transformation = DataIdentity(), # no data transformatio,
+data_stdevs = data_stdevs,
+slice = slice)</p>
+</dd>
+</dl>
+<p># all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:
+eval_param = all_res[0:model.param_dim]
+sim_result = all_res[model.param_dim:model.param_dim+model.data_dim]
+central_param_density = all_res[-1]</p>
+</div></blockquote>
 </dd></dl>
 
 </section>

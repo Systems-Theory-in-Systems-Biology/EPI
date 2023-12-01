@@ -127,6 +127,9 @@
   <section id="module-eulerpi.core.kde">
 <span id="eulerpi-core-kde-module"></span><h1>eulerpi.core.kde module<a class="headerlink" href="#module-eulerpi.core.kde" title="Link to this heading"></a></h1>
 <p>This module provides functions to handle the Kernel Densitiy Estimation (<a class="reference external" href="https://en.wikipedia.org/wiki/Kernel_density_estimation">KDE</a>) in EPI.</p>
+<blockquote>
+<div><p>It is used in the EPI algorithm to <code class="xref py py-func docutils literal notranslate"><span class="pre">eulerpi.core.transformations.evaluate_density</span></code> of the transformed data distribution at the simulation results.</p>
+</div></blockquote>
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.kde.calc_kernel_width">
 <span class="sig-name descname"><span class="pre">calc_kernel_width</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="headerlink" href="#eulerpi.core.kde.calc_kernel_width" title="Link to this definition"></a></dt>
@@ -142,21 +145,33 @@
 <dd class="field-odd"><p>jnp.ndarray</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to always use 2D arrays as data, especially when the data dimension is only one.</p>
+<p>The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.</p>
+</div>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import jax.numpy as jnp
+from eulerpi.core.kde import calc_kernel_width</p>
+<p># create 4 data points of dimension 2 and store them in a numpy 2D array
+data = jnp.array([[0,0], [0,2], [1,0], [1,2]])</p>
+<p>scales = calc_kernel_width(data)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.kde.eval_kde_cauchy">
 <span class="sig-name descname"><span class="pre">eval_kde_cauchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Array</span></span></span><a class="headerlink" href="#eulerpi.core.kde.eval_kde_cauchy" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>Evaluates a Cauchy Kernel Density estimator in one or several simulation results.</dt><dd><p>Assumes that each data point is a potentially high-dimensional sample
-from a joint data distribution.
-This is for example given for time-series data, where each evaluation
-time is one dimension of the data point.
+<dd><p>Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
+Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
+This is for example given for time-series data, where each evaluation time is one dimension of the data point.
 In the following formula x are the evaluation points (sim_res) and y is the data.</p>
-<div class="math notranslate nohighlight">
+<blockquote>
+<div><div class="math notranslate nohighlight">
 \[density_{i} = \frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \frac{1}{(\frac{x_{i,d} - y_{s,d}}{scales_d})^2 \; \pi \; scales_d}\]</div>
-</dd>
-</dl>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -199,23 +214,21 @@ While it is possible to define different standard deviations for different measu
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Make sure to always use 2D arrays as data, especially when the data dimension is only one.</p>
-<p>The data object should be shaped (#Samples, 1) and not (#Samples,).</p>
+<p>The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
-
-<span class="c1"># create 4 data points of dimension 2 and store them in a numpy 2D array</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
-
-<span class="c1"># we intend to evaluate the kernel density estimator at the point (0.5, 0.5)</span>
-<span class="n">evaluation_coordinates</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
-
-<span class="c1"># the dimension-specific kernel bandwidths are set to 1</span>
-<span class="n">scales</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="n">kde_res</span> <span class="o">=</span> <span class="n">eval_kde_gauss</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">evaluation_coordinates</span><span class="p">,</span> <span class="n">scales</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import jax.numpy as jnp
+from eulerpi.core.kde import eval_kde_gauss</p>
+<p># create 4 data points of dimension 2 and store them in a numpy 2D array
+data = jnp.array([[0,0], [0,1], [1,0], [1,1]])</p>
+<p># we intend to evaluate the kernel density estimator at the point (0.5, 0.5)
+evaluation_coordinates = jnp.array([[0.5, 0.5]])</p>
+<p># the dimension-specific kernel bandwidths are set to 1
+scales = jnp.array([1,1])</p>
+<p>kde_res = eval_kde_gauss(data, evaluation_coordinates, scales)</p>
+</div></blockquote>
 </dd></dl>
 
 </section>

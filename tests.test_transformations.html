@@ -155,6 +155,38 @@
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.model import JaxModel
+from jax import vmap</p>
+<p># instantiate the heat model
+model = Heat()</p>
+<p># define a 3D example parameter for the heat model
+example_param = np.array([1.4, 1.6, 0.5])</p>
+<p># the forward simulation is achieved by using the forward method of the model
+sim_result = model.forward(example_param)</p>
+<p># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
+multiple_params = np.array([[1.5, 1.5, 0.5],</p>
+<blockquote>
+<div><p>[1.4, 1.4, 0.6],
+[1.6, 1.6, 0.4],
+model.central_param,
+[1.5, 1.4, 0.4]])</p>
+</div></blockquote>
+<p># try to use jax vmap to perform the forward pass on multiple parameters at once
+if isinstance(model, JaxModel):</p>
+<blockquote>
+<div><p>multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)</p>
+</div></blockquote>
+<p># if the model is not a jax model, we can use numpy vectorize to perform the forward pass
+else:</p>
+<blockquote>
+<div><p>multiple_sim_results = np.vectorize(model.forward, signature=”(n)-&gt;(m)”)(multiple_params)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">

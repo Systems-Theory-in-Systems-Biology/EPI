@@ -145,6 +145,8 @@
              
   <section id="module-eulerpi.core.data_transformation">
 <span id="eulerpi-core-data-transformation-module"></span><h1>eulerpi.core.data_transformation module<a class="headerlink" href="#module-eulerpi.core.data_transformation" title="Link to this heading"></a></h1>
+<p>Data transformations can be used to improve the performance of the <a class="reference internal" href="eulerpi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference</span></code></a> function by improving the quality of the kernel density estimate.</p>
+<p>This module contains all predefined data transformations and an abstract base class for custom data transformations.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="eulerpi.core.data_transformation.DataIdentity">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataIdentity</span></span><a class="headerlink" href="#eulerpi.core.data_transformation.DataIdentity" title="Link to this definition"></a></dt>
@@ -332,7 +334,9 @@
 <dt class="sig sig-object py" id="eulerpi.core.data_transformation.DataTransformation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DataTransformation</span></span><a class="headerlink" href="#eulerpi.core.data_transformation.DataTransformation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
-<p>Class for normalizing data. The data is normalized by subtracting the mean and multiplying by the inverse of the Cholesky decomposition of the covariance matrix.</p>
+<p>Abstract base class for all data transformations</p>
+<p>Data transformations can be used to improve the performance of the <a class="reference internal" href="eulerpi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference</span></code></a> function
+by improving the quality of the <a class="reference internal" href="eulerpi.core.kde.html#module-eulerpi.core.kde" title="eulerpi.core.kde"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kernel</span> <span class="pre">density</span> <span class="pre">estimate</span></code></a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.data_transformation.DataTransformation.jacobian">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="headerlink" href="#eulerpi.core.data_transformation.DataTransformation.jacobian" title="Link to this definition"></a></dt>
@@ -356,7 +360,21 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.data_transformation.DataTransformation.transform">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Array</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Array</span></span></span><a class="headerlink" href="#eulerpi.core.data_transformation.DataTransformation.transform" title="Link to this definition"></a></dt>
-<dd><p>Transform the given data.</p>
+<dd><p>Transform the given data point(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>jnp.ndarray</em>) – The data to be transformed. Columns correspond to different dimensions. Rows correspond to different observations.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised if the transform is not implemented in the subclass.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The transformed data point(s).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>jnp.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

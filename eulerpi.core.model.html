@@ -157,13 +157,13 @@
              
   <section id="module-eulerpi.core.model">
 <span id="eulerpi-core-model-module"></span><h1>eulerpi.core.model module<a class="headerlink" href="#module-eulerpi.core.model" title="Link to this heading"></a></h1>
+<p>Module containing an abstract base class and specialized subclasses for use with the EPI algorithm.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="eulerpi.core.model.ArtificialModelInterface">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ArtificialModelInterface</span></span><a class="headerlink" href="#eulerpi.core.model.ArtificialModelInterface" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
-and the corresponding artificial data dataset, which can be used to compare the results from eulerpi with the ground truth.
-The comparison can be done using the plotEmceeResults.</p>
+and the corresponding artificial data dataset, which can be used to compare the results from eulerpi with the ground truth.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.ArtificialModelInterface.generate_artificial_data">
 <span class="sig-name descname"><span class="pre">generate_artificial_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#eulerpi.core.model.ArtificialModelInterface.generate_artificial_data" title="Link to this definition"></a></dt>
@@ -210,11 +210,15 @@ The comparison can be done using the plotEmceeResults.</p>
 <dt class="sig sig-object py" id="eulerpi.core.model.JaxModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JaxModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.model.JaxModel" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
-<p>The JaxModel class automatically creates the jacobian method based on the forward method.
-Additionally it jit compiles the forward and jacobian method with jax.
-To use this class you have to implement your forward method using jax, e. g. jax.numpy.
+<p>The JaxModel is a base class for models using the JAX library.</p>
+<p>It automatically creates the jacobian method based on the forward method.
+Additionally it jit compiles the forward and jacobian method with jax for faster execution.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To use this class you have to implement your forward method using jax, e. g. jax.numpy.
 Dont overwrite the __init__ method of JaxModel without calling the super constructor.
 Else your forward method wont be jitted.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.JaxModel.forward_and_jacobian">
 <span class="sig-name descname"><span class="pre">forward_and_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.model.JaxModel.forward_and_jacobian" title="Link to this definition"></a></dt>
@@ -290,7 +294,10 @@ E.g. for: class CoronaArtificial(Corona)</p>
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Examples of model implementations can be found in the <a class="reference internal" href="examples.html"><span class="doc">Example Models</span></a>.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.Model.forward">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#eulerpi.core.model.Model.forward" title="Link to this definition"></a></dt>
@@ -306,13 +313,46 @@ E.g. for: class CoronaArtificial(Corona)</p>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.model import JaxModel
+from jax import vmap</p>
+<p># instantiate the heat model
+model = Heat()</p>
+<p># define a 3D example parameter for the heat model
+example_param = np.array([1.4, 1.6, 0.5])</p>
+<p># the forward simulation is achieved by using the forward method of the model
+sim_result = model.forward(example_param)</p>
+<p># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
+multiple_params = np.array([[1.5, 1.5, 0.5],</p>
+<blockquote>
+<div><p>[1.4, 1.4, 0.6],
+[1.6, 1.6, 0.4],
+model.central_param,
+[1.5, 1.4, 0.4]])</p>
+</div></blockquote>
+<p># try to use jax vmap to perform the forward pass on multiple parameters at once
+if isinstance(model, JaxModel):</p>
+<blockquote>
+<div><p>multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)</p>
+</div></blockquote>
+<p># if the model is not a jax model, we can use numpy vectorize to perform the forward pass
+else:</p>
+<blockquote>
+<div><p>multiple_sim_results = np.vectorize(model.forward, signature=”(n)-&gt;(m)”)(multiple_params)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.Model.forward_and_jacobian">
 <span class="sig-name descname"><span class="pre">forward_and_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.model.Model.forward_and_jacobian" title="Link to this definition"></a></dt>
 <dd><p>Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p>
+it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
+It can be vectorized in the same way as the forward and jacobian methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the jacobian should be evaluated.</p>
@@ -355,6 +395,37 @@ it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.fo
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.model import JaxModel
+from jax import vmap</p>
+<p># instantiate the heat model
+model = Heat()</p>
+<p># define a 3D example parameter for the heat model
+example_param = np.array([1.4, 1.6, 0.5])</p>
+<p>sim_jacobian = model.jacobian(example_param)</p>
+<p># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
+# This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</p>
+<dl class="simple">
+<dt>multiple_params = np.array([[1.5, 1.5, 0.5],</dt><dd><p>[1.4, 1.4, 0.6],
+model.central_param,
+[1.5, 1.4, 0.4]])</p>
+</dd>
+</dl>
+<p># try to use jax vmap for vectorization if possible
+if isinstance(model, JaxModel):</p>
+<blockquote>
+<div><p>multiple_sim_jacobians = vmap(model.jacobian, in_axes=0)(multiple_params)</p>
+</div></blockquote>
+<p># if the model is not a jax model, we can use numpy vectorize to vectorize
+else:</p>
+<blockquote>
+<div><p>multiple_sim_jacobians = np.vectorize(model.jacobian, signature=”(n)-&gt;(m)”)(multiple_params)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -422,13 +493,46 @@ Overwrite this function if your model has a more complex parameter domain than a
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.model import JaxModel
+from jax import vmap</p>
+<p># instantiate the heat model
+model = Heat()</p>
+<p># define a 3D example parameter for the heat model
+example_param = np.array([1.4, 1.6, 0.5])</p>
+<p># the forward simulation is achieved by using the forward method of the model
+sim_result = model.forward(example_param)</p>
+<p># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
+multiple_params = np.array([[1.5, 1.5, 0.5],</p>
+<blockquote>
+<div><p>[1.4, 1.4, 0.6],
+[1.6, 1.6, 0.4],
+model.central_param,
+[1.5, 1.4, 0.4]])</p>
+</div></blockquote>
+<p># try to use jax vmap to perform the forward pass on multiple parameters at once
+if isinstance(model, JaxModel):</p>
+<blockquote>
+<div><p>multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)</p>
+</div></blockquote>
+<p># if the model is not a jax model, we can use numpy vectorize to perform the forward pass
+else:</p>
+<blockquote>
+<div><p>multiple_sim_results = np.vectorize(model.forward, signature=”(n)-&gt;(m)”)(multiple_params)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.SBMLModel.forward_and_jacobian">
 <span class="sig-name descname"><span class="pre">forward_and_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#eulerpi.core.model.SBMLModel.forward_and_jacobian" title="Link to this definition"></a></dt>
 <dd><p>Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p>
+it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
+It can be vectorized in the same way as the forward and jacobian methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the jacobian should be evaluated.</p>
@@ -481,6 +585,37 @@ it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.fo
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.heat import Heat
+from eulerpi.core.model import JaxModel
+from jax import vmap</p>
+<p># instantiate the heat model
+model = Heat()</p>
+<p># define a 3D example parameter for the heat model
+example_param = np.array([1.4, 1.6, 0.5])</p>
+<p>sim_jacobian = model.jacobian(example_param)</p>
+<p># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
+# This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</p>
+<dl class="simple">
+<dt>multiple_params = np.array([[1.5, 1.5, 0.5],</dt><dd><p>[1.4, 1.4, 0.6],
+model.central_param,
+[1.5, 1.4, 0.4]])</p>
+</dd>
+</dl>
+<p># try to use jax vmap for vectorization if possible
+if isinstance(model, JaxModel):</p>
+<blockquote>
+<div><p>multiple_sim_jacobians = vmap(model.jacobian, in_axes=0)(multiple_params)</p>
+</div></blockquote>
+<p># if the model is not a jax model, we can use numpy vectorize to vectorize
+else:</p>
+<blockquote>
+<div><p>multiple_sim_jacobians = np.vectorize(model.jacobian, signature=”(n)-&gt;(m)”)(multiple_params)</p>
+</div></blockquote>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -492,7 +627,8 @@ it simply calls <a class="reference internal" href="#eulerpi.core.model.Model.fo
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.model.SBMLModel.setSensitivities">
 <span class="sig-name descname"><span class="pre">setSensitivities</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.model.SBMLModel.setSensitivities" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Tell the underlying amici solver to calculate sensitivities based on the attribute <cite>self.param_ids</cite></p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="eulerpi.core.model.SBMLModel.data_dim">

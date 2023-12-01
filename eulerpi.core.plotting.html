@@ -152,6 +152,29 @@ Uses burn_in and thinning accordinng to the simulation settings.</p>
 <dd class="field-odd"><p>axes</p>
 </dd>
 </dl>
+<p>Examples:
+.. code-block:: python</p>
+<blockquote>
+<div><p>import numpy as np
+from eulerpi.examples.corona import Corona
+from eulerpi.core.inference import inference
+from eulerpi.core.plotting import sample_violin_plot</p>
+<p># instantiate the Covid example model
+model = Corona()</p>
+<p># generate 1000 artificial, 4D data points for the Covid example model
+data_scales = np.array([1.0, 5.0, 35.0, 2.0])
+data = (np.random.rand(1000, 4)+1.0)*data_scales</p>
+<p># run inference only specifying the model and the data
+inference(model, data)</p>
+<p>sample_violin_plot(model)</p>
+<dl class="simple">
+<dt>sample_violin_plot(model,</dt><dd><p>reference_sample = data,
+what_to_plot = “data”,
+credibility_level = 0.99,
+axis_labels = [r”$1$”, r”$2$”, r”$5$”, r”$15$ weeks”])</p>
+</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 </section>

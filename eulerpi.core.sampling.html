@@ -66,10 +66,6 @@
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.plotting.html">Plotting</a></li>
 <li class="toctree-l6"><a class="reference internal" href="eulerpi.core.result_manager.html">Result Manager</a></li>
 <li class="toctree-l6 current"><a class="current reference internal" href="#">Sampling</a><ul>
-<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.NUM_RUNS"><code class="docutils literal notranslate"><span class="pre">NUM_RUNS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.NUM_WALKERS"><code class="docutils literal notranslate"><span class="pre">NUM_WALKERS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.NUM_STEPS"><code class="docutils literal notranslate"><span class="pre">NUM_STEPS</span></code></a></li>
-<li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.NUM_PROCESSES"><code class="docutils literal notranslate"><span class="pre">NUM_PROCESSES</span></code></a></li>
 <li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.calc_walker_acceptance"><code class="docutils literal notranslate"><span class="pre">calc_walker_acceptance()</span></code></a></li>
 <li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.evaluate_sample"><code class="docutils literal notranslate"><span class="pre">evaluate_sample()</span></code></a></li>
 <li class="toctree-l7"><a class="reference internal" href="#eulerpi.core.sampling.inference_mcmc"><code class="docutils literal notranslate"><span class="pre">inference_mcmc()</span></code></a></li>
@@ -131,52 +127,14 @@
              
   <section id="module-eulerpi.core.sampling">
 <span id="eulerpi-core-sampling-module"></span><h1>eulerpi.core.sampling module<a class="headerlink" href="#module-eulerpi.core.sampling" title="Link to this heading"></a></h1>
-<p>Sampling methods for the EPI package.</p>
-<p>This module provides functions to handle the sampling in EPI. It is based on the emcee package.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_RUNS">
-<span class="sig-name descname"><span class="pre">NUM_RUNS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_RUNS" title="Link to this definition"></a></dt>
-<dd><p>Default number of runs of the emcee sampler.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_WALKERS">
-<span class="sig-name descname"><span class="pre">NUM_WALKERS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_WALKERS" title="Link to this definition"></a></dt>
-<dd><p>Default number of walkers in the emcee sampler.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_STEPS">
-<span class="sig-name descname"><span class="pre">NUM_STEPS</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_STEPS" title="Link to this definition"></a></dt>
-<dd><p>Default number of steps each walker performs before storing the sub run.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="eulerpi.core.sampling.NUM_PROCESSES">
-<span class="sig-name descname"><span class="pre">NUM_PROCESSES</span></span><a class="headerlink" href="#eulerpi.core.sampling.NUM_PROCESSES" title="Link to this definition"></a></dt>
-<dd><p>Default number of parallel threads.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
+<p>Module implementing the <a class="reference internal" href="eulerpi.core.inference.html#eulerpi.core.inference.inference" title="eulerpi.core.inference.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference</span></code></a> with a Markov Chain Monte Carlo(MCMC) sampling.</p>
+<p>The inference with a sampling based approach approximates the the (joint/marginal) parameter distribution(s) by calculating a parameter Markov Chain
+using multiple walkers in parallel. This module is currently based on the emcee package.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The functions in this module are mainly intended for internal use and are accessed by <a class="reference internal" href="eulerpi.core.inference.html#module-eulerpi.core.inference" title="eulerpi.core.inference"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference</span></code></a> function.
+Read the documentation of <a class="reference internal" href="#eulerpi.core.sampling.inference_mcmc" title="eulerpi.core.sampling.inference_mcmc"><code class="xref py py-func docutils literal notranslate"><span class="pre">inference_mcmc</span></code></a> to learn more about the available options for the MCMC based inference.</p>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="eulerpi.core.sampling.calc_walker_acceptance">
 <span class="sig-name descname"><span class="pre">calc_walker_acceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_walkers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_burn_in_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager" title="eulerpi.core.result_manager.ResultManager"><span class="pre">ResultManager</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.core.sampling.calc_walker_acceptance" title="Link to this definition"></a></dt>
