@@ -61,9 +61,10 @@ def get_example_name(example):
     """Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k
 
     Args:
-      example:
+      example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)
 
     Returns:
+        str: name of the example
 
     """
     return example[1]
@@ -71,16 +72,7 @@ def get_example_name(example):
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)
 def test_model_requirements(example):
-    """Perform a simple sanity check on the model. It tests the following:
-    - The model has a positive parameter dimension
-    - The model has a positive data dimension
-    - The model has a valid combination of parameter and data dimension
-    - The central parameter has the correct shape
-    - The parameter limits have the correct shape
-    - The model can be instantiated
-    - The model forward pass can be calculated
-    - The model jacobi matrix can be calculated
-    - The return values of the forward pass and the jacobi matrix have the correct shape
+    """Perform a simple sanity check on the model.
 
     Args:
         example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)

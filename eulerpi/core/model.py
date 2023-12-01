@@ -1,3 +1,5 @@
+"""Module containing an abstract base class and specialized subclasses for use with the EPI algorithm."""
+
 import inspect
 import os
 import tempfile
@@ -32,7 +34,8 @@ class Model(ABC):
         param_limits(np.ndarray): Box limits for the parameters. The limits are given as a 2D array with shape (param_dim, 2). The parameter limits are used as limits as well as for the movement policy for MCMC sampling, and as boundaries for the grid when using grid-based inference. Overwrite the function param_is_within_domain if the domain is more complex than a box - the grid will still be build based on param_limits, but actual model evaluations only take place within the limits specified in param_is_within_domain. (Default value = None)
         name(str): The name of the model. The class name is used if no name is given. (Default value = None)
 
-    Examples of model implementations can be found in the :doc:`Example Models </examples>`.
+    .. note::
+        Examples of model implementations can be found in the :doc:`Example Models </examples>`.
     """
 
     param_dim: Optional[
@@ -194,7 +197,6 @@ class Model(ABC):
 class ArtificialModelInterface(ABC):
     """By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
     and the corresponding artificial data dataset, which can be used to compare the results from eulerpi with the ground truth.
-    The comparison can be done using the plotEmceeResults.
 
     """
 
@@ -263,12 +265,16 @@ def add_autodiff(_cls):
 
 
 class JaxModel(Model):
-    """The JaxModel class automatically creates the jacobian method based on the forward method.
-    Additionally it jit compiles the forward and jacobian method with jax.
-    To use this class you have to implement your forward method using jax, e. g. jax.numpy.
-    Dont overwrite the __init__ method of JaxModel without calling the super constructor.
-    Else your forward method wont be jitted.
+    """The JaxModel is a base class for models using the JAX library.
 
+    It automatically creates the jacobian method based on the forward method.
+    Additionally it jit compiles the forward and jacobian method with jax for faster execution.
+
+    .. note::
+
+        To use this class you have to implement your forward method using jax, e. g. jax.numpy.
+        Dont overwrite the __init__ method of JaxModel without calling the super constructor.
+        Else your forward method wont be jitted.
     """
 
     def __init__(
@@ -278,11 +284,6 @@ class JaxModel(Model):
         name: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Constructor of the JaxModel class.
-
-        Args:
-            name: str: The name of the model. If None the name of the class is used.
-        """
         super().__init__(
             central_param=central_param,
             param_limits=param_limits,
@@ -454,6 +455,7 @@ class SBMLModel(Model):
         self.amici_solver.setAbsoluteTolerance(1e-10)
 
     def setSensitivities(self):
+        """Tell the underlying amici solver to calculate sensitivities based on the attribute `self.param_ids`"""
         if self.param_ids == self.amici_model.getParameterIds():
             self.amici_model.requireSensitivitiesForAllParameters()
         else:

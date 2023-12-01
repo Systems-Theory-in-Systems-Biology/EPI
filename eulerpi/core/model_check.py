@@ -1,4 +1,4 @@
-"""Check models for implementation errors or test them in a quick inference run on an artificially created dataset."""
+"""Check a custom :py:class:`Model <eulerpi.core.model.Model>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
 
 import jax.numpy as jnp
 import numpy as np

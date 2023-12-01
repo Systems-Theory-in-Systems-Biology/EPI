@@ -1,16 +1,16 @@
-"""Sampling methods for the EPI package.
+"""Module implementing the :py:func:`inference <eulerpi.core.inference.inference>` with a Markov Chain Monte Carlo(MCMC) sampling.
 
-This module provides functions to handle the sampling in EPI. It is based on the emcee package.
+The inference with a sampling based approach approximates the the (joint/marginal) parameter distribution(s) by calculating a parameter Markov Chain
+using multiple walkers in parallel. This module is currently based on the emcee package.
 
 .. _emcee: https://emcee.readthedocs.io/en/stable/
 
-Attributes:
-    NUM_RUNS (int): Default number of runs of the emcee sampler.
-    NUM_WALKERS (int): Default number of walkers in the emcee sampler.
-    NUM_STEPS (int): Default number of steps each walker performs before storing the sub run.
-    NUM_PROCESSES (int): Default number of parallel threads.
+.. note::
 
+    The functions in this module are mainly intended for internal use and are accessed by :func:`inference <eulerpi.core.inference>` function.
+    Read the documentation of :func:`inference_mcmc <inference_mcmc>` to learn more about the available options for the MCMC based inference.
 """
+
 
 import typing
 from multiprocessing import get_context

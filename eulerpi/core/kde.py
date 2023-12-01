@@ -1,5 +1,7 @@
 """This module provides functions to handle the Kernel Densitiy Estimation (KDE_) in EPI.
 
+    It is used in the EPI algorithm to :py:func:`eulerpi.core.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the simulation results.
+
 
 .. _KDE: https://en.wikipedia.org/wiki/Kernel_density_estimation
 """

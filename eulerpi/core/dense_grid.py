@@ -1,3 +1,14 @@
+"""Module implementing the :py:func:`inference <eulerpi.core.inference.inference>` with a dense grid.
+
+The inference with a dense grid approximates the (joint/marginal) parameter distribution(s) on a dense grid.
+
+.. note::
+
+    The functions in this module are mainly intended for internal use and are accessed by :func:`inference <eulerpi.core.inference>` function.
+    Read the documentation of :func:`inference_dense_grid <eulerpi.core.dense_grid.inference_dense_grid>` to learn more
+    about the available options for the inference with a dense grid.
+"""
+
 import typing
 from itertools import repeat
 from multiprocessing import get_context
@@ -213,7 +224,7 @@ def inference_dense_grid(
     Dict[str, np.ndarray],
     ResultManager,
 ]:
-    """This function runs a dense grid evaluation for the given model and data. The grid points are distributed evenly over the parameter space.
+    """This function runs a dense grid inference for the given model and data.
 
     Args:
         model (Model): The model describing the mapping from parameters to data.
@@ -223,6 +234,7 @@ def inference_dense_grid(
         slices (np.ndarray): A list of slices to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
         num_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
+        dense_grid_type (DenseGridType, optional): The type of grid that should be used. Defaults to DenseGridType.EQUIDISTANT.
         load_balancing_safety_faktor (int, optional): Split the grid into num_processes * load_balancing_safety_faktor chunks. Defaults to 4.
 
     Returns:

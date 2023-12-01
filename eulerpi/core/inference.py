@@ -1,3 +1,5 @@
+"""The inference module provides the main interface to the eulerpi library in the form of the :py:func:`inference <inference>` function."""
+
 import os
 import pathlib
 from typing import Dict, Optional, Tuple, Union
@@ -40,7 +42,7 @@ def inference(
     Dict[str, np.ndarray],
     ResultManager,
 ]:
-    """Starts the parameter inference for the given model. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
+    """Starts the parameter inference for the given model and data.
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
