@@ -31,6 +31,9 @@ def basic_model_check(model: Model) -> None:
     Raises:
         AssertionError: Raised if any of the tests fails.
 
+    Returns:
+        None
+
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
@@ -132,6 +135,9 @@ def inference_model_check(
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
 
+    Returns:
+        None
+
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
@@ -228,9 +234,11 @@ def full_model_check(
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
 ) -> None:
-    """Check your model for basic functionality and in a quick inference run on an artificially created dataset.
+    """Perform all available checks on the model.
+
+    Check your model for basic functionality and in a quick inference run on an artificially created dataset.
     We recommend to run this function for every new model you create.
-    It runs the functions basic_model_check and inference_model_check to perform the checks.
+    It runs the functions :py:func:`basic_model_check <basic_model_check>` and :py:func:`inference_model_check <inference_model_check>` to perform the checks.
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
@@ -239,6 +247,9 @@ def full_model_check(
 
     Raises:
         AssertionError: Raised if any of the tests fails.
+
+    Returns:
+        None
 
     .. code-block:: python
 
