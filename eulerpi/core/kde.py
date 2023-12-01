@@ -1,5 +1,7 @@
 """This module provides functions to handle the Kernel Densitiy Estimation (KDE_) in EPI.
 
+    It is used in the EPI algorithm to :py:func:`eulerpi.core.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the simulation results.
+
 
 .. _KDE: https://en.wikipedia.org/wiki/Kernel_density_estimation
 """
@@ -15,12 +17,11 @@ from jax.scipy.stats import cauchy, norm
 def eval_kde_cauchy(
     data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
-    r"""Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
-        Assumes that each data point is a potentially high-dimensional sample
-        from a joint data distribution.
-        This is for example given for time-series data, where each evaluation
-        time is one dimension of the data point.
-        In the following formula x are the evaluation points (sim_res) and y is the data.
+    r"""
+    Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
+    Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
+    This is for example given for time-series data, where each evaluation time is one dimension of the data point.
+    In the following formula x are the evaluation points (sim_res) and y is the data.
 
         .. math::
             density_{i} = \frac{1}{samples} \sum_{s=1}^{samples} \prod_{d=1}^{dims} \frac{1}{(\frac{x_{i,d} - y_{s,d}}{scales_d})^2 \; \pi \; scales_d}
@@ -67,12 +68,13 @@ def eval_kde_gauss(
     .. note::
 
         Make sure to always use 2D arrays as data, especially when the data dimension is only one.\n
-        The data object should be shaped (#Samples, 1) and not (#Samples,).
+        The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
 
+    Examples:
     .. code-block:: python
 
         import jax.numpy as jnp
-        from eulerpi.core.transformations import eval_kde_gauss
+        from eulerpi.core.kde import eval_kde_gauss
 
         # create 4 data points of dimension 2 and store them in a numpy 2D array
         data = jnp.array([[0,0], [0,1], [1,0], [1,1]])
@@ -108,6 +110,22 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
 
     Returns:
         jnp.ndarray: kernel width for each data dimension, shape: (#MeasurementDimensions,)
+
+    .. note::
+
+        Make sure to always use 2D arrays as data, especially when the data dimension is only one.\n
+        The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
+
+    Examples:
+    .. code-block:: python
+
+        import jax.numpy as jnp
+        from eulerpi.core.kde import calc_kernel_width
+
+        # create 4 data points of dimension 2 and store them in a numpy 2D array
+        data = jnp.array([[0,0], [0,2], [1,0], [1,2]])
+
+        scales = calc_kernel_width(data)
 
     """
     num_data_points, data_dim = data.shape

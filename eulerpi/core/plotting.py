@@ -44,6 +44,33 @@ def sample_violin_plot(
 
     Returns:
         axes: The overview figure with all violin plots as a matplotlib axes object.
+
+    Examples:
+    .. code-block:: python
+
+        import numpy as np
+        from eulerpi.examples.corona import Corona
+        from eulerpi.core.inference import inference
+        from eulerpi.core.plotting import sample_violin_plot
+
+        # instantiate the Covid example model
+        model = Corona()
+
+        # generate 1000 artificial, 4D data points for the Covid example model
+        data_scales = np.array([1.0, 5.0, 35.0, 2.0])
+        data = (np.random.rand(1000, 4)+1.0)*data_scales
+
+        # run inference only specifying the model and the data
+        inference(model, data)
+
+        sample_violin_plot(model)
+
+        sample_violin_plot(model,
+                        reference_sample = data,
+                        what_to_plot = "data",
+                        credibility_level = 0.99,
+                        axis_labels = [r"$1$", r"$2$", r"$5$", r"$15$ weeks"])
+
     """
 
     # set figure font and color (also depending on what to plot)

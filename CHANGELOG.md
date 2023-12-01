@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 - Basic plotting function for sample results
 - Users can now check the models they want to use with a basic functionality check and a quick inference check on artificial data.
+- Added code usage examples to documentation.
 
 ### Changed
 
