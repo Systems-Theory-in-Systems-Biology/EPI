@@ -163,8 +163,6 @@ def inference(
         )
     data = data_transformation.transform(data)
 
-    # TODO rename std_dev to kernel_width, adapt calculation of kernel width
-
     slices = slices or [
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
