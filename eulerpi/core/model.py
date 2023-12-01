@@ -71,7 +71,7 @@ class Model(ABC):
 
     @abstractmethod
     def forward(self, param: np.ndarray) -> np.ndarray:
-        """Executed the forward pass of the model to obtain data from a parameter. You can also do equivalently :code:`model(param)`.
+        """Executed the forward pass of the model to obtain data from a parameter.
 
         Args:
             param(np.ndarray): The parameter for which the data should be generated.
