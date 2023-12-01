@@ -146,14 +146,14 @@ Therefore this function returns 0 if the result is not finite.</p>
 <dd class="field-odd"><p>jnp.double</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import jax.numpy as jnp
-from eulerpi.core.transformations import calc_gram_determinant</p>
-<p>jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
-pseudo_det = calc_gram_determinant(jac)</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">calc_gram_determinant</span>
+
+<span class="n">jac</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span>
+<span class="n">pseudo_det</span> <span class="o">=</span> <span class="n">calc_gram_determinant</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -204,38 +204,42 @@ pseudo_det = calc_gram_determinant(jac)</p>
 <dd class="field-odd"><p>Tuple[np.double, np.ndarray]</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.heat import Heat
-from eulerpi.core.kde import calc_kernel_width
-from eulerpi.core.data_transformation import DataIdentity
-from eulerpi.core.transformations import evaluate_density</p>
-<p># use the heat model
-model = Heat()</p>
-<p># generate 1000 artificial, 5D data points for the Heat example model
-data_mean = np.array([0.5, 0.1, 0.5, 0.9, 0.5])
-data = np.random.randn(1000, 5)/25.0 + data_mean</p>
-<p># evaluating the parameter probabiltiy density at the central parameter of the Heat model
-eval_param = model.central_param</p>
-<p># calculating the kernel widths for the data based on Silverman’s rule of thumb
-data_stdevs = calc_kernel_width(data)</p>
-<p># evaluate the three-variate joint density
-slice = np.array([0,1,2])</p>
-<dl class="simple">
-<dt>(central_param_density, all_res) = evaluate_density(param = eval_param,</dt><dd><p>model = model,
-data = data,
-data_transformation = DataIdentity(), # no data transformatio,
-data_stdevs = data_stdevs,
-slice = slice)</p>
-</dd>
-</dl>
-<p># all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:
-eval_param = all_res[0:model.param_dim]
-sim_result = all_res[model.param_dim:model.param_dim+model.data_dim]
-central_param_density = all_res[-1]</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="n">DataIdentity</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">evaluate_density</span>
+
+<span class="c1"># use the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># generate 1000 artificial, 5D data points for the Heat example model</span>
+<span class="n">data_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="mf">25.0</span> <span class="o">+</span> <span class="n">data_mean</span>
+
+<span class="c1"># evaluating the parameter probabiltiy density at the central parameter of the Heat model</span>
+<span class="n">eval_param</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
+
+<span class="c1"># calculating the kernel widths for the data based on Silverman&#39;s rule of thumb</span>
+<span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># evaluate the three-variate joint density</span>
+<span class="nb">slice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="p">(</span><span class="n">central_param_density</span><span class="p">,</span> <span class="n">all_res</span><span class="p">)</span> <span class="o">=</span> <span class="n">evaluate_density</span><span class="p">(</span><span class="n">param</span> <span class="o">=</span> <span class="n">eval_param</span><span class="p">,</span>
+                                                    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span>
+                                                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+                                                    <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataIdentity</span><span class="p">(),</span> <span class="c1"># no data transformatio,</span>
+                                                    <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">data_stdevs</span><span class="p">,</span>
+                                                    <span class="nb">slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">)</span>
+
+<span class="c1"># all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:</span>
+<span class="n">eval_param</span> <span class="o">=</span> <span class="n">all_res</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">]</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">all_res</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">:</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="o">+</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">]</span>
+<span class="n">central_param_density</span> <span class="o">=</span> <span class="n">all_res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

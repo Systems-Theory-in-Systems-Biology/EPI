@@ -313,38 +313,37 @@ E.g. for: class CoronaArtificial(Corona)</p>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.heat import Heat
-from eulerpi.core.model import JaxModel
-from jax import vmap</p>
-<p># instantiate the heat model
-model = Heat()</p>
-<p># define a 3D example parameter for the heat model
-example_param = np.array([1.4, 1.6, 0.5])</p>
-<p># the forward simulation is achieved by using the forward method of the model
-sim_result = model.forward(example_param)</p>
-<p># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
-multiple_params = np.array([[1.5, 1.5, 0.5],</p>
-<blockquote>
-<div><p>[1.4, 1.4, 0.6],
-[1.6, 1.6, 0.4],
-model.central_param,
-[1.5, 1.4, 0.4]])</p>
-</div></blockquote>
-<p># try to use jax vmap to perform the forward pass on multiple parameters at once
-if isinstance(model, JaxModel):</p>
-<blockquote>
-<div><p>multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)</p>
-</div></blockquote>
-<p># if the model is not a jax model, we can use numpy vectorize to perform the forward pass
-else:</p>
-<blockquote>
-<div><p>multiple_sim_results = np.vectorize(model.forward, signature=”(n)-&gt;(m)”)(multiple_params)</p>
-</div></blockquote>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># the forward simulation is achieved by using the forward method of the model</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once</span>
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to perform the forward pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -395,37 +394,37 @@ It can be vectorized in the same way as the forward and jacobian methods.</p>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.heat import Heat
-from eulerpi.core.model import JaxModel
-from jax import vmap</p>
-<p># instantiate the heat model
-model = Heat()</p>
-<p># define a 3D example parameter for the heat model
-example_param = np.array([1.4, 1.6, 0.5])</p>
-<p>sim_jacobian = model.jacobian(example_param)</p>
-<p># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
-# This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</p>
-<dl class="simple">
-<dt>multiple_params = np.array([[1.5, 1.5, 0.5],</dt><dd><p>[1.4, 1.4, 0.6],
-model.central_param,
-[1.5, 1.4, 0.4]])</p>
-</dd>
-</dl>
-<p># try to use jax vmap for vectorization if possible
-if isinstance(model, JaxModel):</p>
-<blockquote>
-<div><p>multiple_sim_jacobians = vmap(model.jacobian, in_axes=0)(multiple_params)</p>
-</div></blockquote>
-<p># if the model is not a jax model, we can use numpy vectorize to vectorize
-else:</p>
-<blockquote>
-<div><p>multiple_sim_jacobians = np.vectorize(model.jacobian, signature=”(n)-&gt;(m)”)(multiple_params)</p>
-</div></blockquote>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="n">sim_jacobian</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.</span>
+<span class="c1"># This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</span>
+
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap for vectorization if possible</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_jacobians</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to vectorize</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_jacobians</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -493,38 +492,37 @@ Overwrite this function if your model has a more complex parameter domain than a
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.heat import Heat
-from eulerpi.core.model import JaxModel
-from jax import vmap</p>
-<p># instantiate the heat model
-model = Heat()</p>
-<p># define a 3D example parameter for the heat model
-example_param = np.array([1.4, 1.6, 0.5])</p>
-<p># the forward simulation is achieved by using the forward method of the model
-sim_result = model.forward(example_param)</p>
-<p># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
-multiple_params = np.array([[1.5, 1.5, 0.5],</p>
-<blockquote>
-<div><p>[1.4, 1.4, 0.6],
-[1.6, 1.6, 0.4],
-model.central_param,
-[1.5, 1.4, 0.4]])</p>
-</div></blockquote>
-<p># try to use jax vmap to perform the forward pass on multiple parameters at once
-if isinstance(model, JaxModel):</p>
-<blockquote>
-<div><p>multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)</p>
-</div></blockquote>
-<p># if the model is not a jax model, we can use numpy vectorize to perform the forward pass
-else:</p>
-<blockquote>
-<div><p>multiple_sim_results = np.vectorize(model.forward, signature=”(n)-&gt;(m)”)(multiple_params)</p>
-</div></blockquote>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># the forward simulation is achieved by using the forward method of the model</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once</span>
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to perform the forward pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -585,37 +583,37 @@ It can be vectorized in the same way as the forward and jacobian methods.</p>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.heat import Heat
-from eulerpi.core.model import JaxModel
-from jax import vmap</p>
-<p># instantiate the heat model
-model = Heat()</p>
-<p># define a 3D example parameter for the heat model
-example_param = np.array([1.4, 1.6, 0.5])</p>
-<p>sim_jacobian = model.jacobian(example_param)</p>
-<p># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
-# This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</p>
-<dl class="simple">
-<dt>multiple_params = np.array([[1.5, 1.5, 0.5],</dt><dd><p>[1.4, 1.4, 0.6],
-model.central_param,
-[1.5, 1.4, 0.4]])</p>
-</dd>
-</dl>
-<p># try to use jax vmap for vectorization if possible
-if isinstance(model, JaxModel):</p>
-<blockquote>
-<div><p>multiple_sim_jacobians = vmap(model.jacobian, in_axes=0)(multiple_params)</p>
-</div></blockquote>
-<p># if the model is not a jax model, we can use numpy vectorize to vectorize
-else:</p>
-<blockquote>
-<div><p>multiple_sim_jacobians = np.vectorize(model.jacobian, signature=”(n)-&gt;(m)”)(multiple_params)</p>
-</div></blockquote>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="n">sim_jacobian</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># Similar to the forward pass, also the evaluation of the jacobian can be vectorized.</span>
+<span class="c1"># This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.</span>
+
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap for vectorization if possible</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_jacobians</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to vectorize</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_jacobians</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

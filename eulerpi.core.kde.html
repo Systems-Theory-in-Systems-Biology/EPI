@@ -150,15 +150,16 @@
 <p>Make sure to always use 2D arrays as data, especially when the data dimension is only one.</p>
 <p>The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.</p>
 </div>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import jax.numpy as jnp
-from eulerpi.core.kde import calc_kernel_width</p>
-<p># create 4 data points of dimension 2 and store them in a numpy 2D array
-data = jnp.array([[0,0], [0,2], [1,0], [1,2]])</p>
-<p>scales = calc_kernel_width(data)</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
+
+<span class="c1"># create 4 data points of dimension 2 and store them in a numpy 2D array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+
+<span class="n">scales</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -216,19 +217,22 @@ While it is possible to define different standard deviations for different measu
 <p>Make sure to always use 2D arrays as data, especially when the data dimension is only one.</p>
 <p>The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.</p>
 </div>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import jax.numpy as jnp
-from eulerpi.core.kde import eval_kde_gauss</p>
-<p># create 4 data points of dimension 2 and store them in a numpy 2D array
-data = jnp.array([[0,0], [0,1], [1,0], [1,1]])</p>
-<p># we intend to evaluate the kernel density estimator at the point (0.5, 0.5)
-evaluation_coordinates = jnp.array([[0.5, 0.5]])</p>
-<p># the dimension-specific kernel bandwidths are set to 1
-scales = jnp.array([1,1])</p>
-<p>kde_res = eval_kde_gauss(data, evaluation_coordinates, scales)</p>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
+
+<span class="c1"># create 4 data points of dimension 2 and store them in a numpy 2D array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="c1"># we intend to evaluate the kernel density estimator at the point (0.5, 0.5)</span>
+<span class="n">evaluation_coordinates</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="c1"># the dimension-specific kernel bandwidths are set to 1</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">kde_res</span> <span class="o">=</span> <span class="n">eval_kde_gauss</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">evaluation_coordinates</span><span class="p">,</span> <span class="n">scales</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

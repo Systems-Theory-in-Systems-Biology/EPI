@@ -152,29 +152,31 @@ Uses burn_in and thinning accordinng to the simulation settings.</p>
 <dd class="field-odd"><p>axes</p>
 </dd>
 </dl>
-<p>Examples:
-.. code-block:: python</p>
-<blockquote>
-<div><p>import numpy as np
-from eulerpi.examples.corona import Corona
-from eulerpi.core.inference import inference
-from eulerpi.core.plotting import sample_violin_plot</p>
-<p># instantiate the Covid example model
-model = Corona()</p>
-<p># generate 1000 artificial, 4D data points for the Covid example model
-data_scales = np.array([1.0, 5.0, 35.0, 2.0])
-data = (np.random.rand(1000, 4)+1.0)*data_scales</p>
-<p># run inference only specifying the model and the data
-inference(model, data)</p>
-<p>sample_violin_plot(model)</p>
-<dl class="simple">
-<dt>sample_violin_plot(model,</dt><dd><p>reference_sample = data,
-what_to_plot = “data”,
-credibility_level = 0.99,
-axis_labels = [r”$1$”, r”$2$”, r”$5$”, r”$15$ weeks”])</p>
-</dd>
-</dl>
-</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.corona</span> <span class="kn">import</span> <span class="n">Corona</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">inference</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.plotting</span> <span class="kn">import</span> <span class="n">sample_violin_plot</span>
+
+<span class="c1"># instantiate the Covid example model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Corona</span><span class="p">()</span>
+
+<span class="c1"># generate 1000 artificial, 4D data points for the Covid example model</span>
+<span class="n">data_scales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">35.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="n">data_scales</span>
+
+<span class="c1"># run inference only specifying the model and the data</span>
+<span class="n">inference</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="n">sample_violin_plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">sample_violin_plot</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">reference_sample</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+                <span class="n">what_to_plot</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                <span class="n">credibility_level</span> <span class="o">=</span> <span class="mf">0.99</span><span class="p">,</span>
+                <span class="n">axis_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$2$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$5$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$15$ weeks&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
