@@ -53,16 +53,19 @@ def sample_violin_plot(
         from eulerpi.core.inference import inference
         from eulerpi.core.plotting import sample_violin_plot
 
+        # instantiate the Covid example model
+        model = Corona()
+
         # generate 1000 artificial, 4D data points for the Covid example model
         data_scales = np.array([1.0, 5.0, 35.0, 2.0])
         data = (np.random.rand(1000, 4)+1.0)*data_scales
 
         # run inference only specifying the model and the data
-        inference(Corona(), data)
+        inference(model, data)
 
-        sample_violin_plot(Corona())
+        sample_violin_plot(model)
 
-        sample_violin_plot(Corona(),
+        sample_violin_plot(model,
                         reference_sample = data,
                         what_to_plot = "data",
                         credibility_level = 0.99,
