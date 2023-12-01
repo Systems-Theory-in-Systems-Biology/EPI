@@ -45,6 +45,7 @@ def sample_violin_plot(
     Returns:
         axes: The overview figure with all violin plots as a matplotlib axes object.
 
+    Examples:
     .. code-block:: python
 
         import numpy as np
@@ -57,7 +58,7 @@ def sample_violin_plot(
         data = (np.random.rand(1000, 4)+1.0)*data_scales
 
         # run inference only specifying the model and the data
-        (param_sample_dict, sim_res_sample_dict, desities_dict, _) = inference(Corona(), data)
+        inference(Corona(), data)
 
         sample_violin_plot(Corona())
 

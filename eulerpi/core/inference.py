@@ -60,7 +60,7 @@ def inference(
         Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
         evaluations for each slice and the result manager used for the inference.
 
-
+    Examples:
     Inference with eulerpi only requires the model and the data.
     The following example shows how to run inference for the Covid example model.
 

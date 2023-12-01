@@ -23,6 +23,7 @@ def basic_model_check(model: Model) -> None:
     Returns:
         None
 
+    Examples:
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
@@ -125,6 +126,7 @@ def inference_model_check(
     Returns:
         None
 
+    Examples:
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
@@ -232,6 +234,7 @@ def full_model_check(
     Returns:
         None
 
+    Examples:
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona

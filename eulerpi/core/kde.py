@@ -68,6 +68,7 @@ def eval_kde_gauss(
         Make sure to always use 2D arrays as data, especially when the data dimension is only one.\n
         The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
 
+    Examples:
     .. code-block:: python
 
         import jax.numpy as jnp
@@ -113,6 +114,7 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
         Make sure to always use 2D arrays as data, especially when the data dimension is only one.\n
         The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
 
+    Examples:
     .. code-block:: python
 
         import jax.numpy as jnp

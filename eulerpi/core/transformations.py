@@ -33,6 +33,7 @@ def evaluate_density(
             : parameter density at the point param
             : vector containing the parameter, the simulation result and the density
 
+    Examples:
     .. code-block:: python
 
         import numpy as np
@@ -173,6 +174,15 @@ def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
     Returns:
         jnp.double: The pseudo-determinant of the jacobian
 
+    Examples:
+    .. code-block:: python
+
+        import jax.numpy as jnp
+        from eulerpi.core.transformations import calc_gram_determinant
+
+        jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
+        pseudo_det = calc_gram_determinant(jac)
+
     """
     correction = _calc_gram_determinant(jac)
     # If the correction factor is not finite, return 0 instead to not affect the sampling.
@@ -194,15 +204,6 @@ def _calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
 
     Returns:
         jnp.double: The pseudo-determinant of the jacobian
-
-    .. code-block:: python
-
-        import jax.numpy as jnp
-        from eulerpi.core.transformations import calc_gram_determinant
-
-        jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
-        pseudo_det = calc_gram_determinant(jac)
-
     """
 
     jac = jnp.atleast_2d(jac)

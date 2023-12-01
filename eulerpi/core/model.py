@@ -76,6 +76,7 @@ class Model(ABC):
         Returns:
             np.ndarray: The data generated from the parameter.
 
+        Examples:
         .. code-block:: python
 
             import numpy as np
@@ -83,14 +84,16 @@ class Model(ABC):
             from eulerpi.core.model import JaxModel
             from jax import vmap
 
+            # instantiate the heat model
+            model = Heat()
+
             # define a 3D example parameter for the heat model
             example_param = np.array([1.4, 1.6, 0.5])
 
             # the forward simulation is achieved by using the forward method of the model
-            sim_result = Heat().forward(example_param)
+            sim_result = model.forward(example_param)
 
-            # in a more realistic scenario, we predefine the model and would like to perform the forward pass on multiple parameters at once
-            model = Heat()
+            # in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
             multiple_params = np.array([[1.5, 1.5, 0.5],
                                         [1.4, 1.4, 0.6],
                                         [1.6, 1.6, 0.4],
@@ -118,6 +121,7 @@ class Model(ABC):
         Returns:
             np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.core.model.Model.forward` method with respect to the parameters.
 
+        Examples:
         .. code-block:: python
 
             import numpy as np
@@ -125,16 +129,17 @@ class Model(ABC):
             from eulerpi.core.model import JaxModel
             from jax import vmap
 
+            # instantiate the heat model
+            model = Heat()
+
             # define a 3D example parameter for the heat model
             example_param = np.array([1.4, 1.6, 0.5])
 
-            sim_jacobian = Heat().jacobian(example_param)
-            print(sim_jacobian)
+            sim_jacobian = model.jacobian(example_param)
 
             # Similar to the forward pass, also the evaluation of the jacobian can be vectorized.
             # This yields a 3D array of shape (num_params, data_dim, param_dim) = (4,5,3) in this example.
 
-            model = Heat()
             multiple_params = np.array([[1.5, 1.5, 0.5],
                                         [1.4, 1.4, 0.6],
                                         model.central_param,
