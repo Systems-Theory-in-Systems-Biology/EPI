@@ -63,6 +63,7 @@ def inference(
         evaluations for each slice and the result manager used for the inference.
 
     Examples:
+
     Inference with eulerpi only requires the model and the data.
     The following example shows how to run inference for the Covid example model.
 

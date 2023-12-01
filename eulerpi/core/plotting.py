@@ -46,6 +46,7 @@ def sample_violin_plot(
         axes: The overview figure with all violin plots as a matplotlib axes object.
 
     Examples:
+
     .. code-block:: python
 
         import numpy as np

@@ -80,6 +80,7 @@ class Model(ABC):
             np.ndarray: The data generated from the parameter.
 
         Examples:
+
         .. code-block:: python
 
             import numpy as np
@@ -125,6 +126,7 @@ class Model(ABC):
             np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.core.model.Model.forward` method with respect to the parameters.
 
         Examples:
+
         .. code-block:: python
 
             import numpy as np

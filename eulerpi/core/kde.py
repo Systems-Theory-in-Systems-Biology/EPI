@@ -71,6 +71,7 @@ def eval_kde_gauss(
         The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
 
     Examples:
+
     .. code-block:: python
 
         import jax.numpy as jnp
@@ -117,6 +118,7 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
         The data object should be shaped (#Samples, 1) and not (#Samples,) in this case.
 
     Examples:
+
     .. code-block:: python
 
         import jax.numpy as jnp

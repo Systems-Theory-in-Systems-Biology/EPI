@@ -37,6 +37,7 @@ def evaluate_density(
             : vector containing the parameter, the simulation result and the density
 
     Examples:
+
     .. code-block:: python
 
         import numpy as np
@@ -181,6 +182,7 @@ def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
         jnp.double: The pseudo-determinant of the jacobian. Returns 0 if the result is not finite.
 
     Examples:
+
     .. code-block:: python
 
         import jax.numpy as jnp
