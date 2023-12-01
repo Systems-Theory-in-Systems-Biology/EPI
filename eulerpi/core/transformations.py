@@ -1,3 +1,6 @@
+"""This module implements the random variable transformation of the EPI algorithm.
+"""
+
 from typing import Tuple
 
 import jax.numpy as jnp
@@ -18,7 +21,7 @@ def evaluate_density(
     data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
-    """Given a simulation model, its derivative and corresponding data, evaluate the parameter density that is the backtransformed data distribution.
+    """Calculate the parameter density as backtransformed data density using the simulation model
 
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
@@ -139,8 +142,7 @@ def eval_log_transformed_density(
     data_stdevs: np.ndarray,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
-    """Given a simulation model, its derivative and corresponding data, evaluate the natural log of the parameter density that is the backtransformed data distribution.
-        This function is intended to be used with the emcee sampler and can be implemented more efficiently at some points.
+    """Calculate the logarithmical parameter density as backtransformed data density using the simulation model
 
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
@@ -165,14 +167,18 @@ def eval_log_transformed_density(
 
 
 def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
-    """Evaluate the pseudo-determinant of the jacobian (that serves as a correction term) in one specific parameter point.
-    Returns 0 if the correction factor is not finite.
+    """Evaluate the pseudo-determinant of the jacobian
+
+    .. warning::
+
+        The pseudo-determinant of the model jacobian serves as a correction term in the :py:func:`evaluate_density <evaluate_density>` function.
+        Therefore this function returns 0 if the result is not finite.
 
     Args:
       jac(jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
 
     Returns:
-        jnp.double: The pseudo-determinant of the jacobian
+        jnp.double: The pseudo-determinant of the jacobian. Returns 0 if the result is not finite.
 
     Examples:
     .. code-block:: python

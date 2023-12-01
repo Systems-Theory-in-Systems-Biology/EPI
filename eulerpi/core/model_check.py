@@ -1,3 +1,5 @@
+"""Check a custom :py:class:`Model <eulerpi.core.model.Model>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
+
 import jax.numpy as jnp
 import numpy as np
 from jax import vmap
@@ -8,7 +10,10 @@ from eulerpi.core.plotting import sample_violin_plot
 
 
 def basic_model_check(model: Model) -> None:
-    """Perform a simple sanity check on the model. It tests the following:
+    """Perform a simple sanity check on the model.
+
+    It tests the following:
+
     - The model has a positive parameter dimension
     - The model has a positive data dimension
     - The model has a valid combination of parameter and data dimension
@@ -18,8 +23,14 @@ def basic_model_check(model: Model) -> None:
     - The model forward pass can be calculated
     - The model jacobi matrix can be calculated
     - The return values of the forward pass and the jacobi matrix have the correct shape
+    - The jacobi matrix has full rank
+
     Args:
         model(Model): The model describing the mapping from parameters to data.
+
+    Raises:
+        AssertionError: Raised if any of the tests fails.
+
     Returns:
         None
 
@@ -117,12 +128,14 @@ def inference_model_check(
     num_model_evaluations: int = 11000,
 ) -> None:
     """Check your model in a quick inference run on an artificially created dataset.
+
     It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
+
     Returns:
         None
 
@@ -223,14 +236,20 @@ def full_model_check(
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
 ) -> None:
-    """Check your model for basic functionality and in a quick inference run on an artificially created dataset.
+    """Perform all available checks on the model.
+
+    Check your model for basic functionality and in a quick inference run on an artificially created dataset.
     We recommend to run this function for every new model you create.
-    It runs the functions basic_model_check and inference_model_check to perform the checks.
+    It runs the functions :py:func:`basic_model_check <basic_model_check>` and :py:func:`inference_model_check <inference_model_check>` to perform the checks.
 
     Args:
         model(Model): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
+
+    Raises:
+        AssertionError: Raised if any of the tests fails.
+
     Returns:
         None
 
