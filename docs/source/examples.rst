@@ -10,6 +10,7 @@ a sbml model; and a problem defined through external C++ code.
    
    1D-Temperature Model <examples/temperature_example>
    Corona ODE Model <examples/corona_example>
+   Heat Model <eulerpi.examples.heat.heat.rst>
    SBML Model <examples/sbml_example>
    External C++ Model <examples/cpp_example>
 
