@@ -1,9 +1,6 @@
 eulerpi.core package
 ====================
 
-Submodules
-----------
-
 .. toctree::
    :maxdepth: 4
 
@@ -21,11 +18,3 @@ Submodules
    Sampling<eulerpi.core.sampling>
    Sparse Grid<eulerpi.core.sparsegrid>
    Transformations<eulerpi.core.transformations>
-
-Module contents
----------------
-
-.. automodule:: eulerpi.core
-   :members:
-   :undoc-members:
-   :show-inheritance:
