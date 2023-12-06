@@ -1,5 +1,5 @@
-eulerpi.examples.temperature.temperature module
-===============================================
+Earth Temperature Model
+=======================
 
 .. automodule:: eulerpi.examples.temperature.temperature
    :members:

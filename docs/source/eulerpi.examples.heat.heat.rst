@@ -1,4 +1,4 @@
-Heat Model
+Heat Conduction Model
 =================================
 
 .. automodule:: eulerpi.examples.heat.heat

@@ -1,5 +1,5 @@
-eulerpi.examples.cpp.cpp\_plant module
-======================================
+C++ Plant Model
+===============
 
 .. automodule:: eulerpi.examples.cpp.cpp_plant
    :members:

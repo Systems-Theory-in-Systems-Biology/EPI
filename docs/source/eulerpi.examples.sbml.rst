@@ -1,16 +1,9 @@
 SBML Models
------------
+===========
+
 The :py:class:`~eulerpi.core.model.SBMLModel` loads a biological model from an external file written in the sbml standard format.
 It generates the forward and jacobian method automatically and derives the parameter and data dimension from the sbml model.
-
-The two example models are included in :file:`eulerpi/examples/sbml/`.
-
-
-Specialities
-____________
-
-* Super simple setup
-* No need to write any model code
+This allows for extremely fast prototyping of sbml models and no model specific code has to be written.
 
 Here's a code snippet to load your own sbml model and to do the parameter inference:
 
@@ -41,6 +34,10 @@ Per default it contains all parameters from the sbml model file.
     For the SBML Standard see https://sbml.org/.
     You can visualize sbml files with https://sbml4humans.de/.
 
-.. .. literalinclude:: ../../../eulerpi/examples/sbml/sbml_model.py
-..   :language: python
-..   :pyobject: MySBMLModel
+
+We provide two examples for sbml models:
+
+.. toctree::
+
+   Caffeine Model<eulerpi.examples.sbml.sbml_caffeine_model>
+   Menten Model<eulerpi.examples.sbml.sbml_menten_model>

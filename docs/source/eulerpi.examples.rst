@@ -10,6 +10,7 @@ Subpackages
    eulerpi.examples.corona
    eulerpi.examples.cpp
    eulerpi.examples.heat
+   eulerpi.examples.sbml
    eulerpi.examples.temperature
 
 Submodules
