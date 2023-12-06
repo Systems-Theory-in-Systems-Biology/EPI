@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_heat &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tests.test_heat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tests.test_heat</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span><span class="p">,</span> <span class="n">HeatArtificial</span>
+
+
+<div class="viewcode-block" id="test_heat_model">
+<a class="viewcode-back" href="../../tests.test_heat.html#tests.test_heat.test_heat_model">[docs]</a>
+<span class="k">def</span> <span class="nf">test_heat_model</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the heat model and plot the solution of a simple model problem.&quot;&quot;&quot;</span>
+    <span class="c1"># define the model</span>
+    <span class="n">heat_model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+    <span class="c1"># test the model</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">heat_model</span><span class="o">.</span><span class="n">perform_simulation</span><span class="p">(</span><span class="n">kappa</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]))</span>
+
+    <span class="c1"># build the grid</span>
+    <span class="n">y_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">y_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">Y_1</span><span class="p">,</span> <span class="n">Y_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y_1</span><span class="p">,</span> <span class="n">y_2</span><span class="p">)</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="c1"># Define the color map</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;#762a83&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#9970ab&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#c2a5cf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#e7d4e8&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#d9f0d3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#a6dba0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#5aae61&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#1b7837&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="s2">&quot;my_colormap&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+
+    <span class="c1"># plot the KDE: draw the function</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.8</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># draw the contour lines</span>
+    <span class="n">cset</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+        <span class="c1"># np.arange(np.min(u), np.max(u), (np.max(u) - np.min(u)) / 8),</span>
+        <span class="n">linewidths</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
+        <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">cset</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%1.2f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># draw the colorbar</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+
+    <span class="c1"># add pretty stuff</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Solution of the heat equation&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_1$&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$x_2$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="test_heat_artificial">
+<a class="viewcode-back" href="../../tests.test_heat.html#tests.test_heat.test_heat_artificial">[docs]</a>
+<span class="k">def</span> <span class="nf">test_heat_artificial</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the artificial data generation of the heat model.&quot;&quot;&quot;</span>
+    <span class="c1"># define the model</span>
+    <span class="n">heat_model</span> <span class="o">=</span> <span class="n">HeatArtificial</span><span class="p">()</span>
+    <span class="n">n_params</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="c1"># generate some artificial params</span>
+    <span class="n">artificial_params</span> <span class="o">=</span> <span class="n">heat_model</span><span class="o">.</span><span class="n">generate_artificial_params</span><span class="p">(</span><span class="n">n_params</span><span class="p">)</span>
+    <span class="c1"># check correct shape</span>
+    <span class="k">assert</span> <span class="n">artificial_params</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">heat_model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span>
+    <span class="c1"># check that all params are within the domain</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">heat_model</span><span class="o">.</span><span class="n">param_is_within_domain</span><span class="p">(</span><span class="n">artificial_params</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+    <span class="c1"># generate some artificial data</span>
+    <span class="n">artificial_data</span> <span class="o">=</span> <span class="n">heat_model</span><span class="o">.</span><span class="n">generate_artificial_data</span><span class="p">(</span><span class="n">artificial_params</span><span class="p">)</span>
+    <span class="c1"># check correct shape</span>
+    <span class="k">assert</span> <span class="n">artificial_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">heat_model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># TODO: possbly we should check this for all models in test_examples.py?</span>
+<span class="c1"># This test specifically exists because we had problems with the backpropagation in the heat model, where we received only zeros.</span>
+<div class="viewcode-block" id="test_heat_jacobian">
+<a class="viewcode-back" href="../../tests.test_heat.html#tests.test_heat.test_heat_jacobian">[docs]</a>
+<span class="k">def</span> <span class="nf">test_heat_jacobian</span><span class="p">():</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">HeatArtificial</span><span class="p">()</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">)</span>
+    <span class="n">res1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">res2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+    <span class="n">res3</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="p">]))</span>
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">)</span>
+
+    <span class="c1"># compare with finite differences</span>
+    <span class="n">jac_fd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">))</span>
+    <span class="n">jac_fd</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">res1</span> <span class="o">-</span> <span class="n">res</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+    <span class="n">jac_fd</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">res2</span> <span class="o">-</span> <span class="n">res</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+    <span class="n">jac_fd</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">res3</span> <span class="o">-</span> <span class="n">res</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">jac</span><span class="p">,</span> <span class="n">jac_fd</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+
+    <span class="c1"># Assert that the jacobian is not zero and that norm is larger than the same tolerance</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">jac</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-5</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

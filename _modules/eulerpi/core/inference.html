@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.inference &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.inference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.inference</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The inference module provides the main interface to the eulerpi library in the form of the :py:func:`inference &lt;inference&gt;` function.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DataIdentity</span><span class="p">,</span>
+    <span class="n">DataNormalizer</span><span class="p">,</span>
+    <span class="n">DataPCA</span><span class="p">,</span>
+    <span class="n">DataTransformation</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation_types</span> <span class="kn">import</span> <span class="n">DataTransformationType</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.dense_grid</span> <span class="kn">import</span> <span class="n">inference_dense_grid</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.sampling</span> <span class="kn">import</span> <span class="n">inference_mcmc</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.sparsegrid</span> <span class="kn">import</span> <span class="n">inference_sparse_grid</span>
+
+
+<div class="viewcode-block" id="inference">
+<a class="viewcode-back" href="../../../eulerpi.core.inference.html#eulerpi.core.inference.inference">[docs]</a>
+<span class="k">def</span> <span class="nf">inference</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">inference_type</span><span class="p">:</span> <span class="n">InferenceType</span> <span class="o">=</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">,</span>
+    <span class="n">slices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default_run&quot;</span><span class="p">,</span>
+    <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">continue_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformationType</span> <span class="o">=</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Normalize</span><span class="p">,</span>
+    <span class="n">custom_data_transformation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataTransformation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_components_pca</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">ResultManager</span><span class="p">,</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts the parameter inference for the given model and data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.</span>
+<span class="sd">        inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)</span>
+<span class="sd">        slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)</span>
+<span class="sd">        num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = Non)</span>
+<span class="sd">        run_name(str): The name of the run. (Default value = &quot;default_run&quot;)</span>
+<span class="sd">        result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)</span>
+<span class="sd">        continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)</span>
+<span class="sd">        data_transformation(DataTransformationType): The type of data transformation to use. (Default value = DataTransformationType.Normalize)</span>
+<span class="sd">        custom_data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)</span>
+<span class="sd">        n_components_pca(int, optional): If using the PCA as data_transformation, selects how many dimensions are kept in the pca. Per default the number of dimensions equals the dimension of the parameter space. (Default value = None)</span>
+<span class="sd">        **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density</span>
+<span class="sd">        evaluations for each slice and the result manager used for the inference.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    Inference with eulerpi only requires the model and the data.</span>
+<span class="sd">    The following example shows how to run inference for the Covid example model.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.inference import inference</span>
+
+<span class="sd">        # generate 1000 artificial, 4D data points for the Covid example model</span>
+<span class="sd">        data_scales = np.array([1.0, 5.0, 35.0, 2.0])</span>
+<span class="sd">        data = (np.random.rand(1000, 4)+1.0)*data_scales</span>
+
+<span class="sd">        # run inference only specifying the model and the data</span>
+<span class="sd">        (param_sample_dict, sim_res_sample_dict, desities_dict, _) = inference(Corona(), data)</span>
+
+<span class="sd">        # retrieve (for instance) the parameter samples by evaluating the parameter sample dictionary in the slice Q0Q1Q2 corresponding to all three joint parameter dimensions</span>
+<span class="sd">        param_sample = param_sample_dict[&quot;Slice_Q0Q1Q2&quot;]</span>
+
+<span class="sd">    Of course, you can also specify additional parameters and import data from a file Data/Coronoa/data.csv.</span>
+<span class="sd">    In addition, the result manager is a convenient and versatile interface to access the inference results.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.inference import inference</span>
+
+<span class="sd">        # run inference with additional arguments</span>
+<span class="sd">        (_, _, _, res_manager) = inference(Corona(),</span>
+<span class="sd">                                        data = &quot;pathto/data.csv&quot;, # load data from a csv file location</span>
+<span class="sd">                                        num_processes = 8, # use 8 processes in parallelization</span>
+<span class="sd">                                        run_name = &quot;second_run&quot;, # specify the run</span>
+<span class="sd">                                        num_walkers = 50, # use 50 walkers during sampling</span>
+<span class="sd">                                        num_steps = 200, # each walker performs 200 steps</span>
+<span class="sd">                                        num_burn_in_samples = 20, # discard the first 20 steps of each walker</span>
+<span class="sd">                                        thinning_factor = 10) # only use every 10th sample to avoid autocorrelation</span>
+
+<span class="sd">        # use the result manager to retreive the inference results</span>
+<span class="sd">        param_sample, sim_res_sample, density_evals = res_manager.load_slice_inference_results(slice = np.array([0,1,2]))</span>
+
+<span class="sd">    Principle Compoonent Analysis (PCA) can be useful to reduce the dimension of the data space and is supported by eulerpi.</span>
+<span class="sd">    Grid based parameter density estimation is especially useful whenever parameter dimension can be assumed to be indepedent.</span>
+<span class="sd">    In the following example, we assume parameter dimension 2 to be independent from dimensions 0 and 1.</span>
+<span class="sd">    Therefore, we compute the joint density of dimensions 0 and 1 and the marginal density of dimension 2.</span>
+<span class="sd">    Please note, that specifying 30 grid points for a 2D density estimation results in 900 grid points in total.</span>
+<span class="sd">    The result manager is especially useful to access already computed inference results and only requires the model and run name.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.inference import inference, InferenceType</span>
+<span class="sd">        from eulerpi.core.data_transformation_types import DataTransformationType</span>
+<span class="sd">        from eulerpi.core.result_manager import ResultManager</span>
+
+<span class="sd">        inference(Corona(),</span>
+<span class="sd">                data = &quot;pathto/data.csv&quot;,</span>
+<span class="sd">                slices = [np.array([0,1]), np.array([2])], # specify joint and marginal parameter subdistributions we are interested in</span>
+<span class="sd">                inference_type = InferenceType.DENSE_GRID, # use dense grid inference</span>
+<span class="sd">                run_name = &quot;grid_run&quot;,</span>
+<span class="sd">                data_transformation = DataTransformationType.PCA, # perform PCA on the data before inference</span>
+<span class="sd">                num_grid_points = 30) # use 30 grid points per parameter dimension</span>
+
+<span class="sd">        # initiate the result manager using the model and run name to retreive the inference results computed above and stored offline</span>
+<span class="sd">        grid_res_manager = ResultManager(model_name = Corona().name, run_name = &quot;grid_run&quot;)</span>
+
+<span class="sd">        # load the inference results for the joint distribution of parameter dimensions 0 and 1</span>
+<span class="sd">        param_grid_dim01, sim_res_grid_dim01, density_evals_dim01 = grid_res_manager.load_slice_inference_results(slice = np.array([0,1]))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load data from file if necessary</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The data argument must be a path to a file or a numpy array. The argument passed was of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Transform the data</span>
+    <span class="k">if</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Identity</span><span class="p">:</span>
+        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataIdentity</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Normalize</span><span class="p">:</span>
+        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataNormalizer</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">PCA</span><span class="p">:</span>
+        <span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components_pca</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span>
+        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataPCA</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Custom</span><span class="p">:</span>
+        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">custom_data_transformation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">custom_data_transformation</span><span class="p">,</span> <span class="n">DataTransformation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The custom_data_transformation must be an instance of a subclass from DataTransformation. It is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data_transformation</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;The data_transformation must be one of the enum values of DataTransformationType.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data_transformation</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">slices</span> <span class="o">=</span> <span class="n">slices</span> <span class="ow">or</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span>
+    <span class="p">]</span>  <span class="c1"># If no slice is given, compute full joint distribution, i.e. a slice with all parameters</span>
+    <span class="n">result_manager</span> <span class="o">=</span> <span class="n">result_manager</span> <span class="ow">or</span> <span class="n">ResultManager</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">slices</span>
+    <span class="p">)</span>  <span class="c1"># If no result_manager is given, create one with default paths</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">continue_sampling</span><span class="p">:</span>
+        <span class="n">result_manager</span><span class="o">.</span><span class="n">delete_application_folder_structure</span><span class="p">()</span>
+    <span class="n">result_manager</span><span class="o">.</span><span class="n">create_application_folder_structure</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">num_processes</span><span class="p">:</span>
+        <span class="n">num_processes</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(</span><span class="n">logical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">DENSE_GRID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inference_dense_grid</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">data_transformation</span><span class="o">=</span><span class="n">data_transformation</span><span class="p">,</span>
+            <span class="n">result_manager</span><span class="o">=</span><span class="n">result_manager</span><span class="p">,</span>
+            <span class="n">slices</span><span class="o">=</span><span class="n">slices</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inference_mcmc</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">data_transformation</span><span class="o">=</span><span class="n">data_transformation</span><span class="p">,</span>
+            <span class="n">result_manager</span><span class="o">=</span><span class="n">result_manager</span><span class="p">,</span>
+            <span class="n">slices</span><span class="o">=</span><span class="n">slices</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">SPARSE_GRID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inference_sparse_grid</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">data_transformation</span><span class="o">=</span><span class="n">data_transformation</span><span class="p">,</span>
+            <span class="n">result_manager</span><span class="o">=</span><span class="n">result_manager</span><span class="p">,</span>
+            <span class="n">slices</span><span class="o">=</span><span class="n">slices</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The inference type </span><span class="si">{</span><span class="n">inference_type</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

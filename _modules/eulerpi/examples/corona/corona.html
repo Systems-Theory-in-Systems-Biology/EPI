@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Corona ODE Model &mdash; EPI  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <title>eulerpi.examples.corona.corona &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="SBML Models" href="sbml_example.html" />
-    <link rel="prev" title="Temperature Model" href="temperature_example.html" /> 
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,12 +32,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
+          <a href="../../../../index.html" class="icon icon-home">
             EPI
-              <img src="../_static/epi.png" class="logo" alt="Logo"/>
+              <img src="../../../../_static/epi.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -48,24 +45,15 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../eulerpi.core.html">Core API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Example Models</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="temperature_example.html">1D-Temperature Model</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Corona ODE Model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#specialities">Specialities</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="sbml_example.html">SBML Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cpp_example.html">External C++ Model</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -74,18 +62,17 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">EPI</a>
+          <a href="../../../../index.html">EPI</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../examples.html">Example Models</a></li>
-      <li class="breadcrumb-item active">Corona ODE Model</li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.examples.corona.corona</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/examples/corona_example.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -93,20 +80,46 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="corona-ode-model">
-<h1>Corona ODE Model<a class="headerlink" href="#corona-ode-model" title="Link to this heading"></a></h1>
-<p>A corona ode model is contained in <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/corona/corona.py</span></code>.</p>
-<section id="specialities">
-<h2>Specialities<a class="headerlink" href="#specialities" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>ODE solver: To solve the ODE problem the jax based ode solver library <code class="code docutils literal notranslate"><span class="pre">diffrax</span></code> is used: <a class="reference external" href="https://github.com/patrick-kidger/diffrax">https://github.com/patrick-kidger/diffrax</a>.</p></li>
-<li><p>Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>,
-which automatically calculates sets <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.</p></li>
-<li><p>JIT compilation: Inheriting from <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a> also enables jit compilation / optimization for the forward and jacobian method.
-This usually results in a significant execution speedup. It also allows to run your model on the gpu.</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Corona</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+  <h1>Source code for eulerpi.examples.corona.corona</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">diffrax</span> <span class="k">as</span> <span class="nn">dx</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">JaxModel</span>
+
+
+<div class="viewcode-block" id="Corona">
+<a class="viewcode-back" href="../../../../eulerpi.examples.corona.corona.html#eulerpi.examples.corona.corona.Corona">[docs]</a>
+<span class="k">class</span> <span class="nc">Corona</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describes the dynamics of the corona virus.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        :nowrap:</span>
+
+<span class="sd">        \\begin{eqnarray}</span>
+<span class="sd">            \\frac{d[S]}{dt} = &amp; -q_1[S][I] \\\\</span>
+<span class="sd">            \\frac{d[E]}{dt} = &amp; q_1[S][I] - q_2[E] \\\\</span>
+<span class="sd">            \\frac{d[I]}{dt}= &amp; q_2[E] - q_3[I] \\\\</span>
+<span class="sd">            \\frac{d[R]}{dt}= &amp; q_3[I]</span>
+<span class="sd">        \\end{eqnarray}</span>
+
+<span class="sd">    subject to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        {\\left([S](t=0), \\ [E](t=0), \\ [I](t=0), \\ [R](t=0)\\right)}^\\intercal= \\left(999, \\ 0, \\ 1, \\ 0\\right)^\\intercal,</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        * ODE Solver: To solve the ODE problem the jax based ode solver library :code:`diffrax` is used: https://github.com/patrick-kidger/diffrax.</span>
+<span class="sd">        * Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class :py:class:`~eulerpi.core.model.JaxModel`,</span>
+<span class="sd">          which automatically calculates sets :py:meth:`~eulerpi.core.model.Model.jacobian`.</span>
+<span class="sd">        * JIT compilation: Inheriting from :py:class:`~eulerpi.core.model.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.</span>
+<span class="sd">          This usually results in a significant execution speedup. It also allows to run your model on the gpu.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">4</span>
@@ -123,6 +136,8 @@ This usually results in a significant execution speedup. It also allows to run y
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Corona.forward">
+<a class="viewcode-back" href="../../../../eulerpi.examples.corona.corona.html#eulerpi.examples.corona.corona.Corona.forward">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">log_param</span><span class="p">):</span>
         <span class="n">param</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">log_param</span><span class="p">)</span>
@@ -159,19 +174,43 @@ This usually results in a significant execution speedup. It also allows to run y
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ODE solution not possible!&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
-</pre></div>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span></div>
 </div>
-</section>
-</section>
 
+
+
+<div class="viewcode-block" id="CoronaArtificial">
+<a class="viewcode-back" href="../../../../eulerpi.examples.corona.corona.html#eulerpi.examples.corona.corona.CoronaArtificial">[docs]</a>
+<span class="k">class</span> <span class="nc">CoronaArtificial</span><span class="p">(</span><span class="n">Corona</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]])</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Corona</span><span class="o">.</span><span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CoronaArtificial.generate_artificial_params">
+<a class="viewcode-back" href="../../../../eulerpi.examples.corona.corona.html#eulerpi.examples.corona.corona.CoronaArtificial.generate_artificial_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">])</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+
+        <span class="n">true_param_sample</span> <span class="o">=</span> <span class="n">lower_bound</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">upper_bound</span> <span class="o">-</span> <span class="n">lower_bound</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">true_param_sample</span></div>
+</div>
+
+</pre></div>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="temperature_example.html" class="btn btn-neutral float-left" title="Temperature Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sbml_example.html" class="btn btn-neutral float-right" title="SBML Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

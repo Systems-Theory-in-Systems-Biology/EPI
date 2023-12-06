@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.model_check &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.model_check</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.model_check</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Check a custom :py:class:`Model &lt;eulerpi.core.model.Model&gt;` for implementation errors or test them in a quick inference run on an artificially created dataset.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.plotting</span> <span class="kn">import</span> <span class="n">sample_violin_plot</span>
+
+
+<div class="viewcode-block" id="basic_model_check">
+<a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.basic_model_check">[docs]</a>
+<span class="k">def</span> <span class="nf">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a simple sanity check on the model.</span>
+
+<span class="sd">    It tests the following:</span>
+
+<span class="sd">    - The model has a positive parameter dimension</span>
+<span class="sd">    - The model has a positive data dimension</span>
+<span class="sd">    - The model has a valid combination of parameter and data dimension</span>
+<span class="sd">    - The central parameter has the correct shape</span>
+<span class="sd">    - The parameter limits have the correct shape</span>
+<span class="sd">    - The model can be instantiated</span>
+<span class="sd">    - The model forward pass can be calculated</span>
+<span class="sd">    - The model jacobi matrix can be calculated</span>
+<span class="sd">    - The return values of the forward pass and the jacobi matrix have the correct shape</span>
+<span class="sd">    - The jacobi matrix has full rank</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: Raised if any of the tests fails.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.model_check import basic_model_check</span>
+
+<span class="sd">        basic_model_check(Corona())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Checking model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> at location </span><span class="se">\n</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">for basic functionality.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># test the shapes</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a non-positive parameter dimension&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a non-positive data dimension&quot;</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span> <span class="o">&gt;=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a data dimension smaller than the parameter dimension. &quot;</span>
+        <span class="s2">&quot;This is not supported by the inference.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a central parameter with the wrong shape. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has parameter limits with the wrong shape. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Successfully checked shapes and dimensions of model attributes.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Evaluate model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> and its jacobian in its central parameter </span><span class="se">\n</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">model_forward</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,)</span>
+        <span class="ow">or</span> <span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()</span>
+    <span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a forward function with the wrong shape. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,)</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="p">()</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">model_jac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,))</span>
+        <span class="ow">or</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,))</span>
+    <span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> has a jacobian function with the wrong shape. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,)</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">,)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># check rank of jacobian</span>
+    <span class="k">assert</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">model_jac</span><span class="p">)</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The Jacobian of the model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> does not have full rank. This is a requirement for the inference. &quot;</span>
+        <span class="s2">&quot;Please check the model implementation.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">fw</span><span class="p">,</span> <span class="n">jc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward_and_jacobian</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">fw</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The shape </span><span class="si">{</span><span class="n">fw</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> of the forward function extracted from the forward_and_jacobian function does not match the shape </span><span class="si">{</span><span class="n">model_forward</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> of the forward function. &quot;</span>
+        <span class="s2">&quot;Please check the model implementation.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">jc</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The shape </span><span class="si">{</span><span class="n">jc</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> of the jacobian extracted from the forward_and_jacobian function does not match the shape </span><span class="si">{</span><span class="n">model_jac</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> of the jacobian. &quot;</span>
+        <span class="s2">&quot;Please check the model implementation.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">jnp</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fw</span><span class="p">,</span> <span class="n">model_forward</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The forward function of the model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> does not match the forward function extracted from the forward_and_jacobian function. &quot;</span>
+        <span class="s2">&quot;Please check the model implementation.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">jnp</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">jc</span><span class="p">,</span> <span class="n">model_jac</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The jacobian of the model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> does not match the jacobian extracted from the forward_and_jacobian function. &quot;</span>
+        <span class="s2">&quot;Please check the model implementation.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;Successfully checked model forward simulation and corresponding jacobian.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="inference_model_check">
+<a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.inference_model_check">[docs]</a>
+<span class="k">def</span> <span class="nf">inference_model_check</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">num_model_evaluations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check your model in a quick inference run on an artificially created dataset.</span>
+
+<span class="sd">    It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)</span>
+<span class="sd">        num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.model_check import inference_model_check</span>
+
+<span class="sd">        inference_model_check(Corona())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Checking model </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> at location </span><span class="se">\n</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">for inference functionality on artificially created data.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># create artificial parametrs similar to how we create initial walker positions for emcee sampling</span>
+
+    <span class="n">central_param</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
+    <span class="n">param_limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
+
+    <span class="c1"># sample parameters from a uniform distribution around the central parameter and between the parameter limits</span>
+    <span class="n">d_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+        <span class="n">central_param</span> <span class="o">-</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_param</span>
+    <span class="p">)</span>
+    <span class="n">param_sample</span> <span class="o">=</span> <span class="n">central_param</span> <span class="o">+</span> <span class="n">d_min</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="p">)</span>
+
+    <span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+        <span class="n">data_sample</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">param_sample</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span>
+            <span class="n">param_sample</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Successfully created an artificial data set of size </span><span class="si">{</span><span class="n">num_data_points</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># choose sensible values for the sampling hyper-parameters and print them</span>
+    <span class="n">num_inference_evaluations</span> <span class="o">=</span> <span class="n">num_model_evaluations</span> <span class="o">-</span> <span class="n">num_data_points</span>
+
+    <span class="n">num_walkers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">num_inference_evaluations</span> <span class="o">/</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_inference_evaluations</span> <span class="o">/</span> <span class="n">num_walkers</span><span class="p">)</span>
+
+    <span class="n">num_burn_in_samples</span> <span class="o">=</span> <span class="n">num_walkers</span>
+    <span class="n">thinning_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">num_walkers</span> <span class="o">/</span> <span class="mi">10</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Attempting inference with hyperparameters chosen as follows:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_data_points: </span><span class="si">{</span><span class="n">num_data_points</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_walkers: </span><span class="si">{</span><span class="n">num_walkers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_steps: </span><span class="si">{</span><span class="n">num_steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_burn_in_samples: </span><span class="si">{</span><span class="n">num_burn_in_samples</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;thinning_factor: </span><span class="si">{</span><span class="n">thinning_factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">run_name</span> <span class="o">=</span> <span class="s2">&quot;test_model_run&quot;</span>
+
+    <span class="c1"># perform the inference</span>
+    <span class="n">inference</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data_sample</span><span class="p">,</span>
+        <span class="n">inference_type</span><span class="o">=</span><span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">,</span>
+        <span class="n">slices</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)],</span>
+        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+        <span class="n">num_runs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_walkers</span><span class="o">=</span><span class="n">num_walkers</span><span class="p">,</span>
+        <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+        <span class="n">num_burn_in_samples</span><span class="o">=</span><span class="n">num_burn_in_samples</span><span class="p">,</span>
+        <span class="n">thinning_factor</span><span class="o">=</span><span class="n">thinning_factor</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Successfully finishes inference run with </span><span class="si">{</span><span class="n">num_walkers</span><span class="o">*</span><span class="n">num_steps</span><span class="si">}</span><span class="s2"> samples.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># plot the results</span>
+    <span class="n">sample_violin_plot</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">reference_sample</span><span class="o">=</span><span class="n">param_sample</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+        <span class="n">credibility_level</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span>
+        <span class="n">what_to_plot</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sample_violin_plot</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">reference_sample</span><span class="o">=</span><span class="n">data_sample</span><span class="p">,</span>
+        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+        <span class="n">credibility_level</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span>
+        <span class="n">what_to_plot</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="full_model_check">
+<a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.full_model_check">[docs]</a>
+<span class="k">def</span> <span class="nf">full_model_check</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">num_model_evaluations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform all available checks on the model.</span>
+
+<span class="sd">    Check your model for basic functionality and in a quick inference run on an artificially created dataset.</span>
+<span class="sd">    We recommend to run this function for every new model you create.</span>
+<span class="sd">    It runs the functions :py:func:`basic_model_check &lt;basic_model_check&gt;` and :py:func:`inference_model_check &lt;inference_model_check&gt;` to perform the checks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)</span>
+<span class="sd">        num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: Raised if any of the tests fails.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from eulerpi.examples.corona import Corona</span>
+<span class="sd">        from eulerpi.core.model_check import full_model_check</span>
+
+<span class="sd">        full_model_check(Corona())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">inference_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">num_data_points</span><span class="p">,</span> <span class="n">num_model_evaluations</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

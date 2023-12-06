@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.sparsegrid &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.sparsegrid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.sparsegrid</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; This module provides functions to handle create Sparse Grids (SGs_) and work with them.</span>
+<span class="sd">    All pure SG functions are defined on the unit hypercube $[0,1]^d$.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        The inference with this class is not tested and not recommended for use!</span>
+
+<span class="sd">.. _SGs: https://en.wikipedia.org/wiki/Sparse_grid</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">evaluate_density</span>
+
+
+<div class="viewcode-block" id="basis_1d">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.basis_1d">[docs]</a>
+<span class="k">def</span> <span class="nf">basis_1d</span><span class="p">(</span>
+    <span class="n">points1D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centre1D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a 1D hat function in an array of doubles. The hat is centered around centre1D</span>
+<span class="sd">    and the hat&#39;s level defines its support. The support shrinks exponentially with growing level and a level of 0 is equivalent with full support on [0,1].</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points1D(np.ndarray): The points at which the hat function should be evaluated.</span>
+<span class="sd">        centre1D(np.double): The centre of the hat function.</span>
+<span class="sd">        level(int): The level of the hat function. The level defines the support of the hat function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The hat function evaluated at the given points.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">points1D</span> <span class="o">-</span> <span class="n">centre1D</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="basis_nd">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.basis_nd">[docs]</a>
+<span class="k">def</span> <span class="nf">basis_nd</span><span class="p">(</span>
+    <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centre</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use a tensor product to generalise the 1D basis function to arbitrarily high dimensions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        points(np.ndarray): The points at which the basis function should be evaluated. Shape: (numPoints, numDims)</span>
+<span class="sd">        centre(np.ndarray): The centre of the basis function. Shape: (numDims,)</span>
+<span class="sd">        levels(np.ndarray): The levels of the basis function. Shape: (numDims,)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The basis function evaluated at the given points. Shape: (numPoints,)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initialize the basis evaluation of each point as 1</span>
+    <span class="n">basisEval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># loop over all dimensions</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="c1"># Multipy the current basis evaluation with the evaluation result of the current dimension</span>
+        <span class="n">basisEval</span> <span class="o">*=</span> <span class="n">basis_1d</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="n">d</span><span class="p">],</span> <span class="n">centre</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="n">levels</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">basisEval</span></div>
+
+
+
+<div class="viewcode-block" id="meshgrid2matrix">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.meshgrid2matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">meshgrid2matrix</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a np.meshgrid into a np.2darray of grid points.</span>
+<span class="sd">    The function is mainly used when assigning grid points to Smolnyak-Subspaces.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        meshgrid(list): A list of np.arrays returned by np.meshgrid</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A matrix of shape #Points x #Dims defining all grid points</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># calculate the shape of the matrix and initialize with 0s</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">)</span>
+    <span class="n">n_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+
+    <span class="c1"># read out the respective meshgrid entry for each matrix entry</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
+        <span class="n">linear_mesh_slice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_points</span><span class="p">):</span>
+            <span class="n">matrix</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">linear_mesh_slice</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">matrix</span></div>
+
+
+
+<div class="viewcode-block" id="SparseGrid">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid">[docs]</a>
+<span class="k">class</span> <span class="nc">SparseGrid</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Each object of this class respresents a sparse grid.</span>
+<span class="sd">    In this implementation, a sparse grid is a list of Smolnyak-subspaces.</span>
+<span class="sd">    Each subspace is in principle a regular grid of a certain grid width but every second grid point is negelcted.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        dim (int): The dimension of the sparse grid. This is the same as the dimension of the parameter space.</span>
+<span class="sd">        max_level_sum (int): The maximum sum of all levels of the subspaces. This is the same as the maximum level of the sparse grid.</span>
+<span class="sd">        subspace_list (list): A list of all subspaces that are part of the sparse grid.</span>
+<span class="sd">        levels2index (dict): A dictionary that maps the level combination of a subspace to its index in the subspace_list.</span>
+<span class="sd">        nSubspaces (int): The number of subspaces in the sparse grid.</span>
+<span class="sd">        n_points (int): The number of grid points in the sparse grid.</span>
+<span class="sd">        index_list4top_down_sparse_grid_traverse[ (list): A list of indices that defines an ordering of subspaces where low-level subspaces come before high-level ones.</span>
+<span class="sd">        allPoints (np.ndarray): A matrix of shape #Points x #Dims defining all grid points in the sparse grid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_level_sum</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for a sparse grid.</span>
+<span class="sd">        A sparse grid is uniquely defined by its dimension and a level sum that must not be exceeded by any of the Smolnyak subspaces.</span>
+<span class="sd">        A subspace&#39;s levels define how fine the grid is resolved in each of the respective dimensions.</span>
+<span class="sd">        The position of a certain subspace within the list of subspaces can be tracked using the levels2index dictionary.</span>
+<span class="sd">        As we only limit the sum of all levels, the sparse grids implemented here are not refined in a dimension-dependent way.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dim (int): The dimension of the sparse grid. This is the same as the dimension of the parameter space.</span>
+<span class="sd">            max_level_sum (int): The maximum sum of all levels of the subspaces. This is the same as the maximum level of the sparse grid.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_level_sum</span> <span class="o">=</span> <span class="n">max_level_sum</span>
+
+        <span class="c1"># initiation of the root, list of subspaces and dictionary that maps the level-combination to the list-index</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">Subspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels2index</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels2index</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># refine root by calling the recursive function refine_subspace and count resulting subspaces and grid points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refine_subspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_n_points</span><span class="p">()</span>
+
+        <span class="c1"># create an ordering of subspaces where low-level subspaces come before high-level ones</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_index_list4top_down_sparse_grid_traverse</span><span class="p">()</span>
+
+        <span class="c1"># collect all points from all subspaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_all_points</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SparseGrid.refine_subspace">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.refine_subspace">[docs]</a>
+    <span class="k">def</span> <span class="nf">refine_subspace</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">current_levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">indexRefinedLevel</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursive function used to accumulate all subspaces up to a specified level sum in the form of a list</span>
+<span class="sd">        It returns the list itself together with a dictionary that maps the level-combination of each subspace onto its index inside the list.</span>
+<span class="sd">        This function only lists each subspace once.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            current_levels (np.ndarray): The level combination of the subspace that is currently being refined. Shape (dim,)</span>
+<span class="sd">            indexRefinedLevel (int): The index of the level that was refined to form the current subspace.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># This loop makes sure that each subspace is only counted once.</span>
+        <span class="c1"># Achieved by storing the index that got altered to form the current subspace and letting the current</span>
+        <span class="c1"># ... subspace only refine level indices with similar or higher entry number in the levels array.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">indexRefinedLevel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">):</span>
+            <span class="c1"># derive the level increment array and calculate new level</span>
+            <span class="n">levels_increment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+            <span class="n">levels_increment</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">new_levels</span> <span class="o">=</span> <span class="n">current_levels</span> <span class="o">+</span> <span class="n">levels_increment</span>
+
+            <span class="c1"># kill-condition for recursion if max level is reached</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">new_levels</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level_sum</span><span class="p">:</span>
+                <span class="c1"># store refined subspace in list and dictionary</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">levels2index</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">new_levels</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Subspace</span><span class="p">(</span><span class="n">new_levels</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+                <span class="c1"># recursive call to refine refined subspace</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">refine_subspace</span><span class="p">(</span><span class="n">new_levels</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SparseGrid.compute_n_points">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_n_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_n_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over all subspaces of the sparse grid and accumulates the total number of gridpoints.&quot;&quot;&quot;</span>
+
+        <span class="c1"># initiate the counter to be 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_points</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># loop over all subspaces</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="c1"># get current subspace</span>
+            <span class="n">current_subspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="c1"># add the number of points in the current subspace</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_points</span> <span class="o">+=</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">n_points</span></div>
+
+
+<div class="viewcode-block" id="SparseGrid.compute_all_points">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_all_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_all_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect all SG points in one array by iterating over all subspaces.&quot;&quot;&quot;</span>
+
+        <span class="c1"># allocate enough storage for all points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+
+        <span class="c1"># initiate a counter for the number of already counted points</span>
+        <span class="n">num_included_points</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># loop over all subspaces of the SG</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="c1"># traverse the SG in a top-down manner</span>
+            <span class="n">current_subspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index_list4top_down_sparse_grid_traverse</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="c1"># copy the points from the subspace into the array of the SG</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span>
+                <span class="n">num_included_points</span> <span class="p">:</span> <span class="n">num_included_points</span>
+                <span class="o">+</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">n_points</span><span class="p">,</span>
+                <span class="p">:,</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">points</span>
+
+            <span class="c1"># increase the counter accordingly</span>
+            <span class="n">num_included_points</span> <span class="o">+=</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">n_points</span></div>
+
+
+<div class="viewcode-block" id="SparseGrid.compute_index_list4top_down_sparse_grid_traverse">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_index_list4top_down_sparse_grid_traverse">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_index_list4top_down_sparse_grid_traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an ordering of subspaces where low-level subspaces come before high-level ones.&quot;&quot;&quot;</span>
+
+        <span class="c1"># allocate storage to count the sum of levels of each subspace</span>
+        <span class="n">level_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+        <span class="c1"># loop over all subspaces and sum over their levels array</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="n">level_sums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levels2index</span><span class="p">)[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># argument sort by the just-calculated level-sum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_list4top_down_sparse_grid_traverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">level_sums</span><span class="p">)</span></div>
+
+
+    <span class="c1"># TODO: Shouldn&#39;t an eval function return something?</span>
+<div class="viewcode-block" id="SparseGrid.eval_function_sg">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.eval_function_sg">[docs]</a>
+    <span class="k">def</span> <span class="nf">eval_function_sg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the provided function for all subspaces of a sparse grid by using Subspace.eval_function</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            function (typing.Callable): The function that is to be evaluated. It must be possible to evaluate the function in a single sparse grid point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop over all subspaces</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="c1"># call eval_function for the current subspace</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">eval_function</span><span class="p">(</span><span class="n">function</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SparseGrid.compute_coefficients">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_coefficients">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;When using sparse grids for function interpolation (and quadrature),</span>
+<span class="sd">        this function computes the coefficients of all basis function of the whole sparse grid.</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># loop over all smolnyak subspaces in a low to high level order</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="n">current_subspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index_list4top_down_sparse_grid_traverse</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="c1"># calculate coefficients for the current subspace (consider contributions from &quot;larger&quot; basis functions)</span>
+            <span class="n">current_subspace</span><span class="o">.</span><span class="n">coeffs</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">current_subspace</span><span class="o">.</span><span class="n">f_eval</span>
+                <span class="o">-</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">lower_level_contributions</span>
+            <span class="p">)</span>
+
+            <span class="c1"># pass up contributions arising from the just-computed coefficients to</span>
+            <span class="c1"># ... all higher levels if there are any</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">current_subspace</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level_sum</span><span class="p">:</span>
+                <span class="n">current_subspace</span><span class="o">.</span><span class="n">pass_contributions2higher_levels</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SparseGrid.compute_integral">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_integral">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform sparse grid integration over whole Sparse Grid using the computed coefficients (coeffs) and the volume of each basis function (basis_func_vol)&quot;&quot;&quot;</span>
+        <span class="c1"># initialise the integral to be 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">integral</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># loop over all subspaces</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="c1"># exrtact the current subspace</span>
+            <span class="n">current_subspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+
+            <span class="c1"># multiply the volume of each basis function with the sum of all coefficients of this subspace and add the result to the integral</span>
+            <span class="c1"># (this implicitely uses that all basis functions of a given subspace have the same volume)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">integral</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">current_subspace</span><span class="o">.</span><span class="n">coeffs</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">current_subspace</span><span class="o">.</span><span class="n">basis_func_vol</span>
+            <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Subspace">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace">[docs]</a>
+<span class="k">class</span> <span class="nc">Subspace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Objects represent one Smolnyak-Subspace of a sparse grid and are only defined by a level for each dimension.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SG</span><span class="p">:</span> <span class="n">SparseGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subspace by assigning a level, dimension, number of points and the actual points themselves.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            levels (np.ndarray): The level of the subspace in each dimension. Shape: (#Dims, )</span>
+<span class="sd">            SG (SparseGrid): The sparse grid of which the current subspace is a part.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># fill all known information into the class variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SG</span> <span class="o">=</span> <span class="n">SG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">levels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis_func_vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">levels</span><span class="p">))</span>
+
+        <span class="c1"># this variable is created without being directly filled -&gt; Caution when using it; Check for reliable data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower_level_contributions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_points</span><span class="p">)</span>
+
+        <span class="c1"># Create all points of the current subspace and fill self.points</span>
+        <span class="c1"># Start by creating an empty list to store the coordinates of all single dimensions</span>
+        <span class="n">single_dim_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># loop over all dimensions</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">):</span>
+            <span class="c1"># append a list of 1d coordinates for each dimension</span>
+            <span class="n">single_dim_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">levels</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">levels</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">levels</span><span class="p">[</span><span class="n">d</span><span class="p">]),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># create all possible combinations from the 1d coordinate arrays</span>
+        <span class="n">meshgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">single_dim_points</span><span class="p">)</span>
+
+        <span class="c1"># convert the numpy meshgrid to a matrix of all points with shape (n_points,dim)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">meshgrid2matrix</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Subspace.eval_function">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace.eval_function">[docs]</a>
+    <span class="k">def</span> <span class="nf">eval_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate a function in all points of the respective subspace.</span>
+<span class="sd">        This function is typically called by SparseGrid.eval_function_sg.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            function (typing.Callable): The function that is to be evaluated. It must be possible to evaluate the function in a single sparse grid point.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create an empty array of size #Points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_eval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_points</span><span class="p">)</span>
+
+        <span class="c1"># loop over all grid points of the subspace</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_points</span><span class="p">):</span>
+            <span class="c1"># evaluate the provided function in the current grid point</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">f_eval</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span></div>
+
+
+<div class="viewcode-block" id="Subspace.pass_contributions2higher_levels">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace.pass_contributions2higher_levels">[docs]</a>
+    <span class="k">def</span> <span class="nf">pass_contributions2higher_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;During sparse grid interpolation, this function passes contributions to all subspaces with higher level.&quot;&quot;&quot;</span>
+
+        <span class="c1"># loop over all subspaces of the SG (this can be made more efficient)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SG</span><span class="o">.</span><span class="n">nSubspaces</span><span class="p">):</span>
+            <span class="n">higherLevelSubspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SG</span><span class="o">.</span><span class="n">subspace_list</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+
+            <span class="c1"># check if the higherLevelSubspace indeed has a higher level</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">higherLevelSubspace</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">):</span>
+                <span class="c1"># loop over all points in the mother subspace and add contributions to lower levels</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_points</span><span class="p">):</span>
+                    <span class="n">higherLevelSubspace</span><span class="o">.</span><span class="n">lower_level_contributions</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="n">basis_nd</span><span class="p">(</span>
+                            <span class="n">higherLevelSubspace</span><span class="o">.</span><span class="n">points</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="p">:],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                    <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="evaluate_on_sparse_grid">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.evaluate_on_sparse_grid">[docs]</a>
+<span class="k">def</span> <span class="nf">evaluate_on_sparse_grid</span><span class="p">(</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">Model</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">DataTransformation</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        params (np.ndarray): The parameters to be evaluated.</span>
+<span class="sd">        model(Model): The model used for the inference.</span>
+<span class="sd">        data(np.ndarray): The data points used for the inference.</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)</span>
+<span class="sd">        slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The density values for the given params.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">params</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">evaluate_density</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span>
+    <span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="inference_sparse_grid">
+<a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.inference_sparse_grid">[docs]</a>
+<span class="k">def</span> <span class="nf">inference_sparse_grid</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span><span class="p">,</span>
+    <span class="n">slices</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">ResultManager</span><span class="p">,</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        data(np.ndarray): The data to be used for inference.</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        num_processes(int): number of processes to use for parallel evaluation of the model.</span>
+<span class="sd">        num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density</span>
+<span class="sd">        evaluations for each slice and the result manager used for the inference.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="s2">&quot;The inference_sparse_grid function is not tested and not recommended for use.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># create the return dictionaries</span>
+    <span class="n">overall_params</span><span class="p">,</span> <span class="n">overall_sim_results</span><span class="p">,</span> <span class="n">overall_density_evals</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
+        <span class="c1"># build the sparse grid over [0,1]^param_dim</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">SparseGrid</span><span class="p">(</span><span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_levels</span><span class="p">)</span>
+
+        <span class="c1"># get the model&#39;s parameter limits</span>
+        <span class="n">param_limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
+
+        <span class="c1"># scale the sparse grid points from [0,1]^param_dim to the scaled parameter space</span>
+        <span class="n">scaledSparseGridPoints</span> <span class="o">=</span> <span class="n">param_limits</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">points</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">param_limits</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">param_limits</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create a pool of worker processes</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">scaledSparseGridPoints</span><span class="p">,</span>
+            <span class="n">repeat</span><span class="p">(</span><span class="n">model</span><span class="p">),</span>
+            <span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="n">repeat</span><span class="p">(</span><span class="n">data_transformation</span><span class="p">),</span>
+            <span class="n">repeat</span><span class="p">(</span><span class="n">data_stdevs</span><span class="p">),</span>
+            <span class="n">repeat</span><span class="p">(</span><span class="nb">slice</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># evaluate the probability density transformation for all sparse grid points in parallel</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">evaluate_on_sparse_grid</span><span class="p">,</span>
+            <span class="n">tasks</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># close the worker pool</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="c1"># convert the results to a numpy array</span>
+        <span class="c1"># Take care! The results here are for single points, therefore we cant use np.concatenate</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="n">data_dim</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span>
+
+        <span class="c1"># save the results</span>
+        <span class="n">result_manager</span><span class="o">.</span><span class="n">save_overall</span><span class="p">(</span>
+            <span class="nb">slice</span><span class="p">,</span>
+            <span class="n">results</span><span class="p">[:,</span> <span class="mi">0</span> <span class="p">:</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="n">results</span><span class="p">[:,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_dim</span><span class="p">],</span>
+            <span class="n">results</span><span class="p">[:,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_dim</span> <span class="p">:],</span>
+        <span class="p">)</span>
+        <span class="n">slice_name</span> <span class="o">=</span> <span class="n">result_manager</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+        <span class="n">overall_params</span><span class="p">[</span><span class="n">slice_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:,</span> <span class="mi">0</span> <span class="p">:</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">overall_sim_results</span><span class="p">[</span><span class="n">slice_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span>
+            <span class="p">:,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_dim</span>
+        <span class="p">]</span>
+        <span class="n">overall_density_evals</span><span class="p">[</span><span class="n">slice_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span>
+            <span class="p">:,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_dim</span> <span class="p">:</span>
+        <span class="p">]</span>
+        <span class="n">result_manager</span><span class="o">.</span><span class="n">save_inference_information</span><span class="p">(</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="nb">slice</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">inference_type</span><span class="o">=</span><span class="n">InferenceType</span><span class="o">.</span><span class="n">SPARSE_GRID</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="n">num_levels</span><span class="o">=</span><span class="n">num_levels</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">overall_params</span><span class="p">,</span>
+        <span class="n">overall_sim_results</span><span class="p">,</span>
+        <span class="n">overall_density_evals</span><span class="p">,</span>
+        <span class="n">result_manager</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

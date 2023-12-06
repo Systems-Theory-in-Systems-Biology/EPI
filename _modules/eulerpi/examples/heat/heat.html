@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.examples.heat.heat &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.examples.heat.heat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.examples.heat.heat</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">diffrax</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">JaxModel</span>
+
+
+<div class="viewcode-block" id="heat_rhs">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.heat_rhs">[docs]</a>
+<span class="k">def</span> <span class="nf">heat_rhs</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Right hand side of the heat equation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (float): time at which the right hand side is evaluated</span>
+<span class="sd">        u (jnp.ndarray): current solution of the heat equation</span>
+<span class="sd">        args (tuple | list): tuple of the form (dx, dy, param) with dx, dy the spatial discretization and param the thermal conductivity matrix, given as a vector of length 3 with param[0] = kappa_11, param[1] = kappa_22, param[2] = kappa_12</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jnp.ndarray: right hand side of the heat equation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># use the central difference scheme to approximate the derivatives. Gradient preserves the size of the array by using one-sided differences. We throw away the boundary points later.</span>
+    <span class="n">du_dx</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">du_dx2</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">u</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">dx</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">du_dy2</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">dy</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">du_dx_dy</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">du_dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># compute the right hand side of the heat equation</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">du_dx2</span>
+        <span class="o">+</span> <span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">du_dy2</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">param</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">du_dx_dy</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">rhs</span></div>
+
+
+
+<div class="viewcode-block" id="Heat">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.Heat">[docs]</a>
+<span class="k">class</span> <span class="nc">Heat</span><span class="p">(</span><span class="n">JaxModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A two-dimensional anisotropic heat conduction equation model on a square domain with four dirichlet boundaries.</span>
+
+<span class="sd">    The model is defined by the following partial differential equation on the square spacial domain :math:`\\Omega = [0, 1]^2` on the time interval :math:`[0, 0.1]`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\frac{\\partial u}{\\partial t} = \\nabla \\cdot \\left( \\kappa \\nabla u \\right)</span>
+
+<span class="sd">    subject to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        u(x, y, t=0) = 0</span>
+
+<span class="sd">    and</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        u(0, y, t) = 1, \\quad u(1, y, t) = 0, \\quad u(x, 0, t) = 1, \\quad u(x, 1, t) = 0</span>
+
+<span class="sd">    with the symmetric positive definite thermal conductivity matrix :math:`\\kappa` and the temperature :math:`u`.</span>
+<span class="sd">    Inference is performed on the entries of :math:`\\kappa`: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">t_end</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1">#: End time of the simulation</span>
+    <span class="n">plate_length</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>  <span class="c1">#: Length of the square plate</span>
+    <span class="n">num_grid_points</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1">#: Number of grid points in each spatial direction</span>
+
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1">#: Number of independent heat conductivity parameters</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1">#: The values of the heat equation solution at five points are observed. See evaluation_points.</span>
+
+    <span class="n">evaluation_points</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default constructor for the heat model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            central_param (np.ndarray, optional): Central parameter within the parameter domain, where the density is non-zero. Defaults to CENTRAL_PARAM.</span>
+<span class="sd">            param_limits (np.ndarray, optional): Maximum parameter limits for sampling or grid-based inference. The parameter domain is contained within the box given by param_limits. Defaults to PARAM_LIMITS.</span>
+<span class="sd">            name (Optional[str], optional): Name for the model. Defaults to None means the model name is &quot;heat&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Heat.forward">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.Heat.forward">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward method for the heat model.</span>
+
+<span class="sd">        Yields the solution of the anisotropic heat conduction equation at time :math:`t=0.1`</span>
+<span class="sd">        in five spatial points, which are arranged similar to the number &quot;five&quot; on a dice.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param (np.ndarray): Entries of the conductivity matrix: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: The solution of the anisotropic heat conduction equation at time :math:`t=0.1`</span>
+<span class="sd">        in five spacial points, which are arranged similar to the number &quot;five&quot; on a dice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">solution</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">perform_simulation</span><span class="p">(</span><span class="n">kappa</span><span class="o">=</span><span class="n">param</span><span class="p">)</span>
+
+        <span class="c1"># linearly interpolate the solution at the evaluation points, use own interpolation function as jax doesn&#39;t support scipy.interpolate.interp2d and doesn&#39;t provide a 2d interpolation function</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span><span class="p">)</span>
+
+        <span class="c1"># compute the indices between which the evaluation points lie</span>
+        <span class="n">x_indices</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">y_indices</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span>
+
+        <span class="c1"># interpolate the solution at the evaluation points</span>
+        <span class="n">solution_at_evaluation_points</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dy</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">solution</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="o">+</span> <span class="n">solution</span><span class="p">[</span><span class="n">x_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">x_indices</span><span class="p">])</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="o">+</span> <span class="n">solution</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="n">y_indices</span><span class="p">])</span>
+            <span class="o">+</span> <span class="n">solution</span><span class="p">[</span><span class="n">x_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y_indices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">x_indices</span><span class="p">])</span>
+            <span class="o">*</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">evaluation_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="n">y_indices</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">solution_at_evaluation_points</span></div>
+
+
+<div class="viewcode-block" id="Heat.param_is_within_domain">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.Heat.param_is_within_domain">[docs]</a>
+    <span class="k">def</span> <span class="nf">param_is_within_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether a parameter is within the parameter domain of the model.</span>
+<span class="sd">        This condition stems from thermodynamical considerations.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param(np.ndarray): The parameter to check.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the parameter is within the limits.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">param</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="Heat.perform_simulation">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.Heat.perform_simulation">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">perform_simulation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a simulation of the heat equation with the given parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kappa (np.ndarray): Entries of the conductivity matrix: kappa[0] = :math:`\\kappa_{11}`, kappa[1] = :math:`\\kappa_{22}`, kapp[2] = :math:`\\kappa_{12}`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: An array containing the solution of the anisotropic heat conduction equation, where the first two indices correspond to the x and y coordinates, respectively. The time is fixed to the class variable t_end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># import os</span>
+        <span class="c1"># os.environ[&quot;XLA_PYTHON_CLIENT_PREALLOCATE&quot;]=&quot;false&quot;</span>
+
+        <span class="c1"># The grid</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span><span class="p">)</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">plate_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">num_grid_points</span>
+
+        <span class="k">def</span> <span class="nf">stable_time_step</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">kappa</span><span class="p">):</span>
+            <span class="n">trace_kappa</span> <span class="o">=</span> <span class="n">kappa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">kappa</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">det_kappa</span> <span class="o">=</span> <span class="n">kappa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">kappa</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="c1"># Compute the maximum eigenvalue of the thermal conductivity matrix using trace and determinant:</span>
+            <span class="n">kappa_max</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">trace_kappa</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">trace_kappa</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">det_kappa</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">safety_factor</span> <span class="o">=</span> <span class="mf">1.25</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">safety_factor</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">kappa_max</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">dt</span>
+
+        <span class="n">dt0</span> <span class="o">=</span> <span class="n">stable_time_step</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+        <span class="c1"># Set boundary conditions</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">u0</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>  <span class="c1"># left</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">u0</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>  <span class="c1"># right</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">u0</span><span class="o">.</span><span class="n">at</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>  <span class="c1"># bottom</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">u0</span><span class="o">.</span><span class="n">at</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>  <span class="c1"># top</span>
+
+        <span class="c1"># perform the time integration using diffrax</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">diffrax</span><span class="o">.</span><span class="n">ODETerm</span><span class="p">(</span><span class="n">heat_rhs</span><span class="p">)</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">diffrax</span><span class="o">.</span><span class="n">Heun</span><span class="p">()</span>
+        <span class="n">saveat</span> <span class="o">=</span> <span class="n">diffrax</span><span class="o">.</span><span class="n">SaveAt</span><span class="p">(</span><span class="n">t0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">t1</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stepsize_controller</span> <span class="o">=</span> <span class="n">diffrax</span><span class="o">.</span><span class="n">PIDController</span><span class="p">(</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">dtmax</span><span class="o">=</span><span class="n">dt0</span>
+        <span class="p">)</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">diffrax</span><span class="o">.</span><span class="n">diffeqsolve</span><span class="p">(</span>
+            <span class="n">term</span><span class="p">,</span>
+            <span class="n">solver</span><span class="p">,</span>
+            <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">t1</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">t_end</span><span class="p">,</span>
+            <span class="n">dt0</span><span class="o">=</span><span class="n">dt0</span><span class="p">,</span>
+            <span class="n">saveat</span><span class="o">=</span><span class="n">saveat</span><span class="p">,</span>
+            <span class="n">y0</span><span class="o">=</span><span class="n">u0</span><span class="p">,</span>
+            <span class="n">stepsize_controller</span><span class="o">=</span><span class="n">stepsize_controller</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">kappa</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">ys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># The solution at the final time</span>
+        <span class="k">return</span> <span class="n">u</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="HeatArtificial">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.HeatArtificial">[docs]</a>
+<span class="k">class</span> <span class="nc">HeatArtificial</span><span class="p">(</span><span class="n">Heat</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">num_grid_points</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default constructor for the artificial heat model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            central_param (np.ndarray, optional): Central parameter within the parameter domain, where the density is non-zero. Defaults to CENTRAL_PARAM.</span>
+<span class="sd">            param_limits (np.ndarray, optional): Maximum parameter limits for sampling or grid-based inference. The parameter domain is contained within the box given by param_limits. Defaults to PARAM_LIMITS.</span>
+<span class="sd">            name (Optional[str], optional): Name for the model. Defaults to None means the model name is &quot;heat&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HeatArtificial.generate_artificial_params">
+<a class="viewcode-back" href="../../../../eulerpi.examples.heat.heat.html#eulerpi.examples.heat.heat.HeatArtificial.generate_artificial_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">independent_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a set of viable parameter samples for the heat model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_samples (int): Number of samples to generate.</span>
+<span class="sd">            independent_params (bool, optional): Whether the parameters should be independent. Defaults to True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: A set of viable parameter samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">lower_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">param_spans</span>
+        <span class="n">upper_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">param_spans</span>
+        <span class="n">true_param_sample</span> <span class="o">=</span> <span class="n">lower_bounds</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">upper_bounds</span> <span class="o">-</span> <span class="n">lower_bounds</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_dim</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">true_param_sample</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_examples &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tests.test_examples</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tests.test_examples</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test the instantiation, data loading / data generation and the inference for the example models in the examples folder.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">importlib</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">is_amici_available</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model_check</span> <span class="kn">import</span> <span class="n">basic_model_check</span>
+
+<span class="n">cpp_plant_example</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+    <span class="p">(</span><span class="s2">&quot;eulerpi.examples.cpp.cpp_plant&quot;</span><span class="p">,</span> <span class="s2">&quot;CppPlant&quot;</span><span class="p">),</span>
+    <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;XFAIL means that the Cpp Library for the plant model ist not compiled yet&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">menten_example</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+    <span class="p">(</span><span class="s2">&quot;eulerpi.examples.sbml.sbml_menten_model&quot;</span><span class="p">,</span> <span class="s2">&quot;MentenSBMLModel&quot;</span><span class="p">),</span>
+    <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+        <span class="ow">not</span> <span class="n">is_amici_available</span><span class="p">(),</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Amici not available, no SBML models can be tested&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">caffeine_example</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+    <span class="p">(</span><span class="s2">&quot;eulerpi.examples.sbml.sbml_caffeine_model&quot;</span><span class="p">,</span> <span class="s2">&quot;CaffeineSBMLModel&quot;</span><span class="p">),</span>
+    <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+        <span class="ow">not</span> <span class="n">is_amici_available</span><span class="p">(),</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Amici not available, no SBML models can be tested&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Examples">
+<a class="viewcode-back" href="../../tests.test_examples.html#tests.test_examples.Examples">[docs]</a>
+<span class="k">def</span> <span class="nf">Examples</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides the list of examples to the parametrized test&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.heat&quot;</span><span class="p">,</span> <span class="s2">&quot;HeatArtificial&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.corona&quot;</span><span class="p">,</span> <span class="s2">&quot;Corona&quot;</span><span class="p">,</span> <span class="s2">&quot;CoronaData.csv&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.corona&quot;</span><span class="p">,</span> <span class="s2">&quot;CoronaArtificial&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureArtificial&quot;</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TemperatureWithFixedParams&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">cpp_plant_example</span><span class="p">,</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.cpp.python_reference_plants&quot;</span><span class="p">,</span> <span class="s2">&quot;ExternalPlant&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;eulerpi.examples.cpp.python_reference_plants&quot;</span><span class="p">,</span> <span class="s2">&quot;JaxPlant&quot;</span><span class="p">),</span>
+        <span class="n">menten_example</span><span class="p">,</span>
+        <span class="n">caffeine_example</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">yield</span> <span class="n">example</span></div>
+
+
+
+<div class="viewcode-block" id="get_example_name">
+<a class="viewcode-back" href="../../tests.test_examples.html#tests.test_examples.get_example_name">[docs]</a>
+<span class="k">def</span> <span class="nf">get_example_name</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the name of the example from the tuple to have nice names in the test report and be able to select the test using -k</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: name of the example</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">example</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="test_model_requirements">
+<a class="viewcode-back" href="../../tests.test_examples.html#tests.test_examples.test_model_requirements">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="n">Examples</span><span class="p">(),</span> <span class="n">ids</span><span class="o">=</span><span class="n">get_example_name</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_model_requirements</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a simple sanity check on the model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># extract example parameters from tuple</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module_location</span><span class="p">,</span> <span class="n">className</span><span class="p">,</span> <span class="n">dataFileName</span> <span class="o">=</span> <span class="n">example</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">module_location</span><span class="p">,</span> <span class="n">className</span> <span class="o">=</span> <span class="n">example</span>
+        <span class="n">dataFileName</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_location</span><span class="p">)</span>
+    <span class="n">ModelClass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">className</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
+
+    <span class="c1"># Use the basic model check to assert all model attribute dimension requirements as well as forward simulations and the corresponding jacobian.</span>
+    <span class="n">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_examples">
+<a class="viewcode-back" href="../../tests.test_examples.html#tests.test_examples.test_examples">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="n">Examples</span><span class="p">(),</span> <span class="n">ids</span><span class="o">=</span><span class="n">get_example_name</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;inference_type&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">InferenceType</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_examples</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">inference_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the inference for the example models.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      example(Tuple[str, str, int]): The example which should be tested. The tuple contains the module location, the class name and the number of walkers.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># extract example parameters from tuple</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module_location</span><span class="p">,</span> <span class="n">className</span><span class="p">,</span> <span class="n">dataFileName</span> <span class="o">=</span> <span class="n">example</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">module_location</span><span class="p">,</span> <span class="n">className</span> <span class="o">=</span> <span class="n">example</span>
+        <span class="n">dataFileName</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_location</span><span class="p">)</span>
+    <span class="n">ModelClass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">className</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
+
+    <span class="c1"># generate artificial data if necessary</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_artificial</span><span class="p">():</span>
+        <span class="n">num_data_points</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_params</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_data</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">dataFileName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">module_location</span><span class="p">,</span> <span class="n">dataFileName</span><span class="p">)</span>
+
+    <span class="c1"># Define kwargs for inference</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;inference_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inference_type</span>
+    <span class="k">if</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_walkers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">DENSE_GRID</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_grid_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">SPARSE_GRID</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_levels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="n">params</span><span class="p">,</span> <span class="n">sim_res</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">result_manager</span> <span class="o">=</span> <span class="n">inference</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># get all keys of the params dict</span>
+    <span class="n">full_slice_str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">result_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">assert</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">sim_res</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">densities</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">params</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">sim_res</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">densities</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">params</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">sim_res</span><span class="p">[</span><span class="n">full_slice_str</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span>
+    <span class="p">)</span>  <span class="c1"># Take care, only valid for full slice</span></div>
+
+
+    <span class="c1"># TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

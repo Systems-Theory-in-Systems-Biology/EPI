@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.sampling &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.sampling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.sampling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module implementing the :py:func:`inference &lt;eulerpi.core.inference.inference&gt;` with a Markov Chain Monte Carlo(MCMC) sampling.</span>
+
+<span class="sd">The inference with a sampling based approach approximates the the (joint/marginal) parameter distribution(s) by calculating a parameter Markov Chain</span>
+<span class="sd">using multiple walkers in parallel. This module is currently based on the emcee package.</span>
+
+<span class="sd">.. _emcee: https://emcee.readthedocs.io/en/stable/</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    The functions in this module are mainly intended for internal use and are accessed by :func:`inference &lt;eulerpi.core.inference&gt;` function.</span>
+<span class="sd">    Read the documentation of :func:`inference_mcmc &lt;inference_mcmc&gt;` to learn more about the available options for the MCMC based inference.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">get_context</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">import</span> <span class="nn">emcee</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">eval_log_transformed_density</span>
+
+<span class="c1"># TODO: This works on the blob</span>
+<span class="c1"># Return the samples.</span>
+<span class="c1"># return sampler.get_chain(discard=0, thin=1, flat=True)</span>
+<span class="c1"># TODO: This stores the sample as 2d array in the format walker1_step1, walker2_step1, walker3_step1, walker1_step2, walker2_step2, walker3_step2, ...</span>
+<span class="c1"># sampler_results = samplerBlob.reshape(</span>
+<span class="c1">#     num_walkers * num_steps, sampling_dim + data_dim + 1</span>
+<span class="c1"># )</span>
+
+
+<div class="viewcode-block" id="evaluate_sample">
+<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.evaluate_sample">[docs]</a>
+<span class="k">def</span> <span class="nf">evaluate_sample</span><span class="p">(</span>
+    <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the log transformed density at the given parameter values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        param (np.ndarray): parameter values</span>
+<span class="sd">        model (Model): The model which will be sampled</span>
+<span class="sd">        data (np.ndarray): data</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        data_stdevs (np.ndarray): kernel width for the data</span>
+<span class="sd">        slice (np.ndarray): slice of the parameter space which will be sampled</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        typing.Tuple[float, np.ndarray]: log transformed density and the sampler result</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">log_samplerresult</span> <span class="o">=</span> <span class="n">eval_log_transformed_density</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_samplerresult</span></div>
+
+
+
+<div class="viewcode-block" id="run_emcee_once">
+<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.run_emcee_once">[docs]</a>
+<span class="k">def</span> <span class="nf">run_emcee_once</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">initial_walker_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">num_walkers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the emcee particle swarm sampler once.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (Model): The model which will be sampled</span>
+<span class="sd">        data (np.ndarray): data</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        data_stdevs (np.ndarray): kernel width for the data</span>
+<span class="sd">        slice (np.ndarray): slice of the parameter space which will be sampled</span>
+<span class="sd">        initial_walker_positions (np.ndarray): initial parameter values for the walkers</span>
+<span class="sd">        num_walkers (int): number of particles in the particle swarm sampler</span>
+<span class="sd">        num_steps (int): number of samples each particle performs before storing the sub run</span>
+<span class="sd">        num_processes (int): number of parallel threads</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: samples from the transformed parameter density</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create a pool of worker processes</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span>
+    <span class="n">sampling_dim</span> <span class="o">=</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Call the sampler for all parallel workers (possibly use arg moves = movePolicy)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
+            <span class="n">num_walkers</span><span class="p">,</span>
+            <span class="n">sampling_dim</span><span class="p">,</span>
+            <span class="n">evaluate_sample</span><span class="p">,</span>
+            <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># Extract the final walker position and close the pool of worker processes.</span>
+        <span class="n">final_walker_positions</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
+            <span class="n">initial_walker_positions</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># If the message equals &quot;Probability function returned NaN.&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;Probability function returned NaN&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Probability function returned NaN. &quot;</span>
+                <span class="s2">&quot;You possibly have to exclude data dimensions which do not depend on the paramaters. &quot;</span>
+                <span class="s2">&quot;In addition your parameters should not be linearly dependent.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="c1"># TODO: Keep as 3d array?</span>
+    <span class="c1"># Should have shape (num_steps, num_walkers, param_dim+data_dim+1)</span>
+    <span class="n">sampler_results</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_blobs</span><span class="p">()</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span>
+    <span class="n">sampler_results</span> <span class="o">=</span> <span class="n">sampler_results</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="n">num_steps</span> <span class="o">*</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">sampling_dim</span> <span class="o">+</span> <span class="n">data_dim</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The acceptance fractions of the emcee sampler per walker are: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">corrTimes</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_autocorr_time</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;autocorrelation time: </span><span class="si">{</span><span class="n">corrTimes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">emcee</span><span class="o">.</span><span class="n">autocorr</span><span class="o">.</span><span class="n">AutocorrError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;The autocorrelation time could not be calculate reliable&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span></div>
+
+
+
+<div class="viewcode-block" id="run_emcee_sampling">
+<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.run_emcee_sampling">[docs]</a>
+<span class="k">def</span> <span class="nf">run_emcee_sampling</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span><span class="p">,</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_runs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_walkers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">thinning_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.</span>
+<span class="sd">       Inital values are not stored in the chain and each file contains &lt;num_steps&gt; blocks of size num_walkers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (Model): The model which will be sampled</span>
+<span class="sd">        data (np.ndarray): data</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        slice (np.ndarray): slice of the parameter space which will be sampled</span>
+<span class="sd">        result_manager (ResultManager): ResultManager which will store the results</span>
+<span class="sd">        num_processes (int): number of parallel threads.</span>
+<span class="sd">        num_runs (int): number of stored sub runs.</span>
+<span class="sd">        num_walkers (int): number of particles in the particle swarm sampler.</span>
+<span class="sd">        num_steps (int): number of samples each particle performs before storing the sub run.</span>
+<span class="sd">        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.</span>
+<span class="sd">        thinning_factor (int): thinning factor for the samples.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities</span>
+<span class="sd">        TODO check: are those really log probabilities?</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate the standard deviation of the data for each dimension</span>
+    <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">sampling_dim</span> <span class="o">=</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">central_param</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
+    <span class="n">param_limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
+
+    <span class="c1"># Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.</span>
+    <span class="c1"># compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit</span>
+    <span class="n">d_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+        <span class="n">central_param</span> <span class="o">-</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_param</span>
+    <span class="p">)</span>
+    <span class="n">initial_walker_positions</span> <span class="o">=</span> <span class="n">central_param</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">+</span> <span class="n">d_min</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_walkers</span><span class="p">,</span> <span class="n">sampling_dim</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Count and print how many runs have already been performed for this model</span>
+    <span class="n">num_existing_files</span> <span class="o">=</span> <span class="n">result_manager</span><span class="o">.</span><span class="n">count_emcee_sub_runs</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_existing_files</span><span class="si">}</span><span class="s2"> existing files found&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Loop over the remaining sub runs and contiune the counter where it ended.</span>
+    <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_existing_files</span><span class="p">,</span> <span class="n">num_existing_files</span> <span class="o">+</span> <span class="n">num_runs</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">run</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">num_runs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If there are current walker positions defined by runs before this one, use them.</span>
+        <span class="n">position_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">result_manager</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/currentPos.csv&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">position_path</span><span class="p">):</span>
+            <span class="n">initial_walker_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">position_path</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Continue sampling from saved sampler position in </span><span class="si">{</span><span class="n">position_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Run the sampler.</span>
+        <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span> <span class="o">=</span> <span class="n">run_emcee_once</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">data_transformation</span><span class="p">,</span>
+            <span class="n">data_stdevs</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="p">,</span>
+            <span class="n">initial_walker_positions</span><span class="p">,</span>
+            <span class="n">num_walkers</span><span class="p">,</span>
+            <span class="n">num_steps</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">result_manager</span><span class="o">.</span><span class="n">save_run</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span>
+        <span class="p">)</span>
+
+    <span class="p">(</span>
+        <span class="n">overall_params</span><span class="p">,</span>
+        <span class="n">overall_sim_results</span><span class="p">,</span>
+        <span class="n">overall_density_evals</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">result_manager</span><span class="o">.</span><span class="n">load_slice_inference_results</span><span class="p">(</span>
+        <span class="nb">slice</span><span class="p">,</span> <span class="n">num_burn_in_samples</span><span class="p">,</span> <span class="n">thinning_factor</span>
+    <span class="p">)</span>
+    <span class="n">result_manager</span><span class="o">.</span><span class="n">save_overall</span><span class="p">(</span>
+        <span class="nb">slice</span><span class="p">,</span>
+        <span class="n">overall_params</span><span class="p">,</span>
+        <span class="n">overall_sim_results</span><span class="p">,</span>
+        <span class="n">overall_density_evals</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">overall_params</span><span class="p">,</span>
+        <span class="n">overall_sim_results</span><span class="p">,</span>
+        <span class="n">overall_density_evals</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="calc_walker_acceptance">
+<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.calc_walker_acceptance">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_walker_acceptance</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">num_walkers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the acceptance ratio for each individual walker of the emcee chain.</span>
+<span class="sd">    This is especially important to find &quot;zombie&quot; walkers, that are never moving.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (Model): The model for which the acceptance ratio should be calculated</span>
+<span class="sd">        slice (np.ndarray): slice for which the acceptance ratio should be calculated</span>
+<span class="sd">        num_walkers (int): number of walkers in the emcee chain</span>
+<span class="sd">        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.</span>
+<span class="sd">        result_manager (ResultManager): ResultManager to load the results from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Array with the acceptance ratio for each walker</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># load the emcee parameter chain</span>
+    <span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span>
+        <span class="n">sim_res</span><span class="p">,</span>
+        <span class="n">density_evals</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">result_manager</span><span class="o">.</span><span class="n">load_slice_inference_results</span><span class="p">(</span>
+        <span class="nb">slice</span><span class="p">,</span> <span class="n">num_burn_in_samples</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="c1"># calculate the number of steps each walker walked</span>
+    <span class="c1"># subtract 1 because we count the steps between the parameters</span>
+    <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_walkers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># Unflatten the parameter chain and count the number of accepted steps for each walker</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_steps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span>
+
+    <span class="c1"># Build a boolean array that is true if the parameters of the current step are the same as the parameters of the next step and sum over it</span>
+    <span class="c1"># If the parameters are the same, the step is not accepted and we add 0 to the number of accepted steps</span>
+    <span class="c1"># If the parameters are different, the step is accepted and we add 1 to the number of accepted steps</span>
+    <span class="n">numAcceptedSteps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">!=</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># calculate the acceptance ratio by dividing the number of accepted steps by the overall number of steps</span>
+    <span class="n">acceptanceRatios</span> <span class="o">=</span> <span class="n">numAcceptedSteps</span> <span class="o">/</span> <span class="n">num_steps</span>
+
+    <span class="k">return</span> <span class="n">acceptanceRatios</span></div>
+
+
+
+<div class="viewcode-block" id="inference_mcmc">
+<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.inference_mcmc">[docs]</a>
+<span class="k">def</span> <span class="nf">inference_mcmc</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span><span class="p">,</span>
+    <span class="n">slices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_runs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">num_walkers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2500</span><span class="p">,</span>
+    <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">thinning_factor</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">get_walker_acceptance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">ResultManager</span><span class="p">,</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function runs a MCMC sampling for the given model and data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        data (np.ndarray): The data to be used for the inference.</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        result_manager (ResultManager): The result manager to be used for the inference.</span>
+<span class="sd">        slices (np.ndarray): A list of slices to be used for the inference.</span>
+<span class="sd">        num_processes (int): The number of processes to be used for the inference.</span>
+<span class="sd">        num_runs (int, optional): The number of runs to be used for the inference. For each run except the first, all walkers continue with the end position of the previous run - this parameter does not affect the number of Markov chains, but how often results for each chain are saved. Defaults to 1.</span>
+<span class="sd">        num_walkers (int, optional): The number of walkers to be used for the inference. Corresponds to the number of Markov chains. Defaults to 10.</span>
+<span class="sd">        num_steps (int, optional): The number of steps to be used for the inference. Defaults to 2500.</span>
+<span class="sd">        num_burn_in_samples (int, optional): number of samples to be discarded as burn-in. Defaults to None means a burn in of 10% of the total number of samples.</span>
+<span class="sd">        thinning_factor (int, optional): thinning factor for the samples. Defaults to None means no thinning.</span>
+<span class="sd">        get_walker_acceptance (bool, optional): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density</span>
+<span class="sd">        evaluations for each slice and the result manager used for the inference.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set default values for burn in and thinning factor</span>
+    <span class="k">if</span> <span class="n">num_burn_in_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">num_burn_in_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_runs</span> <span class="o">*</span> <span class="n">num_steps</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">thinning_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">thinning_factor</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># create the return dictionaries</span>
+    <span class="n">overall_params</span><span class="p">,</span> <span class="n">overall_sim_results</span><span class="p">,</span> <span class="n">overall_density_evals</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
+        <span class="n">slice_name</span> <span class="o">=</span> <span class="n">result_manager</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+        <span class="n">result_manager</span><span class="o">.</span><span class="n">save_inference_information</span><span class="p">(</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="nb">slice</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">inference_type</span><span class="o">=</span><span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+            <span class="n">num_runs</span><span class="o">=</span><span class="n">num_runs</span><span class="p">,</span>
+            <span class="n">num_walkers</span><span class="o">=</span><span class="n">num_walkers</span><span class="p">,</span>
+            <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+            <span class="n">num_burn_in_samples</span><span class="o">=</span><span class="n">num_burn_in_samples</span><span class="p">,</span>
+            <span class="n">thinning_factor</span><span class="o">=</span><span class="n">thinning_factor</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">overall_params</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+            <span class="n">overall_sim_results</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+            <span class="n">overall_density_evals</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">run_emcee_sampling</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">data_transformation</span><span class="o">=</span><span class="n">data_transformation</span><span class="p">,</span>
+            <span class="nb">slice</span><span class="o">=</span><span class="nb">slice</span><span class="p">,</span>
+            <span class="n">result_manager</span><span class="o">=</span><span class="n">result_manager</span><span class="p">,</span>
+            <span class="n">num_runs</span><span class="o">=</span><span class="n">num_runs</span><span class="p">,</span>
+            <span class="n">num_walkers</span><span class="o">=</span><span class="n">num_walkers</span><span class="p">,</span>
+            <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+            <span class="n">num_burn_in_samples</span><span class="o">=</span><span class="n">num_burn_in_samples</span><span class="p">,</span>
+            <span class="n">thinning_factor</span><span class="o">=</span><span class="n">thinning_factor</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">get_walker_acceptance</span><span class="p">:</span>
+            <span class="n">num_burn_in_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_steps</span> <span class="o">*</span> <span class="n">num_runs</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="n">acceptance</span> <span class="o">=</span> <span class="n">calc_walker_acceptance</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">num_burn_in_steps</span><span class="p">,</span> <span class="n">result_manager</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Acceptance rate for slice </span><span class="si">{</span><span class="nb">slice</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">acceptance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">overall_params</span><span class="p">,</span>
+        <span class="n">overall_sim_results</span><span class="p">,</span>
+        <span class="n">overall_density_evals</span><span class="p">,</span>
+        <span class="n">result_manager</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

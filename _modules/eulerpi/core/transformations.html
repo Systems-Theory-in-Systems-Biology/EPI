@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.transformations &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.transformations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.transformations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module implements the random variable transformation of the EPI algorithm.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="evaluate_density">
+<a class="viewcode-back" href="../../../eulerpi.core.transformations.html#eulerpi.core.transformations.evaluate_density">[docs]</a>
+<span class="k">def</span> <span class="nf">evaluate_density</span><span class="p">(</span>
+    <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the parameter density as backtransformed data density using the simulation model</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\Phi_\\mathcal{Q}(q) = \\Phi_\\mathcal{Y}(s(q)) \\cdot \\sqrt{\\det \\left({\\frac{ds}{dq}(q)}^\\intercal {\\frac{ds}{dq}(q)}\\right)}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        param (np.ndarray): parameter for which the transformed density shall be evaluated</span>
+<span class="sd">        model (Model): model to be evaluated</span>
+<span class="sd">        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension</span>
+<span class="sd">        slice (np.ndarray): slice of the parameter vector that is to be evaluated</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[np.double, np.ndarray]:</span>
+<span class="sd">            : parameter density at the point param</span>
+<span class="sd">            : vector containing the parameter, the simulation result and the density</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from eulerpi.examples.heat import Heat</span>
+<span class="sd">        from eulerpi.core.kde import calc_kernel_width</span>
+<span class="sd">        from eulerpi.core.data_transformation import DataIdentity</span>
+<span class="sd">        from eulerpi.core.transformations import evaluate_density</span>
+
+<span class="sd">        # use the heat model</span>
+<span class="sd">        model = Heat()</span>
+
+<span class="sd">        # generate 1000 artificial, 5D data points for the Heat example model</span>
+<span class="sd">        data_mean = np.array([0.5, 0.1, 0.5, 0.9, 0.5])</span>
+<span class="sd">        data = np.random.randn(1000, 5)/25.0 + data_mean</span>
+
+<span class="sd">        # evaluating the parameter probabiltiy density at the central parameter of the Heat model</span>
+<span class="sd">        eval_param = model.central_param</span>
+
+<span class="sd">        # calculating the kernel widths for the data based on Silverman&#39;s rule of thumb</span>
+<span class="sd">        data_stdevs = calc_kernel_width(data)</span>
+
+<span class="sd">        # evaluate the three-variate joint density</span>
+<span class="sd">        slice = np.array([0,1,2])</span>
+
+<span class="sd">        (central_param_density, all_res) = evaluate_density(param = eval_param,</span>
+<span class="sd">                                                            model = model,</span>
+<span class="sd">                                                            data = data,</span>
+<span class="sd">                                                            data_transformation = DataIdentity(), # no data transformatio,</span>
+<span class="sd">                                                            data_stdevs = data_stdevs,</span>
+<span class="sd">                                                            slice = slice)</span>
+
+<span class="sd">        # all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:</span>
+<span class="sd">        eval_param = all_res[0:model.param_dim]</span>
+<span class="sd">        sim_result = all_res[model.param_dim:model.param_dim+model.data_dim]</span>
+<span class="sd">        central_param_density = all_res[-1]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
+
+    <span class="c1"># Build the full parameter vector for evaluation based on the passed param slice and the constant central points</span>
+    <span class="n">fullParam</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
+    <span class="n">fullParam</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+
+    <span class="c1"># Check if the tried parameter is within the just-defined bounds and return the lowest possible density if not.</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">param</span> <span class="o">&lt;</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">param</span> <span class="o">&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[</span><span class="nb">slice</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="ow">or</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">param_is_within_domain</span><span class="p">(</span><span class="n">fullParam</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Parameters outside of predefined range&quot;</span>
+        <span class="p">)</span>  <span class="c1"># Slows down the sampling to much? -&gt; Change logger level to warning or even error</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># If the parameter is within the valid ranges...</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Try evaluating the model for the given parameters. Evaluating the model and the jacobian for the specified parameter simultaneously provide a little speedup over calculating it separately in some cases.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sim_res</span><span class="p">,</span> <span class="n">model_jac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward_and_jacobian</span><span class="p">(</span><span class="n">fullParam</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Error while evaluating model and its jacobian.&quot;</span>
+                <span class="s2">&quot;The program will continue, but the density will be set to 0.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The parameter that caused the error is: </span><span class="si">{</span><span class="n">fullParam</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The error message is: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># normalize sim_res</span>
+        <span class="n">transformed_sim_res</span> <span class="o">=</span> <span class="n">data_transformation</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sim_res</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate the data density in the simulation result.</span>
+        <span class="n">densityEvaluation</span> <span class="o">=</span> <span class="n">eval_kde_gauss</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">transformed_sim_res</span><span class="p">,</span> <span class="n">data_stdevs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate the simulation model&#39;s pseudo-determinant in the parameter point (also called the correction factor).</span>
+        <span class="c1"># Scale with the determinant of the transformation matrix.</span>
+        <span class="n">transformation_jac</span> <span class="o">=</span> <span class="n">data_transformation</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">sim_res</span><span class="p">)</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="n">calc_gram_determinant</span><span class="p">(</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                <span class="n">transformation_jac</span><span class="p">,</span> <span class="n">model_jac</span>
+            <span class="p">)</span>  <span class="c1"># We use dot, because matmul does not support scalars</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Multiply data density and correction factor.</span>
+        <span class="n">trafo_density_evaluation</span> <span class="o">=</span> <span class="n">densityEvaluation</span> <span class="o">*</span> <span class="n">correction</span>
+
+        <span class="c1"># Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.</span>
+        <span class="n">evaluation_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">sim_res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">trafo_density_evaluation</span><span class="p">]))</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">trafo_density_evaluation</span><span class="p">,</span> <span class="n">evaluation_results</span></div>
+
+
+
+<div class="viewcode-block" id="eval_log_transformed_density">
+<a class="viewcode-back" href="../../../eulerpi.core.transformations.html#eulerpi.core.transformations.eval_log_transformed_density">[docs]</a>
+<span class="k">def</span> <span class="nf">eval_log_transformed_density</span><span class="p">(</span>
+    <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
+    <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the logarithmical parameter density as backtransformed data density using the simulation model</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\log{\\Phi_\\mathcal{Q}(q)} :=</span>
+<span class="sd">            \\begin{cases}</span>
+<span class="sd">                \\log{\\Phi_\\mathcal{Q}(q)} \\quad \\text{if } \\Phi_\\mathcal{Q}(q) &gt; 0 \\\\</span>
+<span class="sd">                -\\infty \\quad \\text{else}</span>
+<span class="sd">            \\end{cases}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        param (np.ndarray): parameter for which the transformed density shall be evaluated</span>
+<span class="sd">        model (Model): model to be evaluated</span>
+<span class="sd">        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)</span>
+<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
+<span class="sd">        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension</span>
+<span class="sd">        slice (np.ndarray): slice of the parameter vector that is to be evaluated</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[np.double, np.ndarray]:</span>
+<span class="sd">            : natural log of the parameter density at the point param</span>
+<span class="sd">            : sampler_results (array concatenation of parameters, simulation results and evaluated density, stored as &quot;blob&quot; by the emcee sampler)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trafo_density_evaluation</span><span class="p">,</span> <span class="n">evaluation_results</span> <span class="o">=</span> <span class="n">evaluate_density</span><span class="p">(</span>
+        <span class="n">param</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">trafo_density_evaluation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">evaluation_results</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">trafo_density_evaluation</span><span class="p">),</span> <span class="n">evaluation_results</span></div>
+
+
+
+<div class="viewcode-block" id="calc_gram_determinant">
+<a class="viewcode-back" href="../../../eulerpi.core.transformations.html#eulerpi.core.transformations.calc_gram_determinant">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_gram_determinant</span><span class="p">(</span><span class="n">jac</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">double</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the pseudo-determinant of the jacobian</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sqrt{\\det \\left({\\frac{ds}{dq}(q)}^\\intercal {\\frac{ds}{dq}(q)}\\right)}</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        The pseudo-determinant of the model jacobian serves as a correction term in the :py:func:`evaluate_density &lt;evaluate_density&gt;` function.</span>
+<span class="sd">        Therefore this function returns 0 if the result is not finite.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      jac(jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jnp.double: The pseudo-determinant of the jacobian. Returns 0 if the result is not finite.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import jax.numpy as jnp</span>
+<span class="sd">        from eulerpi.core.transformations import calc_gram_determinant</span>
+
+<span class="sd">        jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])</span>
+<span class="sd">        pseudo_det = calc_gram_determinant(jac)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">correction</span> <span class="o">=</span> <span class="n">_calc_gram_determinant</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
+    <span class="c1"># If the correction factor is not finite, return 0 instead to not affect the sampling.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">jnp</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">correction</span><span class="p">):</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invalid value encountered for correction factor&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">correction</span></div>
+
+
+
+<span class="nd">@jit</span>
+<span class="k">def</span> <span class="nf">_calc_gram_determinant</span><span class="p">(</span><span class="n">jac</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">double</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Jitted calculation of the pseudo-determinant of the jacobian. This function is called by calc_gram_determinant() and should not be called directly.</span>
+<span class="sd">    It does not check if the correction factor is finite.</span>
+
+<span class="sd">    Not much faster than a similar numpy version. However it can run on gpu and is maybe a bit faster because we can jit compile the sequence of operations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        jac (jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jnp.double: The pseudo-determinant of the jacobian</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">jac</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">jac</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">jac</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jacT</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span>
+        <span class="c1"># The pseudo-determinant is calculated as the square root of the determinant of the matrix-product of the Jacobian and its transpose.</span>
+        <span class="c1"># For numerical reasons, one can regularize the matrix product by adding a diagonal matrix of ones before calculating the determinant.</span>
+        <span class="c1"># correction = np.sqrt(np.linalg.det(np.matmul(jacT,jac) + np.eye(param.shape[0])))</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">jacT</span><span class="p">,</span> <span class="n">jac</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">correction</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.examples.temperature.temperature &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.examples.temperature.temperature</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.examples.temperature.temperature</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
+
+<span class="c1"># from functools import partial</span>
+<span class="c1"># from jax import jit</span>
+
+
+<div class="viewcode-block" id="Temperature">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.Temperature">[docs]</a>
+<span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model describes the temperature :math:`y` in degree celsius at a given latitude :math:`q` in degree.</span>
+
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        s: [0^{\\circ}, 90^{\\circ}] \\rightarrow [-30, 30]</span>
+
+<span class="sd">        q \\mapsto y = s(q) := 60 \\cdot \\cos{(q)} - 30</span>
+
+<span class="sd">    :math:`q=0^{\\circ}` corresponds to the equator and :math:`q=90^{\\circ}` to the north pole.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">param_dim</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1">#: The latitude of the location</span>
+    <span class="n">data_dim</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1">#: The temperature in degree celsius</span>
+
+    <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]]</span>
+    <span class="p">)</span>  <span class="c1">#: The latitude is between :math:`0^{\circ}` and :math:`90^{\circ}`</span>
+    <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1">#: The central latitude is :math:`\pi/4 = 45^{\circ}`</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Temperature.forward">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.Temperature.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the temperature at the given latitude using the model equation</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            y = 60 \\cdot \\cos{(q)} - 30</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">low_T</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span>
+        <span class="n">high_T</span> <span class="o">=</span> <span class="mf">30.0</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">low_T</span> <span class="o">+</span> <span class="p">(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="Temperature.jacobian">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.Temperature.jacobian">[docs]</a>
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the analytical jacobian of the model equation at the given latitude</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\frac{dy}{dq} = -60 \\cdot \\sin{(q)}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">60.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TemperatureArtificial">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureArtificial">[docs]</a>
+<span class="k">class</span> <span class="nc">TemperatureArtificial</span><span class="p">(</span><span class="n">Temperature</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="TemperatureArtificial.generate_artificial_params">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureArtificial.generate_artificial_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">paramPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
+            <span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureArtificialParams.csv&quot;</span>
+        <span class="p">)</span>
+        <span class="n">true_param_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">paramPath</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">true_param_sample</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TemperatureWithFixedParams">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureWithFixedParams">[docs]</a>
+<span class="k">class</span> <span class="nc">TemperatureWithFixedParams</span><span class="p">(</span><span class="n">Temperature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model describes the temperature :math:`y` in degree celsius at a given latitude :math:`q` in degree.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        * Additional fixed parameters: The model includes fixed parameters :code:`self.low_T=30.0` and :code:`self.high_T=30.0`.</span>
+<span class="sd">          These fixed parameters are passed to the calc_forward function separately. You can create models with different parameters by</span>
+<span class="sd">          creating several model objects.</span>
+<span class="sd">          The best way to separate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute :py:attr:`run_name` of the :py:func:`~eulerpi.core.inference` function.</span>
+<span class="sd">        * The functions :py:meth:`~eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.calc_forward` is not strictly necessary.</span>
+<span class="sd">          However it can help to make it work with jax.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">low_T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span> <span class="o">=</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span>
+        <span class="n">high_T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span> <span class="o">=</span> <span class="n">low_T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span> <span class="o">=</span> <span class="n">high_T</span>
+
+<div class="viewcode-block" id="TemperatureWithFixedParams.forward">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_forward</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemperatureWithFixedParams.calc_forward">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.calc_forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">calc_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">high_T</span><span class="p">,</span> <span class="n">low_T</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">low_T</span> <span class="o">+</span> <span class="p">(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="TemperatureWithFixedParams.jacobian">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.jacobian">[docs]</a>
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_jacobian</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low_T</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemperatureWithFixedParams.calc_jacobian">
+<a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.calc_jacobian">[docs]</a>
+    <span class="k">def</span> <span class="nf">calc_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">high_T</span><span class="p">,</span> <span class="n">low_T</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">high_T</span> <span class="o">-</span> <span class="n">low_T</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

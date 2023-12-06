@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.examples.simple_models module &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EPI
+              <img src="_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">eulerpi.examples.simple_models module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/eulerpi.examples.simple_models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-eulerpi.examples.simple_models">
+<span id="eulerpi-examples-simple-models-module"></span><h1>eulerpi.examples.simple_models module<a class="headerlink" href="#module-eulerpi.examples.simple_models" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Exponential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.,</span> <span class="pre">1.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">2.],</span> <span class="pre">[1.,</span> <span class="pre">2.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#Exponential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.bw">
+<span class="sig-name descname"><span class="pre">bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.bw" title="Link to this definition"></a></dt>
+<dd><p>Jacobian of forward with respect to positional argument(s) 0. Takes the same arguments as forward but returns the jacobian of the output with respect to the arguments at positions 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.forward">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#Exponential.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.forward" title="Link to this definition"></a></dt>
+<dd><p>Executed the forward pass of the model to obtain data from a parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the data should be generated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data generated from the parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># the forward simulation is achieved by using the forward method of the model</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once</span>
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to perform the forward pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.fw">
+<span class="sig-name descname"><span class="pre">fw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.fw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.vj">
+<span class="sig-name descname"><span class="pre">vj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.vj" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>jnp.ndarray</em>) – The input to the function</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value and the jacobian of the passed function using reverse mode AD.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple</em>[jnp.ndarray, jnp.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.CENTRAL_PARAM">
+<span class="sig-name descname"><span class="pre">CENTRAL_PARAM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([1.,</span> <span class="pre">1.])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.CENTRAL_PARAM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.PARAM_LIMITS">
+<span class="sig-name descname"><span class="pre">PARAM_LIMITS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[1.,</span> <span class="pre">2.],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[1.,</span> <span class="pre">2.]])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.PARAM_LIMITS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.data_dim">
+<span class="sig-name descname"><span class="pre">data_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.data_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the data space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Exponential.param_dim">
+<span class="sig-name descname"><span class="pre">param_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Exponential.param_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the parameter space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([0.5,</span> <span class="pre">0.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[-0.2,</span> <span class="pre">1.2],</span> <span class="pre">[-0.2,</span> <span class="pre">1.2]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#Linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.Linear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>, <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.ArtificialModelInterface" title="eulerpi.core.model.ArtificialModelInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.bw">
+<span class="sig-name descname"><span class="pre">bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.bw" title="Link to this definition"></a></dt>
+<dd><p>Jacobian of forward with respect to positional argument(s) 0. Takes the same arguments as forward but returns the jacobian of the output with respect to the arguments at positions 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.forward">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#Linear.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.forward" title="Link to this definition"></a></dt>
+<dd><p>Executed the forward pass of the model to obtain data from a parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the data should be generated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data generated from the parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># the forward simulation is achieved by using the forward method of the model</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once</span>
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to perform the forward pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.fw">
+<span class="sig-name descname"><span class="pre">fw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.fw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.generate_artificial_params">
+<span class="sig-name descname"><span class="pre">generate_artificial_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#Linear.generate_artificial_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.generate_artificial_params" title="Link to this definition"></a></dt>
+<dd><p>This method must be overwritten an return an numpy array of num_samples parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – The number of parameters to generate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the method is not overwritten in a subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.vj">
+<span class="sig-name descname"><span class="pre">vj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.vj" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>jnp.ndarray</em>) – The input to the function</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value and the jacobian of the passed function using reverse mode AD.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple</em>[jnp.ndarray, jnp.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.CENTRAL_PARAM">
+<span class="sig-name descname"><span class="pre">CENTRAL_PARAM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([0.5,</span> <span class="pre">0.5])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.CENTRAL_PARAM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.PARAM_LIMITS">
+<span class="sig-name descname"><span class="pre">PARAM_LIMITS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[-0.2,</span>&#160; <span class="pre">1.2],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[-0.2,</span>&#160; <span class="pre">1.2]])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.PARAM_LIMITS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.data_dim">
+<span class="sig-name descname"><span class="pre">data_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.data_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the data space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.Linear.param_dim">
+<span class="sig-name descname"><span class="pre">param_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.Linear.param_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the parameter space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LinearODE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.5,</span> <span class="pre">1.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[-2.,</span> <span class="pre">4.],</span> <span class="pre">[-2.,</span> <span class="pre">4.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#LinearODE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel" title="eulerpi.core.model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a>, <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.ArtificialModelInterface" title="eulerpi.core.model.ArtificialModelInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.bw">
+<span class="sig-name descname"><span class="pre">bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.bw" title="Link to this definition"></a></dt>
+<dd><p>Jacobian of forward with respect to positional argument(s) 0. Takes the same arguments as forward but returns the jacobian of the output with respect to the arguments at positions 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.forward">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#LinearODE.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.forward" title="Link to this definition"></a></dt>
+<dd><p>Executed the forward pass of the model to obtain data from a parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the data should be generated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data generated from the parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">eulerpi.examples.heat</span> <span class="kn">import</span> <span class="n">Heat</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
+
+<span class="c1"># instantiate the heat model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Heat</span><span class="p">()</span>
+
+<span class="c1"># define a 3D example parameter for the heat model</span>
+<span class="n">example_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># the forward simulation is achieved by using the forward method of the model</span>
+<span class="n">sim_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">example_param</span><span class="p">)</span>
+
+<span class="c1"># in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once</span>
+<span class="n">multiple_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                            <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
+                            <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+
+<span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+
+<span class="c1"># if the model is not a jax model, we can use numpy vectorize to perform the forward pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">multiple_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span><span class="n">multiple_params</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.fw">
+<span class="sig-name descname"><span class="pre">fw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.fw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.generate_artificial_params">
+<span class="sig-name descname"><span class="pre">generate_artificial_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/simple_models.html#LinearODE.generate_artificial_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.generate_artificial_params" title="Link to this definition"></a></dt>
+<dd><p>This method must be overwritten an return an numpy array of num_samples parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – The number of parameters to generate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the method is not overwritten in a subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.vj">
+<span class="sig-name descname"><span class="pre">vj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.vj" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>jnp.ndarray</em>) – The input to the function</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value and the jacobian of the passed function using reverse mode AD.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple</em>[jnp.ndarray, jnp.ndarray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.CENTRAL_PARAM">
+<span class="sig-name descname"><span class="pre">CENTRAL_PARAM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([1.5,</span> <span class="pre">1.5])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.CENTRAL_PARAM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.PARAM_LIMITS">
+<span class="sig-name descname"><span class="pre">PARAM_LIMITS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[-2.,</span>&#160; <span class="pre">4.],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[-2.,</span>&#160; <span class="pre">4.]])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.PARAM_LIMITS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.TRUE_PARAM_LIMITS">
+<span class="sig-name descname"><span class="pre">TRUE_PARAM_LIMITS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[1.,</span> <span class="pre">2.],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[1.,</span> <span class="pre">2.]])</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.TRUE_PARAM_LIMITS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.data_dim">
+<span class="sig-name descname"><span class="pre">data_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.data_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the data space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="eulerpi.examples.simple_models.LinearODE.param_dim">
+<span class="sig-name descname"><span class="pre">param_dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#eulerpi.examples.simple_models.LinearODE.param_dim" title="Link to this definition"></a></dt>
+<dd><p>The dimension of the parameter space of the model. It must be defined in the subclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

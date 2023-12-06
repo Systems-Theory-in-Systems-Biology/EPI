@@ -4,27 +4,27 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>C++ Model &mdash; EPI  documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <title>External C++ Models &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
+    <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Development" href="../MarkdownLinks/development.html" />
-    <link rel="prev" title="SBML Models" href="sbml_example.html" /> 
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="C++ Plant Model" href="eulerpi.examples.cpp.cpp_plant.html" />
+    <link rel="prev" title="Menten Model" href="eulerpi.examples.sbml.sbml_menten_model.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,12 +35,12 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             EPI
-              <img src="../_static/epi.png" class="logo" alt="Logo"/>
+              <img src="_static/epi.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -49,28 +49,33 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../eulerpi.core.html">Core API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial_material/tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Example Models</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="temperature_example.html">1D-Temperature Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="corona_example.html">Corona ODE Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sbml_example.html">SBML Model</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">External C++ Model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#specialities">Specialities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Example Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.temperature.temperature.html">Earth Temperature Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.corona.corona.html">Corona SEIR Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.heat.heat.html">Heat Conduction Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.sbml.html">SBML Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">External C++ Models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#preparation">Preparation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#c-model-definition">C++ Model Definition</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#wrapping-the-c-code">Wrapping the C++ Code</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#compilation">Compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python-side-model">Python Side Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="eulerpi.examples.cpp.cpp_plant.html">C++ Plant Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html">Python Plant Model</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/development.html">Development</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/license.html">LICENSE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/citation.html">Citation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MarkdownLinks/changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -79,18 +84,18 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">EPI</a>
+          <a href="index.html">EPI</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../examples.html">Example Models</a></li>
-      <li class="breadcrumb-item active">C++ Model</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Example Models</a></li>
+      <li class="breadcrumb-item active">External C++ Models</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/examples/cpp_example.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/eulerpi.examples.cpp.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -98,20 +103,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="c-model">
-<h1>C++ Model<a class="headerlink" href="#c-model" title="Link to this heading"></a></h1>
+  <section id="external-c-models">
+<h1>External C++ Models<a class="headerlink" href="#external-c-models" title="Link to this heading"></a></h1>
 <p>Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
+call C++ code from your python <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
 It is primarily intended for fast implementations of the <cite>forward</cite> and <cite>jacobian</cite> method.</p>
-<section id="specialities">
-<h2>Specialities<a class="headerlink" href="#specialities" title="Link to this heading"></a></h2>
+<p>This example model uses the following features:</p>
 <ul class="simple">
 <li><p>Calling C++ Code: Calls external c++ code using pybind11</p></li>
 <li><p>Performance Comparison: The file <code class="file docutils literal notranslate"><span class="pre">eulerpi/examples/cpp/python_reference_plants.py</span></code> includes
 python models implementing the same mapping. You can compare the performance of the different approaches.</p></li>
 </ul>
-</section>
 <section id="preparation">
 <h2>Preparation<a class="headerlink" href="#preparation" title="Link to this heading"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>cmake
@@ -282,14 +285,44 @@ make<span class="w"> </span>-j
 </div>
 <p>You can use the cpp example model as template for your own C++ Model.</p>
 </section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="eulerpi.examples.cpp.cpp_plant.html">C++ Plant Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html">Python Plant Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant"><code class="docutils literal notranslate"><span class="pre">ExternalPlant</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.forward"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.generate_artificial_params"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.generate_artificial_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.jacobian"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.CENTRAL_PARAM"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.CENTRAL_PARAM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.PARAM_LIMITS"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.PARAM_LIMITS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.data_dim"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.data_dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.param_dim"><code class="docutils literal notranslate"><span class="pre">ExternalPlant.param_dim</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant"><code class="docutils literal notranslate"><span class="pre">JaxPlant</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.forward"><code class="docutils literal notranslate"><span class="pre">JaxPlant.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.generate_artificial_params"><code class="docutils literal notranslate"><span class="pre">JaxPlant.generate_artificial_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.CENTRAL_PARAM"><code class="docutils literal notranslate"><span class="pre">JaxPlant.CENTRAL_PARAM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.PARAM_LIMITS"><code class="docutils literal notranslate"><span class="pre">JaxPlant.PARAM_LIMITS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.data_dim"><code class="docutils literal notranslate"><span class="pre">JaxPlant.data_dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.JaxPlant.param_dim"><code class="docutils literal notranslate"><span class="pre">JaxPlant.param_dim</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sbml_example.html" class="btn btn-neutral float-left" title="SBML Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../MarkdownLinks/development.html" class="btn btn-neutral float-right" title="Development" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="eulerpi.examples.sbml.sbml_menten_model.html" class="btn btn-neutral float-left" title="Menten Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="eulerpi.examples.cpp.cpp_plant.html" class="btn btn-neutral float-right" title="C++ Plant Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

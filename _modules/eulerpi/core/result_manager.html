@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.result_manager &mdash; EPI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.result_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.result_manager</h1><div class="highlight"><pre>
+<span></span><span class="c1"># TODO: Import Path from pathlib?</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seedir</span>
+<span class="kn">from</span> <span class="nn">seedir</span> <span class="kn">import</span> <span class="n">FakeDir</span><span class="p">,</span> <span class="n">FakeFile</span>
+
+<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="ResultManager">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager">[docs]</a>
+<span class="k">class</span> <span class="nc">ResultManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The result manager is responsible for saving the results of the inference and loading them again.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        model_name(str): The name of the model (e.g. &quot;temperature&quot;). It is used to create the folder structure.</span>
+<span class="sd">        run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span> <span class="o">=</span> <span class="n">run_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">slices</span>
+
+<div class="viewcode-block" id="ResultManager.count_emcee_sub_runs">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.count_emcee_sub_runs">[docs]</a>
+    <span class="k">def</span> <span class="nf">count_emcee_sub_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This data organization function counts how many sub runs are saved for the specified scenario.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the number of sub runs should be counted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          num_existing_files(int): The number of completed sub runs of the emcee particle swarm sampler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize the number of existing files to be 0</span>
+        <span class="n">num_existing_files</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Increase the just defined number until no corresponding file is found anymore ...</span>
+        <span class="k">while</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;/SimResults/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;sim_results_&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_existing_files</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
+        <span class="p">):</span>
+            <span class="n">num_existing_files</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">num_existing_files</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.get_slice_name">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_slice_name">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_slice_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This organization function returns the name of the folder for the current slice.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the name of the folder will be returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The name of the folder for the current slice.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;Slice_&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Q&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">slice</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.get_slice_path">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_slice_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_slice_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the path to the folder where the results for the given slice are stored.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the path will be returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The path to the folder where the results for the given slice are stored.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sliceName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="s2">&quot;Applications&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span> <span class="n">sliceName</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.create_application_folder_structure">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.create_application_folder_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the `Application` folder including subfolder where all simulation results</span>
+<span class="sd">        are stored for this model. No files are deleted during this action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_slice_folder_structure</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.create_slice_folder_structure">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.create_slice_folder_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the subfolders in `Aplication` for the given slice where all simulation results</span>
+<span class="sd">        are stored for this model and slice. No files are deleted during this action.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the folder structure will be created</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">applicationFolderStructure</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Applications/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;  - </span><span class="si">{modelName}</span><span class="s2">/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;    - </span><span class="si">{runName}</span><span class="s2">/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;       - </span><span class="si">{sliceName}</span><span class="s2">/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;           - DensityEvals/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;           - Params/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;           - SimResults/ </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">applicationFolderStructure</span>
+
+        <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">              f:</span>
+<span class="sd">              root:</span>
+
+<span class="sd">            Returns:</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_path</span><span class="p">()</span>
+            <span class="n">joined</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fpath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">FakeDir</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">joined</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory `</span><span class="si">{</span><span class="n">joined</span><span class="si">}</span><span class="s2">` already exists&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">FakeFile</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">joined</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">):</span>
+                        <span class="k">pass</span>
+                <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File `</span><span class="si">{</span><span class="n">joined</span><span class="si">}</span><span class="s2">` already exists&quot;</span><span class="p">)</span>
+
+        <span class="n">sliceName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+        <span class="n">fakeStructure</span> <span class="o">=</span> <span class="n">seedir</span><span class="o">.</span><span class="n">fakedir_fromstring</span><span class="p">(</span>
+            <span class="n">structure</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">modelName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="n">runName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_name</span><span class="p">,</span>
+                <span class="n">sliceName</span><span class="o">=</span><span class="n">sliceName</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">fakeStructure</span><span class="o">.</span><span class="n">realize</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">path_arg</span><span class="p">:</span> <span class="n">fakeStructure</span><span class="o">.</span><span class="n">walk_apply</span><span class="p">(</span>
+            <span class="n">create</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">path_arg</span>
+        <span class="p">)</span>
+        <span class="n">fakeStructure</span><span class="o">.</span><span class="n">realize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.delete_application_folder_structure">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_application_folder_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes the `Applications` subfolder&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">delete_slice_folder_structure</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Folder structure for slice </span><span class="si">{</span><span class="nb">slice</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.delete_slice_folder_structure">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_slice_folder_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes the `Applications/[slice]` subfolder</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the folder structure will be deleted</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.get_application_path">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_application_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_application_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the path to the simulation results folder, containing also intermediate results.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The path to the simulation results folder, containing also intermediate results.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;Applications/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.save_run">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_run">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">run</span><span class="p">,</span>
+        <span class="n">sampler_results</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">final_walker_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the results of a single run of the emcee particle swarm sampler.</span>
+<span class="sd">        sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them</span>
+<span class="sd">        as seperate files in the folders &#39;Params&#39; and&#39;SimResults&#39; and &#39;DensityEvals&#39;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model(Model): The model for which the results will be saved</span>
+<span class="sd">            slice(np.ndarray): The slice for which the results will be saved</span>
+<span class="sd">            run(int): The run for which the results will be saved</span>
+<span class="sd">            sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)</span>
+<span class="sd">            final_walker_positions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sampling_dim</span> <span class="o">=</span> <span class="n">final_walker_positions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">results_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+
+        <span class="c1"># Save the parameters</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/Params/params_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">run</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+            <span class="n">sampler_results</span><span class="p">[:,</span> <span class="p">:</span><span class="n">sampling_dim</span><span class="p">],</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save the density evaluations</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/DensityEvals/density_evals_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">run</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+            <span class="n">sampler_results</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save the simulation results</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/SimResults/sim_results_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">run</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+            <span class="n">sampler_results</span><span class="p">[:,</span> <span class="n">sampling_dim</span> <span class="p">:</span> <span class="n">sampling_dim</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">data_dim</span><span class="p">],</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save the final walker positions</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/final_walker_positions_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">run</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+            <span class="n">final_walker_positions</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.save_overall">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_overall">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_overall</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">overall_params</span><span class="p">,</span> <span class="n">overall_sim_results</span><span class="p">,</span> <span class="n">overall_density_evals</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the results of all runs of the emcee particle swarm sampler for the given slice.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the results will be saved. # TODO document dimensions of overall_params, overall_sim_results, overall_density_evals</span>
+<span class="sd">            overall_params(np.ndarray): The results of the sampler.</span>
+<span class="sd">            overall_sim_results(np.ndarray): The results of the sampler.</span>
+<span class="sd">            overall_density_evals(np.ndarray): The results of the sampler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save the three just-created files.</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/overall_density_evals.csv&quot;</span><span class="p">,</span>
+            <span class="n">overall_density_evals</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/overall_sim_results.csv&quot;</span><span class="p">,</span>
+            <span class="n">overall_sim_results</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/overall_params.csv&quot;</span><span class="p">,</span>
+            <span class="n">overall_params</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.save_inference_information">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_inference_information">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_inference_information</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">inference_type</span><span class="p">:</span> <span class="n">InferenceType</span><span class="p">,</span>
+        <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the information about the inference run.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): The slice for which the results will be saved.</span>
+<span class="sd">            model(Model): The model for which the results will be saved.</span>
+<span class="sd">            inference_type(InferenceType): The type of inference that was performed.</span>
+<span class="sd">            num_processes(int): The number of processes that were used for the inference.</span>
+<span class="sd">            **kwargs: Additional information about the inference run.</span>
+<span class="sd">                num_runs(int): The number of runs that were performed. Only for mcmc inference.</span>
+<span class="sd">                num_walkers(int): The number of walkers that were used. Only for mcmc inference.</span>
+<span class="sd">                num_steps(int): The number of steps that were performed. Only for mcmc inference.</span>
+<span class="sd">                num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.</span>
+<span class="sd">                thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.</span>
+<span class="sd">                load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.</span>
+<span class="sd">                num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.</span>
+<span class="sd">                dense_grid_type(DenseGridType): The type of dense grid that was used: either equidistant or chebyshev. Only for dense grid inference.</span>
+<span class="sd">                num_levels(int): The number of sparse grid levels that were used. Only for sparse grid inference.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the inference type is unknown.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">information</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;slice&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">),</span>
+            <span class="s2">&quot;inference_type&quot;</span><span class="p">:</span> <span class="n">inference_type</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;num_processes&quot;</span><span class="p">:</span> <span class="n">num_processes</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">information</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">&quot;num_grid_points&quot;</span> <span class="ow">in</span> <span class="n">information</span><span class="p">:</span>
+            <span class="n">information</span><span class="p">[</span><span class="s2">&quot;num_grid_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span>
+                <span class="n">information</span><span class="p">[</span><span class="s2">&quot;num_grid_points&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;dense_grid_type&quot;</span> <span class="ow">in</span> <span class="n">information</span><span class="p">:</span>
+            <span class="n">information</span><span class="p">[</span><span class="s2">&quot;dense_grid_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">information</span><span class="p">[</span>
+                <span class="s2">&quot;dense_grid_type&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="c1"># save information as json file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/inference_information.json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">information</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.load_inference_results">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.load_inference_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_inference_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">slices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">thinning_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the inference results generated by EPI.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slices(list[np.ndarray]): Slices for which the results will be loaded. Default is None and loads all slices.</span>
+<span class="sd">            num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</span>
+<span class="sd">            thinning_factor(int): Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in each inference_information.json.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            typing.Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray]]: The parameters, the simulation results and the density evaluations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">slices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sim_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">density_evals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
+            <span class="n">slice_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_name</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+            <span class="p">(</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+                <span class="n">sim_results</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+                <span class="n">density_evals</span><span class="p">[</span><span class="n">slice_name</span><span class="p">],</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_slice_inference_results</span><span class="p">(</span>
+                <span class="nb">slice</span><span class="p">,</span> <span class="n">num_burn_in_samples</span><span class="p">,</span> <span class="n">thinning_factor</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">sim_results</span><span class="p">,</span> <span class="n">density_evals</span></div>
+
+
+<div class="viewcode-block" id="ResultManager.load_slice_inference_results">
+<a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.load_slice_inference_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_slice_inference_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">thinning_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the files generated by the EPI algorithm through sampling</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slice(np.ndarray): Slice for which the results will be loaded</span>
+<span class="sd">            num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</span>
+<span class="sd">            thinning_factor(int): Thinning factor that will be used to thin the Markov chain. Only for mcmc inference. Default is None and uses the value that was used for the inference stored in inference_information.json.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the simulation results and the density evaluations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slice_path</span><span class="p">(</span><span class="nb">slice</span><span class="p">)</span>
+
+        <span class="c1"># load information from json file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/inference_information.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">inference_information</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="c1"># dense grid or sparse grid inference: load directly from overall results</span>
+        <span class="k">if</span> <span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;inference_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;MCMC&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_burn_in_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;For inference type </span><span class="si">{</span><span class="n">inference_information</span><span class="p">[</span><span class="s1">&#39;inference_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, num_burn_in_samples is ignored.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">thinning_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;For inference type </span><span class="si">{</span><span class="n">inference_information</span><span class="p">[</span><span class="s1">&#39;inference_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, thinning_factor is ignored.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">overall_density_evals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/overall_density_evals.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">overall_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/overall_sim_results.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">overall_param_chain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="s2">&quot;/overall_params.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">overall_param_chain</span><span class="p">,</span>
+                <span class="n">overall_sim_results</span><span class="p">,</span>
+                <span class="n">overall_density_evals</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># MCMC inference</span>
+        <span class="c1"># use default values saved in inference_information if not specified</span>
+        <span class="k">if</span> <span class="n">num_burn_in_samples</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">num_burn_in_samples</span> <span class="o">=</span> <span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;num_burn_in_samples&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">thinning_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">thinning_factor</span> <span class="o">=</span> <span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;thinning_factor&quot;</span><span class="p">]</span>
+
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;num_steps&quot;</span><span class="p">]</span>
+        <span class="n">num_walkers</span> <span class="o">=</span> <span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;num_walkers&quot;</span><span class="p">]</span>
+
+        <span class="c1"># load samples from raw chains</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inference_information</span><span class="p">[</span><span class="s2">&quot;num_runs&quot;</span><span class="p">]):</span>
+            <span class="n">density_evals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/DensityEvals/density_evals_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/SimResults/sim_results_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+                <span class="n">results_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/Params/params_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">param_dim</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">data_dim</span> <span class="o">=</span> <span class="n">sim_results</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">overall_density_evals</span> <span class="o">=</span> <span class="n">density_evals</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="n">overall_sim_results</span> <span class="o">=</span> <span class="n">sim_results</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">data_dim</span>
+                <span class="p">)</span>
+                <span class="n">overall_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">param_dim</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">overall_density_evals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">overall_density_evals</span><span class="p">,</span>
+                        <span class="n">density_evals</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">overall_sim_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">overall_sim_results</span><span class="p">,</span>
+                        <span class="n">sim_results</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">data_dim</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">overall_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">overall_params</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">num_walkers</span><span class="p">,</span> <span class="n">param_dim</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="c1"># thin and burn in</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">overall_params</span><span class="p">[</span><span class="n">num_burn_in_samples</span><span class="p">::</span><span class="n">thinning_factor</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">param_dim</span>
+            <span class="p">),</span>
+            <span class="n">overall_sim_results</span><span class="p">[</span>
+                <span class="n">num_burn_in_samples</span><span class="p">::</span><span class="n">thinning_factor</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_dim</span><span class="p">),</span>
+            <span class="n">overall_density_evals</span><span class="p">[</span>
+                <span class="n">num_burn_in_samples</span><span class="p">::</span><span class="n">thinning_factor</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2023, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>
