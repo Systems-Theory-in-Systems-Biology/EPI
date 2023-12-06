@@ -1,5 +1,5 @@
 Corona SEIR Model
-=====================================
+=================
 
 .. automodule:: eulerpi.examples.corona.corona
    :members:
