@@ -15,7 +15,7 @@ Welcome to EPI's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   API DOC<modules>
+   Core API<eulerpi.core>
    Tutorial<tutorial_material/tutorial>
    Example Models<examples>
    MarkdownLinks/development
