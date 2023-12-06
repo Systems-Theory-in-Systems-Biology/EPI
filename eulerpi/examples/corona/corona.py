@@ -9,7 +9,32 @@ from eulerpi.core.model import ArtificialModelInterface, JaxModel
 
 
 class Corona(JaxModel):
-    """ """
+    """Describes the dynamics of the corona virus.
+
+    .. math::
+        :nowrap:
+
+        \\begin{eqnarray}
+            \\frac{d[S]}{dt} = & -q_1[S][I] \\\\
+            \\frac{d[E]}{dt} = & q_1[S][I] - q_2[E] \\\\
+            \\frac{d[I]}{dt}= & q_2[E] - q_3[I] \\\\
+            \\frac{d[R]}{dt}= & q_3[I]
+        \\end{eqnarray}
+
+    subject to
+
+    .. math::
+
+        {\\left([S](t=0), \\ [E](t=0), \\ [I](t=0), \\ [R](t=0)\\right)}^\\intercal= \\left(999, \\ 0, \\ 1, \\ 0\\right)^\\intercal,
+
+    .. note::
+
+        * ODE Solver: To solve the ODE problem the jax based ode solver library :code:`diffrax` is used: https://github.com/patrick-kidger/diffrax.
+        * Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class :py:class:`~eulerpi.core.model.JaxModel`,
+          which automatically calculates sets :py:meth:`~eulerpi.core.model.Model.jacobian`.
+        * JIT compilation: Inheriting from :py:class:`~eulerpi.core.model.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.
+          This usually results in a significant execution speedup. It also allows to run your model on the gpu.
+    """
 
     param_dim = 3
     data_dim = 4

@@ -40,25 +40,35 @@ def heat_rhs(t: float, u: jnp.ndarray, args: tuple | list) -> jnp.ndarray:
 
 class Heat(JaxModel):
     """A two-dimensional anisotropic heat conduction equation model on a square domain with four dirichlet boundaries.
+
     The model is defined by the following partial differential equation on the square spacial domain :math:`\\Omega = [0, 1]^2` on the time interval :math:`[0, 0.1]`:
+
     .. math::
-        \\frac{\\partial u}{\\partial t} = \\div \\left( \\kappa \\nabla u \\right)
+
+        \\frac{\\partial u}{\\partial t} = \\nabla \\cdot \\left( \\kappa \\nabla u \\right)
+
     subject to
+
     .. math::
+
         u(x, y, t=0) = 0
+
     and
+
     .. math::
+
         u(0, y, t) = 1, \\quad u(1, y, t) = 0, \\quad u(x, 0, t) = 1, \\quad u(x, 1, t) = 0
+
     with the symmetric positive definite thermal conductivity matrix :math:`\\kappa` and the temperature :math:`u`.
     Inference is performed on the entries of :math:`\\kappa`: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`.
     """
 
-    t_end = 0.1
-    plate_length = jnp.array([1.0, 1.0])
-    num_grid_points = 20
+    t_end = 0.1  #: End time of the simulation
+    plate_length = jnp.array([1.0, 1.0])  #: Length of the square plate
+    num_grid_points = 20  #: Number of grid points in each spatial direction
 
-    param_dim = 3
-    data_dim = 5  # The values of the heat equation solution at five points are observed. See evaluation_points.
+    param_dim = 3  #: Number of independent heat conductivity parameters
+    data_dim = 5  #: The values of the heat equation solution at five points are observed. See evaluation_points.
 
     evaluation_points = jnp.array(
         [
@@ -91,14 +101,16 @@ class Heat(JaxModel):
 
     @classmethod
     def forward(cls, param: np.ndarray) -> np.ndarray:
-        """Forward method for the heat model. Yields the solution of the anisotropic heat conduction equation at time :math:`\\t=0.1`
+        """Forward method for the heat model.
+
+        Yields the solution of the anisotropic heat conduction equation at time :math:`t=0.1`
         in five spatial points, which are arranged similar to the number "five" on a dice.
 
         Args:
             param (np.ndarray): Entries of the conductivity matrix: param[0] = :math:`\\kappa_{11}`, param[1] = :math:`\\kappa_{22}`, param[2] = :math:`\\kappa_{12}`
 
         Returns:
-            np.ndarray: The solution of the anisotropic heat conduction equation at time :math:`\\t=0.1`
+            np.ndarray: The solution of the anisotropic heat conduction equation at time :math:`t=0.1`
         in five spacial points, which are arranged similar to the number "five" on a dice.
         """
 
