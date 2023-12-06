@@ -23,6 +23,10 @@ def evaluate_density(
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the parameter density as backtransformed data density using the simulation model
 
+    .. math::
+
+        \\Phi_\\mathcal{Q}(q) = \\Phi_\\mathcal{Y}(s(q)) \\cdot \\sqrt{\\det \\left({\\frac{ds}{dq}(q)}^\\intercal {\\frac{ds}{dq}(q)}\\right)}
+
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
@@ -145,6 +149,14 @@ def eval_log_transformed_density(
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the logarithmical parameter density as backtransformed data density using the simulation model
 
+    .. math::
+
+        \\log{\\Phi_\\mathcal{Q}(q)} :=
+            \\begin{cases}
+                \\log{\\Phi_\\mathcal{Q}(q)} \\quad \\text{if } \\Phi_\\mathcal{Q}(q) > 0 \\\\
+                -\\infty \\quad \\text{else}
+            \\end{cases}
+
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (Model): model to be evaluated
@@ -169,6 +181,10 @@ def eval_log_transformed_density(
 
 def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
     """Evaluate the pseudo-determinant of the jacobian
+
+    .. math::
+
+        \\sqrt{\\det \\left({\\frac{ds}{dq}(q)}^\\intercal {\\frac{ds}{dq}(q)}\\right)}
 
     .. warning::
 
