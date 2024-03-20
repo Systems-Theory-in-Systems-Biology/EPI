@@ -162,7 +162,7 @@ Every time a new version is tagged, a GitHub Action workflow is triggered which 
 
 Please update the version number in the `pyproject.toml` file before tagging the version.
 
-### Test Deployment with TestPyPi
+### Test Deployment to TestPyPi
 
 You have to set-up testpypi once:
 
@@ -184,7 +184,14 @@ Test this with
 python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps eulerpi
 ```
 
-### Deployment with PyPi
+### Deployment with GitHub CI (recommended)
+
+0. Checkout the main branch `git checkout main`
+1. Update the version number `X.X.X` in `CHANGELOG.md` and `pyproject.toml`
+2. Set a new version tag `git tag -a vX.X.X -m "Release version X.X.X"` and push it `git push origin vX.X.X`
+3. Check if the CI deployment was successful on [GitHub](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/publish.yml) and finally on [PyPi](https://pypi.org/project/eulerpi/#history). The CI and PyPi may needs some time to run and update.
+
+### Deployment with Poetry (not recommended)
   
 You have to set-up pypi once:
 
