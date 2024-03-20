@@ -62,8 +62,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#hosting-with-github-pages">Hosting with GitHub Pages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changelog">Changelog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#versioning">Versioning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#test-deployment-with-testpypi">Test Deployment with TestPyPi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#deployment-with-pypi">Deployment with PyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-deployment-to-testpypi">Test Deployment to TestPyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployment-with-github-ci-recommended">Deployment with GitHub CI (recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployment-with-poetry-not-recommended">Deployment with Poetry (not recommended)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#jax-with-cuda">Jax with CUDA</a></li>
@@ -239,8 +240,8 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 <p>Every time a new version is tagged, a GitHub Action workflow is triggered which builds and uploads the version to pypi.</p>
 <p>Please update the version number in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file before tagging the version.</p>
 </section>
-<section id="test-deployment-with-testpypi">
-<h3>Test Deployment with TestPyPi<a class="headerlink" href="#test-deployment-with-testpypi" title="Link to this heading"></a></h3>
+<section id="test-deployment-to-testpypi">
+<h3>Test Deployment to TestPyPi<a class="headerlink" href="#test-deployment-to-testpypi" title="Link to this heading"></a></h3>
 <p>You have to set-up testpypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>repositories.testpypi<span class="w"> </span>https://test.pypi.org/legacy/
 poetry<span class="w"> </span>config<span class="w"> </span>http-basic.testpypi<span class="w"> </span>__token__<span class="w"> </span>pypi-your-api-token-here
@@ -256,8 +257,17 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 </pre></div>
 </div>
 </section>
-<section id="deployment-with-pypi">
-<h3>Deployment with PyPi<a class="headerlink" href="#deployment-with-pypi" title="Link to this heading"></a></h3>
+<section id="deployment-with-github-ci-recommended">
+<h3>Deployment with GitHub CI (recommended)<a class="headerlink" href="#deployment-with-github-ci-recommended" title="Link to this heading"></a></h3>
+<ol class="arabic simple" start="0">
+<li><p>Checkout the main branch <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">main</span></code></p></li>
+<li><p>Update the version number <code class="docutils literal notranslate"><span class="pre">X.X.X</span></code> in <code class="docutils literal notranslate"><span class="pre">CHANGELOG.md</span></code> and <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></p></li>
+<li><p>Set a new version tag <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-a</span> <span class="pre">vX.X.X</span> <span class="pre">-m</span> <span class="pre">&quot;Release</span> <span class="pre">version</span> <span class="pre">X.X.X&quot;</span></code> and push it <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">vX.X.X</span></code></p></li>
+<li><p>Check if the CI deployment was successful on <a class="reference external" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/publish.yml">GitHub</a> and finally on <a class="reference external" href="https://pypi.org/project/eulerpi/#history">PyPi</a>. The CI and PyPi may needs some time to run and update.</p></li>
+</ol>
+</section>
+<section id="deployment-with-poetry-not-recommended">
+<h3>Deployment with Poetry (not recommended)<a class="headerlink" href="#deployment-with-poetry-not-recommended" title="Link to this heading"></a></h3>
 <p>You have to set-up pypi once:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>pypi-token.pypi<span class="w"> </span>pypi-your-token-here
 </pre></div>
