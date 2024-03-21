@@ -21,13 +21,24 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+
+### Changed
+
+
+### Fixed
+
+
+## [0.8.0] - 2024-03-21
+
+### Added
+
 - Basic plotting function for sample results
 - Users can now check the models they want to use with a basic functionality check and a quick inference check on artificial data.
 - Added code usage examples to documentation.
 
-### Changed
-
 ### Fixed
+
+- Fixed deprecated jax.config import
 
 ## [0.7.0] - 2023-11-03
 
