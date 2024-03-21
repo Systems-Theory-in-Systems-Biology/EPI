@@ -2,13 +2,12 @@
 
 To cite Eulerian Parameter Inference (EPI) in publications, please use:
 
-V. Wagner et al. An inverse transformation algorithm to infer parameter distributions from population snapshot data. IFAC FOSBE 2022, accepted and presented.
+V. Wagner, B. Castellaz et al. Eulerian Parameter Inference: A Probabilistic Change of Variables for Model-Based Inference with High-Variability Data Sets, in review.
 
 A BibTeX entry for LaTeX users is
 
-@InProceedings{
-   author = {Wagner, Vincent and Höpfl, Sebastian and Klingel, Viviane and Pop, Maria C. and Radde, Nicole E.},
-   title = {An inverse transformation algorithm to infer parameter distributions from population snapshot data},
-   booktitle = {Proc. 9th IFAC Foundations of Systems Biology in Engineering},
-   year = {2022},
- }
+@article{wagnercastellaz2024eulerian,
+  title={Eulerian Parameter Inference: A Probabilistic Change of Variables for Model-Based Inference with High-Variability Data Sets},
+  author={Wagner, Vincent and Castellaz, Benjamin and Kaiser, Lars and H{\"o}pfl, Sebastian and Radde, Nicole},
+  year={2024}
+}
