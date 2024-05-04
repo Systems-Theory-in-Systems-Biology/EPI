@@ -3094,7 +3094,7 @@ files = [
 ]
 
 [extras]
-sbml = []
+sbml = ["amici"]
 
 [metadata]
 lock-version = "2.0"
