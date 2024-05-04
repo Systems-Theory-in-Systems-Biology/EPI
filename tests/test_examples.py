@@ -117,15 +117,6 @@ def test_examples(example, inference_type):
     ModelClass = getattr(module, className)
     model: Model = ModelClass()
 
-    # generate artificial data if necessary
-    if model.is_artificial():
-        num_data_points = 100
-        params = model.generate_artificial_params(num_data_points)
-        data = model.generate_artificial_data(params)
-    else:
-        assert dataFileName is not None
-        data = importlib.resources.path(module_location, dataFileName)
-
     # Define kwargs for inference
     kwargs = {}
     kwargs["inference_type"] = inference_type
@@ -137,11 +128,27 @@ def test_examples(example, inference_type):
     elif inference_type == InferenceType.SPARSE_GRID:
         kwargs["num_levels"] = 3
 
-    params, sim_res, densities, result_manager = inference(
-        model,
-        data,
-        **kwargs,
-    )
+    # generate artificial data if necessary
+    if model.is_artificial():
+        num_data_points = 100
+        params = model.generate_artificial_params(num_data_points)
+        data = model.generate_artificial_data(params)
+        params, sim_res, densities, result_manager = inference(
+            model,
+            data,
+            **kwargs,
+        )
+    else:
+        assert dataFileName is not None
+        data_resource = importlib.resources.files(module_location).joinpath(
+            dataFileName
+        )
+        with importlib.resources.as_file(data_resource) as data_file:
+            params, sim_res, densities, result_manager = inference(
+                model,
+                data_file,
+                **kwargs,
+            )
 
     # get all keys of the params dict
     full_slice_str = list(params.keys())[0]
