@@ -73,7 +73,7 @@ jobs:
           cd eulerpi/examples/cpp
           mkdir build
           cd build
-          cmake ..
+          cmake .. -DPYTHON_EXECUTABLE=$(which python)
           make -j
       - name: Run pytest
         run: |
