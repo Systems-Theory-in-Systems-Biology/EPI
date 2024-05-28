@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eulerpi.core.model &mdash; EPI  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=5c84b33f" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -126,12 +128,12 @@
 <span class="sd">        Examples of model implementations can be found in the :doc:`Example Models &lt;/examples&gt;`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">param_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-        <span class="nb">int</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1">#: The dimension of the parameter space of the model. It must be defined in the subclass.</span>
-    <span class="n">data_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
-        <span class="nb">int</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1">#: The dimension of the data space of the model. It must be defined in the subclass.</span>
+    <span class="n">param_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span>  <span class="c1">#: The dimension of the parameter space of the model. It must be defined in the subclass.</span>
+    <span class="p">)</span>
+    <span class="n">data_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span>  <span class="c1">#: The dimension of the data space of the model. It must be defined in the subclass.</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the required attributes are set.&quot;&quot;&quot;</span>
