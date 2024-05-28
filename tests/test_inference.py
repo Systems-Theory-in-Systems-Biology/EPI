@@ -150,9 +150,12 @@ def test_inference_mcmc_dense_exact(
     mcmc_kde_error = np.abs(mcmc_kde - true_pdf_grid)
     dense_grid_pdf_error = np.abs(dense_grid_pdf - true_pdf_grid)
 
-    # Calculate the integrals of the errors
-    integral_mcmc_kde_error = integrate(to2d(mcmc_kde_error), x, y)
-    integral_dense_grid_pdf_error = integrate(to2d(dense_grid_pdf_error), x, y)
+    def l2_error(x, y, error):
+        return np.sqrt(integrate(to2d(error**2), x, y))
+
+    # Calculate the L2 error
+    integral_mcmc_kde_error = l2_error(x, y, mcmc_kde_error)
+    integral_dense_grid_pdf_error = l2_error(x, y, dense_grid_pdf_error)
 
     # Divide the integral through the area of the grid
     integral_mcmc_kde_error /= (lims[0, 1] - lims[0, 0]) * (
@@ -240,7 +243,7 @@ def test_inference_mcmc_dense_exact(
     # TODO: Then evaluate whether the threshold is set reasonable
     # TODO: The threshold should be adapted depending on how hard the problem is
     # and how many samples / grid points we have
-    threshold = 0.05
+    threshold = 0.02
     assert integral_mcmc_kde_error < threshold
     assert integral_dense_grid_pdf_error < threshold
 
