@@ -19,17 +19,17 @@ exclude = ["**/__pycache__/*", "**/build/*", "**/*.so"]
 "Changelog" = "https://Systems-Theory-in-Systems-Biology.github.io/EPI/MarkdownLinks/changelog.html"
 
 [tool.poetry.dependencies]
-python = "<3.13, >=3.9"
-jax = "^0.4.19"
-numpy = "^1.26.1"
-matplotlib = "^3.8.0"
-diffrax = "^0.4.1"
-emcee = "^3.1.4"
-jaxlib = "^0.4.19"
-tqdm = "^4.66.1"
-seedir = "^0.4.2"
-amici = { version = "^0.16.1", optional = true }
-scikit-learn = "^1.3.1"
+python = "<3.13, >=3.10"
+jax = ">=0.4.28"
+jaxlib = "^0.4.28"
+numpy = ">=1.26.4"
+matplotlib = ">=3.9.0"
+diffrax = ">=0.5.1"
+emcee = ">=3.1.6"
+tqdm = ">=4.66.4"
+seedir = ">=0.4.2"
+amici = { version = ">=0.25.1", optional = true }
+scikit-learn = ">=1.5.0"
 
 [tool.poetry.extras]
 sbml = ["amici"]
