@@ -110,45 +110,6 @@
 <span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">eval_log_transformed_density</span>
 
-<span class="c1"># TODO: This works on the blob</span>
-<span class="c1"># Return the samples.</span>
-<span class="c1"># return sampler.get_chain(discard=0, thin=1, flat=True)</span>
-<span class="c1"># TODO: This stores the sample as 2d array in the format walker1_step1, walker2_step1, walker3_step1, walker1_step2, walker2_step2, walker3_step2, ...</span>
-<span class="c1"># sampler_results = samplerBlob.reshape(</span>
-<span class="c1">#     num_walkers * num_steps, sampling_dim + data_dim + 1</span>
-<span class="c1"># )</span>
-
-
-<div class="viewcode-block" id="evaluate_sample">
-<a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.evaluate_sample">[docs]</a>
-<span class="k">def</span> <span class="nf">evaluate_sample</span><span class="p">(</span>
-    <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
-    <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the log transformed density at the given parameter values.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        param (np.ndarray): parameter values</span>
-<span class="sd">        model (Model): The model which will be sampled</span>
-<span class="sd">        data (np.ndarray): data</span>
-<span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
-<span class="sd">        data_stdevs (np.ndarray): kernel width for the data</span>
-<span class="sd">        slice (np.ndarray): slice of the parameter space which will be sampled</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        typing.Tuple[float, np.ndarray]: log transformed density and the sampler result</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">log_samplerresult</span> <span class="o">=</span> <span class="n">eval_log_transformed_density</span><span class="p">(</span>
-        <span class="n">param</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">log_samplerresult</span></div>
-
-
 
 <div class="viewcode-block" id="run_emcee_once">
 <a class="viewcode-back" href="../../../eulerpi.core.sampling.html#eulerpi.core.sampling.run_emcee_once">[docs]</a>
@@ -190,7 +151,7 @@
         <span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
             <span class="n">num_walkers</span><span class="p">,</span>
             <span class="n">sampling_dim</span><span class="p">,</span>
-            <span class="n">evaluate_sample</span><span class="p">,</span>
+            <span class="n">eval_log_transformed_density</span><span class="p">,</span>
             <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_transformation</span><span class="p">,</span> <span class="n">data_stdevs</span><span class="p">,</span> <span class="nb">slice</span><span class="p">],</span>
         <span class="p">)</span>
