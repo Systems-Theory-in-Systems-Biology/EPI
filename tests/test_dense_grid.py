@@ -1,6 +1,7 @@
 """
 Test the slices functionality for each of the inference methods.
 """
+
 import numpy as np
 import pytest
 

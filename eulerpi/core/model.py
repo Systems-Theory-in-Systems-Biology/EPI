@@ -38,12 +38,12 @@ class Model(ABC):
         Examples of model implementations can be found in the :doc:`Example Models </examples>`.
     """
 
-    param_dim: Optional[
-        int
-    ] = None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
-    data_dim: Optional[
-        int
-    ] = None  #: The dimension of the data space of the model. It must be defined in the subclass.
+    param_dim: Optional[int] = (
+        None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
+    )
+    data_dim: Optional[int] = (
+        None  #: The dimension of the data space of the model. It must be defined in the subclass.
+    )
 
     def __init_subclass__(cls, **kwargs):
         """Check if the required attributes are set."""
