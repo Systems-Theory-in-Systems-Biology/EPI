@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Removed the redundant function `evaluate_sample` from `sampling.py`
 
 ### Fixed
 
