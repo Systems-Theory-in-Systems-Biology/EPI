@@ -27,7 +27,6 @@ jobs:
           # - windows-latest Reason: get it running on ubuntu-latest first
           # - macOS-latest   Reason: get it running on ubuntu-latest first
         python-version: ["3.10",]
-        poetry-version: ["1.2.2",]
     name: Run tests
     runs-on: ${{ matrix.os }}
     steps:
@@ -41,7 +40,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          #version: 1.2.2
+          version: 1.8.3
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
