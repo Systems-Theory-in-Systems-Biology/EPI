@@ -238,9 +238,12 @@
     <span class="n">mcmc_kde_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mcmc_kde</span> <span class="o">-</span> <span class="n">true_pdf_grid</span><span class="p">)</span>
     <span class="n">dense_grid_pdf_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dense_grid_pdf</span> <span class="o">-</span> <span class="n">true_pdf_grid</span><span class="p">)</span>
 
-    <span class="c1"># Calculate the integrals of the errors</span>
-    <span class="n">integral_mcmc_kde_error</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">to2d</span><span class="p">(</span><span class="n">mcmc_kde_error</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">integral_dense_grid_pdf_error</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">to2d</span><span class="p">(</span><span class="n">dense_grid_pdf_error</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">l2_error</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">integrate</span><span class="p">(</span><span class="n">to2d</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+    <span class="c1"># Calculate the L2 error</span>
+    <span class="n">integral_mcmc_kde_error</span> <span class="o">=</span> <span class="n">l2_error</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mcmc_kde_error</span><span class="p">)</span>
+    <span class="n">integral_dense_grid_pdf_error</span> <span class="o">=</span> <span class="n">l2_error</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dense_grid_pdf_error</span><span class="p">)</span>
 
     <span class="c1"># Divide the integral through the area of the grid</span>
     <span class="n">integral_mcmc_kde_error</span> <span class="o">/=</span> <span class="p">(</span><span class="n">lims</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">lims</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span>
@@ -328,7 +331,7 @@
     <span class="c1"># TODO: Then evaluate whether the threshold is set reasonable</span>
     <span class="c1"># TODO: The threshold should be adapted depending on how hard the problem is</span>
     <span class="c1"># and how many samples / grid points we have</span>
-    <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.02</span>
     <span class="k">assert</span> <span class="n">integral_mcmc_kde_error</span> <span class="o">&lt;</span> <span class="n">threshold</span>
     <span class="k">assert</span> <span class="n">integral_dense_grid_pdf_error</span> <span class="o">&lt;</span> <span class="n">threshold</span></div>
 
