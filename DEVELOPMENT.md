@@ -102,6 +102,15 @@ coverage report
 coverage html
 ```
 
+### Running the tutorial (jupyter notebook)
+
+The jupyter notebook can be run using
+
+- vs code: https://code.visualstudio.com/docs/datascience/jupyter-notebooks
+- shell + browser: `jupyter notebook`
+
+In the first case you need to select the poetry environment when selecting the interpreter, in the second case you need to run the command in the poetry shell.
+
 ### Profiling with scalene
 
 You can profile eulerpi with scalene (or gprofile) using the commands:
