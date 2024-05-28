@@ -11,7 +11,6 @@ using multiple walkers in parallel. This module is currently based on the emcee 
     Read the documentation of :func:`inference_mcmc <inference_mcmc>` to learn more about the available options for the MCMC based inference.
 """
 
-
 import typing
 from multiprocessing import get_context
 from os import path

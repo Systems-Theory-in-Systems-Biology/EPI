@@ -29,7 +29,6 @@ def sample_violin_plot(
     num_vertical_grid_points: int = 100,
     axis_labels: Optional[list[str]] = None,
 ) -> axes:
-
     """Creates an overview figure with one violin plot for each marginal distribution.
        Can be used for parameters and simulation results and compares reference (or true underlying) and inferred values when possible.
 
@@ -261,9 +260,9 @@ def sample_violin_plot(
                 reference_left_bound_konf,
                 reference_right_bound_konf,
                 color=colorOrig,
-                label=r"$\Phi_\mathcal{" + variable_name + "}$"
-                if i == 0
-                else "",
+                label=(
+                    r"$\Phi_\mathcal{" + variable_name + "}$" if i == 0 else ""
+                ),
                 alpha=0.3,
             )
 
@@ -371,9 +370,11 @@ def sample_violin_plot(
             reconstructed_left_bound_konf,
             reconstructed_right_bound_konf,
             color=colorAppr,
-            label=r"$\Phi_{\hat{\mathcal{" + variable_name + "}}}$"
-            if i == 0
-            else "",
+            label=(
+                r"$\Phi_{\hat{\mathcal{" + variable_name + "}}}$"
+                if i == 0
+                else ""
+            ),
             alpha=0.3,
         )
 
