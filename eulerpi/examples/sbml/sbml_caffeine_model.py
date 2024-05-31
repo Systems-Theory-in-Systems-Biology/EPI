@@ -18,7 +18,7 @@ class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
     ) -> None:
         param_ids = ["A", "B"]
         timepoints = np.array([0.5, 1.0])
-        sbml_files = files(package="eulerpi.examples.sbml")
+        sbml_files = files("eulerpi.examples.sbml")
         sbml_file_name = "Caffeine_2Wks_Exponential_decay.xml"
         with as_file(sbml_files.joinpath(sbml_file_name)) as sbml_file:
             super().__init__(
