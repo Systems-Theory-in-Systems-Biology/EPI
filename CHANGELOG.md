@@ -24,10 +24,23 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+### Fixed
+
+## [0.8.1] - 2024-05-31
+
+### Added
+
+- Added `PyQt6` as dev dependency to allow developers to view plots in the development environment
+
+### Changed
+
 - Removed the redundant function `evaluate_sample` from `sampling.py`
 
 ### Fixed
 
+- Switched from `importlib.resources.path` to `importlib.resources.files` due to deprecation
+- Removed argument name in call to `files(...)` that is changing from `package` to `anchor`
+- Removed unused kwargs passed to the plotting function `contour` that generated a warning in `test_heat_model()`
 
 ## [0.8.0] - 2024-03-21
 
