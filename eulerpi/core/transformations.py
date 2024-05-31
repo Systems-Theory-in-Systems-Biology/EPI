@@ -80,10 +80,8 @@ def evaluate_density(
 
     """
 
-    limits = model.param_limits
-
     # Build the full parameter vector for evaluation based on the passed param slice and the constant central points
-    fullParam = model.central_param
+    fullParam = model.central_param.copy()
     fullParam[slice] = param
 
     # Check if the tried parameter is within the just-defined bounds and return the lowest possible density if not.

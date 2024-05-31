@@ -41,6 +41,7 @@ All notable changes to this project will be documented in this file.
 - Switched from `importlib.resources.path` to `importlib.resources.files` due to deprecation
 - Removed argument name in call to `files(...)` that is changing from `package` to `anchor`
 - Removed unused kwargs passed to the plotting function `contour` that generated a warning in `test_heat_model()`
+- Bug that changed the model attribute `central_param` during `inference`
 
 ## [0.8.0] - 2024-03-21
 
