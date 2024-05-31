@@ -69,10 +69,11 @@ class Temperature(Model):
 
 class TemperatureArtificial(Temperature, ArtificialModelInterface):
     def generate_artificial_params(self, num_data_points: int = -1):
-        paramPath = importlib.resources.path(
-            "eulerpi.examples.temperature", "TemperatureArtificialParams.csv"
-        )
-        true_param_sample = np.loadtxt(paramPath, delimiter=",", ndmin=2)
+        param_resource = importlib.resources.files(
+            "eulerpi.examples.temperature"
+        ).joinpath("TemperatureArtificialParams.csv")
+        with importlib.resources.as_file(param_resource) as param_file:
+            true_param_sample = np.loadtxt(param_file, delimiter=",", ndmin=2)
         return true_param_sample
 
 
