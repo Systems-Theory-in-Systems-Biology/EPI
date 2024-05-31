@@ -109,7 +109,12 @@
 
     <span class="kn">import</span> <span class="nn">logging</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;eulerpi&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">LOGGING_LEVEL</span><span class="p">)</span></div>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;eulerpi&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">LOGGING_LEVEL</span><span class="p">)</span>
+
+    <span class="c1"># Seed the numpy random number generator to ensure reproducibility</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 </pre></div>
 
