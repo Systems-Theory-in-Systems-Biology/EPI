@@ -21,10 +21,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-
 ### Changed
 
 ### Fixed
+
+## [0.9.0] - 2024-05-31
+
+### Changed
+
+- Raised the required python version to 3.10
+- Removed upper limit on the version number of dependencies
+- Updated amici to newest version to fix compilation with Intel MKL
 
 ## [0.8.1] - 2024-05-31
 
