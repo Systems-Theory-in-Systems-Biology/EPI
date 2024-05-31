@@ -126,18 +126,17 @@
 <span class="k">def</span> <span class="nf">test_fixed_params</span><span class="p">(</span><span class="n">temperatures</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">TemperatureWithFixedParams</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-        <span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureData.csv&quot;</span>
-    <span class="p">)</span>
-
     <span class="n">run_name</span> <span class="o">=</span> <span class="n">temp_name</span><span class="p">(</span><span class="o">*</span><span class="n">temperatures</span><span class="p">)</span>
-
-    <span class="n">inference</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">,</span>
-        <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="n">data_resource</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span>
+        <span class="s2">&quot;eulerpi.examples.temperature&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;TemperatureData.csv&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">data_resource</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_file</span><span class="p">:</span>
+        <span class="n">inference</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">data_file</span><span class="p">,</span>
+            <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

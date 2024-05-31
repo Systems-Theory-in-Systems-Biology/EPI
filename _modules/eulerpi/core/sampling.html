@@ -237,15 +237,14 @@
     <span class="c1"># Calculate the standard deviation of the data for each dimension</span>
     <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">sampling_dim</span> <span class="o">=</span> <span class="nb">slice</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">central_param</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
-    <span class="n">param_limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
 
     <span class="c1"># Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.</span>
     <span class="c1"># compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit</span>
     <span class="n">d_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
-        <span class="n">central_param</span> <span class="o">-</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">central_param</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">central_param</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">initial_walker_positions</span> <span class="o">=</span> <span class="n">central_param</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">+</span> <span class="n">d_min</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="n">initial_walker_positions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">+</span> <span class="n">d_min</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_walkers</span><span class="p">,</span> <span class="n">sampling_dim</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
     <span class="p">)</span>
 

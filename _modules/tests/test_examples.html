@@ -213,15 +213,6 @@
     <span class="n">ModelClass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">className</span><span class="p">)</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
 
-    <span class="c1"># generate artificial data if necessary</span>
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_artificial</span><span class="p">():</span>
-        <span class="n">num_data_points</span> <span class="o">=</span> <span class="mi">100</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_params</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_data</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">dataFileName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">module_location</span><span class="p">,</span> <span class="n">dataFileName</span><span class="p">)</span>
-
     <span class="c1"># Define kwargs for inference</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;inference_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inference_type</span>
@@ -233,11 +224,27 @@
     <span class="k">elif</span> <span class="n">inference_type</span> <span class="o">==</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">SPARSE_GRID</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_levels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
-    <span class="n">params</span><span class="p">,</span> <span class="n">sim_res</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">result_manager</span> <span class="o">=</span> <span class="n">inference</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="c1"># generate artificial data if necessary</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_artificial</span><span class="p">():</span>
+        <span class="n">num_data_points</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_params</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_data</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">sim_res</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">result_manager</span> <span class="o">=</span> <span class="n">inference</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">dataFileName</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">data_resource</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">module_location</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span>
+            <span class="n">dataFileName</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">data_resource</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_file</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">sim_res</span><span class="p">,</span> <span class="n">densities</span><span class="p">,</span> <span class="n">result_manager</span> <span class="o">=</span> <span class="n">inference</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">data_file</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="c1"># get all keys of the params dict</span>
     <span class="n">full_slice_str</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>

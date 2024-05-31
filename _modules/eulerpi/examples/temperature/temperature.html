@@ -167,10 +167,11 @@
 <div class="viewcode-block" id="TemperatureArtificial.generate_artificial_params">
 <a class="viewcode-back" href="../../../../eulerpi.examples.temperature.temperature.html#eulerpi.examples.temperature.temperature.TemperatureArtificial.generate_artificial_params">[docs]</a>
     <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">paramPath</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">path</span><span class="p">(</span>
-            <span class="s2">&quot;eulerpi.examples.temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;TemperatureArtificialParams.csv&quot;</span>
-        <span class="p">)</span>
-        <span class="n">true_param_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">paramPath</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">param_resource</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span>
+            <span class="s2">&quot;eulerpi.examples.temperature&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;TemperatureArtificialParams.csv&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">param_resource</span><span class="p">)</span> <span class="k">as</span> <span class="n">param_file</span><span class="p">:</span>
+            <span class="n">true_param_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">param_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">true_param_sample</span></div>
 </div>
 

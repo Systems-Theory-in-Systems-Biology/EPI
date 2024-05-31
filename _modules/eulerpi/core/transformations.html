@@ -167,10 +167,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">limits</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_limits</span>
-
     <span class="c1"># Build the full parameter vector for evaluation based on the passed param slice and the constant central points</span>
-    <span class="n">fullParam</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span>
+    <span class="n">fullParam</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">central_param</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">fullParam</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
 
     <span class="c1"># Check if the tried parameter is within the just-defined bounds and return the lowest possible density if not.</span>
