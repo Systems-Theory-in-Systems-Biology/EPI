@@ -23,3 +23,8 @@ def pytest_sessionstart(session):
     import logging
 
     logging.getLogger("eulerpi").setLevel(LOGGING_LEVEL)
+
+    # Seed the numpy random number generator to ensure reproducibility
+    import numpy as np
+
+    np.random.seed(0)

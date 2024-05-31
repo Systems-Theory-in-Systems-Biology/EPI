@@ -25,6 +25,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Seed numpy random number generator for reproducibility of pytest runs
+
 ## [0.9.0] - 2024-05-31
 
 ### Changed
