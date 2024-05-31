@@ -5,6 +5,7 @@ find_package(Eigen3 REQUIRED)
 # Maybe you have to do something linke this: sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 message(STATUS "Eigen3 version ${EIGEN3_VERSION} found in ${EIGEN3_INCLUDE_DIR}")
 
+set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 REQUIRED)
 pybind11_add_module(cpp_model wrapper.cpp cpp_model.hpp) # Add wrapper code and all library source files
 
