@@ -43,9 +43,7 @@ def test_heat_model():
         np.arange(0, 1, 0.1),
         # np.arange(np.min(u), np.max(u), (np.max(u) - np.min(u)) / 8),
         linewidths=2,
-        color="k",
         extent=extent,
-        aspect=1,
     )
     ax.clabel(cset, inline=True, fmt="%1.2f", fontsize=10)
 
