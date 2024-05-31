@@ -49,6 +49,7 @@ sphinx-rtd-theme = "^2.0.0"
 myst-parser = "^3.0.1"
 jupyter = "^1.0.0"
 nbmake = "^1.5.3"
+pyqt6 = "^6.7.0"
 
 [build-system]
 requires = ["poetry-core"]
