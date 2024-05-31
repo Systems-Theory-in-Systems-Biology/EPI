@@ -36,15 +36,14 @@ def temp_name(low_T, high_T):
 def test_fixed_params(temperatures):
     """ """
     model: Model = TemperatureWithFixedParams(*temperatures)
-    data = importlib.resources.path(
-        "eulerpi.examples.temperature", "TemperatureData.csv"
-    )
-
     run_name = temp_name(*temperatures)
-
-    inference(
-        model,
-        data,
-        num_steps=100,
-        run_name=run_name,
-    )
+    data_resource = importlib.resources.files(
+        "eulerpi.examples.temperature"
+    ).joinpath("TemperatureData.csv")
+    with importlib.resources.as_file(data_resource) as data_file:
+        inference(
+            model,
+            data_file,
+            num_steps=100,
+            run_name=run_name,
+        )
