@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Raised required amici version to 0.26.1
+
 ### Fixed
 
 - Seed numpy random number generator for reproducibility of pytest runs
