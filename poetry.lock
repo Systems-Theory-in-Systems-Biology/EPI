@@ -13,12 +13,12 @@ files = [
 
 [[package]]
 name = "amici"
-version = "0.25.1"
+version = "0.26.1"
 description = "Advanced multi-language Interface to CVODES and IDAS"
 optional = true
 python-versions = ">=3.10"
 files = [
-    {file = "amici-0.25.1.tar.gz", hash = "sha256:00a1b90a5abfc00fd9429a7690a5000d4966841345b6f0f88ffe11c604ebea02"},
+    {file = "amici-0.26.1.tar.gz", hash = "sha256:2dfc3e1a2941eb2f53eeef2175b00f9896223b987dbf8ae29f37e2cc8c3702dd"},
 ]
 
 [package.dependencies]
@@ -33,12 +33,12 @@ pandas = ">=2.0.2"
 pyarrow = "*"
 python-libsbml = "*"
 setuptools = ">=48"
-sympy = ">=1.9"
+sympy = ">=1.12.1"
 toposort = "*"
 
 [package.extras]
 examples = ["jupyter", "scipy"]
-petab = ["petab (>=0.2.9)"]
+petab = ["petab (>=0.4.0)"]
 pysb = ["pysb (>=1.13.1)"]
 test = ["antimony (!=2.14)", "antimony (>=2.13)", "coverage", "h5py", "pooch", "pytest", "pytest-cov", "pytest-rerunfailures", "scipy", "shyaml"]
 vis = ["matplotlib", "seaborn"]
@@ -4264,4 +4264,4 @@ sbml = ["amici"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <4.0"
-content-hash = "a4a0ca6e42ecbc8e4c231e45721a87d257b613dcc19be12cdb3a5a4fce1b8839"
+content-hash = "f7fa18a8249e018123a3d298cea26fd87653df5b075b466ffd1d5c7f25c93cf4"
