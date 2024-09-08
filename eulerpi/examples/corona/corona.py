@@ -39,7 +39,7 @@ class Corona(JaxModel):
     param_dim = 3
     data_dim = 4
 
-    PARAM_LIMITS = np.array([[-4.5, 0.5], [-2.0, 3.0], [-2.0, 3.0]])
+    PARAM_LIMITS = np.array([[-3.0, 0.0], [-2.0, 2.0], [-2.0, 2.0]])
     CENTRAL_PARAM = np.array([-1.8, 0.0, 0.7])
 
     def __init__(
@@ -69,7 +69,7 @@ class Corona(JaxModel):
         term = dx.ODETerm(rhs)
         solver = dx.Kvaerno5()
         saveat = dx.SaveAt(ts=[0.0, 1.0, 2.0, 5.0, 15.0])
-        stepsize_controller = dx.PIDController(rtol=1e-5, atol=1e-5)
+        stepsize_controller = dx.PIDController(rtol=1e-7, atol=1e-9)
 
         try:
             ode_sol = dx.diffeqsolve(
@@ -77,7 +77,7 @@ class Corona(JaxModel):
                 solver,
                 t0=0.0,
                 t1=15.0,
-                dt0=0.1,
+                dt0=0.01,
                 y0=xInit,
                 args=param,
                 saveat=saveat,
