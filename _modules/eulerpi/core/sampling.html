@@ -97,6 +97,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">get_context</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
 
@@ -271,17 +272,27 @@
             <span class="p">)</span>
 
         <span class="c1"># Run the sampler.</span>
-        <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span> <span class="o">=</span> <span class="n">run_emcee_once</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">data</span><span class="p">,</span>
-            <span class="n">data_transformation</span><span class="p">,</span>
-            <span class="n">data_stdevs</span><span class="p">,</span>
-            <span class="nb">slice</span><span class="p">,</span>
-            <span class="n">initial_walker_positions</span><span class="p">,</span>
-            <span class="n">num_walkers</span><span class="p">,</span>
-            <span class="n">num_steps</span><span class="p">,</span>
-            <span class="n">num_processes</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="c1"># This warning is raised when the model returned a -inf value for the log probability, e.g. because the parameters are out of bounds.</span>
+            <span class="c1"># We want to ignore this warning, because the sampler will handle this case correctly.</span>
+            <span class="c1"># NaN values and other errors are not affected by this.</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+                <span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+                <span class="n">module</span><span class="o">=</span><span class="s2">&quot;red_blue&quot;</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;invalid value encountered in scalar subtract&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span> <span class="o">=</span> <span class="n">run_emcee_once</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">data_transformation</span><span class="p">,</span>
+                <span class="n">data_stdevs</span><span class="p">,</span>
+                <span class="nb">slice</span><span class="p">,</span>
+                <span class="n">initial_walker_positions</span><span class="p">,</span>
+                <span class="n">num_walkers</span><span class="p">,</span>
+                <span class="n">num_steps</span><span class="p">,</span>
+                <span class="n">num_processes</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">result_manager</span><span class="o">.</span><span class="n">save_run</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">sampler_results</span><span class="p">,</span> <span class="n">final_walker_positions</span>
