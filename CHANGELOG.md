@@ -23,6 +23,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+### Fixed
+
+## [0.9.1] - 2024-09-08
+
+### Changed
+
 - Raised required amici version to 0.26.1
 - Ignoring sampler warnings caused by parameters outside the parameter limits
 - Limited the parameter range and increased the solver accuracy of the Corona model to avoid warnings
