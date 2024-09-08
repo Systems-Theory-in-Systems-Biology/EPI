@@ -12,6 +12,7 @@ using multiple walkers in parallel. This module is currently based on the emcee 
 """
 
 import typing
+import warnings
 from multiprocessing import get_context
 from os import path
 
@@ -181,17 +182,27 @@ def run_emcee_sampling(
             )
 
         # Run the sampler.
-        sampler_results, final_walker_positions = run_emcee_once(
-            model,
-            data,
-            data_transformation,
-            data_stdevs,
-            slice,
-            initial_walker_positions,
-            num_walkers,
-            num_steps,
-            num_processes,
-        )
+        with warnings.catch_warnings():
+            # This warning is raised when the model returned a -inf value for the log probability, e.g. because the parameters are out of bounds.
+            # We want to ignore this warning, because the sampler will handle this case correctly.
+            # NaN values and other errors are not affected by this.
+            warnings.filterwarnings(
+                "ignore",
+                module="red_blue",
+                category=RuntimeWarning,
+                message="invalid value encountered in scalar subtract",
+            )
+            sampler_results, final_walker_positions = run_emcee_once(
+                model,
+                data,
+                data_transformation,
+                data_stdevs,
+                slice,
+                initial_walker_positions,
+                num_walkers,
+                num_steps,
+                num_processes,
+            )
 
         result_manager.save_run(
             model, slice, run, sampler_results, final_walker_positions

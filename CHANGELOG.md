@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Raised required amici version to 0.26.1
+- Ignoring sampler warnings caused by parameters outside the parameter limits
 
 ### Fixed
 
