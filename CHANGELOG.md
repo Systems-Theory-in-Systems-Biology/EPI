@@ -23,6 +23,8 @@ All notable changes to this project will be documented in this file.
 
 - Added the `AffineTransformation` class to perform affine transformations on the data using jax
 
+- Added the method function `forward_vectorized` to the (Base)Model class and a specialized jax version in the `JaxModel` class.
+
 ### Changed
 
 - Refactored the module `eulerpi.core.data_transformation` into the subpackage `eulerpi.core.data_transformations`. The data transformation classes can be import from this subpackage directly
@@ -30,6 +32,10 @@ All notable changes to this project will be documented in this file.
 - Removed the class/factory functions `from_data` and `from_transformation` from the `DataTransformation` subclasses. Use the constructors instead.
 - The inference function no longer has the parameter `custom_data_transformation`. You can pass an instance of the provided `DataTransformation` subclasses or pass a custom subclass.
 - The inference function no longer has the parameter `n_components_pca`. Instantiate a `PCATransformation` with the data and the number of components to keep. Pass it as as argument for the parameter `data_transformation` in the inference function.
+
+- Renamed the abstract base `Model` class to `BaseModel`. The usage of `Model` is still supported, but deprecated, and possibly removed in a future release.
+- Splitted the file model.py into multiple modules, one for each class, located in the subpackage `eulerpi.core.models`. The imports change from `eulerpi.core.model` to `eulerpi.core.models`.
+- Removed the function `is_artificial` from the (Base)Model class. Use `isinstance(custom_model, ArtificialModelInterface)` or `issubclass(CustomModel, ArtificialModelInterface)` instead.
 
 ### Fixed
 

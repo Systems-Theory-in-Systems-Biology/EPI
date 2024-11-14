@@ -4,7 +4,7 @@ import pytest
 
 from eulerpi.core.data_transformations import DataIdentity
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.model import ArtificialModelInterface, JaxModel
+from eulerpi.core.models import ArtificialModelInterface, JaxModel
 from eulerpi.core.transformations import calc_gram_determinant
 
 

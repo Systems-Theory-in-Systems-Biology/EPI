@@ -2,11 +2,11 @@ import numpy as np
 
 from eulerpi.core.data_transformations import DataIdentity
 from eulerpi.core.kde import calc_kernel_width
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.transformations import evaluate_density
 
 
-class CrashModel(Model):
+class CrashModel(BaseModel):
     data_dim = 1
     param_dim = 1
 

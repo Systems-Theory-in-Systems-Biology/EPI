@@ -11,7 +11,7 @@ from seedir import FakeDir, FakeFile
 
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 
 
 class ResultManager:
@@ -180,7 +180,7 @@ class ResultManager:
 
     def save_run(
         self,
-        model: Model,
+        model: BaseModel,
         slice: np.ndarray,
         run,
         sampler_results: np.ndarray,
@@ -191,7 +191,7 @@ class ResultManager:
         as seperate files in the folders 'Params' and'SimResults' and 'DensityEvals'.
 
         Args:
-            model(Model): The model for which the results will be saved
+            model(BaseModel): The model for which the results will be saved
             slice(np.ndarray): The slice for which the results will be saved
             run(int): The run for which the results will be saved
             sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)
@@ -263,7 +263,7 @@ class ResultManager:
     def save_inference_information(
         self,
         slice: np.ndarray,
-        model: Model,
+        model: BaseModel,
         inference_type: InferenceType,
         num_processes: int,
         **kwargs,
@@ -272,7 +272,7 @@ class ResultManager:
 
         Args:
             slice(np.ndarray): The slice for which the results will be saved.
-            model(Model): The model for which the results will be saved.
+            model(BaseModel): The model for which the results will be saved.
             inference_type(InferenceType): The type of inference that was performed.
             num_processes(int): The number of processes that were used for the inference.
             **kwargs: Additional information about the inference run.

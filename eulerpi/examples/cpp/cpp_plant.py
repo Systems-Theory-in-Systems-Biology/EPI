@@ -1,10 +1,10 @@
 import numpy as np
 
-from eulerpi.core.model import ArtificialModelInterface, Model
+from eulerpi.core.models import ArtificialModelInterface, BaseModel
 from eulerpi.examples.cpp import cpp_model
 
 
-class CppPlant(Model, ArtificialModelInterface):
+class CppPlant(BaseModel, ArtificialModelInterface):
     """A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient
     Param0: Water [0,1]
     Param1: Sun   [0,1]

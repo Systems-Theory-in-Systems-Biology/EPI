@@ -14,14 +14,14 @@ from eulerpi.core.data_transformations import (
 )
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
 
 
 def inference(
-    model: Model,
+    model: BaseModel,
     data: Union[str, os.PathLike, np.ndarray],
     inference_type: InferenceType = InferenceType.MCMC,
     slices: Optional[list[np.ndarray]] = None,
@@ -40,7 +40,7 @@ def inference(
     """Starts the parameter inference for the given model and data.
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
         data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
         inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)
         slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)

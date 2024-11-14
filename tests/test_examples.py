@@ -7,8 +7,9 @@ import importlib
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import Model, is_amici_available
 from eulerpi.core.model_check import basic_model_check
+from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.core.models.sbml_model import is_amici_available
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -88,7 +89,7 @@ def test_model_requirements(example):
     # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
-    model: Model = ModelClass()
+    model: BaseModel = ModelClass()
 
     # Use the basic model check to assert all model attribute dimension requirements as well as forward simulations and the corresponding jacobian.
     basic_model_check(model)
@@ -115,7 +116,7 @@ def test_examples(example, inference_type):
     # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
-    model: Model = ModelClass()
+    model: BaseModel = ModelClass()
 
     # Define kwargs for inference
     kwargs = {}
@@ -129,7 +130,7 @@ def test_examples(example, inference_type):
         kwargs["num_levels"] = 3
 
     # generate artificial data if necessary
-    if model.is_artificial():
+    if isinstance(model, ArtificialModelInterface):
         num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)

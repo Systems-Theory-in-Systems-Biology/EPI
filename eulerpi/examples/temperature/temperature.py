@@ -4,13 +4,13 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.model import ArtificialModelInterface, Model
+from eulerpi.core.models import ArtificialModelInterface, BaseModel
 
 # from functools import partial
 # from jax import jit
 
 
-class Temperature(Model):
+class Temperature(BaseModel):
     """The model describes the temperature :math:`y` in degree celsius at a given latitude :math:`q` in degree.
 
 

@@ -18,7 +18,7 @@ from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.transformations import evaluate_density
 
@@ -372,7 +372,7 @@ class Subspace(object):
 def evaluate_on_sparse_grid(
     args: typing.Tuple[
         np.ndarray,
-        Model,
+        BaseModel,
         np.ndarray,
         DataTransformation,
         np.ndarray,
@@ -383,7 +383,7 @@ def evaluate_on_sparse_grid(
 
     Args:
         params (np.ndarray): The parameters to be evaluated.
-        model(Model): The model used for the inference.
+        model(BaseModel): The model used for the inference.
         data(np.ndarray): The data points used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
@@ -400,7 +400,7 @@ def evaluate_on_sparse_grid(
 
 
 def inference_sparse_grid(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     result_manager: ResultManager,
@@ -416,7 +416,7 @@ def inference_sparse_grid(
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
         data(np.ndarray): The data to be used for inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         num_processes(int): number of processes to use for parallel evaluation of the model.

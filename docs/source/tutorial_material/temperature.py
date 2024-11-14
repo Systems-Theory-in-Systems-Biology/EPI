@@ -3,10 +3,10 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 
 
-class Temperature(Model):
+class Temperature(BaseModel):
 
     param_dim = 1
     data_dim = 1

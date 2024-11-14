@@ -8,7 +8,7 @@ import pytest
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference import inference
 from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.model import Model
+from eulerpi.core.models import ArtificialModelInterface, BaseModel
 from eulerpi.examples.corona import CoronaArtificial
 
 
@@ -20,10 +20,10 @@ from eulerpi.examples.corona import CoronaArtificial
 )
 def test_dense_grid(dense_grid_type):
     """ """
-    model: Model = CoronaArtificial()
+    model: BaseModel = CoronaArtificial()
 
     # generate artificial data
-    if model.is_artificial():
+    if isinstance(model, ArtificialModelInterface):
         num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)

@@ -23,13 +23,13 @@ from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.transformations import eval_log_transformed_density
 
 
 def run_emcee_once(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
@@ -42,7 +42,7 @@ def run_emcee_once(
     """Run the emcee particle swarm sampler once.
 
     Args:
-        model (Model): The model which will be sampled
+        model (BaseModel): The model which will be sampled
         data (np.ndarray): data
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): kernel width for the data
@@ -112,7 +112,7 @@ def run_emcee_once(
 
 
 def run_emcee_sampling(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     slice: np.ndarray,
@@ -128,7 +128,7 @@ def run_emcee_sampling(
        Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
 
     Args:
-        model (Model): The model which will be sampled
+        model (BaseModel): The model which will be sampled
         data (np.ndarray): data
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice (np.ndarray): slice of the parameter space which will be sampled
@@ -229,7 +229,7 @@ def run_emcee_sampling(
 
 
 def calc_walker_acceptance(
-    model: Model,
+    model: BaseModel,
     slice: np.ndarray,
     num_walkers: int,
     num_burn_in_samples: int,
@@ -239,7 +239,7 @@ def calc_walker_acceptance(
     This is especially important to find "zombie" walkers, that are never moving.
 
     Args:
-        model (Model): The model for which the acceptance ratio should be calculated
+        model (BaseModel): The model for which the acceptance ratio should be calculated
         slice (np.ndarray): slice for which the acceptance ratio should be calculated
         num_walkers (int): number of walkers in the emcee chain
         num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
@@ -281,7 +281,7 @@ def calc_walker_acceptance(
 
 
 def inference_mcmc(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     result_manager: ResultManager,
@@ -302,7 +302,7 @@ def inference_mcmc(
     """This function runs a MCMC sampling for the given model and data.
 
     Args:
-        model (Model): The model describing the mapping from parameters to data.
+        model (BaseModel): The model describing the mapping from parameters to data.
         data (np.ndarray): The data to be used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         result_manager (ResultManager): The result manager to be used for the inference.

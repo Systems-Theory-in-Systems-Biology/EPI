@@ -6,7 +6,7 @@ import pickle
 import numpy as np
 import pytest
 
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from tests.test_examples import Examples, get_example_name
 
 
@@ -21,7 +21,7 @@ def test_pickling_model(example):
     # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
     module = importlib.import_module(module_location)
     ModelClass = getattr(module, className)
-    model: Model = ModelClass()
+    model: BaseModel = ModelClass()
 
     # Test pickling
     dumped = pickle.dumps(model)
