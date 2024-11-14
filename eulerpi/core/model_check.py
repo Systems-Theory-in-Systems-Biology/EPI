@@ -2,10 +2,9 @@
 
 import jax.numpy as jnp
 import numpy as np
-from jax import vmap
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.models import BaseModel, JaxModel
+from eulerpi.core.models import BaseModel
 from eulerpi.core.plotting import sample_violin_plot
 
 
@@ -168,13 +167,7 @@ def inference_model_check(
         (np.random.rand(num_data_points, model.param_dim) - 0.5) / 3.0
     )
 
-    # try to use jax vmap to perform the forward pass on multiple parameters at once
-    if isinstance(model, JaxModel):
-        data_sample = vmap(model.forward, in_axes=0)(param_sample)
-    else:
-        data_sample = np.vectorize(model.forward, signature="(n)->(m)")(
-            param_sample
-        )
+    data_sample = model.forward_vectorized(param_sample)
 
     print(
         f"Successfully created an artificial data set of size {num_data_points}.\n"

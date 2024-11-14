@@ -82,14 +82,7 @@ class BaseModel(ABC):
                                         [1.6, 1.6, 0.4],
                                         model.central_param,
                                         [1.5, 1.4, 0.4]])
-
-            # try to use jax vmap to perform the forward pass on multiple parameters at once
-            if isinstance(model, JaxModel):
-                multiple_sim_results = vmap(model.forward, in_axes=0)(multiple_params)
-
-            # if the model is not a jax model, we can use numpy vectorize to perform the forward pass
-            else:
-                multiple_sim_results = np.vectorize(model.forward, signature="(n)->(m)")(multiple_params)
+            multiple_sim_results = model.forward_vectorized(multiple_params)
 
         """
         raise NotImplementedError

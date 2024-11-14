@@ -4,7 +4,6 @@ Test the simple models
 
 import matplotlib.pyplot as plt
 import numpy as np
-from jax import vmap
 from matplotlib import cm
 
 from eulerpi.core.data_transformations import DataIdentity
@@ -105,7 +104,7 @@ def test_transformationExponential():
     num_data_points = 10000
     trueParam = np.random.rand(num_data_points, 2) + 1
 
-    data = vmap(model.forward, in_axes=0)(trueParam)
+    data = model.forward_vectorized(trueParam)
     data_transformation = DataIdentity()
 
     # define standard deviations according to silverman
