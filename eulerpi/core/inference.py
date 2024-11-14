@@ -10,11 +10,11 @@ import psutil
 
 from eulerpi.core.data_transformation import (
     DataIdentity,
-    DataNormalizer,
+    DataNormalization,
     DataPCA,
     DataTransformation,
+    DataTransformationType,
 )
-from eulerpi.core.data_transformation_types import DataTransformationType
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
@@ -117,7 +117,7 @@ def inference(
         import numpy as np
         from eulerpi.examples.corona import Corona
         from eulerpi.core.inference import inference, InferenceType
-        from eulerpi.core.data_transformation_types import DataTransformationType
+        from eulerpi.core.data_transformation import DataTransformationType
         from eulerpi.core.result_manager import ResultManager
 
         inference(Corona(),
@@ -148,7 +148,7 @@ def inference(
     if data_transformation == DataTransformationType.Identity:
         data_transformation = DataIdentity()
     elif data_transformation == DataTransformationType.Normalize:
-        data_transformation = DataNormalizer.from_data(data)
+        data_transformation = DataNormalization.from_data(data)
     elif data_transformation == DataTransformationType.PCA:
         n_components = n_components_pca or model.param_dim
         data_transformation = DataPCA.from_data(

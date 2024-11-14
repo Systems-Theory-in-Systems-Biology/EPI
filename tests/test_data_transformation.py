@@ -2,7 +2,7 @@ import numpy as np
 
 from eulerpi.core.data_transformation import (
     DataIdentity,
-    DataNormalizer,
+    DataNormalization,
     DataPCA,
 )
 
@@ -20,14 +20,14 @@ def test_DataIdentity():
     assert np.allclose(data_transformation.transform(data2dim), data2dim)
 
 
-def test_DataNormalizer():
-    """Test whether the DataNormalizer transformation normalizes the data to zero mean and unit variance."""
+def test_DataNormalization():
+    """Test whether the DataNormalization transformation normalizes the data to zero mean and unit variance."""
     data1d = np.random.rand(100, 1)
     data2d = np.random.rand(100, 2)
     test_data = [(1, data1d), (2, data2d)]
 
     for dim, data in test_data:
-        data_transformation = DataNormalizer.from_data(data)
+        data_transformation = DataNormalization.from_data(data)
         transformed_data = data_transformation.transform(data)
         assert np.allclose(
             np.mean(transformed_data, axis=0),

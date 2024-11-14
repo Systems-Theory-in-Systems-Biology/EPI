@@ -23,6 +23,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Refactored the module `eulerpi.core.data_transformation` into a subpackage. The data transformation classes can be import from this subpackage directly
+- Renamed `eulerpi.core.data_transformation.DataNormalizer` into `eulerpi.core.data_transformation.DataNormalization`
+
 ### Fixed
 
 ## [0.9.1] - 2024-09-08
