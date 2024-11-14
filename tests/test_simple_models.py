@@ -7,7 +7,7 @@ import numpy as np
 from jax import vmap
 from matplotlib import cm
 
-from eulerpi.core.data_transformation import DataIdentity
+from eulerpi.core.data_transformations import DataIdentity
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.transformations import evaluate_density

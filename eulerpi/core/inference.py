@@ -8,13 +8,10 @@ import jax.numpy as jnp
 import numpy as np
 import psutil
 
-from eulerpi.core.data_transformation import (
-    DataIdentity,
-    DataNormalizer,
-    DataPCA,
+from eulerpi.core.data_transformations import (
+    DataNormalization,
     DataTransformation,
 )
-from eulerpi.core.data_transformation_types import DataTransformationType
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
@@ -32,9 +29,7 @@ def inference(
     run_name: str = "default_run",
     result_manager: ResultManager = None,
     continue_sampling: bool = False,
-    data_transformation: DataTransformationType = DataTransformationType.Normalize,
-    custom_data_transformation: Optional[DataTransformation] = None,
-    n_components_pca: Optional[int] = None,
+    data_transformation: DataTransformation = None,
     **kwargs,
 ) -> Tuple[
     Dict[str, np.ndarray],
@@ -53,9 +48,7 @@ def inference(
         run_name(str): The name of the run. (Default value = "default_run")
         result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
         continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)
-        data_transformation(DataTransformationType): The type of data transformation to use. (Default value = DataTransformationType.Normalize)
-        custom_data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)
-        n_components_pca(int, optional): If using the PCA as data_transformation, selects how many dimensions are kept in the pca. Per default the number of dimensions equals the dimension of the parameter space. (Default value = None)
+        data_transformation(DataTransformation): The data transformation to use. If None is passed, a DataNormalization will be applied. Pass DataIdentity to avoid the transformation of the data. (Default value = None)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
@@ -117,15 +110,18 @@ def inference(
         import numpy as np
         from eulerpi.examples.corona import Corona
         from eulerpi.core.inference import inference, InferenceType
-        from eulerpi.core.data_transformation_types import DataTransformationType
+        from eulerpi.core.data_transformation import DataPCA
         from eulerpi.core.result_manager import ResultManager
 
-        inference(Corona(),
+        model = Corona()
+        data_transformation = DataPCA(data, n_components=model.param_dim)  # perform PCA on the data before inference
+
+        inference(model,
                 data = "pathto/data.csv",
                 slices = [np.array([0,1]), np.array([2])], # specify joint and marginal parameter subdistributions we are interested in
                 inference_type = InferenceType.DENSE_GRID, # use dense grid inference
                 run_name = "grid_run",
-                data_transformation = DataTransformationType.PCA, # perform PCA on the data before inference
+                data_transformation = data_transformation,
                 num_grid_points = 30) # use 30 grid points per parameter dimension
 
         # initiate the result manager using the model and run name to retreive the inference results computed above and stored offline
@@ -144,25 +140,13 @@ def inference(
             f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(data)}."
         )
 
-    # Transform the data
-    if data_transformation == DataTransformationType.Identity:
-        data_transformation = DataIdentity()
-    elif data_transformation == DataTransformationType.Normalize:
-        data_transformation = DataNormalizer.from_data(data)
-    elif data_transformation == DataTransformationType.PCA:
-        n_components = n_components_pca or model.param_dim
-        data_transformation = DataPCA.from_data(
-            data=data, n_components=n_components
-        )
-    elif data_transformation == DataTransformationType.Custom:
-        data_transformation = custom_data_transformation
-        if not issubclass(custom_data_transformation, DataTransformation):
-            raise TypeError(
-                f"The custom_data_transformation must be an instance of a subclass from DataTransformation. It is of type {type(data_transformation)}."
-            )
-    else:
+    # Assign the DataNormalization as default value
+    if data_transformation is None:
+        data_transformation = DataNormalization(data)
+
+    if not isinstance(data_transformation, DataTransformation):
         raise TypeError(
-            "The data_transformation must be one of the enum values of DataTransformationType."
+            f"The data_transformation must be an instance of a subclass of DataTransformation. It is of type {type(data_transformation)}."
         )
     data = data_transformation.transform(data)
 

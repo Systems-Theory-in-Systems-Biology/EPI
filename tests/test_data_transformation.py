@@ -1,8 +1,9 @@
 import numpy as np
 
-from eulerpi.core.data_transformation import (
+from eulerpi.core.data_transformations import (
+    AffineTransformation,
     DataIdentity,
-    DataNormalizer,
+    DataNormalization,
     DataPCA,
 )
 
@@ -20,14 +21,30 @@ def test_DataIdentity():
     assert np.allclose(data_transformation.transform(data2dim), data2dim)
 
 
-def test_DataNormalizer():
-    """Test whether the DataNormalizer transformation normalizes the data to zero mean and unit variance."""
+def test_AffineTransformation():
+    A1 = np.squeeze(np.array([[2]]))
+    b1 = np.array([0.5])
+    T1 = AffineTransformation(A1, b1)
+    data1dim = np.random.rand(100)
+    expected_result1 = np.inner(data1dim, A1) + b1
+    assert np.allclose(T1.transform(data1dim), expected_result1)
+
+    A2 = np.squeeze(np.array([[1, 2], [3, 4]]))
+    b2 = np.array([0.5])
+    T2 = AffineTransformation(A2, b2)
+    data2dim = np.random.rand(100, 2)
+    expected_result2 = np.inner(data2dim, A2) + b2
+    assert np.allclose(T2.transform(data2dim), expected_result2)
+
+
+def test_DataNormalization():
+    """Test whether the DataNormalization transformation normalizes the data to zero mean and unit variance."""
     data1d = np.random.rand(100, 1)
     data2d = np.random.rand(100, 2)
     test_data = [(1, data1d), (2, data2d)]
 
     for dim, data in test_data:
-        data_transformation = DataNormalizer.from_data(data)
+        data_transformation = DataNormalization(data)
         transformed_data = data_transformation.transform(data)
         assert np.allclose(
             np.mean(transformed_data, axis=0),
@@ -49,9 +66,7 @@ def test_DataPCA():
     test_data = [(1, 1, data1), (2, 2, data2), (2, 1, data2), (3, 2, data3)]
 
     for data_dim, pca_dim, data in test_data:
-        data_transformation = DataPCA.from_data(
-            data=data, n_components=pca_dim
-        )
+        data_transformation = DataPCA(data=data, n_components=pca_dim)
 
         transformed_data = data_transformation.transform(data)
         assert transformed_data.shape == (n_samples, pca_dim)
