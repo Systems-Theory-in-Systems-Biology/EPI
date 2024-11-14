@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>eulerpi.jax_extension module &mdash; EPI  documentation</title>
+  <title>eulerpi.core.models.artificial_model_interface module &mdash; EPI  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -73,9 +73,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">eulerpi.jax_extension module</li>
+      <li class="breadcrumb-item active">eulerpi.core.models.artificial_model_interface module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/eulerpi.jax_extension.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/eulerpi.core.models.artificial_model_interface.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,40 +83,54 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-eulerpi.jax_extension">
-<span id="eulerpi-jax-extension-module"></span><h1>eulerpi.jax_extension module<a class="headerlink" href="#module-eulerpi.jax_extension" title="Link to this heading"></a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="eulerpi.jax_extension.value_and_jacfwd">
-<span class="sig-name descname"><span class="pre">value_and_jacfwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/eulerpi/jax_extension.html#value_and_jacfwd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.jax_extension.value_and_jacfwd" title="Link to this definition"></a></dt>
-<dd><p>Returns a function that computes the value and the jacobian of the passed function using forward mode AD.</p>
+  <section id="module-eulerpi.core.models.artificial_model_interface">
+<span id="eulerpi-core-models-artificial-model-interface-module"></span><h1>eulerpi.core.models.artificial_model_interface module<a class="headerlink" href="#module-eulerpi.core.models.artificial_model_interface" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="eulerpi.core.models.artificial_model_interface.ArtificialModelInterface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ArtificialModelInterface</span></span><a class="reference internal" href="_modules/eulerpi/core/models/artificial_model_interface.html#ArtificialModelInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.artificial_model_interface.ArtificialModelInterface" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>By inheriting from this interface you indicate that you are providing an artificial parameter dataset,
+and the corresponding artificial data dataset, which can be used to compare the results from eulerpi with the ground truth.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.core.models.artificial_model_interface.ArtificialModelInterface.generate_artificial_data">
+<span class="sig-name descname"><span class="pre">generate_artificial_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/core/models/artificial_model_interface.html#ArtificialModelInterface.generate_artificial_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.artificial_model_interface.ArtificialModelInterface.generate_artificial_data" title="Link to this definition"></a></dt>
+<dd><p>This method is called when the user wants to generate artificial data from the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fun</strong> (<em>Callable</em><em>[</em><em>[</em><em>jnp.ndarray</em><em>]</em><em>, </em><em>jnp.ndarray</em><em>]</em>) – The function to supplement with the jacobian</p>
+<dd class="field-odd"><p><strong>params</strong> – typing.Union[os.PathLike, str, np.ndarray]: The parameters for which the data should be generated. Can be either a path to a file, a numpy array or a string.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A function that computes the value and the jacobian of the passed function using forward mode AD.</p>
+<dd class="field-even"><p>The data generated from the parameters.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Callable</em>[[jnp.ndarray], <em>Tuple</em>[jnp.ndarray, jnp.ndarray]]</p>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the params argument is not a path to a file, a numpy array or a string.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="eulerpi.jax_extension.value_and_jacrev">
-<span class="sig-name descname"><span class="pre">value_and_jacrev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/eulerpi/jax_extension.html#value_and_jacrev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.jax_extension.value_and_jacrev" title="Link to this definition"></a></dt>
-<dd><p>Returns a function that computes the value and the jacobian of the passed function using reverse mode AD.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.core.models.artificial_model_interface.ArtificialModelInterface.generate_artificial_params">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_artificial_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/core/models/artificial_model_interface.html#ArtificialModelInterface.generate_artificial_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.artificial_model_interface.ArtificialModelInterface.generate_artificial_params" title="Link to this definition"></a></dt>
+<dd><p>This method must be overwritten an return an numpy array of num_samples parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fun</strong> (<em>Callable</em><em>[</em><em>...</em><em>, </em><em>jnp.ndarray</em><em>]</em>) – The function to supplement with the jacobian</p>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – The number of parameters to generate.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A function that computes the value and the jacobian of the passed function using reverse mode AD.</p>
+<dd class="field-even"><p>The generated parameters.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Callable</em>[[jnp.ndarray], <em>Tuple</em>[jnp.ndarray, jnp.ndarray]]</p>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the method is not overwritten in a subclass.</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -218,6 +218,7 @@
 <h3>Added<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Added the <code class="docutils literal notranslate"><span class="pre">AffineTransformation</span></code> class to perform affine transformations on the data using jax</p></li>
+<li><p>Added the method function <code class="docutils literal notranslate"><span class="pre">forward_vectorized</span></code> to the (Base)Model class and a specialized jax version in the <code class="docutils literal notranslate"><span class="pre">JaxModel</span></code> class.</p></li>
 </ul>
 </section>
 <section id="id2">
@@ -228,6 +229,9 @@
 <li><p>Removed the class/factory functions <code class="docutils literal notranslate"><span class="pre">from_data</span></code> and <code class="docutils literal notranslate"><span class="pre">from_transformation</span></code> from the <code class="docutils literal notranslate"><span class="pre">DataTransformation</span></code> subclasses. Use the constructors instead.</p></li>
 <li><p>The inference function no longer has the parameter <code class="docutils literal notranslate"><span class="pre">custom_data_transformation</span></code>. You can pass an instance of the provided <code class="docutils literal notranslate"><span class="pre">DataTransformation</span></code> subclasses or pass a custom subclass.</p></li>
 <li><p>The inference function no longer has the parameter <code class="docutils literal notranslate"><span class="pre">n_components_pca</span></code>. Instantiate a <code class="docutils literal notranslate"><span class="pre">PCATransformation</span></code> with the data and the number of components to keep. Pass it as as argument for the parameter <code class="docutils literal notranslate"><span class="pre">data_transformation</span></code> in the inference function.</p></li>
+<li><p>Renamed the abstract base <code class="docutils literal notranslate"><span class="pre">Model</span></code> class to <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code>. The usage of <code class="docutils literal notranslate"><span class="pre">Model</span></code> is still supported, but deprecated, and possibly removed in a future release.</p></li>
+<li><p>Splitted the file model.py into multiple modules, one for each class, located in the subpackage <code class="docutils literal notranslate"><span class="pre">eulerpi.core.models</span></code>. The imports change from <code class="docutils literal notranslate"><span class="pre">eulerpi.core.model</span></code> to <code class="docutils literal notranslate"><span class="pre">eulerpi.core.models</span></code>.</p></li>
+<li><p>Removed the function <code class="docutils literal notranslate"><span class="pre">is_artificial</span></code> from the (Base)Model class. Use <code class="docutils literal notranslate"><span class="pre">isinstance(custom_model,</span> <span class="pre">ArtificialModelInterface)</span></code> or <code class="docutils literal notranslate"><span class="pre">issubclass(CustomModel,</span> <span class="pre">ArtificialModelInterface)</span></code> instead.</p></li>
 </ul>
 </section>
 <section id="id3">

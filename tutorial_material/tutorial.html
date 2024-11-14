@@ -134,8 +134,8 @@ It has 455 data points with two dimensions each. Nonuniform data is not supporte
 </section>
 <section id="define-your-model">
 <h2>Define your model<a class="headerlink" href="#define-your-model" title="Link to this heading"></a></h2>
-<p>Next, you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.model.Model</span></code></a> base class.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<p>Next, you need to define your model. The most basic way is to derive from the <a class="reference internal" href="../eulerpi.core.models.html#eulerpi.core.models.BaseModel" title="eulerpi.core.models.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">eulerpi.core.models.BaseModel</span></code></a> class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Temperature</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model describes the temperature :math:`y` in degree celsius at a given latitude :math:`q` in degree.</span>
 
 
@@ -196,10 +196,10 @@ It has 455 data points with two dimensions each. Nonuniform data is not supporte
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 </pre></div>
 </div>
-<p>A model inheriting from <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> must implement the methods <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.forward" title="eulerpi.core.model.Model.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../eulerpi.core.model.html#eulerpi.core.model.Model.jacobian" title="eulerpi.core.model.Model.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
+<p>A model inheriting from <a class="reference internal" href="../eulerpi.core.models.html#eulerpi.core.models.BaseModel" title="eulerpi.core.models.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> must implement the methods <a class="reference internal" href="../eulerpi.core.models.html#eulerpi.core.models.BaseModel.forward" title="eulerpi.core.models.BaseModel.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a> and <a class="reference internal" href="../eulerpi.core.models.html#eulerpi.core.models.BaseModel.jacobian" title="eulerpi.core.models.BaseModel.jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">jacobian()</span></code></a>.
 In addition, it must provide the methods <code class="xref py py-meth docutils literal notranslate"><span class="pre">getcentral_param()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">getParamSamplingLimits()</span></code> to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.</p>
 <div class="admonition important">

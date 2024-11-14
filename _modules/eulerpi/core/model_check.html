@@ -83,20 +83,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for eulerpi.core.model_check</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Check a custom :py:class:`Model &lt;eulerpi.core.model.Model&gt;` for implementation errors or test them in a quick inference run on an artificially created dataset.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Check a custom :py:class:`BaseModel &lt;eulerpi.core.models.BaseModel&gt;` for implementation errors or test them in a quick inference run on an artificially created dataset.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">vmap</span>
 
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">JaxModel</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.plotting</span> <span class="kn">import</span> <span class="n">sample_violin_plot</span>
 
 
 <div class="viewcode-block" id="basic_model_check">
 <a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.basic_model_check">[docs]</a>
-<span class="k">def</span> <span class="nf">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a simple sanity check on the model.</span>
 
 <span class="sd">    It tests the following:</span>
@@ -113,7 +112,7 @@
 <span class="sd">    - The jacobi matrix has full rank</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: Raised if any of the tests fails.</span>
@@ -214,7 +213,7 @@
 <div class="viewcode-block" id="inference_model_check">
 <a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.inference_model_check">[docs]</a>
 <span class="k">def</span> <span class="nf">inference_model_check</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
     <span class="n">num_model_evaluations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11000</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -223,7 +222,7 @@
 <span class="sd">    It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 <span class="sd">        num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)</span>
 <span class="sd">        num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)</span>
 
@@ -258,13 +257,7 @@
         <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
     <span class="p">)</span>
 
-    <span class="c1"># try to use jax vmap to perform the forward pass on multiple parameters at once</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">JaxModel</span><span class="p">):</span>
-        <span class="n">data_sample</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">param_sample</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">data_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s2">&quot;(n)-&gt;(m)&quot;</span><span class="p">)(</span>
-            <span class="n">param_sample</span>
-        <span class="p">)</span>
+    <span class="n">data_sample</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward_vectorized</span><span class="p">(</span><span class="n">param_sample</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Successfully created an artificial data set of size </span><span class="si">{</span><span class="n">num_data_points</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -327,7 +320,7 @@
 <div class="viewcode-block" id="full_model_check">
 <a class="viewcode-back" href="../../../eulerpi.core.model_check.html#eulerpi.core.model_check.full_model_check">[docs]</a>
 <span class="k">def</span> <span class="nf">full_model_check</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">num_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
     <span class="n">num_model_evaluations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11000</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -338,7 +331,7 @@
 <span class="sd">    It runs the functions :py:func:`basic_model_check &lt;basic_model_check&gt;` and :py:func:`inference_model_check &lt;inference_model_check&gt;` to perform the checks.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 <span class="sd">        num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)</span>
 <span class="sd">        num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)</span>
 

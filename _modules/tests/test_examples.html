@@ -92,8 +92,9 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">is_amici_available</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.model_check</span> <span class="kn">import</span> <span class="n">basic_model_check</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models.sbml_model</span> <span class="kn">import</span> <span class="n">is_amici_available</span>
 
 <span class="n">cpp_plant_example</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
     <span class="p">(</span><span class="s2">&quot;eulerpi.examples.cpp.cpp_plant&quot;</span><span class="p">,</span> <span class="s2">&quot;CppPlant&quot;</span><span class="p">),</span>
@@ -181,7 +182,7 @@
     <span class="c1"># Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test</span>
     <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_location</span><span class="p">)</span>
     <span class="n">ModelClass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">className</span><span class="p">)</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
 
     <span class="c1"># Use the basic model check to assert all model attribute dimension requirements as well as forward simulations and the corresponding jacobian.</span>
     <span class="n">basic_model_check</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
@@ -211,7 +212,7 @@
     <span class="c1"># Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test</span>
     <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_location</span><span class="p">)</span>
     <span class="n">ModelClass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">className</span><span class="p">)</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">()</span>
 
     <span class="c1"># Define kwargs for inference</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -225,7 +226,7 @@
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_levels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
     <span class="c1"># generate artificial data if necessary</span>
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_artificial</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
         <span class="n">num_data_points</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_params</span><span class="p">(</span><span class="n">num_data_points</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_artificial_data</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>

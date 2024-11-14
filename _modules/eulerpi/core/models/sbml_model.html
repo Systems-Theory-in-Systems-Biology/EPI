@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eulerpi.core.models.sbml_model &mdash; EPI  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=5c84b33f" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            EPI
+              <img src="../../../../_static/epi.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../eulerpi.core.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial_material/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Example Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/contributing.html">Contributing to EPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/license.html">LICENSE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/citation.html">Citation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../MarkdownLinks/changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">EPI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">eulerpi.core.models.sbml_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for eulerpi.core.models.sbml_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.base_model</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="n">amici_available</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">amici</span>
+
+    <span class="n">amici_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="is_amici_available">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.is_amici_available">[docs]</a>
+<span class="k">def</span> <span class="nf">is_amici_available</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">amici_available</span></div>
+
+
+
+<div class="viewcode-block" id="SBMLModel">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel">[docs]</a>
+<span class="k">class</span> <span class="nc">SBMLModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The SBMLModel class is a wrapper for the AMICI python interface to simulate SBML models using this package.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sbml_file(str): The path to the SBML model file.</span>
+<span class="sd">        param_ids(list): A list of ids of parameter, which will be estimated during the inference. If None all parameter ids are extracted from the SBML model.</span>
+<span class="sd">        state_ids(list): A list of state ids, for which data will be given during the inference. If None all state ids are extracted from the SBML model.</span>
+<span class="sd">        timepoints(list): List of measurement time points, this is where the sbml model is evaluated and compared to the data</span>
+<span class="sd">        skip_creation(bool): If True the model is not created againg based on the SBML file. Instead the model is loaded from a previously created model. (Default value = False)</span>
+<span class="sd">        central_param(np.ndarray): The central parameter for the model</span>
+<span class="sd">        param_limits(np.ndarray): The parameter limits for the model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SBMLModel.indices_from_ids">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.indices_from_ids">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">indices_from_ids</span><span class="p">(</span><span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">all_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the indices of the ids in the all_ids list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ids(list): The ids for which the indices should be returned.</span>
+<span class="sd">            all_ids(list): The list of all ids.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: The indices of the ids in the all_ids list.</span>
+
+<span class="sd">        Throws:</span>
+<span class="sd">            ValueError: If one of the ids is not in the all_ids list.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Parameter / State id &#39;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&#39; is not in the list of the relevant ids </span><span class="si">{</span><span class="n">all_ids</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">indices</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">param_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of parameters of the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The dimension of a data point returned by the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_ids</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sbml_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">timepoints</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">param_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip_creation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_amici_available</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The SBMLModel class requires an AMICI installation. &quot;</span>
+                <span class="s2">&quot;Please install AMICI first.&quot;</span>
+                <span class="s2">&quot;You can do this manually or install eulerpi with the [amici] extra: pip install eulerpi[amici]&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">central_param</span><span class="p">,</span> <span class="n">param_limits</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_dir</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;./generated_sbml_models/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_name</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Generate python code</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_creation</span><span class="p">:</span>
+            <span class="n">sbml_importer</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">SbmlImporter</span><span class="p">(</span><span class="n">sbml_file</span><span class="p">)</span>
+            <span class="n">sbml_importer</span><span class="o">.</span><span class="n">sbml2amici</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_name</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_dir</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Load the generated model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span> <span class="o">=</span> <span class="n">timepoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_amici_model_and_solver</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span> <span class="o">=</span> <span class="n">param_ids</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getParametersIds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_ids</span> <span class="o">=</span> <span class="n">state_ids</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getStateIds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices_from_ids</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getParameterIds</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices_from_ids</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getStateIds</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSensitivities</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SBMLModel.load_amici_model_and_solver">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.load_amici_model_and_solver">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_amici_model_and_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the AMICI model from the previously generated model.&quot;&quot;&quot;</span>
+        <span class="n">amici_model_module</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">import_model_module</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model_dir</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span> <span class="o">=</span> <span class="n">amici_model_module</span><span class="o">.</span><span class="n">getModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getSolver</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">setTimepoints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="o">.</span><span class="n">setAbsoluteTolerance</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SBMLModel.setSensitivities">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.setSensitivities">[docs]</a>
+    <span class="k">def</span> <span class="nf">setSensitivities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tell the underlying amici solver to calculate sensitivities based on the attribute `self.param_ids`&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">getParameterIds</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">requireSensitivitiesForAllParameters</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">setParameterList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_indices</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="o">.</span><span class="n">setSensitivityMethod</span><span class="p">(</span><span class="n">amici</span><span class="o">.</span><span class="n">SensitivityMethod</span><span class="o">.</span><span class="n">forward</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="o">.</span><span class="n">setSensitivityOrder</span><span class="p">(</span><span class="n">amici</span><span class="o">.</span><span class="n">SensitivityOrder</span><span class="o">.</span><span class="n">first</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SBMLModel.forward">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">setParameterById</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">param</span><span class="p">)</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">runAmiciSimulation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rdata</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SBMLModel.jacobian">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.jacobian">[docs]</a>
+    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">setParameterById</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">param</span><span class="p">)</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">runAmiciSimulation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">rdata</span><span class="o">.</span><span class="n">sx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_indices</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">T</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SBMLModel.forward_and_jacobian">
+<a class="viewcode-back" href="../../../../eulerpi.core.models.sbml_model.html#eulerpi.core.models.SBMLModel.forward_and_jacobian">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward_and_jacobian</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="o">.</span><span class="n">setParameterById</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">param</span><span class="p">)</span>
+        <span class="n">rdata</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">runAmiciSimulation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">rdata</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dim</span><span class="p">),</span>
+            <span class="n">rdata</span><span class="o">.</span><span class="n">sx</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_indices</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dim</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">T</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># Allow the model to be pickled</span>
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Create a copy of the object&#39;s state</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Save the amici solver settings to</span>
+        <span class="n">_fd</span><span class="p">,</span> <span class="n">_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># write amici solver settings to file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">amici</span><span class="o">.</span><span class="n">writeSolverSettingsToHDF5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="p">,</span> <span class="n">_file</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Pickling the SBMLModel requires an AMICI &quot;</span>
+                    <span class="s2">&quot;installation with HDF5 support.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">raise</span>
+            <span class="c1"># read in byte stream</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_fd</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">closefd</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_solver_settings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># close file descriptor and remove temporary file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">_fd</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_file</span><span class="p">)</span>
+
+        <span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_model_settings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">amici</span><span class="o">.</span><span class="n">get_model_settings</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Remove the unpicklable entries.</span>
+        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_model&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_solver&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># Restore amici model and solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_amici_model_and_solver</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSensitivities</span><span class="p">()</span>
+
+        <span class="n">_fd</span><span class="p">,</span> <span class="n">_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># write solver settings to temporary file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_fd</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">,</span> <span class="n">closefd</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_solver_settings&quot;</span><span class="p">])</span>
+            <span class="c1"># read in solver settings</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">amici</span><span class="o">.</span><span class="n">readSolverSettingsFromHDF5</span><span class="p">(</span><span class="n">_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amici_solver</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                    <span class="n">err</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,)</span>
+                <span class="n">err</span><span class="o">.</span><span class="n">args</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Unpickling an AmiciObjective requires an AMICI &quot;</span>
+                    <span class="s2">&quot;installation with HDF5 support.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># close file descriptor and remove temporary file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">_fd</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_file</span><span class="p">)</span>
+
+        <span class="n">amici</span><span class="o">.</span><span class="n">set_model_settings</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amici_model</span><span class="p">,</span>
+            <span class="n">state</span><span class="p">[</span><span class="s2">&quot;amici_model_settings&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ <script type="text/javascript">
+    $(document).ready(function() {
+        $(".toggle > *").hide();
+        $(".toggle .header").show();
+        $(".toggle .header").click(function() {
+            $(this).parent().children().not(".header").toggle(400);
+            $(this).parent().children(".header").toggleClass("open");
+        })
+    });
+</script>
+
+
+</body>
+</html>

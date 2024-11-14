@@ -99,7 +99,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.dense_grid</span> <span class="kn">import</span> <span class="n">inference_dense_grid</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.sampling</span> <span class="kn">import</span> <span class="n">inference_mcmc</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.sparsegrid</span> <span class="kn">import</span> <span class="n">inference_sparse_grid</span>
@@ -108,7 +108,7 @@
 <div class="viewcode-block" id="inference">
 <a class="viewcode-back" href="../../../eulerpi.core.inference.html#eulerpi.core.inference.inference">[docs]</a>
 <span class="k">def</span> <span class="nf">inference</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">inference_type</span><span class="p">:</span> <span class="n">InferenceType</span> <span class="o">=</span> <span class="n">InferenceType</span><span class="o">.</span><span class="n">MCMC</span><span class="p">,</span>
     <span class="n">slices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -127,7 +127,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts the parameter inference for the given model and data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 <span class="sd">        data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.</span>
 <span class="sd">        inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)</span>
 <span class="sd">        slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)</span>

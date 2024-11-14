@@ -109,7 +109,7 @@
 <h1>External C++ Models<a class="headerlink" href="#external-c-models" title="Link to this heading"></a></h1>
 <p>Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python <a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model" title="eulerpi.core.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class.
+call C++ code from your python <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code> class.
 It is primarily intended for fast implementations of the <cite>forward</cite> and <cite>jacobian</cite> method.</p>
 <p>This example model uses the following features:</p>
 <ul class="simple">
@@ -241,11 +241,11 @@ make<span class="w"> </span>-j
 <h2>Python Side Model<a class="headerlink" href="#python-side-model" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">BaseModel</span>
 <span class="kn">from</span> <span class="nn">eulerpi.examples.cpp</span> <span class="kn">import</span> <span class="n">cpp_model</span>
 
 
-<span class="k">class</span> <span class="nc">CppPlant</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CppPlant</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient</span>
 <span class="sd">    Param0: Water [0,1]</span>
 <span class="sd">    Param1: Sun   [0,1]</span>

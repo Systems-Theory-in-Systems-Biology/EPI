@@ -95,14 +95,14 @@
 <span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.data_transformations</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 
 <div class="viewcode-block" id="evaluate_density">
 <a class="viewcode-back" href="../../../eulerpi.core.transformations.html#eulerpi.core.transformations.evaluate_density">[docs]</a>
 <span class="k">def</span> <span class="nf">evaluate_density</span><span class="p">(</span>
     <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
     <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -116,7 +116,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        param (np.ndarray): parameter for which the transformed density shall be evaluated</span>
-<span class="sd">        model (Model): model to be evaluated</span>
+<span class="sd">        model (BaseModel): model to be evaluated</span>
 <span class="sd">        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)</span>
 <span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
 <span class="sd">        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension</span>
@@ -229,7 +229,7 @@
 <a class="viewcode-back" href="../../../eulerpi.core.transformations.html#eulerpi.core.transformations.eval_log_transformed_density">[docs]</a>
 <span class="k">def</span> <span class="nf">eval_log_transformed_density</span><span class="p">(</span>
     <span class="n">param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
     <span class="n">data_stdevs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -247,7 +247,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        param (np.ndarray): parameter for which the transformed density shall be evaluated</span>
-<span class="sd">        model (Model): model to be evaluated</span>
+<span class="sd">        model (BaseModel): model to be evaluated</span>
 <span class="sd">        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)</span>
 <span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
 <span class="sd">        data_stdevs (np.ndarray): array of suitable kernel width for each data dimension</span>

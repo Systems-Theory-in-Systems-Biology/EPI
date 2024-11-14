@@ -59,7 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.inference.html">Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.inference_types.html">Inference Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.kde.html">KDE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model_check.html">Model Check</a></li>
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.plotting.html">Plotting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.result_manager.html">Result Manager</a></li>
@@ -141,42 +141,42 @@
 <li class="toctree-l2"><a class="reference internal" href="eulerpi.core.kde.html#eulerpi.core.kde.eval_kde_gauss"><code class="docutils literal notranslate"><span class="pre">eval_kde_gauss()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="eulerpi.core.model.html">Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.ArtificialModelInterface"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.ArtificialModelInterface.generate_artificial_data"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.generate_artificial_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.ArtificialModelInterface.generate_artificial_params"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.generate_artificial_params()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="eulerpi.core.models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.ArtificialModelInterface"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.ArtificialModelInterface.generate_artificial_data"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.generate_artificial_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.ArtificialModelInterface.generate_artificial_params"><code class="docutils literal notranslate"><span class="pre">ArtificialModelInterface.generate_artificial_params()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel"><code class="docutils literal notranslate"><span class="pre">JaxModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_and_jacobian()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel.forward_method"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_method()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel.init_fw_and_bw"><code class="docutils literal notranslate"><span class="pre">JaxModel.init_fw_and_bw()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.JaxModel.jacobian"><code class="docutils literal notranslate"><span class="pre">JaxModel.jacobian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.forward"><code class="docutils literal notranslate"><span class="pre">BaseModel.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">BaseModel.forward_and_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.forward_vectorized"><code class="docutils literal notranslate"><span class="pre">BaseModel.forward_vectorized()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.jacobian"><code class="docutils literal notranslate"><span class="pre">BaseModel.jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.param_is_within_domain"><code class="docutils literal notranslate"><span class="pre">BaseModel.param_is_within_domain()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.data_dim"><code class="docutils literal notranslate"><span class="pre">BaseModel.data_dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.param_dim"><code class="docutils literal notranslate"><span class="pre">BaseModel.param_dim</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.forward"><code class="docutils literal notranslate"><span class="pre">Model.forward()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">Model.forward_and_jacobian()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.is_artificial"><code class="docutils literal notranslate"><span class="pre">Model.is_artificial()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.jacobian"><code class="docutils literal notranslate"><span class="pre">Model.jacobian()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.param_is_within_domain"><code class="docutils literal notranslate"><span class="pre">Model.param_is_within_domain()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.data_dim"><code class="docutils literal notranslate"><span class="pre">Model.data_dim</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.Model.param_dim"><code class="docutils literal notranslate"><span class="pre">Model.param_dim</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel"><code class="docutils literal notranslate"><span class="pre">JaxModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_and_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel.forward_method"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel.forward_vectorized"><code class="docutils literal notranslate"><span class="pre">JaxModel.forward_vectorized()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel.init_fw_and_bw"><code class="docutils literal notranslate"><span class="pre">JaxModel.init_fw_and_bw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.JaxModel.jacobian"><code class="docutils literal notranslate"><span class="pre">JaxModel.jacobian()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel"><code class="docutils literal notranslate"><span class="pre">SBMLModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.forward"><code class="docutils literal notranslate"><span class="pre">SBMLModel.forward()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">SBMLModel.forward_and_jacobian()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.indices_from_ids"><code class="docutils literal notranslate"><span class="pre">SBMLModel.indices_from_ids()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.jacobian"><code class="docutils literal notranslate"><span class="pre">SBMLModel.jacobian()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.load_amici_model_and_solver"><code class="docutils literal notranslate"><span class="pre">SBMLModel.load_amici_model_and_solver()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.setSensitivities"><code class="docutils literal notranslate"><span class="pre">SBMLModel.setSensitivities()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.data_dim"><code class="docutils literal notranslate"><span class="pre">SBMLModel.data_dim</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.SBMLModel.param_dim"><code class="docutils literal notranslate"><span class="pre">SBMLModel.param_dim</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel"><code class="docutils literal notranslate"><span class="pre">SBMLModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.forward"><code class="docutils literal notranslate"><span class="pre">SBMLModel.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.forward_and_jacobian"><code class="docutils literal notranslate"><span class="pre">SBMLModel.forward_and_jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.indices_from_ids"><code class="docutils literal notranslate"><span class="pre">SBMLModel.indices_from_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.jacobian"><code class="docutils literal notranslate"><span class="pre">SBMLModel.jacobian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.load_amici_model_and_solver"><code class="docutils literal notranslate"><span class="pre">SBMLModel.load_amici_model_and_solver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.setSensitivities"><code class="docutils literal notranslate"><span class="pre">SBMLModel.setSensitivities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.data_dim"><code class="docutils literal notranslate"><span class="pre">SBMLModel.data_dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="eulerpi.core.models.html#eulerpi.core.models.SBMLModel.param_dim"><code class="docutils literal notranslate"><span class="pre">SBMLModel.param_dim</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.add_autodiff"><code class="docutils literal notranslate"><span class="pre">add_autodiff()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="eulerpi.core.model.html#eulerpi.core.model.is_amici_available"><code class="docutils literal notranslate"><span class="pre">is_amici_available()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="eulerpi.core.model_check.html">Model Check</a><ul>

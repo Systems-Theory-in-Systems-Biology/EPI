@@ -90,7 +90,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">JaxModel</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">JaxModel</span>
 
 
 <div class="viewcode-block" id="Corona">
@@ -117,9 +117,9 @@
 <span class="sd">    .. note::</span>
 
 <span class="sd">        * ODE Solver: To solve the ODE problem the jax based ode solver library :code:`diffrax` is used: https://github.com/patrick-kidger/diffrax.</span>
-<span class="sd">        * Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class :py:class:`~eulerpi.core.model.JaxModel`,</span>
-<span class="sd">          which automatically calculates sets :py:meth:`~eulerpi.core.model.Model.jacobian`.</span>
-<span class="sd">        * JIT compilation: Inheriting from :py:class:`~eulerpi.core.model.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.</span>
+<span class="sd">        * Automatic Differentiation: The derivatives are calculated automatically with jax by deriving from the class :py:class:`~eulerpi.core.models.JaxModel`,</span>
+<span class="sd">          which automatically calculates sets :py:meth:`~eulerpi.core.models.BaseModel.jacobian`.</span>
+<span class="sd">        * JIT compilation: Inheriting from :py:class:`~eulerpi.core.models.JaxModel` also enables jit compilation / optimization for the forward and jacobian method.</span>
 <span class="sd">          This usually results in a significant execution speedup. It also allows to run your model on the gpu.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

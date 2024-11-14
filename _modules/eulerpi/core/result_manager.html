@@ -96,7 +96,7 @@
 
 <span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 
 <div class="viewcode-block" id="ResultManager">
@@ -293,7 +293,7 @@
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_run">[docs]</a>
     <span class="k">def</span> <span class="nf">save_run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
         <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">run</span><span class="p">,</span>
         <span class="n">sampler_results</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -304,7 +304,7 @@
 <span class="sd">        as seperate files in the folders &#39;Params&#39; and&#39;SimResults&#39; and &#39;DensityEvals&#39;.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model(Model): The model for which the results will be saved</span>
+<span class="sd">            model(BaseModel): The model for which the results will be saved</span>
 <span class="sd">            slice(np.ndarray): The slice for which the results will be saved</span>
 <span class="sd">            run(int): The run for which the results will be saved</span>
 <span class="sd">            sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)</span>
@@ -382,7 +382,7 @@
     <span class="k">def</span> <span class="nf">save_inference_information</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
         <span class="n">inference_type</span><span class="p">:</span> <span class="n">InferenceType</span><span class="p">,</span>
         <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -391,7 +391,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            slice(np.ndarray): The slice for which the results will be saved.</span>
-<span class="sd">            model(Model): The model for which the results will be saved.</span>
+<span class="sd">            model(BaseModel): The model for which the results will be saved.</span>
 <span class="sd">            inference_type(InferenceType): The type of inference that was performed.</span>
 <span class="sd">            num_processes(int): The number of processes that were used for the inference.</span>
 <span class="sd">            **kwargs: Additional information about the inference run.</span>

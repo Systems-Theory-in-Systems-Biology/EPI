@@ -103,7 +103,7 @@
 <span class="kn">from</span> <span class="nn">eulerpi.core.data_transformations</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">evaluate_density</span>
 
@@ -501,7 +501,7 @@
 <span class="k">def</span> <span class="nf">evaluate_on_sparse_grid</span><span class="p">(</span>
     <span class="n">args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">Model</span><span class="p">,</span>
+        <span class="n">BaseModel</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">DataTransformation</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -512,7 +512,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        params (np.ndarray): The parameters to be evaluated.</span>
-<span class="sd">        model(Model): The model used for the inference.</span>
+<span class="sd">        model(BaseModel): The model used for the inference.</span>
 <span class="sd">        data(np.ndarray): The data points used for the inference.</span>
 <span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
 <span class="sd">        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)</span>
@@ -532,7 +532,7 @@
 <div class="viewcode-block" id="inference_sparse_grid">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.inference_sparse_grid">[docs]</a>
 <span class="k">def</span> <span class="nf">inference_sparse_grid</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
     <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span><span class="p">,</span>
@@ -548,7 +548,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 <span class="sd">        data(np.ndarray): The data to be used for inference.</span>
 <span class="sd">        data_transformation (DataTransformation): The data transformation used to normalize the data.</span>
 <span class="sd">        num_processes(int): number of processes to use for parallel evaluation of the model.</span>

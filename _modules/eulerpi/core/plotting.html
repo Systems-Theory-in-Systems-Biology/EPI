@@ -99,7 +99,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">axes</span>
 
 <span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span><span class="p">,</span> <span class="n">eval_kde_gauss</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
 
 <span class="c1"># general plotting function for joint runs</span>
@@ -108,7 +108,7 @@
 <div class="viewcode-block" id="sample_violin_plot">
 <a class="viewcode-back" href="../../../eulerpi.core.plotting.html#eulerpi.core.plotting.sample_violin_plot">[docs]</a>
 <span class="k">def</span> <span class="nf">sample_violin_plot</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">reference_sample</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default_run&quot;</span><span class="p">,</span>
     <span class="n">what_to_plot</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;param&quot;</span><span class="p">,</span>
@@ -120,7 +120,7 @@
 <span class="sd">       Can be used for parameters and simulation results and compares reference (or true underlying) and inferred values when possible.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model(Model): The model describing the mapping from parameters to data.</span>
+<span class="sd">        model(BaseModel): The model describing the mapping from parameters to data.</span>
 <span class="sd">        reference_sample(Union[str, os.PathLike, np.ndarray]): Depending on what_to_plot, this is either the data sample used for the inference, or a reference sample of &quot;true&quot; parameter samples. If a string is given, it is assumed to be a path to a file containing the respective sample. (Default value = None)</span>
 <span class="sd">        run_name(str): The name of the inference run. (Default value = &quot;default_run&quot;)</span>
 <span class="sd">        what_to_plot(str): Choose between &quot;param&quot; and &quot;data&quot; to respectively visualize either the model parameters or output. (Default value = &quot;param&quot;)</span>
