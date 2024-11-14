@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import jax.numpy as jnp
 from jax import jit, tree_util
 
@@ -5,16 +7,17 @@ from .affine_transformation import AffineTransformation
 
 
 @jit
-def compute_normalization_transformation(data):
+def compute_normalization(data) -> Tuple[jnp.ndarray, jnp.ndarray]:
     mean_vector = jnp.mean(data, axis=0)
     cov = jnp.cov(data, rowvar=False)
     L = jnp.linalg.cholesky(jnp.atleast_2d(cov))
     normalizing_matrix = jnp.linalg.inv(L)
+    shift_vector = -normalizing_matrix @ mean_vector
 
     # Use jnp.squeeze to reduce dimensions if normalizing_matrix is (1, 1)
     normalizing_matrix = jnp.squeeze(normalizing_matrix)
 
-    return normalizing_matrix, -mean_vector
+    return normalizing_matrix, shift_vector
 
 
 class DataNormalization(AffineTransformation):
@@ -26,8 +29,9 @@ class DataNormalization(AffineTransformation):
         Args:
             data (jnp.ndarray): The data from which to calculate the mean vector and normalizing matrix.
         """
+        normalizing_matrix, shift_vector = compute_normalization(data)
 
-        super().__init__(*compute_normalization_transformation(data))
+        super().__init__(normalizing_matrix, shift_vector)
 
     @classmethod
     def _tree_unflatten(cls, aux_data, children):

@@ -38,7 +38,7 @@ class AffineTransformation(DataTransformation):
         # data: (n, d)
         # data: (d)
         # The correct output shape is (n, d) or (d) depending on the input shape.
-        return jnp.inner(data + self.b, self.A)
+        return jnp.inner(data, self.A) + self.b
 
     def jacobian(self, data: jnp.ndarray) -> jnp.ndarray:
         return self.A
