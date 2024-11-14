@@ -8,7 +8,7 @@ import jax.numpy as jnp
 import numpy as np
 import psutil
 
-from eulerpi.core.data_transformation import (
+from eulerpi.core.data_transformations import (
     DataNormalization,
     DataTransformation,
 )
