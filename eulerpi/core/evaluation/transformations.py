@@ -9,8 +9,9 @@ from jax import jit
 
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.evaluation.kde import KDE
 from eulerpi.core.models import BaseModel
+
+from .kde import KDE
 
 
 def evaluate_density(
