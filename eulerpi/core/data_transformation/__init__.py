@@ -3,10 +3,8 @@
 This subpackage contains all predefined data transformations and an abstract base class for custom data transformations.
 """
 
+from .affine_transformation import AffineTransformation as AffineTransformation
 from .data_identity import DataIdentity as DataIdentity
 from .data_normalization import DataNormalization as DataNormalization
 from .data_pca import DataPCA as DataPCA
 from .data_transformation import DataTransformation as DataTransformation
-from .data_transformation_types import (
-    DataTransformationType as DataTransformationType,
-)

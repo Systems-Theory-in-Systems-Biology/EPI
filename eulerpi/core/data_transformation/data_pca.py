@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 import jax.numpy as jnp
 from sklearn.decomposition import PCA
@@ -9,36 +9,16 @@ from .data_transformation import DataTransformation
 class DataPCA(DataTransformation):
     """The DataPCA class can be used to transform the data using the Principal Component Analysis."""
 
-    def __init__(
-        self,
-        pca: Optional[PCA] = None,
-    ):
-        """Initialize a DataPCA object.
-
-        Args:
-            pca (Optional[PCA], optional): The PCA object to be used for the transformation. Defaults to None.
-        """
-        super().__init__()
-
-        self.pca = pca
-
-    @classmethod
-    def from_data(
-        cls, data: jnp.ndarray, n_components: Optional[int] = None
-    ) -> DataTransformation:
+    def __init__(self, data: jnp.ndarray, n_components: Union[int, str]):
         """Initialize a DataPCA object by calculating the PCA from the given data.
 
         Args:
             data (jnp.ndarray): The data to be used for the PCA.
-            n_components (Optional[int], optional): The number of components to keep. If None is passed, min(n_samples,n_features) is used. Defaults to None.
-
-        Returns:
-            DataTransformation: The initialized DataPCA object.
+            n_components (Union[int, str]): The number of components to keep.
         """
-        instance = cls()
-        instance.pca = PCA(n_components=n_components)
-        instance.pca.fit(data)
-        return instance
+        super().__init__()
+        self.pca = PCA(n_components=n_components)
+        self.pca.fit(data)
 
     def transform(self, data: jnp.ndarray) -> jnp.ndarray:
         """Transform the given data using the PCA.

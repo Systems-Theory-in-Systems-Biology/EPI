@@ -21,10 +21,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added the `AffineTransformation` class to perform affine transformations on the data using jax
+
 ### Changed
 
 - Refactored the module `eulerpi.core.data_transformation` into a subpackage. The data transformation classes can be import from this subpackage directly
 - Renamed `eulerpi.core.data_transformation.DataNormalizer` into `eulerpi.core.data_transformation.DataNormalization`
+- Removed the class/factory functions `from_data` and `from_transformation` from the `DataTransformation` subclasses. Use the constructors instead.
+- The inference function no longer has the parameter `custom_data_transformation`. You can pass an instance of the provided `DataTransformation` subclasses or pass a custom subclass.
+- The inference function no longer has the parameter `n_components_pca`. Instantiate a `PCATransformation` with the data and the number of components to keep. Pass it as as argument for the parameter `data_transformation` in the inference function.
 
 ### Fixed
 

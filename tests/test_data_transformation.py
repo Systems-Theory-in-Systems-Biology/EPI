@@ -27,7 +27,7 @@ def test_DataNormalization():
     test_data = [(1, data1d), (2, data2d)]
 
     for dim, data in test_data:
-        data_transformation = DataNormalization.from_data(data)
+        data_transformation = DataNormalization(data)
         transformed_data = data_transformation.transform(data)
         assert np.allclose(
             np.mean(transformed_data, axis=0),
@@ -49,9 +49,7 @@ def test_DataPCA():
     test_data = [(1, 1, data1), (2, 2, data2), (2, 1, data2), (3, 2, data3)]
 
     for data_dim, pca_dim, data in test_data:
-        data_transformation = DataPCA.from_data(
-            data=data, n_components=pca_dim
-        )
+        data_transformation = DataPCA(data=data, n_components=pca_dim)
 
         transformed_data = data_transformation.transform(data)
         assert transformed_data.shape == (n_samples, pca_dim)
