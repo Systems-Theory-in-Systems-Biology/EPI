@@ -8,7 +8,7 @@ import numpy as np
 from jax import jit
 
 from eulerpi import logger
-from eulerpi.core.data_transformation import DataTransformation
+from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.kde import eval_kde_gauss
 from eulerpi.core.model import Model
 
@@ -47,7 +47,7 @@ def evaluate_density(
         import numpy as np
         from eulerpi.examples.heat import Heat
         from eulerpi.core.kde import calc_kernel_width
-        from eulerpi.core.data_transformation import DataIdentity
+        from eulerpi.core.data_transformations import DataIdentity
         from eulerpi.core.transformations import evaluate_density
 
         # use the heat model
