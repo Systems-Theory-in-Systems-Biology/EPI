@@ -20,7 +20,7 @@ import emcee
 import numpy as np
 
 from eulerpi import logger
-from eulerpi.core.data_transformation import DataTransformation
+from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.model import Model

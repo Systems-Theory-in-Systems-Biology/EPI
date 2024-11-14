@@ -17,7 +17,7 @@ from typing import Dict, Tuple, Union
 import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
-from eulerpi.core.data_transformation import DataTransformation
+from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.model import Model
