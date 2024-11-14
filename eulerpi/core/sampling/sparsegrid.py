@@ -16,11 +16,12 @@ import numpy as np
 
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.kde import calc_kernel_width
+from eulerpi.core.evaluation.kde import GaussKDE
+from eulerpi.core.evaluation.transformations import evaluate_density
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.transformations import evaluate_density
+
+INFERENCE_NAME = "SPARSE_GRID"
 
 
 def basis_1d(
@@ -373,7 +374,6 @@ def evaluate_on_sparse_grid(
     args: typing.Tuple[
         np.ndarray,
         BaseModel,
-        np.ndarray,
         DataTransformation,
         np.ndarray,
         np.ndarray,
@@ -384,19 +384,16 @@ def evaluate_on_sparse_grid(
     Args:
         params (np.ndarray): The parameters to be evaluated.
         model(BaseModel): The model used for the inference.
-        data(np.ndarray): The data points used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
-        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
+        kde (KDE): The kernel density estimator (or some other estimator implementing the __call__ function) to estimate the density at a data point
         slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
 
     Returns:
         np.ndarray: The density values for the given params.
     """
 
-    params, model, data, data_transformation, data_stdevs, slice = args
-    return evaluate_density(
-        params, model, data, data_transformation, data_stdevs, slice
-    )[1]
+    params, model, data_transformation, kde, slice = args
+    return evaluate_density(params, model, data_transformation, kde, slice)[1]
 
 
 def inference_sparse_grid(
@@ -431,7 +428,7 @@ def inference_sparse_grid(
     logger.warning(
         "The inference_sparse_grid function is not tested and not recommended for use."
     )
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
 
     # create the return dictionaries
     overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
@@ -453,9 +450,8 @@ def inference_sparse_grid(
         tasks = zip(
             scaledSparseGridPoints,
             repeat(model),
-            repeat(data),
             repeat(data_transformation),
-            repeat(data_stdevs),
+            repeat(kde),
             repeat(slice),
         )
 
@@ -493,7 +489,7 @@ def inference_sparse_grid(
         result_manager.save_inference_information(
             slice=slice,
             model=model,
-            inference_type=InferenceType.SPARSE_GRID,
+            inference_type=INFERENCE_NAME,
             num_processes=num_processes,
             num_levels=num_levels,
         )

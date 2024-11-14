@@ -1,20 +1,19 @@
 """Tests for the Kernel Density Estimation module"""
 
-import jax
 import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib import cm
 
-from eulerpi.core.dense_grid import generate_regular_grid
-from eulerpi.core.kde import calc_kernel_width, eval_kde_cauchy, eval_kde_gauss
+from eulerpi.core.evaluation.kde import CauchyKDE, GaussKDE
+from eulerpi.core.sampling.dense_grid import generate_regular_grid
 
 
 def kernel_estimators():
     """Yields the kernel density estimators"""
-    yield eval_kde_cauchy
-    yield eval_kde_gauss
+    yield GaussKDE
+    yield CauchyKDE
 
 
 def kde_data_test_set():
@@ -29,33 +28,14 @@ def kde_data_test_set():
         yield data_list[i], stdev_list[i], grid_bounds_list[i]
 
 
-# Mark the test as expected to fail because the function is not implemented yet, but definitly should be implemented soon!
-@pytest.mark.xfail(reason="Not implemented yet, but is important!")
-def test_calc_kernel_width():
-    data = np.array([[0.0, 1.0], [-1.0, 2.0], [1.0, 3.0]])
-    data_stdevs = calc_kernel_width(data)
-    assert 0 == 1
-
-
-@pytest.mark.xfail(reason="Not implemented yet, contains false values")
-def test_kde_gauss():
-    from eulerpi.core.kde import eval_kde_gauss
-
-    data = np.array([[0.0], [2.0]])
-    data_stdevs = calc_kernel_width(data)
-    grid = np.array([[0.0], [1.0], [2.0]])
-    kde = eval_kde_gauss(data, grid, data_stdevs)
-    assert kde == np.array([0.5, 0.25, 0.5])
-
-
-@pytest.mark.parametrize("evalKDE", kernel_estimators())
+@pytest.mark.parametrize("KDE_T", kernel_estimators())
 @pytest.mark.parametrize("batch", [False, True])
-def test_KDE_batch(batch, evalKDE):
+def test_KDE_batch(batch, KDE_T):
     """Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point
 
     Args:
       batch:
-      evalKDE:
+      KDE_T:
 
     Returns:
 
@@ -64,8 +44,7 @@ def test_KDE_batch(batch, evalKDE):
     data_dim = 2
     num_data_points = 3
     data = np.random.rand(num_data_points, data_dim)
-    stdevs = calc_kernel_width(data)
-
+    kde = KDE_T(data)
     # define the evaluation point(s)
     n_samples = 5
     if batch:
@@ -74,7 +53,7 @@ def test_KDE_batch(batch, evalKDE):
         evalPoint = np.array([0.5] * data_dim)
 
     # evaluate the KDE
-    evaluated = evalKDE(data, evalPoint, stdevs)
+    evaluated = kde(evalPoint)
 
     # The additional dimension should be still there if batch is True
     if batch:
@@ -84,12 +63,12 @@ def test_KDE_batch(batch, evalKDE):
 
 
 @pytest.mark.parametrize("data, stdevs, grid_bounds", kde_data_test_set())
-@pytest.mark.parametrize("evalKDE", kernel_estimators())
-def test_KDE_data(evalKDE, data, stdevs, grid_bounds, resolution=33):
+@pytest.mark.parametrize("KDE_T", kernel_estimators())
+def test_KDE_data(KDE_T, data, stdevs, grid_bounds, resolution=33):
     """Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid
 
     Args:
-      evalKDE:
+      KDE_T
       data:
       stdevs:
       grid_bounds:
@@ -104,11 +83,12 @@ def test_KDE_data(evalKDE, data, stdevs, grid_bounds, resolution=33):
 
     xMesh, yMesh = np.meshgrid(xGrid, yGrid)
 
+    kde = KDE_T(data)
+
     # We only want to vectorize the call for the evaluation points in the mesh, not for the data points.
     # Map over axis 0 because the grid points are stored row-wise in the mesh
-    evaluated = jax.vmap(evalKDE, in_axes=(None, 0, None))(
-        data, np.stack([xMesh, yMesh], axis=-1), stdevs
-    )
+    evaluated = kde(np.stack([xMesh, yMesh], axis=-1))
+
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     surf = ax.plot_surface(
         xMesh,
@@ -136,7 +116,6 @@ def test_kde_convergence_gauss(
     """Test whether the KDE converges to the true distribution."""
     # Generate random numbers from a normal distribution
     data = np.random.randn(num_data_points, dim)
-    stdevs = calc_kernel_width(data)
 
     # Define the grid
     num_grid_points = np.array(
@@ -144,8 +123,9 @@ def test_kde_convergence_gauss(
     )
     limits = np.array([[-5, 5] for _ in range(dim)])
     grid = generate_regular_grid(num_grid_points, limits, flatten=True)
+    kde = GaussKDE(data)
 
-    kde_on_grid = eval_kde_gauss(data, grid, stdevs)  # Evaluate the KDE
+    kde_on_grid = kde(grid)  # Evaluate the KDE
     mean = np.zeros(dim)
     cov = np.eye(dim)
     exact_on_grid = jstats.multivariate_normal.pdf(

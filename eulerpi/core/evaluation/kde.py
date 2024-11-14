@@ -7,6 +7,7 @@
 """
 
 import typing
+from abc import ABC, abstractmethod
 
 import jax.numpy as jnp
 from jax import jit
@@ -75,7 +76,7 @@ def eval_kde_gauss(
     .. code-block:: python
 
         import jax.numpy as jnp
-        from eulerpi.core.kde import eval_kde_gauss
+        from eulerpi.core.evaluation.kde import eval_kde_gauss
 
         # create 4 data points of dimension 2 and store them in a numpy 2D array
         data = jnp.array([[0,0], [0,1], [1,0], [1,1]])
@@ -122,7 +123,7 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
     .. code-block:: python
 
         import jax.numpy as jnp
-        from eulerpi.core.kde import calc_kernel_width
+        from eulerpi.core.evaluation.kde import calc_kernel_width
 
         # create 4 data points of dimension 2 and store them in a numpy 2D array
         data = jnp.array([[0,0], [0,2], [1,0], [1,2]])
@@ -137,3 +138,31 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
     return stdevs * (num_data_points * (data_dim + 2) / 4.0) ** (
         -1.0 / (data_dim + 4)
     )
+
+
+class KDE(ABC):
+    @abstractmethod
+    def __call__(data_point: jnp.ndarray) -> jnp.double:
+        raise NotImplementedError(
+            "Every KDE for eulerpi needs to implement the __call__ function"
+        )
+
+
+class GaussKDE(KDE):
+    def __init__(self, data, kernel_width_rule=calc_kernel_width):
+        super().__init__()
+        self.kernel_width = kernel_width_rule(data)
+        self.data = data
+
+    def __call__(self, data_point):
+        return eval_kde_gauss(self.data, data_point, self.kernel_width)
+
+
+class CauchyKDE(KDE):
+    def __init__(self, data, kernel_width_rule=calc_kernel_width):
+        super().__init__()
+        self.kernel_width = kernel_width_rule(data)
+        self.data = data
+
+    def __call__(self, data_point):
+        return eval_kde_cauchy(self.data, data_point, self.kernel_width)

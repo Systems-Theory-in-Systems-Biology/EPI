@@ -3,9 +3,9 @@ import numpy as np
 import pytest
 
 from eulerpi.core.data_transformations import DataIdentity
-from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
+from eulerpi.core.evaluation.kde import GaussKDE
+from eulerpi.core.evaluation.transformations import calc_gram_determinant
 from eulerpi.core.models import ArtificialModelInterface, JaxModel
-from eulerpi.core.transformations import calc_gram_determinant
 
 
 def test_calc_gram_determinant():
@@ -51,7 +51,7 @@ class X2Model(JaxModel, ArtificialModelInterface):
 
 
 def test_evaluate_density(caplog):
-    from eulerpi.core.transformations import evaluate_density
+    from eulerpi.core.evaluation.transformations import evaluate_density
 
     param = X2Model.CENTRAL_PARAM
     x2_model = X2Model()
@@ -62,13 +62,13 @@ def test_evaluate_density(caplog):
     # KDE has its own tests, so we can use it here to test the transformations
     data = np.array([[0.0], [2.0]])
     data_transformation = DataIdentity()
-    data_stdevs = calc_kernel_width(data)
-    pure_density = eval_kde_gauss(data, sim_res, data_stdevs)
+    kde = GaussKDE(data)
+    pure_density = kde(sim_res)
 
     # Test case 1: When the slice is one dimensional
     slice = np.array([0])
     density, _ = evaluate_density(
-        param, x2_model, data, data_transformation, data_stdevs, slice
+        param, x2_model, data_transformation, kde, slice
     )
     assert density == pure_density * correction
 
@@ -76,14 +76,14 @@ def test_evaluate_density(caplog):
     slice = np.array([])
     with pytest.raises(IndexError):
         density, _ = evaluate_density(
-            param, x2_model, data, data_transformation, data_stdevs, slice
+            param, x2_model, data_transformation, kde, slice
         )
 
     # Test case 3: When the slice is two dimensional, but the model is one dimensional
     slice = np.array([0, 1])
     with pytest.raises(IndexError):
         density, _ = evaluate_density(
-            param, x2_model, data, data_transformation, data_stdevs, slice
+            param, x2_model, data_transformation, kde, slice
         )
 
     # Test case 4: When the param is out of bounds
@@ -95,7 +95,7 @@ def test_evaluate_density(caplog):
 
     logger.setLevel("INFO")
     density, _ = evaluate_density(
-        param, x2_model, data, data_transformation, data_stdevs, slice
+        param, x2_model, data_transformation, kde, slice
     )
     assert density == 0.0
     assert "Parameters outside of predefined range" in caplog.text

@@ -21,18 +21,21 @@ import numpy as np
 
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.kde import calc_kernel_width
+from eulerpi.core.evaluation.kde import KDE, GaussKDE
+from eulerpi.core.evaluation.transformations import (
+    eval_log_transformed_density,
+)
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.transformations import eval_log_transformed_density
+
+INFERENCE_NAME = "MCMC"
 
 
 def run_emcee_once(
     model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
-    data_stdevs: np.ndarray,
+    kde: KDE,
     slice: np.ndarray,
     initial_walker_positions: np.ndarray,
     num_walkers: int,
@@ -68,7 +71,7 @@ def run_emcee_once(
             sampling_dim,
             eval_log_transformed_density,
             pool=pool,
-            args=[model, data, data_transformation, data_stdevs, slice],
+            args=[model, data_transformation, kde, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
         final_walker_positions, _, _, _ = sampler.run_mcmc(
@@ -145,8 +148,7 @@ def run_emcee_sampling(
         TODO check: are those really log probabilities?
 
     """
-    # Calculate the standard deviation of the data for each dimension
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
     sampling_dim = slice.shape[0]
 
     # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
@@ -196,7 +198,7 @@ def run_emcee_sampling(
                 model,
                 data,
                 data_transformation,
-                data_stdevs,
+                kde,
                 slice,
                 initial_walker_positions,
                 num_walkers,
@@ -334,7 +336,7 @@ def inference_mcmc(
         result_manager.save_inference_information(
             slice=slice,
             model=model,
-            inference_type=InferenceType.MCMC,
+            inference_type=INFERENCE_NAME,
             num_processes=num_processes,
             num_runs=num_runs,
             num_walkers=num_walkers,

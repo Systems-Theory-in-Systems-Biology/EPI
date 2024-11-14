@@ -10,7 +10,6 @@ import seedir
 from seedir import FakeDir, FakeFile
 
 from eulerpi import logger
-from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
 
 
@@ -264,7 +263,7 @@ class ResultManager:
         self,
         slice: np.ndarray,
         model: BaseModel,
-        inference_type: InferenceType,
+        inference_type: str,
         num_processes: int,
         **kwargs,
     ) -> None:
@@ -273,7 +272,7 @@ class ResultManager:
         Args:
             slice(np.ndarray): The slice for which the results will be saved.
             model(BaseModel): The model for which the results will be saved.
-            inference_type(InferenceType): The type of inference that was performed.
+            inference_type(str): The type of inference that was performed.
             num_processes(int): The number of processes that were used for the inference.
             **kwargs: Additional information about the inference run.
                 num_runs(int): The number of runs that were performed. Only for mcmc inference.
@@ -293,7 +292,7 @@ class ResultManager:
         information = {
             "model": model.name,
             "slice": self.get_slice_name(slice),
-            "inference_type": inference_type.name,
+            "inference_type": inference_type,
             "num_processes": num_processes,
         }
         information.update(dict(kwargs))

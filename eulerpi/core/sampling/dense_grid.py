@@ -5,11 +5,12 @@ The inference with a dense grid approximates the (joint/marginal) parameter dist
 .. note::
 
     The functions in this module are mainly intended for internal use and are accessed by :func:`inference <eulerpi.core.inference>` function.
-    Read the documentation of :func:`inference_dense_grid <eulerpi.core.dense_grid.inference_dense_grid>` to learn more
+    Read the documentation of :func:`inference_dense_grid <eulerpi.core.sampling.dense_grid.inference_dense_grid>` to learn more
     about the available options for the inference with a dense grid.
 """
 
 import typing
+from enum import Enum
 from itertools import repeat
 from multiprocessing import get_context
 from typing import Dict, Tuple, Union
@@ -18,12 +19,19 @@ import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.dense_grid_types import DenseGridType
-from eulerpi.core.inference_types import InferenceType
+from eulerpi.core.evaluation.kde import KDE, GaussKDE
+from eulerpi.core.evaluation.transformations import evaluate_density
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.sampling import calc_kernel_width
-from eulerpi.core.transformations import evaluate_density
+
+INFERENCE_NAME = "DENSE_GRID"
+
+
+class DenseGridType(Enum):
+    """The available grid types for the :py:mod:`dense grid<eulerpi.core.sampling.dense_grid>` inference."""
+
+    EQUIDISTANT = 0  #: The equidistant grid has the same distance between two grid points in each dimension.
+    CHEBYSHEV = 1  #: The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature.
 
 
 def generate_chebyshev_grid(
@@ -87,9 +95,8 @@ def evaluate_on_grid_chunk(
     args: typing.Tuple[
         np.ndarray,
         BaseModel,
-        np.ndarray,
         DataTransformation,
-        np.ndarray,
+        KDE,
         np.ndarray,
     ]
 ) -> np.ndarray:
@@ -98,15 +105,14 @@ def evaluate_on_grid_chunk(
     Args:
         grid_chunk(np.ndarray): The grid chunk contains the grid points (parameter vectors) for which the density should be evaluated.
         model(BaseModel): The model used for the inference.
-        data(np.ndarray): The data points used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
-        data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
+        kde (KDE): The kernel density estimator (or some other estimator implementing the __call__ function) to estimate the density at a data point
         slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
 
     Returns:
         np.ndarray: The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the simulation results in the second columns and the density evaluations in the last columns.
     """
-    grid_chunk, model, data, data_transformation, data_stdevs, slice = args
+    grid_chunk, model, data_transformation, kde, slice = args
 
     # Init the result array
     evaluation_results = np.zeros(
@@ -115,7 +121,7 @@ def evaluate_on_grid_chunk(
     # Evaluate the grid points
     for i, gridPoint in enumerate(grid_chunk):
         density, param_sim_res_density = evaluate_density(
-            gridPoint, model, data, data_transformation, data_stdevs, slice
+            gridPoint, model, data_transformation, kde, slice
         )
         evaluation_results[i] = param_sim_res_density
     return evaluation_results
@@ -173,7 +179,7 @@ def run_dense_grid_evaluation(
     else:
         raise ValueError(f"Unknown grid type: {dense_grid_type}")
 
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
     # Split the grid into chunks that can be evaluated by each process
     grid_chunks = np.array_split(
         grid, num_processes * load_balancing_safety_faktor
@@ -183,9 +189,8 @@ def run_dense_grid_evaluation(
     tasks = zip(
         grid_chunks,
         repeat(model),
-        repeat(data),
         repeat(data_transformation),
-        repeat(data_stdevs),
+        repeat(kde),
         repeat(slice),
     )
     results = pool.map(evaluate_on_grid_chunk, tasks)
@@ -279,7 +284,7 @@ def inference_dense_grid(
         result_manager.save_inference_information(
             slice=slice,
             model=model,
-            inference_type=InferenceType.DENSE_GRID,
+            inference_type=INFERENCE_NAME,
             num_processes=num_processes,
             load_balancing_safety_faktor=load_balancing_safety_faktor,
             num_grid_points=n_points,

@@ -7,9 +7,9 @@ import numpy as np
 from matplotlib import cm
 
 from eulerpi.core.data_transformations import DataIdentity
+from eulerpi.core.evaluation.kde import GaussKDE
+from eulerpi.core.evaluation.transformations import evaluate_density
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.transformations import evaluate_density
 from eulerpi.examples.simple_models import Exponential, Linear, LinearODE
 
 
@@ -29,7 +29,7 @@ def test_transformationLinear():
     data_transformation = DataIdentity()
 
     # define standard deviations according to silverman
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
     data_transformation = DataIdentity()
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -44,7 +44,7 @@ def test_transformationLinear():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, data_stdevs)
+            gaussEvals[i, j] = kde(evalPoint)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -69,16 +69,16 @@ def test_transformationLinear():
 
     # TODO: Use dense grid evaluation function, but pay attention to the changed limits above. Then todo below can also be removed
     # TODO: Evaluate Density is missing the slice argument here
+    slice = np.arange(model.param_dim)
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
             paramEvals[i, j], _ = evaluate_density(
                 paramPoint,
                 model,
-                data,
                 data_transformation,
-                data_stdevs,
-                slice=np.arange(model.param_dim),
+                kde,
+                slice,
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -107,8 +107,7 @@ def test_transformationExponential():
     data = model.forward_vectorized(trueParam)
     data_transformation = DataIdentity()
 
-    # define standard deviations according to silverman
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
 
     # Now plot the data Gaussian KDE
     KDEresolution = 25
@@ -122,7 +121,7 @@ def test_transformationExponential():
     for i in range(KDEresolution):
         for j in range(KDEresolution):
             evalPoint = np.array([KDExMesh[i, j], KDEyMesh[i, j]])
-            gaussEvals[i, j] = eval_kde_gauss(data, evalPoint, data_stdevs)
+            gaussEvals[i, j] = kde(evalPoint)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     plt.title("Data KDE")
@@ -152,10 +151,9 @@ def test_transformationExponential():
             paramEvals[i, j], _ = evaluate_density(
                 paramPoint,
                 model,
-                data,
                 data_transformation,
-                data_stdevs,
-                slice=fullSlice,
+                kde,
+                fullSlice,
             )
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})

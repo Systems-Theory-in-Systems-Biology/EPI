@@ -79,7 +79,7 @@ class MyModel(BaseModel):
 To evaluate the model and infer the parameter distribution, call:
 
 ```python
-from eulerpi.sampling import inference
+from eulerpi.core import inference
 
 from my_model import MyModel
 

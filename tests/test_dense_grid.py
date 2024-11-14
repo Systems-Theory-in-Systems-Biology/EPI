@@ -5,10 +5,9 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from eulerpi.core.dense_grid_types import DenseGridType
-from eulerpi.core.inference import inference
-from eulerpi.core.inference_types import InferenceType
+from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.core.sampling.dense_grid import DenseGridType
 from eulerpi.examples.corona import CoronaArtificial
 
 

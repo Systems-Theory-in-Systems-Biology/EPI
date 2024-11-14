@@ -9,16 +9,15 @@ from jax import jit
 
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.kde import eval_kde_gauss
+from eulerpi.core.evaluation.kde import KDE
 from eulerpi.core.models import BaseModel
 
 
 def evaluate_density(
     param: np.ndarray,
     model: BaseModel,
-    data: np.ndarray,
     data_transformation: DataTransformation,
-    data_stdevs: np.ndarray,
+    kde: KDE,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the parameter density as backtransformed data density using the simulation model
@@ -30,7 +29,6 @@ def evaluate_density(
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (BaseModel): model to be evaluated
-        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
@@ -46,7 +44,7 @@ def evaluate_density(
 
         import numpy as np
         from eulerpi.examples.heat import Heat
-        from eulerpi.core.kde import calc_kernel_width
+        from eulerpi.core.evaluation.kde import GaussKDE
         from eulerpi.core.data_transformations import DataIdentity
         from eulerpi.core.transformations import evaluate_density
 
@@ -60,17 +58,16 @@ def evaluate_density(
         # evaluating the parameter probabiltiy density at the central parameter of the Heat model
         eval_param = model.central_param
 
-        # calculating the kernel widths for the data based on Silverman's rule of thumb
-        data_stdevs = calc_kernel_width(data)
+        # Create a kernel density estimation using the gaussian kernels with widths based on Silverman's rule of thumb
+        kde = GaussKDE(data)
 
         # evaluate the three-variate joint density
         slice = np.array([0,1,2])
 
         (central_param_density, all_res) = evaluate_density(param = eval_param,
                                                             model = model,
-                                                            data = data,
                                                             data_transformation = DataIdentity(), # no data transformatio,
-                                                            data_stdevs = data_stdevs,
+                                                            kde = kde,
                                                             slice = slice)
 
         # all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:
@@ -113,9 +110,7 @@ def evaluate_density(
         transformed_sim_res = data_transformation.transform(sim_res)
 
         # Evaluate the data density in the simulation result.
-        densityEvaluation = eval_kde_gauss(
-            data, transformed_sim_res, data_stdevs
-        )
+        densityEvaluation = kde(transformed_sim_res)
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         # Scale with the determinant of the transformation matrix.
@@ -140,9 +135,8 @@ def evaluate_density(
 def eval_log_transformed_density(
     param: np.ndarray,
     model: BaseModel,
-    data: np.ndarray,
     data_transformation: DataTransformation,
-    data_stdevs: np.ndarray,
+    density_estimation: KDE,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the logarithmical parameter density as backtransformed data density using the simulation model
@@ -158,7 +152,6 @@ def eval_log_transformed_density(
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (BaseModel): model to be evaluated
-        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
@@ -170,7 +163,7 @@ def eval_log_transformed_density(
 
     """
     trafo_density_evaluation, evaluation_results = evaluate_density(
-        param, model, data, data_transformation, data_stdevs, slice
+        param, model, data_transformation, density_estimation, slice
     )
     if trafo_density_evaluation == 0:
         return -np.inf, evaluation_results

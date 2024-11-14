@@ -1,9 +1,9 @@
 import numpy as np
 
 from eulerpi.core.data_transformations import DataIdentity
-from eulerpi.core.kde import calc_kernel_width
+from eulerpi.core.evaluation.kde import GaussKDE
+from eulerpi.core.evaluation.transformations import evaluate_density
 from eulerpi.core.models import BaseModel
-from eulerpi.core.transformations import evaluate_density
 
 
 class CrashModel(BaseModel):
@@ -29,15 +29,14 @@ def test_logs_error_evaluate_density(caplog):
 
     data = np.array([[0.0], [2.0]])
     data_transformation = DataIdentity()
-    data_stdevs = calc_kernel_width(data)
+    kde = GaussKDE(data)
     slice = np.array([0])
 
     density, _ = evaluate_density(
         central_param,
         crash_model,
-        data,
         data_transformation,
-        data_stdevs,
+        kde,
         slice,
     )
     assert density == 0.0
