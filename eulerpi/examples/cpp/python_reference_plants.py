@@ -2,7 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit
 
-from eulerpi.core.model import ArtificialModelInterface, JaxModel, Model
+from eulerpi.core.models import ArtificialModelInterface, BaseModel, JaxModel
 
 
 class JaxPlant(JaxModel, ArtificialModelInterface):
@@ -68,7 +68,7 @@ def bw(param):
     return fwJac(param)
 
 
-class ExternalPlant(Model, ArtificialModelInterface):
+class ExternalPlant(BaseModel, ArtificialModelInterface):
     """A plant model which uses functions defined outside the class to evaluate the forward pass and the jacobian
     Param0: Water [0,1]
     Param1: Sun   [0,1]

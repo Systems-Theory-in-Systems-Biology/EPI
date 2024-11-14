@@ -20,7 +20,7 @@ from numpy.polynomial.chebyshev import chebpts1
 from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling import calc_kernel_width
 from eulerpi.core.transformations import evaluate_density
@@ -86,7 +86,7 @@ def generate_regular_grid(
 def evaluate_on_grid_chunk(
     args: typing.Tuple[
         np.ndarray,
-        Model,
+        BaseModel,
         np.ndarray,
         DataTransformation,
         np.ndarray,
@@ -97,7 +97,7 @@ def evaluate_on_grid_chunk(
 
     Args:
         grid_chunk(np.ndarray): The grid chunk contains the grid points (parameter vectors) for which the density should be evaluated.
-        model(Model): The model used for the inference.
+        model(BaseModel): The model used for the inference.
         data(np.ndarray): The data points used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs(np.ndarray): The standard deviations of the data points. (Currently the kernel width, #TODO!)
@@ -122,7 +122,7 @@ def evaluate_on_grid_chunk(
 
 
 def run_dense_grid_evaluation(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     slice: np.ndarray,
@@ -135,7 +135,7 @@ def run_dense_grid_evaluation(
     """This function runs a dense grid evaluation for the given model and data.
 
     Args:
-        model(Model): The model for which the evaluation should be performed.
+        model(BaseModel): The model for which the evaluation should be performed.
         data(np.ndarray): The data for which the evaluation should be performed.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice(np.ndarray): The slice for which the evaluation should be performed.
@@ -209,7 +209,7 @@ def run_dense_grid_evaluation(
 
 
 def inference_dense_grid(
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     result_manager: ResultManager,
@@ -227,7 +227,7 @@ def inference_dense_grid(
     """This function runs a dense grid inference for the given model and data.
 
     Args:
-        model (Model): The model describing the mapping from parameters to data.
+        model (BaseModel): The model describing the mapping from parameters to data.
         data (np.ndarray): The data to be used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         result_manager (ResultManager): The result manager to be used for the inference.

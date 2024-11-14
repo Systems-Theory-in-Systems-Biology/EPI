@@ -74,7 +74,7 @@ It has 455 data points with two dimensions each. Nonuniform data is not supporte
 Define your model
 -----------------
 
-Next, you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.core.model.Model` base class.
+Next, you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.core.models.BaseModel` class.
 
 .. literalinclude:: ../../../eulerpi/examples/temperature/temperature.py
   :language: python
@@ -87,10 +87,10 @@ Of course, you also need the imports:
     import importlib
     import jax.numpy as jnp
     import numpy as np
-    from eulerpi.core.model import Model
+    from eulerpi.core.models import BaseModel
 
-A model inheriting from :py:class:`~eulerpi.core.model.Model` must implement the methods :py:meth:`~eulerpi.core.model.Model.forward` and :py:meth:`~eulerpi.core.model.Model.jacobian`.
-In addition, it must provide the methods :py:meth:`~eulerpi.core.model.Model.getcentral_param` and :py:meth:`~eulerpi.core.model.Model.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inheriting from :py:class:`~eulerpi.core.models.BaseModel` must implement the methods :py:meth:`~eulerpi.core.models.BaseModel.forward` and :py:meth:`~eulerpi.core.models.BaseModel.jacobian`.
+In addition, it must provide the methods :py:meth:`~eulerpi.core.models.BaseModel.getcentral_param` and :py:meth:`~eulerpi.core.models.BaseModel.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::

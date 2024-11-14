@@ -1,15 +1,14 @@
-"""Check a custom :py:class:`Model <eulerpi.core.model.Model>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
+"""Check a custom :py:class:`BaseModel <eulerpi.core.models.BaseModel>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
 
 import jax.numpy as jnp
 import numpy as np
-from jax import vmap
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import JaxModel, Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.plotting import sample_violin_plot
 
 
-def basic_model_check(model: Model) -> None:
+def basic_model_check(model: BaseModel) -> None:
     """Perform a simple sanity check on the model.
 
     It tests the following:
@@ -26,7 +25,7 @@ def basic_model_check(model: Model) -> None:
     - The jacobi matrix has full rank
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
 
     Raises:
         AssertionError: Raised if any of the tests fails.
@@ -124,7 +123,7 @@ def basic_model_check(model: Model) -> None:
 
 
 def inference_model_check(
-    model: Model,
+    model: BaseModel,
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
 ) -> None:
@@ -133,7 +132,7 @@ def inference_model_check(
     It produces a violin plot comparing the artificially created parameters and data to the respectively inferred samples.
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
 
@@ -168,13 +167,7 @@ def inference_model_check(
         (np.random.rand(num_data_points, model.param_dim) - 0.5) / 3.0
     )
 
-    # try to use jax vmap to perform the forward pass on multiple parameters at once
-    if isinstance(model, JaxModel):
-        data_sample = vmap(model.forward, in_axes=0)(param_sample)
-    else:
-        data_sample = np.vectorize(model.forward, signature="(n)->(m)")(
-            param_sample
-        )
+    data_sample = model.forward_vectorized(param_sample)
 
     print(
         f"Successfully created an artificial data set of size {num_data_points}.\n"
@@ -234,7 +227,7 @@ def inference_model_check(
 
 
 def full_model_check(
-    model: Model,
+    model: BaseModel,
     num_data_points: int = 1000,
     num_model_evaluations: int = 11000,
 ) -> None:
@@ -245,7 +238,7 @@ def full_model_check(
     It runs the functions :py:func:`basic_model_check <basic_model_check>` and :py:func:`inference_model_check <inference_model_check>` to perform the checks.
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
         num_data_points (int, optional): The number of data data points to artificially generate (Default value = 1000)
         num_model_evaluations (int, optional): The number of model evaluations to perform in the inference. (Default value = 11000)
 

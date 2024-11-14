@@ -10,12 +10,12 @@ from jax import jit
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.kde import eval_kde_gauss
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 
 
 def evaluate_density(
     param: np.ndarray,
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
@@ -29,7 +29,7 @@ def evaluate_density(
 
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
-        model (Model): model to be evaluated
+        model (BaseModel): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
@@ -139,7 +139,7 @@ def evaluate_density(
 
 def eval_log_transformed_density(
     param: np.ndarray,
-    model: Model,
+    model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
     data_stdevs: np.ndarray,
@@ -157,7 +157,7 @@ def eval_log_transformed_density(
 
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
-        model (Model): model to be evaluated
+        model (BaseModel): model to be evaluated
         data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension

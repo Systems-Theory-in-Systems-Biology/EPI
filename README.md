@@ -55,16 +55,16 @@ You can also build the library from the latest source code by following the [Dev
 
 ## Using the library
 
-To use EPI, derive your model from the `Model` class and implement the abstract functions. Here's an example code snippet:
+To use EPI, derive your model from the `BaseModel` class and implement the abstract functions. Here's an example code snippet:
 
 ```python
 # my_model.py
 
 import jax.numpy as jnp
 
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 
-class MyModel(Model):
+class MyModel(BaseModel):
 
     param_dim = N # The dimension of a parameter point
     data_dim = M # The dimension of a data point

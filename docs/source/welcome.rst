@@ -67,18 +67,18 @@ You can also build the library from the latest source code by following the :doc
 How to start
 ------------
 
-.. To use EPI, derive your model from :py:class:`eulerpi.core.model.Model` and implement the abstract functions :py:meth:`~eulerpi.core.model.Model.forward` and :py:meth:`~eulerpi.core.model.Model.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~eulerpi.core.model.Model.data_dim` and :py:attr:`~eulerpi.core.model.Model.param_dim` of your model.
+.. To use EPI, derive your model from :py:class:`eulerpi.core.model.BaseModel` and implement the abstract functions :py:meth:`~eulerpi.core.model.BaseModel.forward` and :py:meth:`~eulerpi.core.model.BaseModel.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~eulerpi.core.model.BaseModel.data_dim` and :py:attr:`~eulerpi.core.model.BaseModel.param_dim` of your model.
 
-To use EPI, derive your model from the Model class and implement the abstract functions. Here's an example code snippet:
+To use EPI, derive your model from the BaseModel class and implement the abstract functions. Here's an example code snippet:
 
 .. code-block:: python
     
     # my_model.py
     import jax.numpy as jnp
 
-    from eulerpi.core.model import Model
+    from eulerpi.core.model import BaseModel
 
-    class MyModel(Model):
+    class MyModel(BaseModel):
 
         param_dim = N # The dimension of a parameter point
         data_dim = M # The dimension of a data point

@@ -14,14 +14,14 @@ import numpy as np
 from matplotlib import axes
 
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 
 # general plotting function for joint runs
 
 
 def sample_violin_plot(
-    model: Model,
+    model: BaseModel,
     reference_sample: Union[str, os.PathLike, np.ndarray, None] = None,
     run_name: str = "default_run",
     what_to_plot: str = "param",
@@ -33,7 +33,7 @@ def sample_violin_plot(
        Can be used for parameters and simulation results and compares reference (or true underlying) and inferred values when possible.
 
     Args:
-        model(Model): The model describing the mapping from parameters to data.
+        model(BaseModel): The model describing the mapping from parameters to data.
         reference_sample(Union[str, os.PathLike, np.ndarray]): Depending on what_to_plot, this is either the data sample used for the inference, or a reference sample of "true" parameter samples. If a string is given, it is assumed to be a path to a file containing the respective sample. (Default value = None)
         run_name(str): The name of the inference run. (Default value = "default_run")
         what_to_plot(str): Choose between "param" and "data" to respectively visualize either the model parameters or output. (Default value = "param")

@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import Model
+from eulerpi.core.models import ArtificialModelInterface, BaseModel
 from eulerpi.examples.corona import CoronaArtificial
 
 # Parametrize the test to run for each inference type
@@ -19,10 +19,10 @@ from eulerpi.examples.corona import CoronaArtificial
 )
 def test_slices(inference_type):
     """ """
-    model: Model = CoronaArtificial()
+    model: BaseModel = CoronaArtificial()
 
     # generate artificial data
-    if model.is_artificial():
+    if isinstance(model, ArtificialModelInterface):
         num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)

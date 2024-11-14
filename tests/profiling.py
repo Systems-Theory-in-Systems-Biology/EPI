@@ -9,13 +9,13 @@ scalene tests/profiling.py from the root directory of the project.
 import numpy as np
 
 from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.examples.corona import CoronaArtificial
 
 
 def profiling_with_slices(inference_type):
     """ """
-    model: Model = CoronaArtificial()
+    model: BaseModel = CoronaArtificial()
 
     # generate artificial data
     num_data_points = 1000

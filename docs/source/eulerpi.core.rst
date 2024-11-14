@@ -11,7 +11,7 @@ eulerpi.core package
    Inference<eulerpi.core.inference>
    Inference Types<eulerpi.core.inference_types>
    KDE<eulerpi.core.kde>
-   Model<eulerpi.core.model>
+   Models<eulerpi.core.models>
    Model Check<eulerpi.core.model_check>
    Plotting<eulerpi.core.plotting>
    Result Manager<eulerpi.core.result_manager>

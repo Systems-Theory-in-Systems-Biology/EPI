@@ -2,7 +2,7 @@ from importlib.resources import as_file, files
 
 import numpy as np
 
-from eulerpi.core.model import ArtificialModelInterface, SBMLModel
+from eulerpi.core.models import ArtificialModelInterface, SBMLModel
 
 
 class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):

@@ -7,7 +7,7 @@ import importlib
 import pytest
 
 from eulerpi.core.inference import inference
-from eulerpi.core.model import Model
+from eulerpi.core.models import BaseModel
 from eulerpi.examples.temperature import TemperatureWithFixedParams
 
 
@@ -35,7 +35,7 @@ def temp_name(low_T, high_T):
 )
 def test_fixed_params(temperatures):
     """ """
-    model: Model = TemperatureWithFixedParams(*temperatures)
+    model: BaseModel = TemperatureWithFixedParams(*temperatures)
     run_name = temp_name(*temperatures)
     data_resource = importlib.resources.files(
         "eulerpi.examples.temperature"

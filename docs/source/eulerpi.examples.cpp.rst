@@ -3,7 +3,7 @@ External C++ Models
 
 Many libraries in the field of scientific computing are written in C++
 to achieve fast code execution and do not have python bindings. The C++ model example shows how you can
-call C++ code from your python :py:class:`~eulerpi.core.model.Model` class.
+call C++ code from your python :py:class:`~eulerpi.core.model.BaseModel` class.
 It is primarily intended for fast implementations of the `forward` and `jacobian` method.
 
 This example model uses the following features:
