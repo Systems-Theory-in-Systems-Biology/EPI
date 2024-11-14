@@ -216,9 +216,19 @@
 <h2>[Unreleased]<a class="headerlink" href="#unreleased" title="Link to this heading"></a></h2>
 <section id="id1">
 <h3>Added<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Added the <code class="docutils literal notranslate"><span class="pre">AffineTransformation</span></code> class to perform affine transformations on the data using jax</p></li>
+</ul>
 </section>
 <section id="id2">
 <h3>Changed<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Refactored the module <code class="docutils literal notranslate"><span class="pre">eulerpi.core.data_transformation</span></code> into the subpackage <code class="docutils literal notranslate"><span class="pre">eulerpi.core.data_transformations</span></code>. The data transformation classes can be import from this subpackage directly</p></li>
+<li><p>Renamed <code class="docutils literal notranslate"><span class="pre">eulerpi.core.data_transformation.DataNormalizer</span></code> into <code class="docutils literal notranslate"><span class="pre">eulerpi.core.data_transformations.DataNormalization</span></code></p></li>
+<li><p>Removed the class/factory functions <code class="docutils literal notranslate"><span class="pre">from_data</span></code> and <code class="docutils literal notranslate"><span class="pre">from_transformation</span></code> from the <code class="docutils literal notranslate"><span class="pre">DataTransformation</span></code> subclasses. Use the constructors instead.</p></li>
+<li><p>The inference function no longer has the parameter <code class="docutils literal notranslate"><span class="pre">custom_data_transformation</span></code>. You can pass an instance of the provided <code class="docutils literal notranslate"><span class="pre">DataTransformation</span></code> subclasses or pass a custom subclass.</p></li>
+<li><p>The inference function no longer has the parameter <code class="docutils literal notranslate"><span class="pre">n_components_pca</span></code>. Instantiate a <code class="docutils literal notranslate"><span class="pre">PCATransformation</span></code> with the data and the number of components to keep. Pass it as as argument for the parameter <code class="docutils literal notranslate"><span class="pre">data_transformation</span></code> in the inference function.</p></li>
+</ul>
 </section>
 <section id="id3">
 <h3>Fixed<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>

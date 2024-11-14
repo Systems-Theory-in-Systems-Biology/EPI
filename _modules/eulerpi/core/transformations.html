@@ -93,7 +93,7 @@
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
 
 <span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformations</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
 
@@ -134,7 +134,7 @@
 <span class="sd">        import numpy as np</span>
 <span class="sd">        from eulerpi.examples.heat import Heat</span>
 <span class="sd">        from eulerpi.core.kde import calc_kernel_width</span>
-<span class="sd">        from eulerpi.core.data_transformation import DataIdentity</span>
+<span class="sd">        from eulerpi.core.data_transformations import DataIdentity</span>
 <span class="sd">        from eulerpi.core.transformations import evaluate_density</span>
 
 <span class="sd">        # use the heat model</span>

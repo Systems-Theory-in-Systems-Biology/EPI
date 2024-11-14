@@ -93,13 +93,10 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">psutil</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DataIdentity</span><span class="p">,</span>
-    <span class="n">DataNormalizer</span><span class="p">,</span>
-    <span class="n">DataPCA</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformations</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DataNormalization</span><span class="p">,</span>
     <span class="n">DataTransformation</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformation_types</span> <span class="kn">import</span> <span class="n">DataTransformationType</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.dense_grid</span> <span class="kn">import</span> <span class="n">inference_dense_grid</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
 <span class="kn">from</span> <span class="nn">eulerpi.core.model</span> <span class="kn">import</span> <span class="n">Model</span>
@@ -119,9 +116,7 @@
     <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default_run&quot;</span><span class="p">,</span>
     <span class="n">result_manager</span><span class="p">:</span> <span class="n">ResultManager</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">continue_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformationType</span> <span class="o">=</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Normalize</span><span class="p">,</span>
-    <span class="n">custom_data_transformation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataTransformation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">n_components_pca</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
     <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
@@ -140,9 +135,7 @@
 <span class="sd">        run_name(str): The name of the run. (Default value = &quot;default_run&quot;)</span>
 <span class="sd">        result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)</span>
 <span class="sd">        continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)</span>
-<span class="sd">        data_transformation(DataTransformationType): The type of data transformation to use. (Default value = DataTransformationType.Normalize)</span>
-<span class="sd">        custom_data_transformation(DataTransformation, optional): The data transformation to be used for the inference. If None, a normalization is applied to the data. (Default value = None)</span>
-<span class="sd">        n_components_pca(int, optional): If using the PCA as data_transformation, selects how many dimensions are kept in the pca. Per default the number of dimensions equals the dimension of the parameter space. (Default value = None)</span>
+<span class="sd">        data_transformation(DataTransformation): The data transformation to use. If None is passed, a DataNormalization will be applied. Pass DataIdentity to avoid the transformation of the data. (Default value = None)</span>
 <span class="sd">        **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.</span>
 
 <span class="sd">    Returns:</span>
@@ -204,15 +197,18 @@
 <span class="sd">        import numpy as np</span>
 <span class="sd">        from eulerpi.examples.corona import Corona</span>
 <span class="sd">        from eulerpi.core.inference import inference, InferenceType</span>
-<span class="sd">        from eulerpi.core.data_transformation_types import DataTransformationType</span>
+<span class="sd">        from eulerpi.core.data_transformation import DataPCA</span>
 <span class="sd">        from eulerpi.core.result_manager import ResultManager</span>
 
-<span class="sd">        inference(Corona(),</span>
+<span class="sd">        model = Corona()</span>
+<span class="sd">        data_transformation = DataPCA(data, n_components=model.param_dim)  # perform PCA on the data before inference</span>
+
+<span class="sd">        inference(model,</span>
 <span class="sd">                data = &quot;pathto/data.csv&quot;,</span>
 <span class="sd">                slices = [np.array([0,1]), np.array([2])], # specify joint and marginal parameter subdistributions we are interested in</span>
 <span class="sd">                inference_type = InferenceType.DENSE_GRID, # use dense grid inference</span>
 <span class="sd">                run_name = &quot;grid_run&quot;,</span>
-<span class="sd">                data_transformation = DataTransformationType.PCA, # perform PCA on the data before inference</span>
+<span class="sd">                data_transformation = data_transformation,</span>
 <span class="sd">                num_grid_points = 30) # use 30 grid points per parameter dimension</span>
 
 <span class="sd">        # initiate the result manager using the model and run name to retreive the inference results computed above and stored offline</span>
@@ -231,25 +227,13 @@
             <span class="sa">f</span><span class="s2">&quot;The data argument must be a path to a file or a numpy array. The argument passed was of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
-    <span class="c1"># Transform the data</span>
-    <span class="k">if</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Identity</span><span class="p">:</span>
-        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataIdentity</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Normalize</span><span class="p">:</span>
-        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataNormalizer</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">PCA</span><span class="p">:</span>
-        <span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components_pca</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">param_dim</span>
-        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataPCA</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span>
-        <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">data_transformation</span> <span class="o">==</span> <span class="n">DataTransformationType</span><span class="o">.</span><span class="n">Custom</span><span class="p">:</span>
-        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">custom_data_transformation</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">custom_data_transformation</span><span class="p">,</span> <span class="n">DataTransformation</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The custom_data_transformation must be an instance of a subclass from DataTransformation. It is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data_transformation</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Assign the DataNormalization as default value</span>
+    <span class="k">if</span> <span class="n">data_transformation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_transformation</span> <span class="o">=</span> <span class="n">DataNormalization</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_transformation</span><span class="p">,</span> <span class="n">DataTransformation</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;The data_transformation must be one of the enum values of DataTransformationType.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;The data_transformation must be an instance of a subclass of DataTransformation. It is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data_transformation</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data_transformation</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
