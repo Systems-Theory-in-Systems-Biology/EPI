@@ -1,6 +1,7 @@
 import numpy as np
 
 from eulerpi.core.data_transformations import (
+    AffineTransformation,
     DataIdentity,
     DataNormalization,
     DataPCA,
@@ -18,6 +19,22 @@ def test_DataIdentity():
     assert np.allclose(data_transformation.transform(data0dim), data0dim)
     assert np.allclose(data_transformation.transform(data1dim), data1dim)
     assert np.allclose(data_transformation.transform(data2dim), data2dim)
+
+
+def test_AffineTransformation():
+    A1 = np.squeeze(np.array([[2]]))
+    b1 = np.array([0.5])
+    T1 = AffineTransformation(A1, b1)
+    data1dim = np.random.rand(100)
+    expected_result1 = np.inner(data1dim, A1) + b1
+    assert np.allclose(T1.transform(data1dim), expected_result1)
+
+    A2 = np.squeeze(np.array([[1, 2], [3, 4]]))
+    b2 = np.array([0.5])
+    T2 = AffineTransformation(A2, b2)
+    data2dim = np.random.rand(100, 2)
+    expected_result2 = np.inner(data2dim, A2) + b2
+    assert np.allclose(T2.transform(data2dim), expected_result2)
 
 
 def test_DataNormalization():
