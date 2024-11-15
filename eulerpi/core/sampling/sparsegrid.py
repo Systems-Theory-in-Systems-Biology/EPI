@@ -16,7 +16,7 @@ import numpy as np
 
 from eulerpi import logger
 from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.evaluation.kde import GaussKDE
+from eulerpi.core.evaluation.kde import KDE
 from eulerpi.core.evaluation.transformations import evaluate_density
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
@@ -400,6 +400,7 @@ def inference_sparse_grid(
     model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
+    kde: KDE,
     result_manager: ResultManager,
     slices: typing.List[np.ndarray],
     num_processes: int,
@@ -416,6 +417,7 @@ def inference_sparse_grid(
         model(BaseModel): The model describing the mapping from parameters to data.
         data(np.ndarray): The data to be used for inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
+        kde(KDE): The density estimator which should be used to estimate the data density.
         num_processes(int): number of processes to use for parallel evaluation of the model.
         num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
@@ -428,7 +430,6 @@ def inference_sparse_grid(
     logger.warning(
         "The inference_sparse_grid function is not tested and not recommended for use."
     )
-    kde = GaussKDE(data)
 
     # create the return dictionaries
     overall_params, overall_sim_results, overall_density_evals = {}, {}, {}

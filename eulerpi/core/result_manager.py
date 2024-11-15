@@ -177,7 +177,7 @@ class ResultManager:
         path = "Applications/" + self.model_name
         return path
 
-    def save_run(
+    def save_subrun(
         self,
         model: BaseModel,
         slice: np.ndarray,
@@ -185,7 +185,7 @@ class ResultManager:
         sampler_results: np.ndarray,
         final_walker_positions: np.ndarray,
     ) -> None:
-        """Saves the results of a single run of the emcee particle swarm sampler.
+        """Saves the results of a single sub run of the emcee particle swarm sampler.
         sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them
         as seperate files in the folders 'Params' and'SimResults' and 'DensityEvals'.
 

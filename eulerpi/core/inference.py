@@ -13,6 +13,7 @@ from eulerpi.core.data_transformations import (
     DataNormalization,
     DataTransformation,
 )
+from eulerpi.core.evaluation import KDE, GaussKDE
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_manager import ResultManager
 from eulerpi.core.sampling.dense_grid import inference_dense_grid
@@ -38,6 +39,7 @@ def inference(
     result_manager: ResultManager = None,
     continue_sampling: bool = False,
     data_transformation: DataTransformation = None,
+    kde: KDE = None,
     **kwargs,
 ) -> Tuple[
     Dict[str, np.ndarray],
@@ -52,11 +54,12 @@ def inference(
         data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
         inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)
         slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
-        num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = Non)
+        num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = None)
         run_name(str): The name of the run. (Default value = "default_run")
         result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
         continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)
         data_transformation(DataTransformation): The data transformation to use. If None is passed, a DataNormalization will be applied. Pass DataIdentity to avoid the transformation of the data. (Default value = None)
+        kde(KDE): The density estimator which should be used to estimate the data density. If None is passed, a GaussianKDE will be used. (Default value = None)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
@@ -158,6 +161,13 @@ def inference(
         )
     data = data_transformation.transform(data)
 
+    if kde is None:
+        kde = GaussKDE(data)
+    if not isinstance(kde, KDE):
+        raise TypeError(
+            f"The kde must be an instance of a subclass of KDE. It is of type {type(kde)}."
+        )
+
     slices = slices or [
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
@@ -172,37 +182,44 @@ def inference(
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
 
-    if inference_type == InferenceType.DENSE_GRID:
-        return inference_dense_grid(
-            model=model,
-            data=data,
-            data_transformation=data_transformation,
-            result_manager=result_manager,
-            slices=slices,
-            num_processes=num_processes,
-            **kwargs,
-        )
-    elif inference_type == InferenceType.MCMC:
-        return inference_mcmc(
-            model=model,
-            data=data,
-            data_transformation=data_transformation,
-            result_manager=result_manager,
-            slices=slices,
-            num_processes=num_processes,
-            **kwargs,
-        )
-    elif inference_type == InferenceType.SPARSE_GRID:
-        return inference_sparse_grid(
-            model=model,
-            data=data,
-            data_transformation=data_transformation,
-            result_manager=result_manager,
-            slices=slices,
-            num_processes=num_processes,
-            **kwargs,
-        )
-    else:
+    # Map inference types to corresponding functions
+    inference_functions = {
+        InferenceType.DENSE_GRID: inference_dense_grid,
+        InferenceType.MCMC: inference_mcmc,
+        InferenceType.SPARSE_GRID: inference_sparse_grid,
+    }
+
+    # Check if the inference type is valid and call the corresponding function
+    inference_func = inference_functions.get(inference_type)
+    if inference_func is None:
         raise NotImplementedError(
             f"The inference type {inference_type} is not implemented yet."
         )
+
+    # create the return dictionaries
+    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
+    for slice in slices:
+        slice_name = result_manager.get_slice_name(slice)
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=inference_type.name,
+            num_processes=num_processes,
+            **kwargs,
+        )
+
+        params, sim_results, densities = inference_func(
+            model=model,
+            data_transformation=data_transformation,
+            kde=kde,
+            result_manager=result_manager,
+            slices=slices,
+            num_processes=num_processes,
+            **kwargs,
+        )
+
+        overall_params[slice_name] = params
+        overall_sim_results[slice_name] = sim_results
+        overall_density_evals[slice_name] = densities
+
+    return result_manager
