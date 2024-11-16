@@ -11,10 +11,7 @@ import psutil
 
 from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
-from eulerpi.inferences.grid_inference import inference as grid_inference
-from eulerpi.inferences.sampling_inference import (
-    inference as sampling_inference,
-)
+from eulerpi.inferences import grid_inference, sampling_inference
 from eulerpi.models import BaseModel
 from eulerpi.result_manager import ResultManager
 from eulerpi.samplers.mcmc import start_subrun as start_mcmc_subrun

@@ -25,10 +25,6 @@ def evaluate_function_on_grid_points_iterative(
     return result
 
 
-def process_grid_chunk(grid_chunk, de):
-    return evaluate_function_on_grid_points_iterative(grid_chunk, de)
-
-
 def evaluate_function_on_grid_points_batched(
     grid_points: np.ndarray,
     de: DensityEvaluator,
@@ -42,7 +38,8 @@ def evaluate_function_on_grid_points_batched(
     with get_context("spawn").Pool(processes=num_processes) as pool:
         # Use zip and repeat for lazy argument pairing
         results = pool.starmap(
-            process_grid_chunk, zip(grid_chunks, repeat(de))
+            evaluate_function_on_grid_points_iterative,
+            zip(grid_chunks, repeat(de)),
         )
     results = np.concatenate(results)
 
