@@ -2,7 +2,7 @@ import jax.numpy as jnp
 import numpy as np
 from jax import jacrev, jit
 
-from eulerpi.core.models import ArtificialModelInterface, BaseModel, JaxModel
+from eulerpi.models import ArtificialModelInterface, BaseModel, JaxModel
 
 
 class JaxPlant(JaxModel, ArtificialModelInterface):

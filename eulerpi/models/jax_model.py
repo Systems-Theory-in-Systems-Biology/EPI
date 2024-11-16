@@ -87,7 +87,7 @@ class JaxModel(BaseModel):
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.core.models.BaseModel.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.models.BaseModel.forward` method with respect to the parameters.
 
         """
         return type(self).bw(param)
@@ -95,7 +95,7 @@ class JaxModel(BaseModel):
     def forward_and_jacobian(
         self, param: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~eulerpi.core.models.BaseModel.forward` and :func:`~eulerpi.core.models.BaseModel.jacobian` methods separately.
+        """Evaluates the jacobian and the forward pass of the model at the same time. This can be more efficient than calling the :func:`~eulerpi.models.BaseModel.forward` and :func:`~eulerpi.models.BaseModel.jacobian` methods separately.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.

@@ -1,7 +1,7 @@
 SBML Models
 ===========
 
-The :py:class:`~eulerpi.core.model.SBMLModel` loads a biological model from an external file written in the sbml standard format.
+The :py:class:`~eulerpi.model.SBMLModel` loads a biological model from an external file written in the sbml standard format.
 It generates the forward and jacobian method automatically and derives the parameter and data dimension from the sbml model.
 This allows for extremely fast prototyping of sbml models and no model specific code has to be written.
 
@@ -10,8 +10,8 @@ Here's a code snippet to load your own sbml model and to do the parameter infere
 .. code-block:: python
 
     import numpy as np
-    from eulerpi.core.model import SBMLModel
-    from eulerpi.core.inference import inference
+    from eulerpi.model import SBMLModel
+    from eulerpi import inference
 
     # This line is needed for multiprocessing in python
     if __name__ == "__main__":
@@ -27,7 +27,7 @@ Here's a code snippet to load your own sbml model and to do the parameter infere
                         param_ids=param_ids)
         inference(model, 'data.csv')
 
-The attribute :py:attr:`~eulerpi.core.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.
+The attribute :py:attr:`~eulerpi.model.SBMLModel.param_names` contains the names of the parameters in the sbml model, for which the inference should be performed.
 Per default it contains all parameters from the sbml model file.
 
 .. note::

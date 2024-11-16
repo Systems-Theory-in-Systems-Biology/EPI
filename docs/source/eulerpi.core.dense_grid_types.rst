@@ -1,7 +1,7 @@
-eulerpi.core.dense\_grid\_types module
+eulerpi.dense\_grid\_types module
 ======================================
 
-.. automodule:: eulerpi.core.dense_grid_types
+.. automodule:: eulerpi.dense_grid_types
    :members:
    :undoc-members:
    :show-inheritance:

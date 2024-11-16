@@ -4,7 +4,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.models import ArtificialModelInterface, BaseModel
 
 # from functools import partial
 # from jax import jit
@@ -85,7 +85,7 @@ class TemperatureWithFixedParams(Temperature):
         * Additional fixed parameters: The model includes fixed parameters :code:`self.low_T=30.0` and :code:`self.high_T=30.0`.
           These fixed parameters are passed to the calc_forward function separately. You can create models with different parameters by
           creating several model objects.
-          The best way to separate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute :py:attr:`run_name` of the :py:func:`~eulerpi.core.inference` function.
+          The best way to separate the outputs for the parametrized models is to pass a string based on the fixed_params to the attribute :py:attr:`run_name` of the :py:func:`~eulerpi.inference` function.
         * The functions :py:meth:`~eulerpi.examples.temperature.temperature.TemperatureWithFixedParams.calc_forward` is not strictly necessary.
           However it can help to make it work with jax.
     """

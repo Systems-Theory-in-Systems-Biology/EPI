@@ -67,7 +67,7 @@ You can also build the library from the latest source code by following the :doc
 How to start
 ------------
 
-.. To use EPI, derive your model from :py:class:`eulerpi.core.model.BaseModel` and implement the abstract functions :py:meth:`~eulerpi.core.model.BaseModel.forward` and :py:meth:`~eulerpi.core.model.BaseModel.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~eulerpi.core.model.BaseModel.data_dim` and :py:attr:`~eulerpi.core.model.BaseModel.param_dim` of your model.
+.. To use EPI, derive your model from :py:class:`eulerpi.model.BaseModel` and implement the abstract functions :py:meth:`~eulerpi.model.BaseModel.forward` and :py:meth:`~eulerpi.model.BaseModel.jacobian`. You also need to define the data and parameter dimension, :py:attr:`~eulerpi.model.BaseModel.data_dim` and :py:attr:`~eulerpi.model.BaseModel.param_dim` of your model.
 
 To use EPI, derive your model from the BaseModel class and implement the abstract functions. Here's an example code snippet:
 
@@ -76,7 +76,7 @@ To use EPI, derive your model from the BaseModel class and implement the abstrac
     # my_model.py
     import jax.numpy as jnp
 
-    from eulerpi.core.model import BaseModel
+    from eulerpi.model import BaseModel
 
     class MyModel(BaseModel):
 
@@ -93,7 +93,7 @@ To evaluate the model and infer the parameter distribution, call:
 
 .. code-block:: python
 
-    from eulerpi.core.inference import inference
+    from eulerpi import inference
 
     from my_model import MyModel
 
@@ -115,7 +115,7 @@ The parameter :py:attr:`data` can be a numpy-2d-array or a PathLike object that 
     ...
     datapoint_dim1, datapoint_dim2, datapoint_dim3, ..., datapoint_dimN
 
-This corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. For more available options and parameters for the :py:mod:`~eulerpi.core.inference` method, please refer to the API documentation.
+This corresponds to a matrix with the shape :py:attr:`nSamples` x :py:attr:`data_dim`. For more available options and parameters for the :py:mod:`~eulerpi.inference` method, please refer to the API documentation.
 Note that the inference can be done with grid-based methods (dense grids, sparse grids) or sampling methods (mcmc).
 
 The results are stored in the following locations

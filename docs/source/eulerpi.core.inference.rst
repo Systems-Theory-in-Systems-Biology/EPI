@@ -1,7 +1,7 @@
-eulerpi.core.inference module
+eulerpi.inference module
 =============================
 
-.. automodule:: eulerpi.core.inference
+.. automodule:: eulerpi.inference
    :members:
    :undoc-members:
    :show-inheritance:

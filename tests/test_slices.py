@@ -5,9 +5,9 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
+from eulerpi.models import ArtificialModelInterface, BaseModel
 
 # Parametrize the test to run for each inference type
 
@@ -33,7 +33,7 @@ def test_slices(inference_type):
     slice2 = np.array([1, 2])
     slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
-    if inference_type == InferenceType.MCMC:
+    if inference_type == InferenceType.SAMPLING:
         kwargs = {"num_steps": 100}
     else:
         kwargs = {}

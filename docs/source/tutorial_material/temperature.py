@@ -3,7 +3,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.models import BaseModel
+from eulerpi.models import BaseModel
 
 
 class Temperature(BaseModel):

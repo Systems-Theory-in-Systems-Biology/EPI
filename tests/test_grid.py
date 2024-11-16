@@ -5,20 +5,19 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from eulerpi.core.dense_grid_types import DenseGridType
-from eulerpi.core.inference import inference
-from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
+from eulerpi.grids.grid_factory import GRID_REGISTRY
+from eulerpi.models import ArtificialModelInterface, BaseModel
 
 
 # Parametrize the test to run for each inference type
 @pytest.mark.parametrize(
-    "dense_grid_type",
-    list(DenseGridType),
-    ids=DenseGridType._member_names_,
+    "grid_type",
+    GRID_REGISTRY.keys(),
+    ids=GRID_REGISTRY.keys(),
 )
-def test_dense_grid(dense_grid_type):
+def test_grid(grid_type):
     """ """
     model: BaseModel = CoronaArtificial()
 
@@ -37,8 +36,8 @@ def test_dense_grid(dense_grid_type):
     inference(
         model,
         data,
-        inference_type=InferenceType.DENSE_GRID,
+        inference_type=InferenceType.GRID,
         slices=slices,
-        dense_grid_type=dense_grid_type,
+        grid_type=grid_type,
         num_grid_points=4,
     )

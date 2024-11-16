@@ -6,11 +6,12 @@ For profiling / identifying bottlenecks and not just observing the iterations pe
 scalene tests/profiling.py from the root directory of the project.
 """
 
+import jax
 import numpy as np
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.models import BaseModel
+from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
+from eulerpi.models import BaseModel
 
 
 def profiling_with_slices(inference_type):
@@ -35,6 +36,7 @@ def profiling_with_slices(inference_type):
 
 
 if __name__ == "__main__":
-    profiling_with_slices(InferenceType.MCMC)
-    profiling_with_slices(InferenceType.DENSE_GRID)
-    profiling_with_slices(InferenceType.SPARSE_GRID)
+    with jax.log_compiles():
+        profiling_with_slices(InferenceType.SAMPLING)
+        profiling_with_slices(InferenceType.GRID)
+    # profiling_with_slices(InferenceType.GRID)

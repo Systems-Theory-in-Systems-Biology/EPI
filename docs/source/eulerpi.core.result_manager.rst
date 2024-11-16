@@ -1,7 +1,7 @@
-eulerpi.core.result\_manager module
+eulerpi.result\_manager module
 ===================================
 
-.. automodule:: eulerpi.core.result_manager
+.. automodule:: eulerpi.result_manager
    :members:
    :undoc-members:
    :show-inheritance:

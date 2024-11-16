@@ -6,9 +6,9 @@ import importlib
 
 import pytest
 
-from eulerpi.core.inference import inference
-from eulerpi.core.models import BaseModel
+from eulerpi.epi import inference
 from eulerpi.examples.temperature import TemperatureWithFixedParams
+from eulerpi.models import BaseModel
 
 
 def temp_name(low_T, high_T):
