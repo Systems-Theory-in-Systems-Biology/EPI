@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 from matplotlib import cm
 
-from eulerpi.core.evaluation.kde import CauchyKDE, GaussKDE
-from eulerpi.core.sampling.dense_grid import generate_regular_grid
+from eulerpi.evaluation.kde import CauchyKDE, GaussKDE
+from eulerpi.grids.equidistant_grid import EquidistantGrid
 
 
 def kernel_estimators():
@@ -122,7 +122,7 @@ def test_kde_convergence_gauss(
         [num_grid_points for _ in range(dim)], dtype=np.int32
     )
     limits = np.array([[-5, 5] for _ in range(dim)])
-    grid = generate_regular_grid(num_grid_points, limits, flatten=True)
+    grid = EquidistantGrid(limits, num_grid_points).grid_points
     kde = GaussKDE(data)
 
     kde_on_grid = kde(grid)  # Evaluate the KDE

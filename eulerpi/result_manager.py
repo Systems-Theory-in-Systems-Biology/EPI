@@ -9,8 +9,8 @@ import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
 
-from eulerpi import logger
-from eulerpi.core.models import BaseModel
+from eulerpi.logger import logger
+from eulerpi.models import BaseModel
 
 
 class ResultManager:
@@ -28,7 +28,7 @@ class ResultManager:
         self.run_name = run_name
         self.slices = slices
 
-    def count_emcee_sub_runs(self, slice: np.ndarray) -> int:
+    def count_sub_runs(self, slice: np.ndarray) -> int:
         """This data organization function counts how many sub runs are saved for the specified scenario.
 
         Args:
@@ -282,7 +282,7 @@ class ResultManager:
                 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
                 load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
                 num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.
-                dense_grid_type(DenseGridType): The type of dense grid that was used: either equidistant or chebyshev. Only for dense grid inference.
+                grid_type(GridType): The type of grid that was used: either equidistant, chebyshev, or sparse
                 num_levels(int): The number of sparse grid levels that were used. Only for sparse grid inference.
 
         Raises:
@@ -297,13 +297,10 @@ class ResultManager:
         }
         information.update(dict(kwargs))
         if "num_grid_points" in information:
-            information["num_grid_points"] = np.array2string(
+            information["num_grid_points"] = str(
                 information["num_grid_points"]
             )
-        if "dense_grid_type" in information:
-            information["dense_grid_type"] = information[
-                "dense_grid_type"
-            ].name
+
         # save information as json file
         with open(
             self.get_slice_path(slice) + "/inference_information.json",
@@ -370,8 +367,10 @@ class ResultManager:
         with open(results_path + "/inference_information.json", "r") as file:
             inference_information = json.load(file)
 
-        # dense grid or sparse grid inference: load directly from overall results
-        if inference_information["inference_type"] != "MCMC":
+        # grid inference: load directly from overall results
+        if (
+            inference_information["inference_type"] == "GRID"
+        ):  # TODO: Specialice result manager for the Different samplings? Depending on the details here is bad
             if num_burn_in_samples is not None:
                 logger.info(
                     f"For inference type {inference_information['inference_type']}, num_burn_in_samples is ignored."

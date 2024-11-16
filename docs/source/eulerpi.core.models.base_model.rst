@@ -1,7 +1,7 @@
-eulerpi.core.models.base_model module
+eulerpi.models.base_model module
 ================================
 
-.. automodule:: eulerpi.core.models.base_model
+.. automodule:: eulerpi.models.base_model
    :members:
    :undoc-members:
    :show-inheritance:

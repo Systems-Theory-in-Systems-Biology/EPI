@@ -6,10 +6,10 @@ import importlib
 
 import pytest
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model_check import basic_model_check
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
-from eulerpi.core.models.sbml_model import is_amici_available
+from eulerpi.epi import InferenceType, inference
+from eulerpi.model_check import basic_model_check
+from eulerpi.models import ArtificialModelInterface, BaseModel
+from eulerpi.models.sbml_model import is_amici_available
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -121,13 +121,11 @@ def test_examples(example, inference_type):
     # Define kwargs for inference
     kwargs = {}
     kwargs["inference_type"] = inference_type
-    if inference_type == InferenceType.MCMC:
+    if inference_type == InferenceType.SAMPLING:
         kwargs["num_walkers"] = max(4, model.param_dim * 2)
         kwargs["num_steps"] = 10
-    elif inference_type == InferenceType.DENSE_GRID:
-        kwargs["num_grid_points"] = 3
-    elif inference_type == InferenceType.SPARSE_GRID:
-        kwargs["num_levels"] = 3
+    elif inference_type == InferenceType.GRID:
+        kwargs["num_grid_points"] = 3  # Also works as num_levels currently
 
     # generate artificial data if necessary
     if isinstance(model, ArtificialModelInterface):

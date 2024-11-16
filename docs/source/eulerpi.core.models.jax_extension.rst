@@ -1,7 +1,7 @@
-eulerpi.core.models.jax\_extension module
+eulerpi.models.jax\_extension module
 =========================================
 
-.. automodule:: eulerpi.core.models.jax_extension
+.. automodule:: eulerpi.models.jax_extension
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,6 +1,6 @@
 """This module provides functions to handle the Kernel Densitiy Estimation (KDE_) in EPI.
 
-    It is used in the EPI algorithm to :py:func:`eulerpi.core.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the simulation results.
+    It is used in the EPI algorithm to :py:func:`eulerpi.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the simulation results.
 
 
 .. _KDE: https://en.wikipedia.org/wiki/Kernel_density_estimation
@@ -76,7 +76,7 @@ def eval_kde_gauss(
     .. code-block:: python
 
         import jax.numpy as jnp
-        from eulerpi.core.evaluation.kde import eval_kde_gauss
+        from eulerpi.evaluation.kde import eval_kde_gauss
 
         # create 4 data points of dimension 2 and store them in a numpy 2D array
         data = jnp.array([[0,0], [0,1], [1,0], [1,1]])
@@ -123,7 +123,7 @@ def calc_kernel_width(data: jnp.ndarray) -> jnp.ndarray:
     .. code-block:: python
 
         import jax.numpy as jnp
-        from eulerpi.core.evaluation.kde import calc_kernel_width
+        from eulerpi.evaluation.kde import calc_kernel_width
 
         # create 4 data points of dimension 2 and store them in a numpy 2D array
         data = jnp.array([[0,0], [0,2], [1,0], [1,2]])

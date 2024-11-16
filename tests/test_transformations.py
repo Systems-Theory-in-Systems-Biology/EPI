@@ -2,10 +2,10 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from eulerpi.core.data_transformations import DataIdentity
-from eulerpi.core.evaluation.kde import GaussKDE
-from eulerpi.core.evaluation.transformations import calc_gram_determinant
-from eulerpi.core.models import ArtificialModelInterface, JaxModel
+from eulerpi.data_transformations import DataIdentity
+from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.evaluation.transformation import calc_gram_determinant
+from eulerpi.models import ArtificialModelInterface, JaxModel
 
 
 def test_calc_gram_determinant():
@@ -51,7 +51,7 @@ class X2Model(JaxModel, ArtificialModelInterface):
 
 
 def test_evaluate_density(caplog):
-    from eulerpi.core.evaluation.transformations import evaluate_density
+    from eulerpi.evaluation.density import evaluate_density
 
     param = X2Model.CENTRAL_PARAM
     x2_model = X2Model()
@@ -91,7 +91,7 @@ def test_evaluate_density(caplog):
     param = np.array([2.1])
     # Other arguments would change too, but shouldn't matter for this test
     # set logger level to debug to see the warning
-    from eulerpi import logger
+    from eulerpi.logger import logger
 
     logger.setLevel("INFO")
     density, _ = evaluate_density(

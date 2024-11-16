@@ -6,7 +6,7 @@ import pickle
 import numpy as np
 import pytest
 
-from eulerpi.core.models import BaseModel
+from eulerpi.models import BaseModel
 from tests.test_examples import Examples, get_example_name
 
 

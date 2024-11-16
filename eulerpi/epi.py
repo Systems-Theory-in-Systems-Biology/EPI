@@ -9,30 +9,28 @@ import jax.numpy as jnp
 import numpy as np
 import psutil
 
-from eulerpi.core.data_transformations import (
-    DataNormalization,
-    DataTransformation,
+from eulerpi.data_transformations import DataNormalization, DataTransformation
+from eulerpi.evaluation import KDE, GaussKDE
+from eulerpi.inferences.grid_inference import inference as grid_inference
+from eulerpi.inferences.sampling_inference import (
+    inference as sampling_inference,
 )
-from eulerpi.core.evaluation import KDE, GaussKDE
-from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.sampling.dense_grid import inference_dense_grid
-from eulerpi.core.sampling.mcmc import inference_mcmc
-from eulerpi.core.sampling.sparsegrid import inference_sparse_grid
+from eulerpi.models import BaseModel
+from eulerpi.result_manager import ResultManager
+from eulerpi.samplers.mcmc import start_subrun as start_mcmc_subrun
 
 
 class InferenceType(Enum):
-    """Available modes for the :py:func:`inference <eulerpi.core.inference.inference>` function."""
+    """Available modes for the :py:func:`inference <eulerpi.inference.inference>` function."""
 
-    DENSE_GRID = 0  #: The dense grid inference uses a dense grid to evaluate the joint distribution.
-    MCMC = 1  #: The MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
-    SPARSE_GRID = 2  #: The sparse grid inference uses a sparse grid to evaluate the joint distribution. It is not tested and not recommended.
+    GRID = 0  #: The grid inference uses a grid to evaluate the joint distribution.
+    SAMPLING = 1  #: The SAMPLING / MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
 
 
 def inference(
     model: BaseModel,
     data: Union[str, os.PathLike, np.ndarray],
-    inference_type: InferenceType = InferenceType.MCMC,
+    inference_type: InferenceType = InferenceType.SAMPLING,
     slices: Optional[list[np.ndarray]] = None,
     num_processes: Optional[int] = None,
     run_name: str = "default_run",
@@ -52,7 +50,7 @@ def inference(
     Args:
         model(BaseModel): The model describing the mapping from parameters to data.
         data(Union[str, os.PathLike, np.ndarray]): The data to be used for the inference. If a string is given, it is assumed to be a path to a file containing the data.
-        inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)
+        inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.SAMPLING)
         slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
         num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = None)
         run_name(str): The name of the run. (Default value = "default_run")
@@ -75,7 +73,7 @@ def inference(
 
         import numpy as np
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.inference import inference
+        from eulerpi import inference
 
         # generate 1000 artificial, 4D data points for the Covid example model
         data_scales = np.array([1.0, 5.0, 35.0, 2.0])
@@ -94,7 +92,7 @@ def inference(
 
         import numpy as np
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.inference import inference
+        from eulerpi import inference
 
         # run inference with additional arguments
         (_, _, _, res_manager) = inference(Corona(),
@@ -120,9 +118,9 @@ def inference(
 
         import numpy as np
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.inference import inference, InferenceType
-        from eulerpi.core.data_transformation import DataPCA
-        from eulerpi.core.result_manager import ResultManager
+        from eulerpi import inference, InferenceType
+        from eulerpi.data_transformation import DataPCA
+        from eulerpi.result_manager import ResultManager
 
         model = Corona()
         data_transformation = DataPCA(data, n_components=model.param_dim)  # perform PCA on the data before inference
@@ -130,7 +128,7 @@ def inference(
         inference(model,
                 data = "pathto/data.csv",
                 slices = [np.array([0,1]), np.array([2])], # specify joint and marginal parameter subdistributions we are interested in
-                inference_type = InferenceType.DENSE_GRID, # use dense grid inference
+                inference_type = InferenceType.GRID, # use grid inference
                 run_name = "grid_run",
                 data_transformation = data_transformation,
                 num_grid_points = 30) # use 30 grid points per parameter dimension
@@ -182,44 +180,44 @@ def inference(
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
 
-    # Map inference types to corresponding functions
-    inference_functions = {
-        InferenceType.DENSE_GRID: inference_dense_grid,
-        InferenceType.MCMC: inference_mcmc,
-        InferenceType.SPARSE_GRID: inference_sparse_grid,
-    }
-
-    # Check if the inference type is valid and call the corresponding function
-    inference_func = inference_functions.get(inference_type)
-    if inference_func is None:
-        raise NotImplementedError(
-            f"The inference type {inference_type} is not implemented yet."
-        )
-
     # create the return dictionaries
     overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
+
     for slice in slices:
         slice_name = result_manager.get_slice_name(slice)
-        result_manager.save_inference_information(
-            slice=slice,
-            model=model,
-            inference_type=inference_type.name,
-            num_processes=num_processes,
-            **kwargs,
-        )
-
-        params, sim_results, densities = inference_func(
-            model=model,
-            data_transformation=data_transformation,
-            kde=kde,
-            result_manager=result_manager,
-            slices=slices,
-            num_processes=num_processes,
-            **kwargs,
-        )
+        if inference_type == InferenceType.GRID:
+            params, sim_results, densities = grid_inference(
+                model=model,
+                data_transformation=data_transformation,
+                kde=kde,
+                slice=slice,
+                result_manager=result_manager,
+                num_processes=num_processes,
+                **kwargs,
+            )
+        elif inference_type == InferenceType.SAMPLING:
+            params, sim_results, densities = sampling_inference(
+                model,
+                data_transformation,
+                kde,
+                slice,
+                result_manager,
+                num_processes,
+                start_mcmc_subrun,
+                **kwargs,
+            )
+        else:
+            raise NotImplementedError(
+                f"The inference type {inference_type} is not implemented yet."
+            )
 
         overall_params[slice_name] = params
         overall_sim_results[slice_name] = sim_results
         overall_density_evals[slice_name] = densities
 
-    return result_manager
+    return (
+        overall_params,
+        overall_sim_results,
+        overall_density_evals,
+        result_manager,
+    )

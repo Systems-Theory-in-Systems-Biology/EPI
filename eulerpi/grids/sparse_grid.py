@@ -9,19 +9,14 @@
 """
 
 import typing
-from itertools import repeat
-from multiprocessing import get_context
 
 import numpy as np
 
-from eulerpi import logger
-from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.evaluation.kde import KDE
-from eulerpi.core.evaluation.transformations import evaluate_density
-from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.logger import logger
 
-INFERENCE_NAME = "SPARSE_GRID"
+from .grid import Grid
+
+# from .grid_factory import register_grid
 
 
 def basis_1d(
@@ -98,7 +93,9 @@ def meshgrid2matrix(meshgrid: list) -> np.ndarray:
     return matrix
 
 
-class SparseGrid(object):
+# TODO: Fix num_grid_points, grid_detail, num_levels interface problem
+# @register_grid("SPARSE")
+class SparseGrid(Grid):
     """Each object of this class respresents a sparse grid.
     In this implementation, a sparse grid is a list of Smolnyak-subspaces.
     Each subspace is in principle a regular grid of a certain grid width but every second grid point is negelcted.
@@ -115,7 +112,7 @@ class SparseGrid(object):
 
     """
 
-    def __init__(self, dim: int, max_level_sum: int) -> None:
+    def __init__(self, limits: np.ndarray, max_level_sum: int) -> None:
         """Constructor for a sparse grid.
         A sparse grid is uniquely defined by its dimension and a level sum that must not be exceeded by any of the Smolnyak subspaces.
         A subspace's levels define how fine the grid is resolved in each of the respective dimensions.
@@ -123,11 +120,17 @@ class SparseGrid(object):
         As we only limit the sum of all levels, the sparse grids implemented here are not refined in a dimension-dependent way.
 
         Args:
+            limits: The boundaries of the grid
             dim (int): The dimension of the sparse grid. This is the same as the dimension of the parameter space.
             max_level_sum (int): The maximum sum of all levels of the subspaces. This is the same as the maximum level of the sparse grid.
 
         """
-
+        logger.warning(
+            "The inference_sparse_grid function is not tested and not recommended for use."
+        )
+        limits = np.atleast_2d(limits)
+        super().__init__(limits, max_level_sum)
+        dim = limits.shape[0]
         self.dim = dim
         self.max_level_sum = max_level_sum
 
@@ -147,6 +150,14 @@ class SparseGrid(object):
 
         # collect all points from all subspaces
         self.compute_all_points()
+
+    @property
+    def grid_points(self):
+        # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
+        scaled_points = self.limits[:, 0] + self.points * (
+            self.limits[:, 1] - self.limits[:, 0]
+        )
+        return scaled_points
 
     def refine_subspace(
         self, current_levels: np.ndarray, indexRefinedLevel: int
@@ -368,136 +379,3 @@ class Subspace(object):
                         )
                         * self.coeffs[p]
                     )
-
-
-def evaluate_on_sparse_grid(
-    args: typing.Tuple[
-        np.ndarray,
-        BaseModel,
-        DataTransformation,
-        np.ndarray,
-        np.ndarray,
-    ]
-) -> np.ndarray:
-    """This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.
-
-    Args:
-        params (np.ndarray): The parameters to be evaluated.
-        model(BaseModel): The model used for the inference.
-        data_transformation (DataTransformation): The data transformation used to normalize the data.
-        kde (KDE): The kernel density estimator (or some other estimator implementing the __call__ function) to estimate the density at a data point
-        slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
-
-    Returns:
-        np.ndarray: The density values for the given params.
-    """
-
-    params, model, data_transformation, kde, slice = args
-    return evaluate_density(params, model, data_transformation, kde, slice)[1]
-
-
-def inference_sparse_grid(
-    model: BaseModel,
-    data: np.ndarray,
-    data_transformation: DataTransformation,
-    kde: KDE,
-    result_manager: ResultManager,
-    slices: typing.List[np.ndarray],
-    num_processes: int,
-    num_levels: int = 5,
-) -> typing.Tuple[
-    typing.Dict[str, np.ndarray],
-    typing.Dict[str, np.ndarray],
-    typing.Dict[str, np.ndarray],
-    ResultManager,
-]:
-    """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
-
-    Args:
-        model(BaseModel): The model describing the mapping from parameters to data.
-        data(np.ndarray): The data to be used for inference.
-        data_transformation (DataTransformation): The data transformation used to normalize the data.
-        kde(KDE): The density estimator which should be used to estimate the data density.
-        num_processes(int): number of processes to use for parallel evaluation of the model.
-        num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
-
-    Returns:
-        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
-        evaluations for each slice and the result manager used for the inference.
-
-    """
-
-    logger.warning(
-        "The inference_sparse_grid function is not tested and not recommended for use."
-    )
-
-    # create the return dictionaries
-    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
-
-    for slice in slices:
-        # build the sparse grid over [0,1]^param_dim
-        grid = SparseGrid(slice.shape[0], num_levels)
-
-        # get the model's parameter limits
-        param_limits = model.param_limits
-
-        # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
-        scaledSparseGridPoints = param_limits[slice, 0] + grid.points * (
-            param_limits[slice, 1] - param_limits[slice, 0]
-        )
-
-        # Create a pool of worker processes
-        pool = get_context("spawn").Pool(processes=num_processes)
-        tasks = zip(
-            scaledSparseGridPoints,
-            repeat(model),
-            repeat(data_transformation),
-            repeat(kde),
-            repeat(slice),
-        )
-
-        # evaluate the probability density transformation for all sparse grid points in parallel
-        results = pool.map(
-            evaluate_on_sparse_grid,
-            tasks,
-        )
-
-        # close the worker pool
-        pool.close()
-        pool.join()
-
-        # convert the results to a numpy array
-        # Take care! The results here are for single points, therefore we cant use np.concatenate
-        results = np.vstack(results)
-
-        data_dim = model.data_dim
-
-        # save the results
-        result_manager.save_overall(
-            slice,
-            results[:, 0 : slice.shape[0]],
-            results[:, slice.shape[0] : slice.shape[0] + data_dim],
-            results[:, slice.shape[0] + data_dim :],
-        )
-        slice_name = result_manager.get_slice_name(slice)
-        overall_params[slice_name] = results[:, 0 : slice.shape[0]]
-        overall_sim_results[slice_name] = results[
-            :, slice.shape[0] : slice.shape[0] + data_dim
-        ]
-        overall_density_evals[slice_name] = results[
-            :, slice.shape[0] + data_dim :
-        ]
-        result_manager.save_inference_information(
-            slice=slice,
-            model=model,
-            inference_type=INFERENCE_NAME,
-            num_processes=num_processes,
-            num_levels=num_levels,
-        )
-
-    return (
-        overall_params,
-        overall_sim_results,
-        overall_density_evals,
-        result_manager,
-    )

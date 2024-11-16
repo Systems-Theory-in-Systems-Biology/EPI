@@ -1,7 +1,7 @@
-eulerpi.core.transformations module
+eulerpi.transformations module
 ===================================
 
-.. automodule:: eulerpi.core.transformations
+.. automodule:: eulerpi.transformations
    :members:
    :undoc-members:
    :show-inheritance:

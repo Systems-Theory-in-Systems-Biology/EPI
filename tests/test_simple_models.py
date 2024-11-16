@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 
-from eulerpi.core.data_transformations import DataIdentity
-from eulerpi.core.evaluation.kde import GaussKDE
-from eulerpi.core.evaluation.transformations import evaluate_density
-from eulerpi.core.inference import InferenceType, inference
+from eulerpi.data_transformations import DataIdentity
+from eulerpi.epi import InferenceType, inference
+from eulerpi.evaluation.density import evaluate_density
+from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import Exponential, Linear, LinearODE
 
 
@@ -192,4 +192,4 @@ def test_transformationODELinear():
     data = model.generate_artificial_data(params)
 
     # run MCMC sampling for EPI
-    inference(model, data, InferenceType.MCMC)
+    inference(model, data, InferenceType.SAMPLING)

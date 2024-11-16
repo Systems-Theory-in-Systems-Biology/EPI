@@ -2,11 +2,11 @@ import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eulerpi.core.evaluation.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.result_manager import ResultManager
-from eulerpi.core.sampling.dense_grid import generate_regular_grid
+from eulerpi.epi import InferenceType, inference
+from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
+from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.result_manager import ResultManager
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
@@ -37,7 +37,7 @@ def test_inference_mcmc_dense_exact(
         result_manager = ResultManager(
             model.name, str(inference_type), full_slice
         )
-        if InferenceType(inference_type) == InferenceType.MCMC:
+        if InferenceType(inference_type) == InferenceType.SAMPLING:
             inference(
                 model,
                 data,
@@ -54,7 +54,7 @@ def test_inference_mcmc_dense_exact(
             ) = result_manager.load_inference_results(
                 full_slice, num_steps * num_runs // 20, 2
             )
-        elif InferenceType(inference_type) == InferenceType.DENSE_GRID:
+        elif InferenceType(inference_type) == InferenceType.GRID:
             inference(
                 model,
                 data,
@@ -109,21 +109,19 @@ def test_inference_mcmc_dense_exact(
     lims = LinearODE.PARAM_LIMITS
     x = np.linspace(lims[0, 0], lims[0, 1], num_grid_points)
     y = np.linspace(lims[1, 0], lims[1, 1], num_grid_points)
-    grid = generate_regular_grid(
-        np.array([num_grid_points, num_grid_points]), lims, flatten=True
-    )
+    grid = EquidistantGrid(
+        lims, np.array([num_grid_points, num_grid_points])
+    ).grid_points
     grid_2d = grid.reshape(num_grid_points, num_grid_points, model.param_dim)
-    # grid = results[InferenceType.DENSE_GRID][2]
+    # grid = results[InferenceType.GRID][2]
 
-    mcmc_params = result_params[InferenceType.MCMC]["Slice_Q0Q1"]
-    mcmc_kde = eval_kde_gauss(
-        mcmc_params, grid, calc_kernel_width(mcmc_params)
-    )
+    mcmc_params = result_params[InferenceType.SAMPLING]["Slice_Q0Q1"]
+    mcmc_kde = GaussKDE(mcmc_params)(grid)
 
-    dense_grid_pdf = result_densities[InferenceType.DENSE_GRID]["Slice_Q0Q1"]
+    dense_grid_pdf = result_densities[InferenceType.GRID]["Slice_Q0Q1"]
 
     true_pdf_grid = true_pdf(grid)
-    true_kde = eval_kde_gauss(params, grid, calc_kernel_width(params))
+    true_kde = GaussKDE(params)(grid)
     true_pdf_samples = true_pdf(params)
 
     def to2d(grid):
@@ -269,7 +267,7 @@ def test_thinning_and_burn_in():
         model=model,
         data=data,
         slices=slices,
-        inference_type=InferenceType.MCMC,
+        inference_type=InferenceType.SAMPLING,
         num_steps=num_steps,
         num_walkers=num_walkers,
         num_burn_in_samples=num_burn_in_samples,

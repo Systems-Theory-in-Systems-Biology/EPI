@@ -1,7 +1,7 @@
-eulerpi.core.inference\_types module
+eulerpi.inference\_types module
 ====================================
 
-.. automodule:: eulerpi.core.inference_types
+.. automodule:: eulerpi.inference_types
    :members:
    :undoc-members:
    :show-inheritance:

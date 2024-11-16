@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import axes
 
-from eulerpi.core.evaluation.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.evaluation.kde import calc_kernel_width, eval_kde_gauss
+from eulerpi.models import BaseModel
+from eulerpi.result_manager import ResultManager
 
 # general plotting function for joint runs
 
@@ -50,8 +50,8 @@ def sample_violin_plot(
 
         import numpy as np
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.inference import inference
-        from eulerpi.core.plotting import sample_violin_plot
+        from eulerpi import inference
+        from eulerpi.plotting import sample_violin_plot
 
         # instantiate the Covid example model
         model = Corona()

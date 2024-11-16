@@ -1,9 +1,9 @@
 import numpy as np
 
-from eulerpi.core.data_transformations import DataIdentity
-from eulerpi.core.evaluation.kde import GaussKDE
-from eulerpi.core.evaluation.transformations import evaluate_density
-from eulerpi.core.models import BaseModel
+from eulerpi.data_transformations import DataIdentity
+from eulerpi.evaluation.density import evaluate_density
+from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.models import BaseModel
 
 
 class CrashModel(BaseModel):

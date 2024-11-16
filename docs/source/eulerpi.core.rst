@@ -4,17 +4,17 @@ eulerpi.core package
 .. toctree::
    :maxdepth: 4
 
-   Data Transformation<eulerpi.core.data_transformation>
-   Data Transformation Types<eulerpi.core.data_transformation_types>
-   Dense Grid<eulerpi.core.dense_grid>
-   Dense Grid Types<eulerpi.core.dense_grid_types>
-   Inference<eulerpi.core.inference>
-   Inference Types<eulerpi.core.inference_types>
-   KDE<eulerpi.core.evaluation.kde>
-   Models<eulerpi.core.models>
-   Model Check<eulerpi.core.model_check>
-   Plotting<eulerpi.core.plotting>
-   Result Manager<eulerpi.core.result_manager>
-   Sampling<eulerpi.core.sampling>
-   Sparse Grid<eulerpi.core.sparsegrid>
-   Transformations<eulerpi.core.transformations>
+   Data Transformation<eulerpi.data_transformation>
+   Data Transformation Types<eulerpi.data_transformation_types>
+   Dense Grid<eulerpi.dense_grid>
+   Dense Grid Types<eulerpi.dense_grid_types>
+   Inference<eulerpi.inference>
+   Inference Types<eulerpi.inference_types>
+   KDE<eulerpi.evaluation.kde>
+   Models<eulerpi.models>
+   Model Check<eulerpi.model_check>
+   Plotting<eulerpi.plotting>
+   Result Manager<eulerpi.result_manager>
+   Sampling<eulerpi.sampling>
+   Sparse Grid<eulerpi.sparsegrid>
+   Transformations<eulerpi.transformations>

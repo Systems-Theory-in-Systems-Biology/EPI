@@ -4,9 +4,9 @@ Test the plotting of samples using the COVID model
 
 import numpy as np
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.plotting import sample_violin_plot
+from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import Corona
+from eulerpi.plotting import sample_violin_plot
 
 
 def test_sample_plotting():
@@ -30,7 +30,7 @@ def test_sample_plotting():
     inference(
         model,
         data=data,
-        inference_type=InferenceType.MCMC,
+        inference_type=InferenceType.SAMPLING,
         slices=[np.arange(model.param_dim)],
         run_name=run_name,
         num_runs=1,

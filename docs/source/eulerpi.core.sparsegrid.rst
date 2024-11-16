@@ -1,7 +1,7 @@
-eulerpi.core.sparsegrid module
+eulerpi.sparsegrid module
 ==============================
 
-.. automodule:: eulerpi.core.sparsegrid
+.. automodule:: eulerpi.sparsegrid
    :members:
    :undoc-members:
    :show-inheritance:
