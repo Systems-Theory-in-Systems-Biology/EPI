@@ -6,8 +6,8 @@ import importlib
 
 import pytest
 
-from eulerpi.epi import inference
 from eulerpi.examples.temperature import TemperatureWithFixedParams
+from eulerpi.inference import inference
 from eulerpi.models import BaseModel
 
 

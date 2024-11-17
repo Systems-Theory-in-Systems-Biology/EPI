@@ -5,9 +5,9 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
 from eulerpi.grids.grid_factory import GRID_REGISTRY
+from eulerpi.inference import InferenceType, inference
 from eulerpi.models import ArtificialModelInterface, BaseModel
 
 

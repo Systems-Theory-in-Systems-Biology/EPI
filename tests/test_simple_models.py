@@ -7,10 +7,10 @@ import numpy as np
 from matplotlib import cm
 
 from eulerpi.data_transformations import DataIdentity
-from eulerpi.epi import InferenceType, inference
 from eulerpi.evaluation.density import evaluate_density
 from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import Exponential, Linear, LinearODE
+from eulerpi.inference import InferenceType, inference
 
 
 def test_transformationLinear():

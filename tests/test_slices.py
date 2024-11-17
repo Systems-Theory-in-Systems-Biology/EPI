@@ -5,8 +5,8 @@ Test the slices functionality for each of the inference methods.
 import numpy as np
 import pytest
 
-from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
+from eulerpi.inference import InferenceType, inference
 from eulerpi.models import ArtificialModelInterface, BaseModel
 
 # Parametrize the test to run for each inference type

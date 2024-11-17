@@ -1,8 +1,8 @@
 import jax
 from jax import config
 
-from .epi import InferenceType as InferenceType
-from .epi import inference as inference
+from .inference import InferenceType as InferenceType
+from .inference import inference as inference
 
 config.update("jax_enable_x64", True)
 

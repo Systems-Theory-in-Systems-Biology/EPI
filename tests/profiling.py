@@ -9,8 +9,8 @@ scalene tests/profiling.py from the root directory of the project.
 import jax
 import numpy as np
 
-from eulerpi.epi import InferenceType, inference
 from eulerpi.examples.corona import CoronaArtificial
+from eulerpi.inference import InferenceType, inference
 from eulerpi.models import BaseModel
 
 

@@ -6,7 +6,7 @@ import importlib
 
 import pytest
 
-from eulerpi.epi import InferenceType, inference
+from eulerpi.inference import InferenceType, inference
 from eulerpi.model_check import basic_model_check
 from eulerpi.models import ArtificialModelInterface, BaseModel
 from eulerpi.models.sbml_model import is_amici_available

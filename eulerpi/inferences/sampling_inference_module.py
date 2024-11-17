@@ -52,7 +52,7 @@ def calc_walker_acceptance(
     return acceptance_ratio
 
 
-def inference(
+def sampling_inference(
     model: BaseModel,
     data_transformation: DataTransformation,
     kde: KDE,

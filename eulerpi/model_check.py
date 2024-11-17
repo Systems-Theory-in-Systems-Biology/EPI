@@ -3,7 +3,7 @@
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.epi import InferenceType, inference
+from eulerpi.inference import InferenceType, inference
 from eulerpi.models import BaseModel
 from eulerpi.plotting import sample_violin_plot
 

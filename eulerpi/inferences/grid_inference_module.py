@@ -46,7 +46,7 @@ def evaluate_function_on_grid_points_batched(
     return results
 
 
-def inference(
+def grid_inference(
     model: BaseModel,
     data_transformation: DataTransformation,
     kde: KDE,

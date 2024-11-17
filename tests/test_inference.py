@@ -2,10 +2,10 @@ import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eulerpi.epi import InferenceType, inference
 from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.inference import InferenceType, inference
 from eulerpi.result_manager import ResultManager
 
 
