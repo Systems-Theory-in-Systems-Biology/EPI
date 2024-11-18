@@ -32,7 +32,7 @@ def test_logs_error_evaluate_density(caplog):
     kde = GaussKDE(data)
     slice = np.array([0])
 
-    density, _ = evaluate_density(
+    density = evaluate_density(
         central_param,
         crash_model,
         data_transformation,
