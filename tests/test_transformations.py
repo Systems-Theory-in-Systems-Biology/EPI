@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 
 from eulerpi.data_transformations import DataIdentity
+from eulerpi.evaluation.gram_determinant import calc_gram_determinant
 from eulerpi.evaluation.kde import GaussKDE
-from eulerpi.evaluation.transformation import calc_gram_determinant
 from eulerpi.models import ArtificialModelInterface, JaxModel
 
 
@@ -51,7 +51,7 @@ class X2Model(JaxModel, ArtificialModelInterface):
 
 
 def test_evaluate_density(caplog):
-    from eulerpi.evaluation.density import evaluate_density
+    from eulerpi.evaluation.transformation import evaluate_density
 
     param = X2Model.CENTRAL_PARAM
     x2_model = X2Model()
@@ -67,7 +67,7 @@ def test_evaluate_density(caplog):
 
     # Test case 1: When the slice is one dimensional
     slice = np.array([0])
-    density = evaluate_density(
+    _, _, density = evaluate_density(
         param, x2_model, data_transformation, kde, slice
     )
     assert density == pure_density * correction
@@ -75,14 +75,14 @@ def test_evaluate_density(caplog):
     # Test case 2: When the slice is empty
     slice = np.array([])
     with pytest.raises(IndexError):
-        density = evaluate_density(
+        _, _, density = evaluate_density(
             param, x2_model, data_transformation, kde, slice
         )
 
     # Test case 3: When the slice is two dimensional, but the model is one dimensional
     slice = np.array([0, 1])
     with pytest.raises(IndexError):
-        density = evaluate_density(
+        _, _, density = evaluate_density(
             param, x2_model, data_transformation, kde, slice
         )
 
@@ -94,7 +94,7 @@ def test_evaluate_density(caplog):
     from eulerpi.logger import logger
 
     logger.setLevel("INFO")
-    density = evaluate_density(
+    _, _, density = evaluate_density(
         param, x2_model, data_transformation, kde, slice
     )
     assert density == 0.0

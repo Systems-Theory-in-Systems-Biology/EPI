@@ -1,17 +1,48 @@
+from functools import partial
 from typing import Tuple
 
 import numpy as np
 
-from eulerpi.data_transformations import DataTransformation
-from eulerpi.evaluation.density import get_DensityEvaluator
+from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
+from eulerpi.evaluation.transformation import evaluate_density
+from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.grids.grid_evaluation import (
     evaluate_function_on_grid_points_iterative,
     evaluate_function_on_grid_points_multiprocessing,
 )
 from eulerpi.grids.grid_factory import construct_grid
-from eulerpi.models import BaseModel
+from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
+
+
+def combined_evaluation(param, model, data_transformation, kde, slice):
+    param, sim_res, density = evaluate_density(
+        param, model, data_transformation, kde, slice
+    )
+    combined_result = np.concatenate([param, sim_res, np.array([density])])
+    return combined_result
+
+
+def get_DensityEvaluator(
+    model: BaseModel,
+    data_transformation: DataTransformation,
+    kde: KDE,
+    slice: np.ndarray,
+):
+    combined_evaluation_function = partial(
+        combined_evaluation,
+        model=model,
+        data_transformation=data_transformation,
+        kde=kde,
+        slice=slice,
+    )
+
+    param_dim = slice.shape[0]
+    output_dim = param_dim + model.data_dim + 1
+    return FunctionWithDimensions(
+        combined_evaluation_function, param_dim, output_dim
+    )
 
 
 def grid_inference(

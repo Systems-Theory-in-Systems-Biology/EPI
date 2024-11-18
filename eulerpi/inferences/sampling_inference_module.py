@@ -1,14 +1,16 @@
 import warnings
+from functools import partial
 from os import path
 from typing import Callable, Optional, Tuple
 
 import numpy as np
 
-from eulerpi.data_transformations import DataTransformation
-from eulerpi.evaluation.density import get_LogDensityEvaluator
+from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
+from eulerpi.evaluation.transformation import evaluate_log_density
+from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.logger import logger
-from eulerpi.models import BaseModel
+from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
 
 
@@ -51,6 +53,35 @@ def calc_walker_acceptance(
     )  # Sum over changes to count accepted steps
     acceptance_ratio = num_accepted_steps / num_steps
     return acceptance_ratio
+
+
+def combined_evaluation(param, model, data_transformation, kde, slice):
+    param, sim_res, logdensity = evaluate_log_density(
+        param, model, data_transformation, kde, slice
+    )
+    combined_result = np.concatenate([param, sim_res, np.array([logdensity])])
+    return logdensity, combined_result
+
+
+def get_LogDensityEvaluator(
+    model: BaseModel,
+    data_transformation: DataTransformation,
+    kde: KDE,
+    slice: np.ndarray,
+):
+    logdensity_blob_function = partial(
+        combined_evaluation,
+        model=model,
+        data_transformation=data_transformation,
+        kde=kde,
+        slice=slice,
+    )
+
+    param_dim = slice.shape[0]
+    output_dim = (1, param_dim + model.data_dim + 1)
+    return FunctionWithDimensions(
+        logdensity_blob_function, param_dim, output_dim
+    )
 
 
 def sampling_inference(

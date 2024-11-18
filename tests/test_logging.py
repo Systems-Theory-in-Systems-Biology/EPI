@@ -1,8 +1,8 @@
 import numpy as np
 
 from eulerpi.data_transformations import DataIdentity
-from eulerpi.evaluation.density import evaluate_density
 from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.models import BaseModel
 
 
@@ -32,7 +32,7 @@ def test_logs_error_evaluate_density(caplog):
     kde = GaussKDE(data)
     slice = np.array([0])
 
-    density = evaluate_density(
+    _, _, density = evaluate_density(
         central_param,
         crash_model,
         data_transformation,

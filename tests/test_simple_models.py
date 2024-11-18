@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib import cm
 
 from eulerpi.data_transformations import DataIdentity
-from eulerpi.evaluation.density import evaluate_density
 from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.examples.simple_models import Exponential, Linear, LinearODE
 from eulerpi.inference import InferenceType, inference
 
@@ -73,7 +73,7 @@ def test_transformationLinear():
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evaluate_density(
+            _, _, paramEvals[i, j] = evaluate_density(
                 paramPoint,
                 model,
                 data_transformation,
@@ -148,7 +148,7 @@ def test_transformationExponential():
     for i in range(paramResolution):
         for j in range(paramResolution):
             paramPoint = np.array([paramxMesh[i, j], paramyMesh[i, j]])
-            paramEvals[i, j], _ = evaluate_density(
+            _, _, paramEvals[i, j] = evaluate_density(
                 paramPoint,
                 model,
                 data_transformation,

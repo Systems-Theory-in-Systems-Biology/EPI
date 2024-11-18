@@ -14,8 +14,7 @@ def evaluate_function_on_grid_points_iterative(
     result = np.zeros((n_points, func.dim_out))
 
     for i, gridPoint in enumerate(grid_points):
-        param_data_density = func(gridPoint)
-        result[i] = param_data_density
+        result[i] = func(gridPoint)
     return result
 
 
