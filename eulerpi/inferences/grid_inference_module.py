@@ -1,49 +1,17 @@
-from itertools import repeat
-from multiprocessing import get_context
 from typing import Tuple
 
 import numpy as np
 
 from eulerpi.data_transformations import DataTransformation
-from eulerpi.evaluation.density import DensityEvaluator, get_DensityEvaluator
+from eulerpi.evaluation.density import get_DensityEvaluator
 from eulerpi.evaluation.kde import KDE
+from eulerpi.grids.grid_evaluation import (
+    evaluate_function_on_grid_points_iterative,
+    evaluate_function_on_grid_points_multiprocessing,
+)
 from eulerpi.grids.grid_factory import construct_grid
 from eulerpi.models import BaseModel
 from eulerpi.result_manager import ResultManager
-
-
-def evaluate_function_on_grid_points_iterative(
-    grid_points: np.ndarray,
-    de: DensityEvaluator,
-):
-    n_points = grid_points.shape[0]
-    result = np.zeros((n_points, de.dim_out))
-
-    for i, gridPoint in enumerate(grid_points):
-        _, param_data_density = de(gridPoint)
-        result[i] = param_data_density
-    return result
-
-
-def evaluate_function_on_grid_points_batched(
-    grid_points: np.ndarray,
-    de: DensityEvaluator,
-    num_processes: int,
-    load_balancing_safety_faktor: int = 1,
-):
-    n_points = grid_points.shape[0]
-    n_chunks = min(n_points, num_processes * load_balancing_safety_faktor)
-    grid_chunks = np.array_split(grid_points, n_chunks)
-
-    with get_context("spawn").Pool(processes=num_processes) as pool:
-        # Use zip and repeat for lazy argument pairing
-        results = pool.starmap(
-            evaluate_function_on_grid_points_iterative,
-            zip(grid_chunks, repeat(de)),
-        )
-    results = np.concatenate(results)
-
-    return results
 
 
 def grid_inference(
@@ -83,18 +51,14 @@ def grid_inference(
         ValueError: If the grid type is unknown.
 
     """
-
-    limits = np.atleast_2d(model.param_limits)[slice, :]
-    # TODO: This is only here, because some of the arguments get their default values just in the sampling_inference / grid_inference, not already in inference
-    result_manager.save_inference_information(
+    result_manager.append_inference_information(
         slice=slice,
-        model=model,
-        inference_type="GRID",  # TODO: Dont depend on details!
-        num_processes=num_processes,
         grid_type=grid_type,
         load_balancing_safety_faktor=load_balancing_safety_faktor,
         num_grid_points=num_grid_points,
     )
+
+    limits = np.atleast_2d(model.param_limits)[slice, :]
     if grid_type == "SPARSE" and num_grid_points > 8:
         raise ValueError(
             "Sparse Grid with more than 8 levels is not supported for now"
@@ -107,7 +71,7 @@ def grid_inference(
 
     grid_points = grid.grid_points
     if num_processes > 1:
-        results = evaluate_function_on_grid_points_batched(
+        results = evaluate_function_on_grid_points_multiprocessing(
             grid_points,
             density_evaluator,
             num_processes,

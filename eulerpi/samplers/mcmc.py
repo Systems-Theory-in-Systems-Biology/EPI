@@ -16,20 +16,14 @@ from multiprocessing import get_context
 import emcee
 import numpy as np
 
-from eulerpi.data_transformations import DataTransformation
-from eulerpi.evaluation.density import evaluate_log_density
-from eulerpi.evaluation.kde import KDE
+from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.logger import logger
-from eulerpi.models import BaseModel
 
 INFERENCE_NAME = "MCMC"
 
 
 def start_subrun(
-    model: BaseModel,
-    data_transformation: DataTransformation,
-    kde: KDE,
-    slice: np.ndarray,
+    evaluation_function: FunctionWithDimensions,
     initial_walker_positions: np.ndarray,
     num_walkers: int,
     num_steps: int,
@@ -38,10 +32,7 @@ def start_subrun(
     """Run the emcee particle swarm sampler once.
 
     Args:
-        model (BaseModel): The model which will be sampled
-        data_transformation (DataTransformation): The data transformation used to normalize the data.
-        kde(KDE): The density estimator which should be used to estimate the data density.
-        slice (np.ndarray): slice of the parameter space which will be sampled
+        evaluation_function: The function returning the log_probabilities and possibly a "blob" as second value
         initial_walker_positions (np.ndarray): initial parameter values for the walkers
         num_walkers (int): number of particles in the particle swarm sampler
         num_steps (int): number of samples each particle performs before storing the sub run
@@ -51,8 +42,6 @@ def start_subrun(
         np.ndarray: samples from the transformed parameter density
 
     """
-    sampling_dim = slice.shape[0]
-
     # Create a pool of worker processes
     pool = get_context("spawn").Pool(processes=num_processes)
 
@@ -60,10 +49,9 @@ def start_subrun(
     try:
         sampler = emcee.EnsembleSampler(
             num_walkers,
-            sampling_dim,
-            evaluate_log_density,
+            evaluation_function.dim_in,
+            evaluation_function,
             pool=pool,
-            args=[model, data_transformation, kde, slice],
         )
         # Extract the final walker position and close the pool of worker processes.
         final_walker_positions, _, _, _ = sampler.run_mcmc(
@@ -87,10 +75,7 @@ def start_subrun(
     # TODO: Keep as 3d array?
     # Should have shape (num_steps, num_walkers, param_dim+data_dim+1)
     sampler_results = sampler.get_blobs()
-    data_dim = model.data_dim
-    sampler_results = sampler_results.reshape(
-        num_steps * num_walkers, sampling_dim + data_dim + 1
-    )
+    sampler_results = sampler_results.reshape(num_steps * num_walkers, -1)
 
     logger.info(
         f"The acceptance fractions of the emcee sampler per walker are: {np.round(sampler.acceptance_fraction, 2)}"

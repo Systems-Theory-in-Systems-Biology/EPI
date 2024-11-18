@@ -5,6 +5,7 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 
 from eulerpi.data_transformations import DataTransformation
+from eulerpi.evaluation.density import get_LogDensityEvaluator
 from eulerpi.evaluation.kde import KDE
 from eulerpi.logger import logger
 from eulerpi.models import BaseModel
@@ -89,6 +90,20 @@ def sampling_inference(
         TODO check: are those really log probabilities?
 
     """
+    result_manager.append_inference_information(
+        slice=slice,
+        num_runs=num_runs,
+        num_walkers=num_walkers,
+        num_steps=num_steps,
+        num_burn_in_samples=num_burn_in_samples,
+        thinning_factor=thinning_factor,
+        get_walker_acceptance=get_walker_acceptance,
+    )
+
+    logdensity_blob_function = get_LogDensityEvaluator(
+        model, data_transformation, kde, slice
+    )
+
     if num_burn_in_samples is None:
         num_burn_in_samples = int(num_runs * num_steps * 0.1)
     if thinning_factor is None:
@@ -104,19 +119,6 @@ def sampling_inference(
     )
     initial_walker_positions = model.central_param[slice] + d_min[slice] * (
         np.random.rand(num_walkers, sampling_dim) - 0.5
-    )
-
-    result_manager.save_inference_information(
-        slice=slice,
-        model=model,
-        inference_type="SAMPLING",  # TODO: Dont depend on details!
-        num_processes=num_processes,
-        num_walkers=num_walkers,
-        num_steps=num_steps,
-        num_runs=num_runs,
-        num_burn_in_samples=num_burn_in_samples,
-        thinning_factor=thinning_factor,
-        get_walker_acceptance=get_walker_acceptance,
     )
 
     # Count and print how many runs have already been performed for this model
@@ -153,10 +155,7 @@ def sampling_inference(
                 message="invalid value encountered in scalar subtract",
             )
             sampler_results, final_walker_positions = start_subrun(
-                model,
-                data_transformation,
-                kde,
-                slice,
+                logdensity_blob_function,
                 initial_walker_positions,
                 num_walkers,
                 num_steps,

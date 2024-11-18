@@ -182,6 +182,13 @@ def inference(
 
     for slice in slices:
         slice_name = result_manager.get_slice_name(slice)
+        result_manager.save_inference_information(
+            slice=slice,
+            model=model,
+            inference_type=inference_type.name,
+            num_processes=num_processes,
+            **kwargs,
+        )
         if inference_type == InferenceType.GRID:
             params, sim_results, densities = grid_inference(
                 model=model,

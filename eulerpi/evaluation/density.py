@@ -2,26 +2,18 @@
 """
 
 from functools import partial
-from typing import Callable, Tuple
+from typing import Tuple
 
 import jax.numpy as jnp
 import numpy as np
 
 from eulerpi.data_transformations import DataTransformation
+from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.logger import logger
 from eulerpi.models import BaseModel
 
 from .kde import KDE
 from .transformation import calc_gram_determinant
-
-
-class DensityEvaluator:
-    def __init__(self, to_call: Callable, dim_out: int):
-        self.to_call = to_call
-        self.dim_out = dim_out
-
-    def __call__(self, *args, **kwargs):
-        return self.to_call(*args, **kwargs)
 
 
 def get_DensityEvaluator(
@@ -37,8 +29,31 @@ def get_DensityEvaluator(
         kde=kde,
         slice=slice,
     )
-    output_dim = slice.shape[0] + model.data_dim + 1
-    return DensityEvaluator(density_evaluation_function, output_dim)
+    param_dim = slice.shape[0]
+    output_dim = param_dim + model.data_dim + 1
+    return FunctionWithDimensions(
+        density_evaluation_function, param_dim, output_dim
+    )
+
+
+def get_LogDensityEvaluator(
+    model: BaseModel,
+    data_transformation: DataTransformation,
+    kde: KDE,
+    slice: np.ndarray,
+):
+    logdensity_evaluation_function = partial(
+        evaluate_log_density,
+        model=model,
+        data_transformation=data_transformation,
+        kde=kde,
+        slice=slice,
+    )
+    param_dim = slice.shape[0]
+    output_dim = (1, param_dim + model.data_dim + 1)
+    return FunctionWithDimensions(
+        logdensity_evaluation_function, param_dim, output_dim
+    )
 
 
 def evaluate_density(
@@ -118,7 +133,7 @@ def evaluate_density(
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
-        return 0.0, np.zeros(slice.shape[0] + model.data_dim + 1)
+        return np.zeros(slice.shape[0] + model.data_dim + 1)
 
     # If the parameter is within the valid ranges...
     else:
@@ -132,7 +147,7 @@ def evaluate_density(
                 f"The parameter that caused the error is: {fullParam}"
                 f"The error message is: {e}"
             )
-            return 0, np.zeros(slice.shape[0] + model.data_dim + 1)
+            return np.zeros(slice.shape[0] + model.data_dim + 1)
 
         # normalize sim_res
         transformed_sim_res = data_transformation.transform(sim_res)
@@ -157,14 +172,14 @@ def evaluate_density(
             (param, sim_res, np.array([trafo_density_evaluation]))
         )
 
-        return trafo_density_evaluation, evaluation_results
+        return evaluation_results
 
 
 def evaluate_log_density(
     param: np.ndarray,
     model: BaseModel,
     data_transformation: DataTransformation,
-    density_estimation: KDE,
+    kde: KDE,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the logarithmical parameter density as backtransformed data density using the simulation model
@@ -190,9 +205,10 @@ def evaluate_log_density(
             : sampler_results (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
-    trafo_density_evaluation, evaluation_results = evaluate_density(
-        param, model, data_transformation, density_estimation, slice
+    evaluation_results = evaluate_density(
+        param, model, data_transformation, kde, slice
     )
+    trafo_density_evaluation = evaluation_results[-1]
     if trafo_density_evaluation == 0:
         return -np.inf, evaluation_results
     return np.log(trafo_density_evaluation), evaluation_results

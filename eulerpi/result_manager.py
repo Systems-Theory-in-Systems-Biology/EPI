@@ -309,6 +309,17 @@ class ResultManager:
         ) as file:
             json.dump(information, file, ensure_ascii=False, indent=4)
 
+    def append_inference_information(self, slice, **kwargs):
+        file_path = self.get_slice_path(slice) + "/inference_information.json"
+
+        with open(file_path, "r") as file:
+            inference_information = json.load(file)
+        with open(file_path, "w") as file:
+            inference_information.update(dict(kwargs))
+            json.dump(
+                inference_information, file, ensure_ascii=False, indent=4
+            )
+
     def load_inference_results(
         self,
         slices: Optional[list[np.ndarray]] = None,
