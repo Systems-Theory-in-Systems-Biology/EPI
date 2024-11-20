@@ -14,7 +14,6 @@ from eulerpi.evaluation import KDE, GaussKDE
 from eulerpi.inferences import grid_inference, sampling_inference
 from eulerpi.models import BaseModel
 from eulerpi.result_manager import ResultManager
-from eulerpi.samplers.mcmc import start_subrun as start_mcmc_subrun
 
 
 class InferenceType(Enum):
@@ -207,7 +206,6 @@ def inference(
                 slice,
                 result_manager,
                 num_processes,
-                start_mcmc_subrun,
                 **kwargs,
             )
         else:

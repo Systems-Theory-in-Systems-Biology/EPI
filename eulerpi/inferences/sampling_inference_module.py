@@ -12,6 +12,7 @@ from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.logger import logger
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
+from eulerpi.samplers.mcmc import start_subrun as start_mcmc_subrun
 
 
 def calc_walker_acceptance(
@@ -91,7 +92,7 @@ def sampling_inference(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_processes: int,
-    start_subrun: Callable,  # TODO: If you really want to allow other samples, the function signature should be declared and probably and adapter is needed.
+    start_subrun: Callable = start_mcmc_subrun,  # TODO: If you really want to allow other samples, the function signature should be declared and probably and adapter is needed.
     num_runs: int = 1,
     num_walkers: int = 10,
     num_steps: int = 2500,
