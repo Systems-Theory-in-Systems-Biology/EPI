@@ -118,7 +118,6 @@ def sampling_inference(
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
-        TODO check: are those really log probabilities?
 
     """
     result_manager.append_inference_information(
