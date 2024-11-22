@@ -10,7 +10,6 @@ import typing
 from abc import ABC, abstractmethod
 
 import jax.numpy as jnp
-import ray
 from jax import jit
 from jax.scipy.stats import cauchy, norm
 
@@ -153,11 +152,10 @@ class GaussKDE(KDE):
     def __init__(self, data, kernel_width_rule=calc_kernel_width):
         super().__init__()
         self.kernel_width = kernel_width_rule(data)
-        self.data_ref = ray.put(data)  # Place data in Ray's object store
+        self.data = data
 
     def __call__(self, data_point):
-        data = ray.get(self.data_ref)  # Retrieve the shared data
-        return eval_kde_gauss(data, data_point, self.kernel_width)
+        return eval_kde_gauss(self.data, data_point, self.kernel_width)
 
 
 class CauchyKDE(KDE):
