@@ -20,6 +20,11 @@ class BaseModel(ABC):
     param_dim: Optional[int] = (
         None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
     )
+
+    param_names: Optional[str] = (
+        None  #: Names of the paramters of the model. If not specified parameters names are assigned automatically via ascending numbering.
+    )
+
     data_dim: Optional[int] = (
         None  #: The dimension of the data space of the model. It must be defined in the subclass.
     )
@@ -35,6 +40,13 @@ class BaseModel(ABC):
                     raise AttributeError(
                         f"Can't instantiate abstract class {cls.__name__} without {required} attribute defined"
                     )
+        # Check if param_names are set
+        if not inspect.isabstract(cls):
+            for optional in ("param_names",):
+                if not getattr(cls, optional):
+                    param_names = [
+                        f"p{number}" for number in range(cls.param_dim)
+                    ]
         return cls
 
     def __init__(
