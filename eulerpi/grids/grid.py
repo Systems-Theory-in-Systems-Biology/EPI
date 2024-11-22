@@ -4,9 +4,8 @@ import numpy as np
 
 
 class Grid(ABC):
-    def __init__(self, limits, detail):
-        self.limits = limits
-        self.detail = detail
+    def __init__(self, limits):
+        self.limits = np.atleast_2d(limits)
 
     @property
     @abstractmethod

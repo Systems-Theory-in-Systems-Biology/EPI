@@ -16,8 +16,6 @@ from eulerpi.logger import logger
 
 from .grid import Grid
 
-# from .grid_factory import register_grid
-
 
 def basis_1d(
     points1D: np.ndarray, centre1D: np.double, level: int
@@ -93,8 +91,6 @@ def meshgrid2matrix(meshgrid: list) -> np.ndarray:
     return matrix
 
 
-# TODO: Fix num_grid_points, grid_detail, num_levels interface problem
-# @register_grid("SPARSE")
 class SparseGrid(Grid):
     """Each object of this class respresents a sparse grid.
     In this implementation, a sparse grid is a list of Smolnyak-subspaces.
@@ -128,9 +124,8 @@ class SparseGrid(Grid):
         logger.warning(
             "The inference_sparse_grid function is not tested and not recommended for use."
         )
-        limits = np.atleast_2d(limits)
-        super().__init__(limits, max_level_sum)
-        dim = limits.shape[0]
+        super().__init__(limits)
+        dim = self.limits.shape[0]
         self.dim = dim
         self.max_level_sum = max_level_sum
 

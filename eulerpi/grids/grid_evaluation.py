@@ -22,10 +22,10 @@ def evaluate_function_on_grid_points_multiprocessing(
     grid_points: np.ndarray,
     func: FunctionWithDimensions,
     num_processes: int,
-    load_balancing_safety_faktor: int = 1,
+    load_balancing_safety_factor: int = 1,
 ):
     n_points = grid_points.shape[0]
-    n_chunks = min(n_points, num_processes * load_balancing_safety_faktor)
+    n_chunks = min(n_points, num_processes * load_balancing_safety_factor)
     grid_chunks = np.array_split(grid_points, n_chunks)
 
     with get_context("spawn").Pool(processes=num_processes) as pool:

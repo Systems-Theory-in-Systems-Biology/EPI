@@ -3,7 +3,6 @@ from typing import Union
 import numpy as np
 
 from .grid import Grid
-from .grid_factory import register_grid
 
 
 def generate_equidistant_grid(
@@ -34,7 +33,6 @@ def generate_equidistant_grid(
         return mesh
 
 
-@register_grid("EQUIDISTANT")
 class EquidistantGrid(Grid):
     """Grid with equal spacing"""
 
@@ -45,14 +43,15 @@ class EquidistantGrid(Grid):
             num_grid_points(np.ndarray): The number of grid points for each dimension.
             limits(np.ndarray): The limits for each dimension.
         """
+        super().__init__(limits)
         if isinstance(num_grid_points, int):
             num_grid_points = (
-                np.ones((limits.shape[0]), dtype=int) * num_grid_points
+                np.ones((self.limits.shape[0]), dtype=int) * num_grid_points
             )
-        limits = np.atleast_2d(limits)
-        super().__init__(limits, num_grid_points)
-        flatten = True
-        self.mesh = generate_equidistant_grid(num_grid_points, limits, flatten)
+        self.num_grid_points = num_grid_points
+        self.mesh = generate_equidistant_grid(
+            self.num_grid_points, self.limits, flatten=True
+        )
 
     @property
     def grid_points(self):

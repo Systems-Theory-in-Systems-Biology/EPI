@@ -1,4 +1,6 @@
 # TODO: Import Path from pathlib?
+# TODO: Rework result manager, the argument and member slices should be removed
+
 import json
 import os
 import shutil
@@ -63,7 +65,6 @@ class ResultManager:
             str: The name of the folder for the current slice.
 
         """
-
         return "Slice_" + "".join(["Q" + str(i) for i in slice])
 
     def get_slice_path(self, slice: np.ndarray) -> str:
@@ -280,7 +281,7 @@ class ResultManager:
                 num_steps(int): The number of steps that were performed. Only for mcmc inference.
                 num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.
                 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
-                load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
+                load_balancing_safety_factor(int): The safety factor that was used for load balancing. Only for dense grid inference.
                 num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.
                 grid_type(GridType): The type of grid that was used: either equidistant, chebyshev, or sparse
                 num_levels(int): The number of sparse grid levels that were used. Only for sparse grid inference.
@@ -422,7 +423,8 @@ class ResultManager:
         num_walkers = inference_information["num_walkers"]
 
         # load samples from raw chains
-        for i in range(inference_information["num_runs"]):
+        num_runs = self.count_sub_runs(slice)
+        for i in range(num_runs):
             density_evals = np.loadtxt(
                 results_path + f"/DensityEvals/density_evals_{i}.csv",
                 delimiter=",",

@@ -1,7 +1,6 @@
-import warnings
+import os
 from functools import partial
-from os import path
-from typing import Callable, Optional, Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 
@@ -12,7 +11,8 @@ from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.logger import logger
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
-from eulerpi.samplers.mcmc import start_subrun as start_mcmc_subrun
+from eulerpi.samplers.emcee_sampler import EmceeSampler
+from eulerpi.samplers.sampler import Sampler
 
 
 def calc_walker_acceptance(
@@ -85,6 +85,19 @@ def get_LogDensityEvaluator(
     )
 
 
+def _load_sampler_position(position_path: os.PathLike):
+    # If there are current walker positions defined by runs before this one, use them.
+
+    if os.path.isfile(position_path):
+        initial_walker_positions = np.loadtxt(
+            position_path,
+            delimiter=",",
+            ndmin=2,
+        )
+        return initial_walker_positions
+    return None
+
+
 def sampling_inference(
     model: BaseModel,
     data_transformation: DataTransformation,
@@ -92,8 +105,7 @@ def sampling_inference(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_processes: int,
-    start_subrun: Callable = start_mcmc_subrun,  # TODO: If you really want to allow other samples, the function signature should be declared and probably and adapter is needed.
-    num_runs: int = 1,
+    sampler: Sampler = None,
     num_walkers: int = 10,
     num_steps: int = 2500,
     num_burn_in_samples: Optional[int] = None,
@@ -110,7 +122,6 @@ def sampling_inference(
         slice (np.ndarray): slice of the parameter space which will be sampled
         result_manager (ResultManager): ResultManager which will store the results
         num_processes (int): number of parallel threads.
-        num_runs (int): number of stored sub runs.
         num_walkers (int): number of particles in the particle swarm sampler.
         num_steps (int): number of samples each particle performs before storing the sub run.
         num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
@@ -123,7 +134,6 @@ def sampling_inference(
     """
     result_manager.append_inference_information(
         slice=slice,
-        num_runs=num_runs,
         num_walkers=num_walkers,
         num_steps=num_steps,
         num_burn_in_samples=num_burn_in_samples,
@@ -136,66 +146,53 @@ def sampling_inference(
     )
 
     if num_burn_in_samples is None:
-        num_burn_in_samples = int(num_runs * num_steps * 0.1)
+        num_burn_in_samples = int(num_steps * 0.1)
     if thinning_factor is None:
         thinning_factor = 1
 
     sampling_dim = slice.shape[0]
 
-    # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-    # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
-    d_min = np.minimum(
-        model.central_param - model.param_limits[:, 0],
-        model.param_limits[:, 1] - model.central_param,
-    )
-    initial_walker_positions = model.central_param[slice] + d_min[slice] * (
-        np.random.rand(num_walkers, sampling_dim) - 0.5
-    )
+    if sampler is None:
+        sampler = EmceeSampler(sampling_dim=sampling_dim, logger=logger)
+
+    position_path = result_manager.get_slice_path(slice) + "/currentPos.csv"
+    if last_position := _load_sampler_position(position_path) is not None:
+        initial_walker_positions = last_position
+        logger.info(
+            f"Continue sampling from saved sampler position in {position_path}"
+        )
+    else:
+        # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
+        # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
+        d_min = np.minimum(
+            model.central_param - model.param_limits[:, 0],
+            model.param_limits[:, 1] - model.central_param,
+        )
+        initial_walker_positions = model.central_param[slice] + d_min[
+            slice
+        ] * (np.random.rand(num_walkers, sampling_dim) - 0.5)
 
     # Count and print how many runs have already been performed for this model
     num_existing_files = result_manager.count_sub_runs(slice)
     logger.debug(f"{num_existing_files} existing files found")
 
-    # Loop over the remaining sub runs and continue the counter where it ended.
-    for i_subrun in range(num_existing_files, num_existing_files + num_runs):
-        logger.info(f"Subrun {i_subrun} of {num_runs}")
+    # Run the sampler.
+    logger.info(f"Starting sampler run {num_existing_files}")
+    sampler_results, final_walker_positions = sampler.run(
+        logdensity_blob_function,
+        initial_walker_positions,
+        num_walkers,
+        num_steps,
+        num_processes,
+    )
 
-        # If there are current walker positions defined by runs before this one, use them.
-        position_path = (
-            result_manager.get_slice_path(slice) + "/currentPos.csv"
-        )
-        if path.isfile(position_path):
-            initial_walker_positions = np.loadtxt(
-                position_path,
-                delimiter=",",
-                ndmin=2,
-            )
-            logger.info(
-                f"Continue sampling from saved sampler position in {position_path}"
-            )
-
-        # Run the sampler.
-        with warnings.catch_warnings():
-            # This warning is raised when the model returned a -inf value for the log probability, e.g. because the parameters are out of bounds.
-            # We want to ignore this warning, because the sampler will handle this case correctly.
-            # NaN values and other errors are not affected by this.
-            warnings.filterwarnings(
-                "ignore",
-                module="red_blue",
-                category=RuntimeWarning,
-                message="invalid value encountered in scalar subtract",
-            )
-            sampler_results, final_walker_positions = start_subrun(
-                logdensity_blob_function,
-                initial_walker_positions,
-                num_walkers,
-                num_steps,
-                num_processes,
-            )
-
-        result_manager.save_subrun(
-            model, slice, i_subrun, sampler_results, final_walker_positions
-        )
+    result_manager.save_subrun(
+        model,
+        slice,
+        num_existing_files,
+        sampler_results,
+        final_walker_positions,
+    )
 
     (
         overall_params,
@@ -212,9 +209,8 @@ def sampling_inference(
     )
 
     if get_walker_acceptance:
-        num_burn_in_steps = int(num_steps * num_runs * 0.01)
         acceptance = calc_walker_acceptance(
-            model, slice, num_walkers, num_burn_in_steps, result_manager
+            model, slice, num_walkers, num_burn_in_samples, result_manager
         )
         logger.info(f"Acceptance rate for slice {slice}: {acceptance}")
 

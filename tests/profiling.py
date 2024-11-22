@@ -27,16 +27,17 @@ def profiling_with_slices(inference_type):
     slice2 = np.array([1, 2])
     slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
-    inference(
-        model,
-        data,
-        inference_type,
-        slices=slices,
-    )
+    for slice in slices:
+        inference(
+            model,
+            data,
+            inference_type,
+            slice=slice,
+            num_steps=5000,
+        )
 
 
 if __name__ == "__main__":
     with jax.log_compiles():
         profiling_with_slices(InferenceType.SAMPLING)
         profiling_with_slices(InferenceType.GRID)
-    # profiling_with_slices(InferenceType.GRID)

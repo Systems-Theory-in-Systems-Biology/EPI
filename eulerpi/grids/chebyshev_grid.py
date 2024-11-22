@@ -4,7 +4,6 @@ import numpy as np
 from numpy.polynomial.chebyshev import chebpts1
 
 from .grid import Grid
-from .grid_factory import register_grid
 
 
 def generate_chebyshev_grid(
@@ -36,7 +35,6 @@ def generate_chebyshev_grid(
         return mesh
 
 
-@register_grid("CHEBYSHEV")
 class ChebyshevGrid(Grid):
     """The Chebyshev grid is a tensor product of Chebyshev polynomial roots. They are optimal for polynomial interpolation and quadrature."""
 
@@ -47,14 +45,16 @@ class ChebyshevGrid(Grid):
             num_grid_points(np.ndarray): The number of grid points for each dimension.
             limits(np.ndarray): The limits for each dimension.
         """
+        super().__init__(limits)
+
         if isinstance(num_grid_points, int):
             num_grid_points = (
-                np.ones((limits.shape[0]), dtype=int) * num_grid_points
+                np.ones((self.limits.shape[0]), dtype=int) * num_grid_points
             )
-        limits = np.atleast_2d(limits)
-        super().__init__(limits, num_grid_points)
-        flatten = True
-        self.mesh = generate_chebyshev_grid(num_grid_points, limits, flatten)
+        self.num_grid_points = num_grid_points
+        self.mesh = generate_chebyshev_grid(
+            self.num_grid_points, self.limits, flatten=True
+        )
 
     @property
     def grid_points(self):

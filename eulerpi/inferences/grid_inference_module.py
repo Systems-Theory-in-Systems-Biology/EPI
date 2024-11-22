@@ -7,11 +7,12 @@ from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.function_wrappers import FunctionWithDimensions
+from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.grids.grid import Grid
 from eulerpi.grids.grid_evaluation import (
     evaluate_function_on_grid_points_iterative,
     evaluate_function_on_grid_points_multiprocessing,
 )
-from eulerpi.grids.grid_factory import construct_grid
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
 
@@ -52,12 +53,9 @@ def grid_inference(
     slice: np.ndarray,
     result_manager: ResultManager,
     num_processes: int,
-    grid_type: str = "EQUIDISTANT",
-    load_balancing_safety_faktor: int = 1,
-    # grid_detail: Union[int, np.ndarray] = 5,
-    # num_levels: int = 5,
+    grid: Grid = None,
     num_grid_points=10,
-    **kwargs,
+    load_balancing_safety_factor: int = 1,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """This function runs a dense grid evaluation for the given model and data.
 
@@ -69,9 +67,9 @@ def grid_inference(
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
         grid_detail(Union[int, list[np.ndarray]]): The number of grid points for each dimension or another parameter defining the grid resolution
         grid_type(str): The type of grid that should be used. (Default value = "EQUIDISTANT")
-        load_balancing_safety_faktor(int): Split the grid into num_processes * load_balancing_safety_faktor chunks.
+        load_balancing_safety_factor(int): Split the grid into num_processes * load_balancing_safety_factor chunks.
             This will ensure that each process can be loaded with a similar amount of work if the run time difference between the evaluations
-            does not exceed the load_balancing_safety_faktor. (Default value = 1)
+            does not exceed the load_balancing_safety_factor. (Default value = 1)
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the corresponding simulation results, the corresponding density
@@ -84,18 +82,14 @@ def grid_inference(
     """
     result_manager.append_inference_information(
         slice=slice,
-        grid_type=grid_type,
-        load_balancing_safety_faktor=load_balancing_safety_faktor,
+        grid=type(grid).__name__,
+        load_balancing_safety_factor=load_balancing_safety_factor,
         num_grid_points=num_grid_points,
     )
 
-    limits = np.atleast_2d(model.param_limits)[slice, :]
-    if grid_type == "SPARSE" and num_grid_points > 8:
-        raise ValueError(
-            "Sparse Grid with more than 8 levels is not supported for now"
-        )
-
-    grid = construct_grid(grid_type, limits, num_grid_points)
+    if grid is None:
+        limits = np.atleast_2d(model.param_limits)[slice, :]
+        grid = EquidistantGrid(limits, num_grid_points)
     density_evaluator = get_DensityEvaluator(
         model, data_transformation, kde, slice
     )
@@ -106,7 +100,7 @@ def grid_inference(
             grid_points,
             density_evaluator,
             num_processes,
-            load_balancing_safety_faktor,
+            load_balancing_safety_factor,
         )
     else:
         results = evaluate_function_on_grid_points_iterative(

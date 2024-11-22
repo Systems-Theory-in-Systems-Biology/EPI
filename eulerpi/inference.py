@@ -3,7 +3,7 @@
 import os
 import pathlib
 from enum import Enum
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import jax.numpy as jnp
 import numpy as np
@@ -27,7 +27,7 @@ def inference(
     model: BaseModel,
     data: Union[str, os.PathLike, np.ndarray],
     inference_type: InferenceType = InferenceType.SAMPLING,
-    slices: Optional[list[np.ndarray]] = None,
+    slice: Optional[np.ndarray] = None,
     num_processes: Optional[int] = None,
     run_name: str = "default_run",
     result_manager: ResultManager = None,
@@ -35,12 +35,7 @@ def inference(
     data_transformation: DataTransformation = None,
     kde: KDE = None,
     **kwargs,
-) -> Tuple[
-    Dict[str, np.ndarray],
-    Dict[str, np.ndarray],
-    Dict[str, np.ndarray],
-    ResultManager,
-]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultManager]:
     """Starts the parameter inference for the given model and data.
 
     Args:
@@ -162,11 +157,12 @@ def inference(
             f"The kde must be an instance of a subclass of KDE. It is of type {type(kde)}."
         )
 
-    slices = slices or [
-        np.arange(model.param_dim)
-    ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
+    if slice is None:
+        slice = np.arange(
+            model.param_dim
+        )  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
     result_manager = result_manager or ResultManager(
-        model.name, run_name, slices
+        model.name, run_name, [slice]
     )  # If no result_manager is given, create one with default paths
 
     if not continue_sampling:
@@ -176,17 +172,12 @@ def inference(
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
 
-    # create the return dictionaries
-    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
-
-    for slice in slices:
-        slice_name = result_manager.get_slice_name(slice)
         result_manager.save_inference_information(
             slice=slice,
             model=model,
             inference_type=inference_type.name,
             num_processes=num_processes,
-            **kwargs,
+            # **kwargs,
         )
         if inference_type == InferenceType.GRID:
             params, sim_results, densities = grid_inference(
@@ -213,13 +204,4 @@ def inference(
                 f"The inference type {inference_type} is not implemented yet."
             )
 
-        overall_params[slice_name] = params
-        overall_sim_results[slice_name] = sim_results
-        overall_density_evals[slice_name] = densities
-
-    return (
-        overall_params,
-        overall_sim_results,
-        overall_density_evals,
-        result_manager,
-    )
+    return params, sim_results, densities, result_manager

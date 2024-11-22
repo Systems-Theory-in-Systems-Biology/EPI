@@ -7,11 +7,9 @@ import pytest
 
 from eulerpi.examples.corona import CoronaArtificial
 from eulerpi.inference import InferenceType, inference
-from eulerpi.models import ArtificialModelInterface, BaseModel
+
 
 # Parametrize the test to run for each inference type
-
-
 @pytest.mark.parametrize(
     "inference_type",
     InferenceType._member_map_.values(),
@@ -19,15 +17,11 @@ from eulerpi.models import ArtificialModelInterface, BaseModel
 )
 def test_slices(inference_type):
     """ """
-    model: BaseModel = CoronaArtificial()
+    model = CoronaArtificial()
 
-    # generate artificial data
-    if isinstance(model, ArtificialModelInterface):
-        num_data_points = 100
-        params = model.generate_artificial_params(num_data_points)
-        data = model.generate_artificial_data(params)
-    else:
-        raise Exception("This test is only for artificial data")
+    num_data_points = 100
+    params = model.generate_artificial_params(num_data_points)
+    data = model.generate_artificial_data(params)
 
     slice1 = np.array([0])
     slice2 = np.array([1, 2])
@@ -37,10 +31,11 @@ def test_slices(inference_type):
         kwargs = {"num_steps": 100}
     else:
         kwargs = {}
-    inference(
-        model,
-        data,
-        inference_type,
-        slices=slices,
-        **kwargs,
-    )
+    for slice in slices:
+        inference(
+            model,
+            data,
+            inference_type,
+            slice=slice,
+            **kwargs,
+        )
