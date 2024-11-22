@@ -16,8 +16,18 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Bug in module B that caused a crash
-
+  
 ## [Unreleased]
+
+### Added
+
+
+### Changed
+
+
+### Fixed
+
+## [0.10.0] - 2024-11-22
 
 ### Added
 
@@ -36,8 +46,6 @@ All notable changes to this project will be documented in this file.
 - Renamed the abstract base `Model` class to `BaseModel`. The usage of `Model` is still supported, but deprecated, and possibly removed in a future release.
 - Splitted the file model.py into multiple modules, one for each class, located in the subpackage `eulerpi.core.models`. The imports change from `eulerpi.core.model` to `eulerpi.core.models`.
 - Removed the function `is_artificial` from the (Base)Model class. Use `isinstance(custom_model, ArtificialModelInterface)` or `issubclass(CustomModel, ArtificialModelInterface)` instead.
-
-### Fixed
 
 ## [0.9.1] - 2024-09-08
 
