@@ -15,7 +15,8 @@ from eulerpi.core.data_transformations import (
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.core.result_managers.output_writer import ResultManager
+from eulerpi.core.result_managers.path_gen import get_slice_name
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
 
@@ -26,7 +27,7 @@ def inference(
     inference_type: InferenceType = InferenceType.MCMC,
     slices: Optional[list[np.ndarray]] = None,
     num_processes: Optional[int] = None,
-    run_name: str = "default_run",
+    run_name: Optional[str] = None,
     result_manager: ResultManager = None,
     continue_sampling: bool = False,
     data_transformation: DataTransformation = None,
@@ -45,7 +46,7 @@ def inference(
         inference_type(InferenceType, optional): The type of inference to be used. (Default value = InferenceType.MCMC)
         slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
         num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = Non)
-        run_name(str): The name of the run. (Default value = "default_run")
+        run_name(str, optional): The name of the run. (Default value = None gives "default_run_[slice_name]")
         result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
         continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)
         data_transformation(DataTransformation): The data transformation to use. If None is passed, a DataNormalization will be applied. Pass DataIdentity to avoid the transformation of the data. (Default value = None)
@@ -153,6 +154,10 @@ def inference(
     slices = slices or [
         np.arange(model.param_dim)
     ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
+
+    if not run_name:
+        run_name = f"default_run_{get_slice_name(slice)}"
+
     result_manager = result_manager or ResultManager(
         model.name, run_name, slices
     )  # If no result_manager is given, create one with default paths

@@ -15,7 +15,7 @@ from matplotlib import axes
 
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.core.result_managers.output_writer import ResultManager
 
 # general plotting function for joint runs
 

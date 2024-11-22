@@ -24,7 +24,7 @@ from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.core.result_managers.output_writer import ResultManager
 from eulerpi.core.transformations import eval_log_transformed_density
 
 
