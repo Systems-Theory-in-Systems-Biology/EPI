@@ -112,10 +112,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="eulerpi.core.models.jax_model.html#eulerpi.core.models.jax_model.add_autodiff">add_autodiff() (in module eulerpi.core.models.jax_model)</a>
 </li>
-      <li><a href="eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.allPoints">allPoints (SparseGrid attribute)</a>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.AffineTransformation">AffineTransformation (class in eulerpi.core.data_transformations)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.allPoints">allPoints (SparseGrid attribute)</a>
+</li>
       <li><a href="eulerpi.core.models.html#eulerpi.core.models.ArtificialModelInterface">ArtificialModelInterface (class in eulerpi.core.models)</a>
 
       <ul>
@@ -256,6 +258,14 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataIdentity">DataIdentity (class in eulerpi.core.data_transformations)</a>
+</li>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataNormalization">DataNormalization (class in eulerpi.core.data_transformations)</a>
+</li>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataPCA">DataPCA (class in eulerpi.core.data_transformations)</a>
+</li>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataTransformation">DataTransformation (class in eulerpi.core.data_transformations)</a>
+</li>
       <li><a href="eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_application_folder_structure">delete_application_folder_structure() (ResultManager method)</a>
 </li>
       <li><a href="eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_slice_folder_structure">delete_slice_folder_structure() (ResultManager method)</a>
@@ -667,10 +677,18 @@
 <h2 id="J">J</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="eulerpi.core.models.base_model.html#eulerpi.core.models.base_model.BaseModel.jacobian">jacobian() (BaseModel method)</a>, <a href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.jacobian">[1]</a>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.AffineTransformation.jacobian">jacobian() (AffineTransformation method)</a>
 
       <ul>
+        <li><a href="eulerpi.core.models.base_model.html#eulerpi.core.models.base_model.BaseModel.jacobian">(BaseModel method)</a>, <a href="eulerpi.core.models.html#eulerpi.core.models.BaseModel.jacobian">[1]</a>
+</li>
         <li><a href="tests.test_logging.html#tests.test_logging.CrashModel.jacobian">(CrashModel method)</a>
+</li>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataIdentity.jacobian">(DataIdentity method)</a>
+</li>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataPCA.jacobian">(DataPCA method)</a>
+</li>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataTransformation.jacobian">(DataTransformation method)</a>
 </li>
         <li><a href="eulerpi.examples.cpp.python_reference_plants.html#eulerpi.examples.cpp.python_reference_plants.ExternalPlant.jacobian">(ExternalPlant method)</a>
 </li>
@@ -1073,8 +1091,6 @@
         <li><a href="tests.html#module-tests">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     tests.conftest
 
@@ -1082,6 +1098,8 @@
         <li><a href="tests.conftest.html#module-tests.conftest">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     tests.profiling
 
@@ -1192,6 +1210,16 @@
 
       <ul>
         <li><a href="tests.test_transformations.html#module-tests.test_transformations">module</a>
+</li>
+      </ul></li>
+      <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.AffineTransformation.transform">transform() (AffineTransformation method)</a>
+
+      <ul>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataIdentity.transform">(DataIdentity method)</a>
+</li>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataPCA.transform">(DataPCA method)</a>
+</li>
+        <li><a href="eulerpi.core.data_transformations.html#eulerpi.core.data_transformations.DataTransformation.transform">(DataTransformation method)</a>
 </li>
       </ul></li>
       <li><a href="eulerpi.examples.simple_models.html#eulerpi.examples.simple_models.LinearODE.TRUE_PARAM_LIMITS">TRUE_PARAM_LIMITS (LinearODE attribute)</a>
