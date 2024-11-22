@@ -8,3 +8,11 @@ from .data_identity import DataIdentity as DataIdentity
 from .data_normalization import DataNormalization as DataNormalization
 from .data_pca import DataPCA as DataPCA
 from .data_transformation import DataTransformation as DataTransformation
+
+__all__ = [
+    "AffineTransformation",
+    "DataIdentity",
+    "DataNormalization",
+    "DataPCA",
+    "DataTransformation",
+]
