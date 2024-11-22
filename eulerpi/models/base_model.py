@@ -64,7 +64,7 @@ class BaseModel(ABC):
 
             import numpy as np
             from eulerpi.examples.heat import Heat
-            from eulerpi.core.models import JaxModel
+            from eulerpi.models import JaxModel
             from jax import vmap
 
             # instantiate the heat model
@@ -89,13 +89,13 @@ class BaseModel(ABC):
 
     @abstractmethod
     def jacobian(self, param: np.ndarray) -> np.ndarray:
-        """Evaluates the jacobian of the :func:`~eulerpi.core.models.BaseModel.forward` method.
+        """Evaluates the jacobian of the :func:`~eulerpi.models.BaseModel.forward` method.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.core.models.BaseModel.forward` method with respect to the parameters.
+            np.ndarray: The jacobian for the variables returned by the :func:`~eulerpi.models.BaseModel.forward` method with respect to the parameters.
 
         Examples:
 
@@ -103,7 +103,7 @@ class BaseModel(ABC):
 
             import numpy as np
             from eulerpi.examples.heat import Heat
-            from eulerpi.core.models import JaxModel
+            from eulerpi.models import JaxModel
             from jax import vmap
 
             # instantiate the heat model
@@ -137,14 +137,14 @@ class BaseModel(ABC):
         self, param: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Evaluates the jacobian and the forward pass of the model at the same time. If the method is not overwritten in a subclass it,
-        it simply calls :func:`~eulerpi.core.models.BaseModel.forward` and :func:`~eulerpi.core.models.BaseModel.jacobian`.
+        it simply calls :func:`~eulerpi.models.BaseModel.forward` and :func:`~eulerpi.models.BaseModel.jacobian`.
         It can be vectorized in the same way as the forward and jacobian methods.
 
         Args:
             param(np.ndarray): The parameter for which the jacobian should be evaluated.
 
         Returns:
-            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~eulerpi.core.models.BaseModel.forward` method with respect to the parameters.
+            typing.Tuple[np.ndarray, np.ndarray]: The data generated from the parameter and the jacobian for the variables returned by the :func:`~eulerpi.models.BaseModel.forward` method with respect to the parameters.
 
         """
 

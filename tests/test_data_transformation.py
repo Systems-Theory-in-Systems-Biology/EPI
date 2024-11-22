@@ -1,6 +1,6 @@
 import numpy as np
 
-from eulerpi.core.data_transformations import (
+from eulerpi.data_transformations import (
     AffineTransformation,
     DataIdentity,
     DataNormalization,

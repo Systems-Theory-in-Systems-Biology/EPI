@@ -4,7 +4,7 @@ import diffrax
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.models import ArtificialModelInterface, JaxModel
+from eulerpi.models import ArtificialModelInterface, JaxModel
 
 
 def heat_rhs(t: float, u: jnp.ndarray, args: tuple | list) -> jnp.ndarray:

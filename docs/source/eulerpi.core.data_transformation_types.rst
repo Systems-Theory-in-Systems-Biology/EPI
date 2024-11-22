@@ -1,7 +1,7 @@
-eulerpi.core.data\_transformation\_types module
+eulerpi.data\_transformation\_types module
 ===============================================
 
-.. automodule:: eulerpi.core.data_transformation_types
+.. automodule:: eulerpi.data_transformation_types
    :members:
    :undoc-members:
    :show-inheritance:

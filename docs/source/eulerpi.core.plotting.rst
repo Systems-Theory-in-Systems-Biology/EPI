@@ -1,7 +1,7 @@
-eulerpi.core.plotting module
+eulerpi.plotting module
 ============================
 
-.. automodule:: eulerpi.core.plotting
+.. automodule:: eulerpi.plotting
    :members:
    :undoc-members:
    :show-inheritance:

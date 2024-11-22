@@ -1,4 +1,6 @@
 # TODO: Import Path from pathlib?
+# TODO: Rework result manager, the argument and member slices should be removed
+
 import json
 import os
 import shutil
@@ -9,9 +11,8 @@ import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
 
-from eulerpi import logger
-from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.models import BaseModel
+from eulerpi.logger import logger
+from eulerpi.models import BaseModel
 
 
 class ResultManager:
@@ -29,7 +30,7 @@ class ResultManager:
         self.run_name = run_name
         self.slices = slices
 
-    def count_emcee_sub_runs(self, slice: np.ndarray) -> int:
+    def count_sub_runs(self, slice: np.ndarray) -> int:
         """This data organization function counts how many sub runs are saved for the specified scenario.
 
         Args:
@@ -64,7 +65,6 @@ class ResultManager:
             str: The name of the folder for the current slice.
 
         """
-
         return "Slice_" + "".join(["Q" + str(i) for i in slice])
 
     def get_slice_path(self, slice: np.ndarray) -> str:
@@ -178,7 +178,7 @@ class ResultManager:
         path = "Applications/" + self.model_name
         return path
 
-    def save_run(
+    def save_subrun(
         self,
         model: BaseModel,
         slice: np.ndarray,
@@ -186,7 +186,7 @@ class ResultManager:
         sampler_results: np.ndarray,
         final_walker_positions: np.ndarray,
     ) -> None:
-        """Saves the results of a single run of the emcee particle swarm sampler.
+        """Saves the results of a single sub run of the emcee particle swarm sampler.
         sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them
         as seperate files in the folders 'Params' and'SimResults' and 'DensityEvals'.
 
@@ -264,7 +264,7 @@ class ResultManager:
         self,
         slice: np.ndarray,
         model: BaseModel,
-        inference_type: InferenceType,
+        inference_type: str,
         num_processes: int,
         **kwargs,
     ) -> None:
@@ -273,7 +273,7 @@ class ResultManager:
         Args:
             slice(np.ndarray): The slice for which the results will be saved.
             model(BaseModel): The model for which the results will be saved.
-            inference_type(InferenceType): The type of inference that was performed.
+            inference_type(str): The type of inference that was performed.
             num_processes(int): The number of processes that were used for the inference.
             **kwargs: Additional information about the inference run.
                 num_runs(int): The number of runs that were performed. Only for mcmc inference.
@@ -281,9 +281,9 @@ class ResultManager:
                 num_steps(int): The number of steps that were performed. Only for mcmc inference.
                 num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.
                 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
-                load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
+                load_balancing_safety_factor(int): The safety factor that was used for load balancing. Only for dense grid inference.
                 num_grid_points(np.ndarray): The number of grid points that were used. Only for dense grid inference.
-                dense_grid_type(DenseGridType): The type of dense grid that was used: either equidistant or chebyshev. Only for dense grid inference.
+                grid_type(GridType): The type of grid that was used: either equidistant, chebyshev, or sparse
                 num_levels(int): The number of sparse grid levels that were used. Only for sparse grid inference.
 
         Raises:
@@ -293,18 +293,15 @@ class ResultManager:
         information = {
             "model": model.name,
             "slice": self.get_slice_name(slice),
-            "inference_type": inference_type.name,
+            "inference_type": inference_type,
             "num_processes": num_processes,
         }
         information.update(dict(kwargs))
         if "num_grid_points" in information:
-            information["num_grid_points"] = np.array2string(
+            information["num_grid_points"] = str(
                 information["num_grid_points"]
             )
-        if "dense_grid_type" in information:
-            information["dense_grid_type"] = information[
-                "dense_grid_type"
-            ].name
+
         # save information as json file
         with open(
             self.get_slice_path(slice) + "/inference_information.json",
@@ -312,6 +309,17 @@ class ResultManager:
             encoding="utf-8",
         ) as file:
             json.dump(information, file, ensure_ascii=False, indent=4)
+
+    def append_inference_information(self, slice, **kwargs):
+        file_path = self.get_slice_path(slice) + "/inference_information.json"
+
+        with open(file_path, "r") as file:
+            inference_information = json.load(file)
+        with open(file_path, "w") as file:
+            inference_information.update(dict(kwargs))
+            json.dump(
+                inference_information, file, ensure_ascii=False, indent=4
+            )
 
     def load_inference_results(
         self,
@@ -371,8 +379,10 @@ class ResultManager:
         with open(results_path + "/inference_information.json", "r") as file:
             inference_information = json.load(file)
 
-        # dense grid or sparse grid inference: load directly from overall results
-        if inference_information["inference_type"] != "MCMC":
+        # grid inference: load directly from overall results
+        if (
+            inference_information["inference_type"] == "GRID"
+        ):  # TODO: Specialice result manager for the Different samplings? Depending on the details here is bad
             if num_burn_in_samples is not None:
                 logger.info(
                     f"For inference type {inference_information['inference_type']}, num_burn_in_samples is ignored."
@@ -413,7 +423,8 @@ class ResultManager:
         num_walkers = inference_information["num_walkers"]
 
         # load samples from raw chains
-        for i in range(inference_information["num_runs"]):
+        num_runs = self.count_sub_runs(slice)
+        for i in range(num_runs):
             density_evals = np.loadtxt(
                 results_path + f"/DensityEvals/density_evals_{i}.csv",
                 delimiter=",",

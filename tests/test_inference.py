@@ -2,11 +2,11 @@ import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eulerpi.core.dense_grid import generate_regular_grid
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
-from eulerpi.core.result_manager import ResultManager
+from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
+from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.inference import InferenceType, inference
+from eulerpi.result_manager import ResultManager
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
@@ -19,8 +19,7 @@ def integrate(z, x, y):
 # TODO: Generalize, currently only works for dense vs mcmc
 def test_inference_mcmc_dense_exact(
     num_data_points=1000,
-    num_steps=1500,
-    num_runs=2,  # Please keep this higher than 1. This tests is also responsible for testing whether the MCMC sampler and result_manager can concatenate multiple runs.
+    num_steps=3000,
     num_grid_points=50,
 ):
     # define the model
@@ -32,19 +31,18 @@ def test_inference_mcmc_dense_exact(
 
     # run EPI with all inference types
     result_params, result_sim_res, result_densities = {}, {}, {}
-    full_slice = [np.arange(model.param_dim)]
+    full_slice = np.arange(model.param_dim)
     for inference_type in InferenceType._member_map_.values():
         result_manager = ResultManager(
-            model.name, str(inference_type), full_slice
+            model.name, str(inference_type), [full_slice]
         )
-        if InferenceType(inference_type) == InferenceType.MCMC:
+        if InferenceType(inference_type) == InferenceType.SAMPLING:
             inference(
                 model,
                 data,
                 inference_type,
                 result_manager=result_manager,
                 num_steps=num_steps,
-                num_runs=num_runs,
             )
             # Take every second sample and skip the first 5% of the chain
             (
@@ -52,9 +50,9 @@ def test_inference_mcmc_dense_exact(
                 result_sim_res[inference_type],
                 result_densities[inference_type],
             ) = result_manager.load_inference_results(
-                full_slice, num_steps * num_runs // 20, 2
+                [full_slice], num_steps // 20, 2
             )
-        elif InferenceType(inference_type) == InferenceType.DENSE_GRID:
+        elif InferenceType(inference_type) == InferenceType.GRID:
             inference(
                 model,
                 data,
@@ -66,7 +64,7 @@ def test_inference_mcmc_dense_exact(
                 result_params[inference_type],
                 result_sim_res[inference_type],
                 result_densities[inference_type],
-            ) = result_manager.load_inference_results(full_slice)
+            ) = result_manager.load_inference_results(slices=[full_slice])
         else:
             # skip other inference types
             continue
@@ -109,21 +107,19 @@ def test_inference_mcmc_dense_exact(
     lims = LinearODE.PARAM_LIMITS
     x = np.linspace(lims[0, 0], lims[0, 1], num_grid_points)
     y = np.linspace(lims[1, 0], lims[1, 1], num_grid_points)
-    grid = generate_regular_grid(
-        np.array([num_grid_points, num_grid_points]), lims, flatten=True
-    )
+    grid = EquidistantGrid(
+        lims, np.array([num_grid_points, num_grid_points])
+    ).grid_points
     grid_2d = grid.reshape(num_grid_points, num_grid_points, model.param_dim)
-    # grid = results[InferenceType.DENSE_GRID][2]
+    # grid = results[InferenceType.GRID][2]
 
-    mcmc_params = result_params[InferenceType.MCMC]["Slice_Q0Q1"]
-    mcmc_kde = eval_kde_gauss(
-        mcmc_params, grid, calc_kernel_width(mcmc_params)
-    )
+    mcmc_params = result_params[InferenceType.SAMPLING]["Slice_Q0Q1"]
+    mcmc_kde = GaussKDE(mcmc_params)(grid)
 
-    dense_grid_pdf = result_densities[InferenceType.DENSE_GRID]["Slice_Q0Q1"]
+    dense_grid_pdf = result_densities[InferenceType.GRID]["Slice_Q0Q1"]
 
     true_pdf_grid = true_pdf(grid)
-    true_kde = eval_kde_gauss(params, grid, calc_kernel_width(params))
+    true_kde = GaussKDE(params)(grid)
     true_pdf_samples = true_pdf(params)
 
     def to2d(grid):
@@ -257,10 +253,9 @@ def test_thinning_and_burn_in():
     data = model.generate_artificial_data(params)
 
     # run EPI with one trivial slice
-    slices = [np.array([0])]
+    slice = np.array([0])
     num_steps = 1000
     num_walkers = 4
-    num_runs = 2
     num_burn_in_samples = 100
     thinning_factor = 4
 
@@ -268,40 +263,39 @@ def test_thinning_and_burn_in():
     overall_params, sim_results, density_evals, result_manager = inference(
         model=model,
         data=data,
-        slices=slices,
-        inference_type=InferenceType.MCMC,
+        slice=slice,
+        inference_type=InferenceType.SAMPLING,
         num_steps=num_steps,
         num_walkers=num_walkers,
         num_burn_in_samples=num_burn_in_samples,
         thinning_factor=thinning_factor,
-        num_runs=num_runs,
         run_name="test_thinning_and_burn_in",
     )
 
     # Check if the thinning and burn in results in the expected shapes
     num_total_samples = (
-        num_steps * num_walkers * num_runs - num_walkers * num_burn_in_samples
+        num_steps * num_walkers - num_walkers * num_burn_in_samples
     ) // thinning_factor
 
-    assert overall_params["Slice_Q0"].shape[1] == slices[0].shape[0]
-    assert sim_results["Slice_Q0"].shape[1] == model.data_dim
-    assert density_evals["Slice_Q0"].shape[1] == 1
-    assert overall_params["Slice_Q0"].shape[0] == num_total_samples
-    assert sim_results["Slice_Q0"].shape[0] == num_total_samples
-    assert density_evals["Slice_Q0"].shape[0] == num_total_samples
+    assert overall_params.shape[1] == slice.shape[0]
+    assert sim_results.shape[1] == model.data_dim
+    assert density_evals.shape[1] == 1
+    assert overall_params.shape[0] == num_total_samples
+    assert sim_results.shape[0] == num_total_samples
+    assert density_evals.shape[0] == num_total_samples
 
     # create some artificial runs to test the thinning and burn in
     artificial_test_data_run = (
         np.arange(num_walkers * num_steps) // thinning_factor
     )
     np.savetxt(
-        result_manager.get_slice_path(np.array([0])) + "/Params/params_0.csv",
+        result_manager.get_slice_path(slice) + "/Params/params_0.csv",
         artificial_test_data_run,
         delimiter=",",
     )
     artificial_test_data_run += 1000
     np.savetxt(
-        result_manager.get_slice_path(np.array([0])) + "/Params/params_1.csv",
+        result_manager.get_slice_path(slice) + "/Params/params_1.csv",
         artificial_test_data_run,
         delimiter=",",
     )

@@ -1,11 +1,11 @@
-"""Check a custom :py:class:`BaseModel <eulerpi.core.models.BaseModel>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
+"""Check a custom :py:class:`BaseModel <eulerpi.models.BaseModel>` for implementation errors or test them in a quick inference run on an artificially created dataset."""
 
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.models import BaseModel
-from eulerpi.core.plotting import sample_violin_plot
+from eulerpi.inference import InferenceType, inference
+from eulerpi.models import BaseModel
+from eulerpi.plotting import sample_violin_plot
 
 
 def basic_model_check(model: BaseModel) -> None:
@@ -38,7 +38,7 @@ def basic_model_check(model: BaseModel) -> None:
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.model_check import basic_model_check
+        from eulerpi.model_check import basic_model_check
 
         basic_model_check(Corona())
 
@@ -144,7 +144,7 @@ def inference_model_check(
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.model_check import inference_model_check
+        from eulerpi.model_check import inference_model_check
 
         inference_model_check(Corona())
 
@@ -195,10 +195,9 @@ def inference_model_check(
     inference(
         model,
         data=data_sample,
-        inference_type=InferenceType.MCMC,
-        slices=[np.arange(model.param_dim)],
+        inference_type=InferenceType.SAMPLING,
+        slice=np.arange(model.param_dim),
         run_name=run_name,
-        num_runs=1,
         num_walkers=num_walkers,
         num_steps=num_steps,
         num_burn_in_samples=num_burn_in_samples,
@@ -253,7 +252,7 @@ def full_model_check(
     .. code-block:: python
 
         from eulerpi.examples.corona import Corona
-        from eulerpi.core.model_check import full_model_check
+        from eulerpi.model_check import full_model_check
 
         full_model_check(Corona())
 

@@ -1,20 +1,10 @@
-import logging
+import jax
+from jax import config
 
-DEBUGFORMATTER = "%(filename)s:%(name)s:%(funcName)s:%(lineno)d: %(message)s"
-"""Debug file formatter."""
+from .inference import InferenceType as InferenceType
+from .inference import inference as inference
 
-INFOFORMATTER = "%(message)s"
-"""Log file and stream output formatter."""
+config.update("jax_enable_x64", True)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
-
-# defines the stream handler
-_ch = logging.StreamHandler()  # creates the handler
-_ch.setLevel(logging.WARNING)  # sets the handler info
-_ch.setFormatter(
-    logging.Formatter(DEBUGFORMATTER)
-)  # sets the handler formatting
-
-# adds the handler to the global variable: log
-logger.addHandler(_ch)
+# TODO: Remove restriction to cpu
+jax.config.update("jax_platform_name", "cpu")  # Restricting to cpu for now

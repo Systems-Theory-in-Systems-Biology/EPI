@@ -74,7 +74,7 @@ It has 455 data points with two dimensions each. Nonuniform data is not supporte
 Define your model
 -----------------
 
-Next, you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.core.models.BaseModel` class.
+Next, you need to define your model. The most basic way is to derive from the :py:class:`eulerpi.models.BaseModel` class.
 
 .. literalinclude:: ../../../eulerpi/examples/temperature/temperature.py
   :language: python
@@ -87,10 +87,10 @@ Of course, you also need the imports:
     import importlib
     import jax.numpy as jnp
     import numpy as np
-    from eulerpi.core.models import BaseModel
+    from eulerpi.models import BaseModel
 
-A model inheriting from :py:class:`~eulerpi.core.models.BaseModel` must implement the methods :py:meth:`~eulerpi.core.models.BaseModel.forward` and :py:meth:`~eulerpi.core.models.BaseModel.jacobian`.
-In addition, it must provide the methods :py:meth:`~eulerpi.core.models.BaseModel.getcentral_param` and :py:meth:`~eulerpi.core.models.BaseModel.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
+A model inheriting from :py:class:`~eulerpi.models.BaseModel` must implement the methods :py:meth:`~eulerpi.models.BaseModel.forward` and :py:meth:`~eulerpi.models.BaseModel.jacobian`.
+In addition, it must provide the methods :py:meth:`~eulerpi.models.BaseModel.getcentral_param` and :py:meth:`~eulerpi.models.BaseModel.getParamSamplingLimits` to provide the sampling algorithm with sensible starting values and boundary values.
 The jacobian is derived analytically here and implemented explicitly.
 
 .. important::
@@ -123,7 +123,7 @@ Now we can now use EPI to infer the parameter distribution from the data.
 
 .. code-block:: python
 
-    from eulerpi.core.inference import inference
+    from eulerpi import inference
 
     # This line is needed for multiprocessing in python
     if __name__ == "__main__":
@@ -133,7 +133,7 @@ Now we can now use EPI to infer the parameter distribution from the data.
 Depending on the complexity of your model the sampling can take a long time.
 Due to this reason, not only the final results but also intermediate sampling results are saved.
 You can find them in the folder :file:`Applications/Temperature/`. The final results are stored in the file :file:`Applications/Temperature/<run_nam>/<slice_name>/OverallSimResults.csv`.
-The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :py:func:`~eulerpi.core.inference.inference` function.
+The ``slice_name`` results from the optional parameter :py:attr:`slice` of the :py:func:`~eulerpi.inference.inference` function.
 
 .. .. code-block:: python
 

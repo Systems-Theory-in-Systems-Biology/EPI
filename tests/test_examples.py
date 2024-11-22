@@ -6,10 +6,10 @@ import importlib
 
 import pytest
 
-from eulerpi.core.inference import InferenceType, inference
-from eulerpi.core.model_check import basic_model_check
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
-from eulerpi.core.models.sbml_model import is_amici_available
+from eulerpi.inference import InferenceType, inference
+from eulerpi.model_check import basic_model_check
+from eulerpi.models import ArtificialModelInterface, BaseModel
+from eulerpi.models.sbml_model import is_amici_available
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -121,13 +121,11 @@ def test_examples(example, inference_type):
     # Define kwargs for inference
     kwargs = {}
     kwargs["inference_type"] = inference_type
-    if inference_type == InferenceType.MCMC:
+    if inference_type == InferenceType.SAMPLING:
         kwargs["num_walkers"] = max(4, model.param_dim * 2)
         kwargs["num_steps"] = 10
-    elif inference_type == InferenceType.DENSE_GRID:
-        kwargs["num_grid_points"] = 3
-    elif inference_type == InferenceType.SPARSE_GRID:
-        kwargs["num_levels"] = 3
+    elif inference_type == InferenceType.GRID:
+        kwargs["num_grid_points"] = 3  # Also works as num_levels currently
 
     # generate artificial data if necessary
     if isinstance(model, ArtificialModelInterface):
@@ -151,20 +149,12 @@ def test_examples(example, inference_type):
                 **kwargs,
             )
 
-    # get all keys of the params dict
-    full_slice_str = list(params.keys())[0]
-
     assert result_manager is not None
 
-    assert params.keys() == sim_res.keys() == densities.keys()
-    assert params[full_slice_str].shape[0] == sim_res[full_slice_str].shape[0]
-    assert (
-        params[full_slice_str].shape[0] == densities[full_slice_str].shape[0]
-    )
+    assert params.shape[0] == sim_res.shape[0]
+    assert params.shape[0] == densities.shape[0]
 
-    assert params[full_slice_str].shape[1] == model.param_dim
-    assert (
-        sim_res[full_slice_str].shape[1] == model.data_dim
-    )  # Take care, only valid for full slice
+    assert params.shape[1] == model.param_dim
+    assert sim_res.shape[1] == model.data_dim
 
     # TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models

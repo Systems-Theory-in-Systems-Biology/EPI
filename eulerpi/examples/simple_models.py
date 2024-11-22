@@ -3,7 +3,7 @@ from typing import Optional
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.core.models import ArtificialModelInterface, JaxModel
+from eulerpi.models import ArtificialModelInterface, JaxModel
 
 
 class Linear(JaxModel, ArtificialModelInterface):

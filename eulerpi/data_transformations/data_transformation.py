@@ -6,8 +6,8 @@ import jax.numpy as jnp
 class DataTransformation(ABC):
     """Abstract base class for all data transformations
 
-    Data transformations can be used to improve the performance of the :py:func:`inference <eulerpi.core.inference.inference>` function
-    by improving the quality of the :py:mod:`kernel density estimate <eulerpi.core.kde>`.
+    Data transformations can be used to improve the performance of the :py:func:`inference <eulerpi.inference.inference>` function
+    by improving the quality of the :py:mod:`kernel density estimate <eulerpi.evaluation.kde>`.
     """
 
     @abstractmethod

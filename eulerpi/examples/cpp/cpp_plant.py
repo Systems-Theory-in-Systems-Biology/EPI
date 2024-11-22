@@ -1,7 +1,7 @@
 import numpy as np
 
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
 from eulerpi.examples.cpp import cpp_model
+from eulerpi.models import ArtificialModelInterface, BaseModel
 
 
 class CppPlant(BaseModel, ArtificialModelInterface):

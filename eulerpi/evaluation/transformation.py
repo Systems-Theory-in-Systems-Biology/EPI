@@ -5,20 +5,20 @@ from typing import Tuple
 
 import jax.numpy as jnp
 import numpy as np
-from jax import jit
 
-from eulerpi import logger
-from eulerpi.core.data_transformations import DataTransformation
-from eulerpi.core.kde import eval_kde_gauss
-from eulerpi.core.models import BaseModel
+from eulerpi.data_transformations.data_transformation import DataTransformation
+from eulerpi.logger import logger
+from eulerpi.models.base_model import BaseModel
+
+from .gram_determinant import calc_gram_determinant
+from .kde import KDE
 
 
 def evaluate_density(
     param: np.ndarray,
     model: BaseModel,
-    data: np.ndarray,
     data_transformation: DataTransformation,
-    data_stdevs: np.ndarray,
+    kde: KDE,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the parameter density as backtransformed data density using the simulation model
@@ -30,7 +30,6 @@ def evaluate_density(
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (BaseModel): model to be evaluated
-        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
@@ -46,9 +45,9 @@ def evaluate_density(
 
         import numpy as np
         from eulerpi.examples.heat import Heat
-        from eulerpi.core.kde import calc_kernel_width
-        from eulerpi.core.data_transformations import DataIdentity
-        from eulerpi.core.transformations import evaluate_density
+        from eulerpi.evaluation.kde import GaussKDE
+        from eulerpi.data_transformations import DataIdentity
+        from eulerpi.transformations import evaluate_density
 
         # use the heat model
         model = Heat()
@@ -58,25 +57,20 @@ def evaluate_density(
         data = np.random.randn(1000, 5)/25.0 + data_mean
 
         # evaluating the parameter probabiltiy density at the central parameter of the Heat model
-        eval_param = model.central_param
+        param = model.central_param
 
-        # calculating the kernel widths for the data based on Silverman's rule of thumb
-        data_stdevs = calc_kernel_width(data)
+        # Create a kernel density estimation using the gaussian kernels with widths based on Silverman's rule of thumb
+        kde = GaussKDE(data)
 
         # evaluate the three-variate joint density
         slice = np.array([0,1,2])
 
-        (central_param_density, all_res) = evaluate_density(param = eval_param,
+        # The evaluate_density function returns the parameter itself, the simulation result, and the inferred density of the parameter
+        param, sim_res, param_density = evaluate_density(param = param,
                                                             model = model,
-                                                            data = data,
-                                                            data_transformation = DataIdentity(), # no data transformatio,
-                                                            data_stdevs = data_stdevs,
+                                                            data_transformation = DataIdentity(), # no data transformation,
+                                                            kde = kde,
                                                             slice = slice)
-
-        # all_res is the concatenation of the evaluated parameter, the simulation result arising from that parameter and the inferred paramter density. Decompose as follows:
-        eval_param = all_res[0:model.param_dim]
-        sim_result = all_res[model.param_dim:model.param_dim+model.data_dim]
-        central_param_density = all_res[-1]
 
     """
 
@@ -93,7 +87,7 @@ def evaluate_density(
         logger.info(
             "Parameters outside of predefined range"
         )  # Slows down the sampling to much? -> Change logger level to warning or even error
-        return 0.0, np.zeros(slice.shape[0] + model.data_dim + 1)
+        return np.zeros((slice.shape[0],)), np.zeros((model.data_dim,)), 0.0
 
     # If the parameter is within the valid ranges...
     else:
@@ -107,15 +101,17 @@ def evaluate_density(
                 f"The parameter that caused the error is: {fullParam}"
                 f"The error message is: {e}"
             )
-            return 0, np.zeros(slice.shape[0] + model.data_dim + 1)
+            return (
+                np.zeros((slice.shape[0],)),
+                np.zeros((model.data_dim,)),
+                0.0,
+            )
 
         # normalize sim_res
         transformed_sim_res = data_transformation.transform(sim_res)
 
         # Evaluate the data density in the simulation result.
-        densityEvaluation = eval_kde_gauss(
-            data, transformed_sim_res, data_stdevs
-        )
+        densityEvaluation = kde(transformed_sim_res)
 
         # Calculate the simulation model's pseudo-determinant in the parameter point (also called the correction factor).
         # Scale with the determinant of the transformation matrix.
@@ -129,20 +125,14 @@ def evaluate_density(
         # Multiply data density and correction factor.
         trafo_density_evaluation = densityEvaluation * correction
 
-        # Store the current parameter, its simulation result as well as its density in a large vector that is stored separately by emcee.
-        evaluation_results = np.concatenate(
-            (param, sim_res, np.array([trafo_density_evaluation]))
-        )
-
-        return trafo_density_evaluation, evaluation_results
+        return param, sim_res, trafo_density_evaluation
 
 
-def eval_log_transformed_density(
+def evaluate_log_density(
     param: np.ndarray,
     model: BaseModel,
-    data: np.ndarray,
     data_transformation: DataTransformation,
-    data_stdevs: np.ndarray,
+    kde: KDE,
     slice: np.ndarray,
 ) -> Tuple[np.double, np.ndarray]:
     """Calculate the logarithmical parameter density as backtransformed data density using the simulation model
@@ -158,7 +148,6 @@ def eval_log_transformed_density(
     Args:
         param (np.ndarray): parameter for which the transformed density shall be evaluated
         model (BaseModel): model to be evaluated
-        data (np.ndarray): data for the model. 2D array with shape (#num_data_points, #data_dim)
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         data_stdevs (np.ndarray): array of suitable kernel width for each data dimension
         slice (np.ndarray): slice of the parameter vector that is to be evaluated
@@ -169,73 +158,10 @@ def eval_log_transformed_density(
             : sampler_results (array concatenation of parameters, simulation results and evaluated density, stored as "blob" by the emcee sampler)
 
     """
-    trafo_density_evaluation, evaluation_results = evaluate_density(
-        param, model, data, data_transformation, data_stdevs, slice
+    param, sim_res, density = evaluate_density(
+        param, model, data_transformation, kde, slice
     )
-    if trafo_density_evaluation == 0:
-        return -np.inf, evaluation_results
-    return np.log(trafo_density_evaluation), evaluation_results
 
-
-def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
-    """Evaluate the pseudo-determinant of the jacobian
-
-    .. math::
-
-        \\sqrt{\\det \\left({\\frac{ds}{dq}(q)}^\\intercal {\\frac{ds}{dq}(q)}\\right)}
-
-    .. warning::
-
-        The pseudo-determinant of the model jacobian serves as a correction term in the :py:func:`evaluate_density <evaluate_density>` function.
-        Therefore this function returns 0 if the result is not finite.
-
-    Args:
-      jac(jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
-
-    Returns:
-        jnp.double: The pseudo-determinant of the jacobian. Returns 0 if the result is not finite.
-
-    Examples:
-
-    .. code-block:: python
-
-        import jax.numpy as jnp
-        from eulerpi.core.transformations import calc_gram_determinant
-
-        jac = jnp.array([[1,2], [3,4], [5,6], [7,8]])
-        pseudo_det = calc_gram_determinant(jac)
-
-    """
-    correction = _calc_gram_determinant(jac)
-    # If the correction factor is not finite, return 0 instead to not affect the sampling.
-    if not jnp.isfinite(correction):
-        correction = 0.0
-        logger.warning("Invalid value encountered for correction factor")
-    return correction
-
-
-@jit
-def _calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:
-    """Jitted calculation of the pseudo-determinant of the jacobian. This function is called by calc_gram_determinant() and should not be called directly.
-    It does not check if the correction factor is finite.
-
-    Not much faster than a similar numpy version. However it can run on gpu and is maybe a bit faster because we can jit compile the sequence of operations.
-
-    Args:
-        jac (jnp.ndarray): The jacobian for which the pseudo determinant shall be calculated
-
-    Returns:
-        jnp.double: The pseudo-determinant of the jacobian
-    """
-
-    jac = jnp.atleast_2d(jac)
-
-    if jac.shape[0] == jac.shape[1]:
-        return jnp.abs(jnp.linalg.det(jac))
-    else:
-        jacT = jnp.transpose(jac)
-        # The pseudo-determinant is calculated as the square root of the determinant of the matrix-product of the Jacobian and its transpose.
-        # For numerical reasons, one can regularize the matrix product by adding a diagonal matrix of ones before calculating the determinant.
-        # correction = np.sqrt(np.linalg.det(np.matmul(jacT,jac) + np.eye(param.shape[0])))
-        correction = jnp.sqrt(jnp.linalg.det(jnp.matmul(jacT, jac)))
-        return correction
+    if density == 0:
+        return param, sim_res, -np.inf
+    return param, sim_res, np.log(density)

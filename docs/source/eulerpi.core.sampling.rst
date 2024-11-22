@@ -1,7 +1,7 @@
-eulerpi.core.sampling module
+eulerpi.sampling module
 ============================
 
-.. automodule:: eulerpi.core.sampling
+.. automodule:: eulerpi.sampling
    :members:
    :undoc-members:
    :show-inheritance:
