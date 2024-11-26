@@ -21,7 +21,7 @@ class BaseModel(ABC):
         None  #: The dimension of the parameter space of the model. It must be defined in the subclass.
     )
 
-    param_names: Optional[str] = (
+    param_names: Optional[list[str]] = (
         None  #: Names of the paramters of the model. If not specified parameters names are assigned automatically via ascending numbering.
     )
 
