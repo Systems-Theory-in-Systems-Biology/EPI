@@ -1,0 +1,11 @@
+{
+    "model": "Temperature",
+    "slice": "slice_Q0",
+    "inference_type": "MCMC",
+    "num_processes": 10,
+    "num_runs": 1,
+    "num_walkers": 10,
+    "num_steps": 2500,
+    "num_burn_in_samples": 250,
+    "thinning_factor": 1
+}

@@ -196,7 +196,7 @@ def inference_model_check(
         model,
         data=data_sample,
         inference_type=InferenceType.MCMC,
-        slices=[np.arange(model.param_dim)],
+        slice=np.arange(model.param_dim),
         run_name=run_name,
         num_runs=1,
         num_walkers=num_walkers,

@@ -134,7 +134,7 @@ def test_examples(example, inference_type):
         num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)
-        params, sim_res, densities, result_manager = inference(
+        params, sim_res, densities, result_reader = inference(
             model,
             data,
             **kwargs,
@@ -145,26 +145,20 @@ def test_examples(example, inference_type):
             dataFileName
         )
         with importlib.resources.as_file(data_resource) as data_file:
-            params, sim_res, densities, result_manager = inference(
+            params, sim_res, densities, result_reader = inference(
                 model,
                 data_file,
                 **kwargs,
             )
 
-    # get all keys of the params dict
-    full_slice_str = list(params.keys())[0]
+    assert result_reader is not None
 
-    assert result_manager is not None
+    assert params.shape[0] == sim_res.shape[0]
+    assert params.shape[0] == densities.shape[0]
 
-    assert params.keys() == sim_res.keys() == densities.keys()
-    assert params[full_slice_str].shape[0] == sim_res[full_slice_str].shape[0]
+    assert params.shape[1] == model.param_dim
     assert (
-        params[full_slice_str].shape[0] == densities[full_slice_str].shape[0]
-    )
-
-    assert params[full_slice_str].shape[1] == model.param_dim
-    assert (
-        sim_res[full_slice_str].shape[1] == model.data_dim
+        sim_res.shape[1] == model.data_dim
     )  # Take care, only valid for full slice
 
     # TODO: Check if results are correct / models invertible by comparing them with the artificial data for the artificial models

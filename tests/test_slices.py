@@ -37,10 +37,11 @@ def test_slices(inference_type):
         kwargs = {"num_steps": 100}
     else:
         kwargs = {}
-    inference(
-        model,
-        data,
-        inference_type,
-        slices=slices,
-        **kwargs,
-    )
+    for slice in slices:
+        inference(
+            model,
+            data,
+            inference_type,
+            slice=slice,
+            **kwargs,
+        )

@@ -1,6 +1,6 @@
 """This module provides functions to handle the Kernel Densitiy Estimation (KDE_) in EPI.
 
-    It is used in the EPI algorithm to :py:func:`eulerpi.core.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the simulation results.
+    It is used in the EPI algorithm to :py:func:`eulerpi.core.transformations.evaluate_density <evaluate the density>` of the transformed data distribution at the pushforward.
 
 
 .. _KDE: https://en.wikipedia.org/wiki/Kernel_density_estimation
@@ -18,7 +18,7 @@ def eval_kde_cauchy(
     data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
     r"""
-    Evaluates a Cauchy Kernel Density estimator in one or several simulation results.
+    Evaluates a Cauchy Kernel Density estimator in one or several pushforwards.
     Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
     This is for example given for time-series data, where each evaluation time is one dimension of the data point.
     In the following formula x are the evaluation points (sim_res) and y is the data.
@@ -32,7 +32,7 @@ def eval_kde_cauchy(
       scales(jnp.ndarray): one scale for each dimension
 
     Returns:
-        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
+        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the pushforward(s), shape: (#nEvals,) or ()
 
     """
 
@@ -52,7 +52,7 @@ def eval_kde_cauchy(
 def eval_kde_gauss(
     data: jnp.ndarray, sim_res: jnp.ndarray, scales: jnp.ndarray
 ) -> typing.Union[jnp.double, jnp.ndarray]:
-    """Evaluates a Gaussian Kernel Density estimator in one or severalsimulation result.
+    """Evaluates a Gaussian Kernel Density estimator in one or several pushforwards.
     Assumes that each data point is a potentially high-dimensional sample from a joint data distribution.
     This is for example given for time-series data, where each evaluation time is one dimension of the data point.
     While it is possible to define different standard deviations for different measurement dimensions, it is so far not possible to define covariances.
@@ -63,7 +63,7 @@ def eval_kde_gauss(
         scales(jnp.ndarray): one scale for each dimension
 
     Returns:
-        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the simulation result(s), shape: (#nEvals,) or ()
+        typing.Union[jnp.double, jnp.ndarray]: estimated kernel density evaluated at the pushforward(s), shape: (#nEvals,) or ()
 
     .. note::
 

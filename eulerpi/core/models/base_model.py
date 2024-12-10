@@ -74,7 +74,7 @@ class BaseModel(ABC):
             example_param = np.array([1.4, 1.6, 0.5])
 
             # the forward simulation is achieved by using the forward method of the model
-            sim_result = model.forward(example_param)
+            pushforward = model.forward(example_param)
 
             # in a more realistic scenario, we would like to perform the forward pass on multiple parameters at once
             multiple_params = np.array([[1.5, 1.5, 0.5],
@@ -82,7 +82,7 @@ class BaseModel(ABC):
                                         [1.6, 1.6, 0.4],
                                         model.central_param,
                                         [1.5, 1.4, 0.4]])
-            multiple_sim_results = model.forward_vectorized(multiple_params)
+            multiple_pushforwards = model.forward_vectorized(multiple_params)
 
         """
         raise NotImplementedError
