@@ -34,11 +34,12 @@ def test_dense_grid(dense_grid_type):
     slice2 = np.array([1, 2])
     slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
-    inference(
-        model,
-        data,
-        inference_type=InferenceType.DENSE_GRID,
-        slices=slices,
-        dense_grid_type=dense_grid_type,
-        num_grid_points=4,
-    )
+    for slice in slices:
+        inference(
+            model,
+            data,
+            inference_type=InferenceType.DENSE_GRID,
+            slice=slice,
+            dense_grid_type=dense_grid_type,
+            num_grid_points=4,
+        )
