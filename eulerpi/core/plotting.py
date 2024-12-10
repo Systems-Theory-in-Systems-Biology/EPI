@@ -15,7 +15,7 @@ from matplotlib import axes
 
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_managers.output_writer import ResultManager
+from eulerpi.core.result_managers import ResultReader
 
 # general plotting function for joint runs
 
@@ -115,15 +115,13 @@ def sample_violin_plot(
     envelope_width = 1.0 / (dim + 1)
 
     # load the results from the inference sampling
-    rm = ResultManager(model_name=model.name, run_name=run_name)
+    result_reader = ResultReader(model_name=model.name, run_name=run_name)
 
     (
         reconstructed_param_sample,
         reconstructed_data_sample,
         _,
-    ) = rm.load_slice_inference_results(
-        slice=np.linspace(0, model.param_dim - 1, model.param_dim, dtype=int)
-    )
+    ) = result_reader.load_inference_results()
 
     if what_to_plot == "param":
         reconstructed_sample = reconstructed_param_sample

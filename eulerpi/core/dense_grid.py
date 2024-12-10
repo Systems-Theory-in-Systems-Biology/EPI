@@ -21,7 +21,7 @@ from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.dense_grid_types import DenseGridType
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_managers.output_writer import ResultManager
+from eulerpi.core.result_managers import OutputWriter, ResultReader
 from eulerpi.core.sampling import calc_kernel_width
 from eulerpi.core.transformations import evaluate_density
 
@@ -104,7 +104,7 @@ def evaluate_on_grid_chunk(
         slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
 
     Returns:
-        np.ndarray: The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the simulation results in the second columns and the density evaluations in the last columns.
+        np.ndarray: The evaluation results for the given grid chunk. It is a vector, containing the parameters in the first columns, the pushforwards of the parameters in the second columns and the density evaluations in the last columns.
     """
     grid_chunk, model, data, data_transformation, data_stdevs, slice = args
 
@@ -126,7 +126,7 @@ def run_dense_grid_evaluation(
     data: np.ndarray,
     data_transformation: DataTransformation,
     slice: np.ndarray,
-    result_manager: ResultManager,
+    output_writer: OutputWriter,
     num_grid_points: np.ndarray,
     dense_grid_type: DenseGridType,
     num_processes: int,
@@ -139,7 +139,7 @@ def run_dense_grid_evaluation(
         data(np.ndarray): The data for which the evaluation should be performed.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice(np.ndarray): The slice for which the evaluation should be performed.
-        result_manager(ResultManager): The result manager that should be used to save the results.
+        output_writer(OutputWriter): The output writer that should be used to save the results.
         num_grid_points(np.ndarray): The number of grid points for each dimension.
         dense_grid_type(DenseGridType): The type of grid that should be used. (Default value = DenseGridType.EQUIDISTANT)
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
@@ -148,7 +148,7 @@ def run_dense_grid_evaluation(
             does not exceed the load_balancing_safety_faktor. (Default value = 4)
 
     Returns:
-        Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the corresponding simulation results, the corresponding density
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the pushforward of the parameters, the corresponding density
         evaluations for the given slice.
 
     Raises:
@@ -156,7 +156,6 @@ def run_dense_grid_evaluation(
         ValueError: If the grid type is unknown.
 
     """
-
     if slice.shape[0] != num_grid_points.shape[0]:
         raise ValueError(
             f"The dimension of the numbers of grid points {num_grid_points} does not match the number of parameters in the slice {slice}"
@@ -195,8 +194,7 @@ def run_dense_grid_evaluation(
 
     data_dim = model.data_dim
 
-    result_manager.save_overall(
-        slice,
+    output_writer.save_grid_based_run(
         results[:, 0 : slice.shape[0]],
         results[:, slice.shape[0] : slice.shape[0] + data_dim],
         results[:, slice.shape[0] + data_dim :],
@@ -212,34 +210,34 @@ def inference_dense_grid(
     model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
-    result_manager: ResultManager,
-    slices: list[np.ndarray],
+    output_writer: OutputWriter,
+    slice: np.ndarray,
     num_processes: int,
-    num_grid_points: Union[int, list[np.ndarray]] = 10,
+    num_grid_points: Union[int, np.ndarray] = 10,
     dense_grid_type: DenseGridType = DenseGridType.EQUIDISTANT,
     load_balancing_safety_faktor: int = 4,
 ) -> Tuple[
     Dict[str, np.ndarray],
     Dict[str, np.ndarray],
     Dict[str, np.ndarray],
-    ResultManager,
+    ResultReader,
 ]:
-    """This function runs a dense grid inference for the given model and data.
+    """This function runs a dense grid inference for the given model and data and saves the results.
 
     Args:
         model (BaseModel): The model describing the mapping from parameters to data.
         data (np.ndarray): The data to be used for the inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
-        result_manager (ResultManager): The result manager to be used for the inference.
-        slices (np.ndarray): A list of slices to be used for the inference.
+        output_writer (OutputWriter): The output writer to be used for the inference.
+        slice (np.ndarray): The slice to be used for the inference.
         num_processes (int): The number of processes to be used for the inference.
-        num_grid_points (Union[int, list[np.ndarray]], optional): The number of grid points to be used for each parameter. If an int is given, it is assumed to be the same for all parameters. Defaults to 10.
+        num_grid_points (Union(int, np.ndarray), optional): The number of grid points to be used for each parameter. If an int is passed, the same number of grid poins is used for each direction. Defaults to 10.
         dense_grid_type (DenseGridType, optional): The type of grid that should be used. Defaults to DenseGridType.EQUIDISTANT.
         load_balancing_safety_faktor (int, optional): Split the grid into num_processes * load_balancing_safety_faktor chunks. Defaults to 4.
 
     Returns:
-        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
-        evaluations for each slice and the result manager used for the inference.
+        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultReader]: The parameter samples, the pushforward of the parameters, the corresponding density
+        evaluations for each slice and the result reader to (re)-load and manipulate the inference results.
 
     Raises:
         TypeError: If the num_grid_points argument has the wrong type.
@@ -247,47 +245,38 @@ def inference_dense_grid(
 
     # If the number of grid points is given as an int, we construct a list of arrays with the same number of grid points for each parameter in the slice
     if isinstance(num_grid_points, int):
-        num_grid_points = [
-            np.full(len(slice), num_grid_points) for slice in slices
-        ]
+        num_grid_points = np.full(len(slice), num_grid_points)
     elif isinstance(num_grid_points, list[np.ndarray]):
         pass
     else:
         raise TypeError(
             f"The num_grid_points argument has to be either an int or a list of arrays. The passed argument was of type {type(num_grid_points)}"
         )
-    # create the return dictionaries
-    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
 
-    for slice, n_points in zip(slices, num_grid_points):
-        slice_name = result_manager.get_slice_name(slice)
-        (
-            overall_params[slice_name],
-            overall_sim_results[slice_name],
-            overall_density_evals[slice_name],
-        ) = run_dense_grid_evaluation(
-            model=model,
-            data=data,
-            data_transformation=data_transformation,
-            slice=slice,
-            result_manager=result_manager,
-            num_grid_points=n_points,
-            dense_grid_type=dense_grid_type,
-            num_processes=num_processes,
-            load_balancing_safety_faktor=load_balancing_safety_faktor,
-        )
-        result_manager.save_inference_information(
-            slice=slice,
-            model=model,
-            inference_type=InferenceType.DENSE_GRID,
-            num_processes=num_processes,
-            load_balancing_safety_faktor=load_balancing_safety_faktor,
-            num_grid_points=n_points,
-            dense_grid_type=dense_grid_type,
-        )
+    params, pushforward_evals, density_evals = run_dense_grid_evaluation(
+        model=model,
+        data=data,
+        data_transformation=data_transformation,
+        slice=slice,
+        output_writer=output_writer,
+        num_grid_points=num_grid_points,
+        dense_grid_type=dense_grid_type,
+        num_processes=num_processes,
+        load_balancing_safety_faktor=load_balancing_safety_faktor,
+    )
+    output_writer.save_inference_information(
+        slice=slice,
+        model=model,
+        inference_type=InferenceType.DENSE_GRID,
+        num_processes=num_processes,
+        load_balancing_safety_faktor=load_balancing_safety_faktor,
+        num_grid_points=num_grid_points,
+        dense_grid_type=dense_grid_type,
+    )
+    result_reader = ResultReader(model.name, output_writer.run_name)
     return (
-        overall_params,
-        overall_sim_results,
-        overall_density_evals,
-        result_manager,
+        params,
+        pushforward_evals,
+        density_evals,
+        result_reader,
     )

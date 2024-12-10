@@ -19,7 +19,7 @@ from eulerpi.core.data_transformations import DataTransformation
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_managers.output_writer import ResultManager
+from eulerpi.core.result_managers import OutputWriter, ResultReader
 from eulerpi.core.transformations import evaluate_density
 
 
@@ -403,15 +403,15 @@ def inference_sparse_grid(
     model: BaseModel,
     data: np.ndarray,
     data_transformation: DataTransformation,
-    result_manager: ResultManager,
-    slices: typing.List[np.ndarray],
+    output_writer: OutputWriter,
+    slice: np.ndarray,
     num_processes: int,
     num_levels: int = 5,
 ) -> typing.Tuple[
     typing.Dict[str, np.ndarray],
     typing.Dict[str, np.ndarray],
     typing.Dict[str, np.ndarray],
-    ResultManager,
+    ResultReader,
 ]:
     """Evaluates the transformed parameter density over a set of points resembling a sparse grid, thereby attempting parameter inference. If a data path is given, it is used to load the data for the model. Else, the default data path of the model is used.
 
@@ -419,12 +419,14 @@ def inference_sparse_grid(
         model(BaseModel): The model describing the mapping from parameters to data.
         data(np.ndarray): The data to be used for inference.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
+        output_writer (OutputWriter): The output writer used to save the results.
+        slice(np.ndarray): The slice defines for which dimensions of the grid points / paramater vectors the marginal density should be evaluated.
         num_processes(int): number of processes to use for parallel evaluation of the model.
         num_levels(int, optional): Maximum sparse grid level depth that mainly defines the number of points. Defaults to 5.
 
     Returns:
-        Tuple[typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], typing.Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
-        evaluations for each slice and the result manager used for the inference.
+        Tuple[np.ndarray, np.ndarray, np.ndarray, ResultReader]: The parameter samples, the pushforward of the parameters, the corresponding density
+        evaluations for each slice and the result reader to (re)-load and manipulate the inference results.
 
     """
 
@@ -433,74 +435,67 @@ def inference_sparse_grid(
     )
     data_stdevs = calc_kernel_width(data)
 
-    # create the return dictionaries
-    overall_params, overall_sim_results, overall_density_evals = {}, {}, {}
+    # build the sparse grid over [0,1]^param_dim
+    grid = SparseGrid(slice.shape[0], num_levels)
 
-    for slice in slices:
-        # build the sparse grid over [0,1]^param_dim
-        grid = SparseGrid(slice.shape[0], num_levels)
+    # get the model's parameter limits
+    param_limits = model.param_limits
 
-        # get the model's parameter limits
-        param_limits = model.param_limits
+    # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
+    scaledSparseGridPoints = param_limits[slice, 0] + grid.points * (
+        param_limits[slice, 1] - param_limits[slice, 0]
+    )
 
-        # scale the sparse grid points from [0,1]^param_dim to the scaled parameter space
-        scaledSparseGridPoints = param_limits[slice, 0] + grid.points * (
-            param_limits[slice, 1] - param_limits[slice, 0]
-        )
+    # Create a pool of worker processes
+    pool = get_context("spawn").Pool(processes=num_processes)
+    tasks = zip(
+        scaledSparseGridPoints,
+        repeat(model),
+        repeat(data),
+        repeat(data_transformation),
+        repeat(data_stdevs),
+        repeat(slice),
+    )
 
-        # Create a pool of worker processes
-        pool = get_context("spawn").Pool(processes=num_processes)
-        tasks = zip(
-            scaledSparseGridPoints,
-            repeat(model),
-            repeat(data),
-            repeat(data_transformation),
-            repeat(data_stdevs),
-            repeat(slice),
-        )
+    # evaluate the probability density transformation for all sparse grid points in parallel
+    results = pool.map(
+        evaluate_on_sparse_grid,
+        tasks,
+    )
 
-        # evaluate the probability density transformation for all sparse grid points in parallel
-        results = pool.map(
-            evaluate_on_sparse_grid,
-            tasks,
-        )
+    # close the worker pool
+    pool.close()
+    pool.join()
 
-        # close the worker pool
-        pool.close()
-        pool.join()
+    # convert the results to a numpy array
+    # Take care! The results here are for single points, therefore we cant use np.concatenate
+    results = np.vstack(results)
 
-        # convert the results to a numpy array
-        # Take care! The results here are for single points, therefore we cant use np.concatenate
-        results = np.vstack(results)
+    data_dim = model.data_dim
 
-        data_dim = model.data_dim
-
-        # save the results
-        result_manager.save_overall(
-            slice,
-            results[:, 0 : slice.shape[0]],
-            results[:, slice.shape[0] : slice.shape[0] + data_dim],
-            results[:, slice.shape[0] + data_dim :],
-        )
-        slice_name = result_manager.get_slice_name(slice)
-        overall_params[slice_name] = results[:, 0 : slice.shape[0]]
-        overall_sim_results[slice_name] = results[
-            :, slice.shape[0] : slice.shape[0] + data_dim
-        ]
-        overall_density_evals[slice_name] = results[
-            :, slice.shape[0] + data_dim :
-        ]
-        result_manager.save_inference_information(
-            slice=slice,
-            model=model,
-            inference_type=InferenceType.SPARSE_GRID,
-            num_processes=num_processes,
-            num_levels=num_levels,
-        )
+    # save the results
+    output_writer.save_grid_based_run(
+        results[:, 0 : slice.shape[0]],
+        results[:, slice.shape[0] : slice.shape[0] + data_dim],
+        results[:, slice.shape[0] + data_dim :],
+    )
+    params = results[:, 0 : slice.shape[0]]
+    pushforward_evals = results[:, slice.shape[0] : slice.shape[0] + data_dim]
+    density_evals = results[:, slice.shape[0] + data_dim :]
+    output_writer.save_inference_information(
+        slice=slice,
+        model=model,
+        inference_type=InferenceType.SPARSE_GRID,
+        num_processes=num_processes,
+        num_levels=num_levels,
+    )
+    result_reader = ResultReader(
+        output_writer.model_name, output_writer.run_name
+    )
 
     return (
-        overall_params,
-        overall_sim_results,
-        overall_density_evals,
-        result_manager,
+        params,
+        pushforward_evals,
+        density_evals,
+        result_reader,
     )
