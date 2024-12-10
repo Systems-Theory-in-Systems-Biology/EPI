@@ -12,7 +12,8 @@ from seedir import FakeDir, FakeFile
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
-from .path_gen import get_slice_name, get_run_path
+from .result_manager_utils import get_slice_name, get_run_path
+
 
 class OutputWriter:
     """The output writer is responsible for saving the results of the inference.
@@ -22,9 +23,7 @@ class OutputWriter:
         run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.
     """
 
-    def __init__(
-        self, model_name: str, run_name: str
-    ) -> None:
+    def __init__(self, model_name: str, run_name: str) -> None:
         """Creates an instance of the output writer for saving the results of the inference.
 
         Args:
@@ -32,12 +31,11 @@ class OutputWriter:
             run_name (str): Name of the run.
         """
         self.model_name = model_name
-        self.run_name = run_name 
-
+        self.run_name = run_name
 
     def create_output_folder_structure(self) -> None:
-        """Creates the subfolders in `Output` for the given slice where all simulation results
-        are stored for this model and slice. No files are deleted during this action.
+        """Creates the subfolders in `Output` for the given run where all simulation results
+        are stored for this model and run. No files are deleted during this action.
 
         """
         outputFolderStructure = (
@@ -46,7 +44,7 @@ class OutputWriter:
             "    - {runName}/ \n"
             "       - DensityEvals/ \n"
             "       - Params/ \n"
-            "       - SimResults/ \n"
+            "       - PushforwardEvals/ \n"
         )
         path = "."
         structure = outputFolderStructure
@@ -93,7 +91,7 @@ class OutputWriter:
             shutil.rmtree(path)
         except FileNotFoundError:
             logger.info(
-                f"Folder structure for slice {slice} does not exist"
+                f"Folder structure for run_name {self.run_name} does not exist"
             )
 
     def count_emcee_sub_runs(self, slice: np.ndarray) -> int:
@@ -111,7 +109,7 @@ class OutputWriter:
 
         # Increase the just defined number until no corresponding file is found anymore ...
         while path.isfile(
-            self.get_slice_path(slice)
+            get_run_path(self.model_name, self.run_name)
             + "/PushforwardEvals/"
             + "pushforward_evals_"
             + str(num_existing_files)
@@ -120,12 +118,12 @@ class OutputWriter:
             num_existing_files += 1
 
         return num_existing_files
-    
+
     def save_sampler_run(
         self,
         model: BaseModel,
         slice: np.ndarray,
-        run,
+        chain_number: int,
         sampler_results: np.ndarray,
         final_walker_positions: np.ndarray,
     ) -> None:
@@ -136,7 +134,7 @@ class OutputWriter:
         Args:
             model(BaseModel): The model for which the results will be saved
             slice(np.ndarray): The slice for which the results will be saved
-            run(int): The run for which the results will be saved
+            chain_number(int): The run for which the results will be saved
             sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)
             final_walker_positions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)
 
@@ -148,34 +146,46 @@ class OutputWriter:
 
         # Save the parameters
         np.savetxt(
-            results_path + "/Params/params_" + str(run) + ".csv",
+            results_path + "/Params/raw_params_" + str(chain_number) + ".csv",
             sampler_results[:, :sampling_dim],
             delimiter=",",
         )
 
         # Save the density evaluations
         np.savetxt(
-            results_path + "/DensityEvals/density_evals_" + str(run) + ".csv",
+            results_path
+            + "/DensityEvals/raw_density_evals_"
+            + str(chain_number)
+            + ".csv",
             sampler_results[:, -1],
             delimiter=",",
         )
 
-        # Save the simulation results
+        # Save the pushforward evaluations
         np.savetxt(
-            results_path + "/PushforwardEvals/pushforward_evals_" + str(run) + ".csv",
+            results_path
+            + "/PushforwardEvals/raw_pushforward_evals_"
+            + str(chain_number)
+            + ".csv",
             sampler_results[:, sampling_dim : sampling_dim + model.data_dim],
             delimiter=",",
         )
 
         # Save the final walker positions
         np.savetxt(
-            results_path + "/final_walker_positions_" + str(run) + ".csv",
+            results_path
+            + "/final_walker_positions_"
+            + str(chain_number)
+            + ".csv",
             final_walker_positions,
             delimiter=",",
         )
 
     def save_grid_based_run(
-        self, params, pushforward_evals, density_evals
+        self,
+        params: np.ndarray,
+        pushforward_evals: np.ndarray,
+        density_evals: np.ndarray,
     ):
         """Saves the results of a grid-based run.
 
@@ -185,20 +195,22 @@ class OutputWriter:
             density_evals(np.ndarray): The densities at the grid points.
 
         """
-        # Save the three just-created files.
+        results_path = get_run_path(self.model_name, self.run_name)
+
+        # Save the parameters
         np.savetxt(
-            self.get_slice_path() + "/overall_density_evals.csv",
-            density_evals,
+            results_path + "/params.csv",
+            params,
             delimiter=",",
         )
         np.savetxt(
-            self.get_slice_path() + "/overall_sim_results.csv",
+            results_path + "/pushforward_evals.csv",
             pushforward_evals,
             delimiter=",",
         )
         np.savetxt(
-            self.get_slice_path() + "/overall_params.csv",
-            params,
+            results_path + "/density_evals.csv",
+            density_evals,
             delimiter=",",
         )
 
@@ -249,10 +261,9 @@ class OutputWriter:
             ].name
         # save information as json file
         with open(
-            get_run_path(self.model_name, self.run_name) + "/inference_information.json",
+            get_run_path(self.model_name, self.run_name)
+            + "/inference_information.json",
             "w",
             encoding="utf-8",
         ) as file:
             json.dump(information, file, ensure_ascii=False, indent=4)
-
-    
