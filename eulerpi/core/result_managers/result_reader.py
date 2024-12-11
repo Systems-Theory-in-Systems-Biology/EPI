@@ -1,9 +1,11 @@
 import json
-from typing import Optional, Tuple, Dict
-from .result_manager_utils import get_run_path
+from typing import Dict, Optional, Tuple
+
 import numpy as np
 
 from eulerpi import logger
+
+from .result_manager_utils import get_run_path
 
 
 class ResultReader:

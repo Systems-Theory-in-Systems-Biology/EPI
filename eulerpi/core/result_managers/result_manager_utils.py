@@ -1,6 +1,8 @@
 import os
-from eulerpi.core.models.base_model import BaseModel
+
 import numpy as np
+
+from eulerpi.core.models.base_model import BaseModel
 
 
 def get_slice_name(slice: np.ndarray) -> str:
@@ -15,6 +17,7 @@ def get_slice_name(slice: np.ndarray) -> str:
     """
 
     return "slice_" + "".join(["Q" + str(i) for i in slice])
+
 
 def get_output_path(model: BaseModel) -> str:
     """Returns the path to the output folder, containing also intermediate results.
@@ -33,6 +36,4 @@ def get_run_path(model_name: str, run_name: str) -> str:
         str: The path to the folder where the results for the given run are stored.
 
     """
-    return os.path.join(
-        "Output", model_name, run_name
-    )
+    return os.path.join("Output", model_name, run_name)

@@ -17,7 +17,6 @@ from multiprocessing import get_context
 from os import path
 
 import emcee
-from eulerpi.core.result_managers.result_manager_utils import get_run_path
 import numpy as np
 
 from eulerpi import logger
@@ -26,6 +25,7 @@ from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_managers import OutputWriter, ResultReader
+from eulerpi.core.result_managers.result_manager_utils import get_run_path
 from eulerpi.core.transformations import eval_log_transformed_density
 
 

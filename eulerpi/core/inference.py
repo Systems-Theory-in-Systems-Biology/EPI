@@ -15,8 +15,11 @@ from eulerpi.core.data_transformations import (
 from eulerpi.core.dense_grid import inference_dense_grid
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
-from eulerpi.core.result_managers import OutputWriter, ResultReader
-from eulerpi.core.result_managers import get_slice_name
+from eulerpi.core.result_managers import (
+    OutputWriter,
+    ResultReader,
+    get_slice_name,
+)
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
 

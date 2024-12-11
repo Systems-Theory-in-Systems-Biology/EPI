@@ -3,7 +3,6 @@ import json
 import os
 import shutil
 from os import path
-from typing import Dict, Optional, Tuple
 
 import numpy as np
 import seedir
@@ -12,7 +11,8 @@ from seedir import FakeDir, FakeFile
 from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
-from .result_manager_utils import get_slice_name, get_run_path
+
+from .result_manager_utils import get_run_path, get_slice_name
 
 
 class OutputWriter:

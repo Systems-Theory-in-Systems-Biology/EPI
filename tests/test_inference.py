@@ -1,4 +1,3 @@
-from eulerpi.core.result_managers.result_manager_utils import get_run_path
 import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,6 +6,7 @@ from eulerpi.core.dense_grid import generate_regular_grid
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.result_managers import OutputWriter, ResultReader
+from eulerpi.core.result_managers.result_manager_utils import get_run_path
 from eulerpi.examples.simple_models import LinearODE
 
 
