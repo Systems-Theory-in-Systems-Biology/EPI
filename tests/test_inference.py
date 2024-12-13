@@ -6,7 +6,7 @@ from eulerpi.core.dense_grid import generate_regular_grid
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.core.result_managers import OutputWriter, ResultReader
-from eulerpi.core.result_managers.result_manager_utils import get_run_path
+from eulerpi.core.result_managers.path_manager import PathManager
 from eulerpi.examples.simple_models import LinearODE
 
 
@@ -295,16 +295,16 @@ def test_thinning_and_burn_in():
     artificial_test_data_run = (
         np.arange(num_walkers * num_steps) // thinning_factor
     )
+    path_manager = PathManager(model.name, "test_thinning_and_burn_in")
+
     np.savetxt(
-        get_run_path(model.name, "test_thinning_and_burn_in")
-        + "/Params/params_0.csv",
+        path_manager.get_run_path() + "/Params/params_0.csv",
         artificial_test_data_run,
         delimiter=",",
     )
     artificial_test_data_run += 1000
     np.savetxt(
-        get_run_path(model.name, "test_thinning_and_burn_in")
-        + "/Params/params_1.csv",
+        path_manager.get_run_path() + "/Params/params_1.csv",
         artificial_test_data_run,
         delimiter=",",
     )

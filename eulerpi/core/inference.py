@@ -4,6 +4,7 @@ import os
 import pathlib
 from typing import Dict, Optional, Tuple, Union
 
+from eulerpi.core.result_managers.path_manager import PathManager
 import jax.numpy as jnp
 import numpy as np
 import psutil
@@ -18,7 +19,6 @@ from eulerpi.core.models import BaseModel
 from eulerpi.core.result_managers import (
     OutputWriter,
     ResultReader,
-    get_slice_name,
 )
 from eulerpi.core.sampling import inference_mcmc
 from eulerpi.core.sparsegrid import inference_sparse_grid
@@ -160,7 +160,8 @@ def inference(
         )  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
 
     if not run_name:
-        run_name = f"default_run_{get_slice_name(slice)}"
+        path_manager = PathManager(model.name, "")
+        run_name = f"default_run_{path_manager.get_slice_name(slice)}"
 
     output_writer = output_writer or OutputWriter(
         model.name, run_name

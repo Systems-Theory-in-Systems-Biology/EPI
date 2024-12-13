@@ -25,7 +25,6 @@ from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.kde import calc_kernel_width
 from eulerpi.core.models import BaseModel
 from eulerpi.core.result_managers import OutputWriter, ResultReader
-from eulerpi.core.result_managers.result_manager_utils import get_run_path
 from eulerpi.core.transformations import eval_log_transformed_density
 
 
@@ -170,8 +169,7 @@ def run_emcee_sampling(
 
         # If there are current walker positions defined by runs before this one, use them.
         position_path = (
-            get_run_path(output_writer.model_name, output_writer.run_name)
-            + "/currentPos.csv"
+            output_writer.path_manager.get_run_path() + "/currentPos.csv"
         )
         if path.isfile(position_path):
             initial_walker_positions = np.loadtxt(
@@ -207,7 +205,7 @@ def run_emcee_sampling(
             )
 
         output_writer.save_sampler_run(
-            model, slice, run, sampler_results, final_walker_positions
+            model, run, sampler_results, final_walker_positions
         )
 
     result_reader = ResultReader(
