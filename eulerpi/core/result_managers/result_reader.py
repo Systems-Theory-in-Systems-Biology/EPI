@@ -5,16 +5,47 @@ import numpy as np
 
 from eulerpi import logger
 
-from .result_manager_utils import get_run_path
+from .path_manager import PathManager
 
 
 class ResultReader:
-    """The result reader is responsible for loading the results of the inference from disk."""
+    """The result reader is responsible for loading the results of the inference from disk.
 
-    def __init__(self, model_name: str, run_name: str) -> None:
+    Attributes:
+        model_name(str): The name of the model (e.g. "temperature"). It is used to create the folder structure.
+        run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.
+        inference_information(dict): A dictionary with information about the inference run, e.g. inference type, number of samples, etc.
+        path_manager(PathManager): A path manager Object to manage file paths.
+    """
+
+    def __init__(
+        self,
+        model_name: str,
+        run_name: str,
+        path_manager: Optional[PathManager] = None,
+    ) -> None:
+        """Creates a result
+
+        Args:
+            model_name(str): The name of the model (e.g. "temperature"). It is used to create the folder structure.
+            run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.
+            path_manager(PathManager, optional): A path manager Object to manage file paths. Defaiults to None creates a new path manager.
+        """
         self.model_name = model_name
         self.run_name = run_name
+        if not path_manager:
+            path_manager = PathManager(self.model_name, self.run_name)
+        self.path_manager = path_manager
         self.inference_information = self.get_inference_information()
+
+    def get_run_path(self) -> str:
+        """Returns the path to the folder where the results for the given run are stored.
+
+        Returns:
+            str: The path to the folder where the results for the given run are stored.
+
+        """
+        return self.path_manager.get_run_path()
 
     def get_inference_information(self) -> Dict:
         """Load the inference information from the inference_information.json file.
@@ -26,7 +57,7 @@ class ResultReader:
         if hasattr(self, "inference_information"):
             return self.inference_information
 
-        run_path = get_run_path(self.model_name, self.run_name)
+        run_path = self.get_run_path()
         with open(run_path + "/inference_information.json", "r") as file:
             inference_information = json.load(file)
 
@@ -47,7 +78,7 @@ class ResultReader:
             typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the pushforward of the parameters, and the density evaluations.
 
         """
-        run_path = get_run_path(self.model_name, self.run_name)
+        run_path = self.get_run_path()
 
         # load information from json file
         with open(run_path + "/inference_information.json", "r") as file:
@@ -80,7 +111,7 @@ class ResultReader:
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the pushforward of the parameters, and the density evaluations.
         """
-        run_path = get_run_path(self.model_name, self.run_name)
+        run_path = self.get_run_path()
 
         # use default values saved in inference_information if not specified
         if num_burn_in_samples is None:
@@ -167,7 +198,7 @@ class ResultReader:
         Returns:
             Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the pushforward of the parameters, and the density evaluations.
         """
-        run_path = get_run_path(self.model_name, self.run_name)
+        run_path = self.get_run_path()
 
         param_chain = np.loadtxt(
             run_path + "/params.csv",

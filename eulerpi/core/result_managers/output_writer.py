@@ -1,18 +1,14 @@
 # TODO: Import Path from pathlib?
 import json
-import os
-import shutil
 from os import path
 
 import numpy as np
-import seedir
-from seedir import FakeDir, FakeFile
+from typing import Optional
 
-from eulerpi import logger
 from eulerpi.core.inference_types import InferenceType
 from eulerpi.core.models import BaseModel
 
-from .result_manager_utils import get_run_path, get_slice_name
+from .path_manager import PathManager
 
 
 class OutputWriter:
@@ -21,78 +17,47 @@ class OutputWriter:
     Attributes:
         model_name(str): The name of the model (e.g. "temperature"). It is used to create the folder structure.
         run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.
+        path_manager(PathManager): A path manager Object to manage file paths.
     """
 
-    def __init__(self, model_name: str, run_name: str) -> None:
+    def __init__(
+        self,
+        model_name: str,
+        run_name: str,
+        path_manager: Optional[PathManager] = None,
+    ) -> None:
         """Creates an instance of the output writer for saving the results of the inference.
 
         Args:
             model_name (str): Name of the model.
             run_name (str): Name of the run.
+            path_manager (PathManager, optional): Path manager Object to manage the folder structure. Defaults to None creates a new path manager.
         """
         self.model_name = model_name
         self.run_name = run_name
+        if not path_manager:
+            path_manager = PathManager(self.model_name, self.run_name)
+        self.path_manager = path_manager
+
+    def get_run_path(self) -> str:
+        """Returns the path to the folder where the results for the given run are stored.
+
+        Returns:
+            str: The path to the folder where the results for the given run are stored.
+
+        """
+        return self.path_manager.get_run_path()
 
     def create_output_folder_structure(self) -> None:
         """Creates the subfolders in `Output` for the given run where all simulation results
         are stored for this model and run. No files are deleted during this action.
 
         """
-        outputFolderStructure = (
-            "Output/ \n"
-            "  - {modelName}/ \n"
-            "    - {runName}/ \n"
-            "       - DensityEvals/ \n"
-            "       - Params/ \n"
-            "       - PushforwardEvals/ \n"
-        )
-        path = "."
-        structure = outputFolderStructure
-
-        def create(f, root):
-            """
-
-            Args:
-              f:
-              root:
-
-            Returns:
-
-            """
-            fpath = f.get_path()
-            joined = os.path.join(root, fpath)
-            if isinstance(f, FakeDir):
-                try:
-                    os.mkdir(joined)
-                except FileExistsError:
-                    logger.info(f"Directory `{joined}` already exists")
-            elif isinstance(f, FakeFile):
-                try:
-                    with open(joined, "w"):
-                        pass
-                except FileExistsError:
-                    logger.info(f"File `{joined}` already exists")
-
-        fakeStructure = seedir.fakedir_fromstring(
-            structure.format(
-                modelName=self.model_name,
-                runName=self.run_name,
-            )
-        )
-        fakeStructure.realize = lambda path_arg: fakeStructure.walk_apply(
-            create, root=path_arg
-        )
-        fakeStructure.realize(path)
+        self.path_manager.create_output_folder_structure()
 
     def delete_output_folder_structure(self) -> None:
         """Deletes the `Output` folder."""
-        try:
-            path = get_run_path(self.model_name, self.run_name)
-            shutil.rmtree(path)
-        except FileNotFoundError:
-            logger.info(
-                f"Folder structure for run_name {self.run_name} does not exist"
-            )
+        self.path_manager.delete_output_folder_structure()
 
     def count_emcee_sub_runs(self, slice: np.ndarray) -> int:
         """This data organization function counts how many sub runs are saved for the specified scenario.
@@ -109,7 +74,7 @@ class OutputWriter:
 
         # Increase the just defined number until no corresponding file is found anymore ...
         while path.isfile(
-            get_run_path(self.model_name, self.run_name)
+            self.get_run_path()
             + "/PushforwardEvals/"
             + "pushforward_evals_"
             + str(num_existing_files)
@@ -122,7 +87,6 @@ class OutputWriter:
     def save_sampler_run(
         self,
         model: BaseModel,
-        slice: np.ndarray,
         chain_number: int,
         sampler_results: np.ndarray,
         final_walker_positions: np.ndarray,
@@ -142,7 +106,7 @@ class OutputWriter:
 
         sampling_dim = final_walker_positions.shape[1]
 
-        results_path = get_run_path(self.model_name, self.run_name)
+        results_path = self.get_run_path()
 
         # Save the parameters
         np.savetxt(
@@ -181,6 +145,9 @@ class OutputWriter:
             delimiter=",",
         )
 
+    def save_current_walker_pos(params: np.ndarray) -> None:
+        pass
+
     def save_grid_based_run(
         self,
         params: np.ndarray,
@@ -195,7 +162,7 @@ class OutputWriter:
             density_evals(np.ndarray): The densities at the grid points.
 
         """
-        results_path = get_run_path(self.model_name, self.run_name)
+        results_path = self.get_run_path()
 
         # Save the parameters
         np.savetxt(
@@ -246,7 +213,7 @@ class OutputWriter:
         """
         information = {
             "model": model.name,
-            "slice": get_slice_name(slice),
+            "slice": self.path_manager.get_slice_name(slice),
             "inference_type": inference_type.name,
             "num_processes": num_processes,
         }
@@ -261,8 +228,7 @@ class OutputWriter:
             ].name
         # save information as json file
         with open(
-            get_run_path(self.model_name, self.run_name)
-            + "/inference_information.json",
+            self.get_run_path() + "/inference_information.json",
             "w",
             encoding="utf-8",
         ) as file:
