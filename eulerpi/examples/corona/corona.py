@@ -1,11 +1,13 @@
+import logging
 from typing import Optional
 
 import diffrax as dx
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.logger import logger
 from eulerpi.models import ArtificialModelInterface, JaxModel
+
+logger = logging.getLogger(__name__)
 
 
 class Corona(JaxModel):

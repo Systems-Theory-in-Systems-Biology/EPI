@@ -8,13 +8,14 @@
 .. _SGs: https://en.wikipedia.org/wiki/Sparse_grid
 """
 
+import logging
 import typing
 
 import numpy as np
 
-from eulerpi.logger import logger
-
 from .grid import Grid
+
+logger = logging.getLogger(__name__)
 
 
 def basis_1d(

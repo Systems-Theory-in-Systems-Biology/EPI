@@ -1,3 +1,4 @@
+import logging
 import os
 from functools import partial
 from typing import Optional, Tuple
@@ -8,11 +9,12 @@ from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_log_density
 from eulerpi.function_wrappers import FunctionWithDimensions
-from eulerpi.logger import logger
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_manager import ResultManager
 from eulerpi.samplers.emcee_sampler import EmceeSampler
 from eulerpi.samplers.sampler import Sampler
+
+logger = logging.getLogger(__name__)
 
 
 def calc_walker_acceptance(

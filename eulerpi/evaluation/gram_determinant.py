@@ -1,7 +1,9 @@
+import logging
+
 import jax.numpy as jnp
 from jax import jit
 
-from eulerpi.logger import logger
+logger = logging.getLogger(__name__)
 
 
 def calc_gram_determinant(jac: jnp.ndarray) -> jnp.double:

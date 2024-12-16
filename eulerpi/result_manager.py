@@ -2,6 +2,7 @@
 # TODO: Rework result manager, the argument and member slices should be removed
 
 import json
+import logging
 import os
 import shutil
 from os import path
@@ -11,8 +12,9 @@ import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
 
-from eulerpi.logger import logger
 from eulerpi.models import BaseModel
+
+logger = logging.getLogger(__name__)
 
 
 class ResultManager:

@@ -1,17 +1,19 @@
 """This module implements the random variable transformation of the EPI algorithm.
 """
 
+import logging
 from typing import Tuple
 
 import jax.numpy as jnp
 import numpy as np
 
 from eulerpi.data_transformations.data_transformation import DataTransformation
-from eulerpi.logger import logger
 from eulerpi.models.base_model import BaseModel
 
 from .gram_determinant import calc_gram_determinant
 from .kde import KDE
+
+logger = logging.getLogger(__name__)
 
 
 def evaluate_density(

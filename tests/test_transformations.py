@@ -1,3 +1,5 @@
+import logging
+
 import jax.numpy as jnp
 import numpy as np
 import pytest
@@ -91,7 +93,7 @@ def test_evaluate_density(caplog):
     param = np.array([2.1])
     # Other arguments would change too, but shouldn't matter for this test
     # set logger level to debug to see the warning
-    from eulerpi.logger import logger
+    logger = logging.getLogger("eulerpi")
 
     logger.setLevel("INFO")
     _, _, density = evaluate_density(
