@@ -8,11 +8,11 @@ import numpy as np
 from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_log_density
-from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_managers import OutputWriter, ResultReader
 from eulerpi.samplers.emcee_sampler import EmceeSampler
 from eulerpi.samplers.sampler import Sampler
+from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
 logger = logging.getLogger(__name__)
 

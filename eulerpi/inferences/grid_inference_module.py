@@ -6,7 +6,6 @@ import numpy as np
 from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.evaluation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_density
-from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 from eulerpi.grids.grid import Grid
 from eulerpi.grids.grid_evaluation import (
@@ -15,6 +14,7 @@ from eulerpi.grids.grid_evaluation import (
 )
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
+from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
 
 def combined_evaluation(param, model, data_transformation, kde, slice):

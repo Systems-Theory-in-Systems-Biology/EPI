@@ -3,7 +3,7 @@ from multiprocessing import get_context
 
 import numpy as np
 
-from eulerpi.function_wrappers import FunctionWithDimensions
+from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
 
 def evaluate_function_on_grid_points_iterative(
