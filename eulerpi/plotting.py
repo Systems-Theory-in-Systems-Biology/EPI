@@ -5,10 +5,8 @@ Uses burn_in and thinning accordinng to the simulation settings.
 """
 
 import os
-import pathlib
 from typing import Optional, Union
 
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import axes
@@ -16,6 +14,7 @@ from matplotlib import axes
 from eulerpi.evaluation.kde import calc_kernel_width, eval_kde_gauss
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import ResultReader
+from eulerpi.utils.io import load_data
 
 # general plotting function for joint runs
 
@@ -101,14 +100,7 @@ def sample_violin_plot(
 
     # Load data from file if necessary
     if reference_available:
-        if isinstance(reference_sample, (str, os.PathLike, pathlib.Path)):
-            reference_sample = np.loadtxt(
-                reference_sample, delimiter=",", ndmin=2
-            )
-        elif not isinstance(reference_sample, (np.ndarray, jnp.ndarray)):
-            raise TypeError(
-                f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(reference_sample)}."
-            )
+        reference_sample = load_data(reference_sample)
 
     # define the locations and extends of the violin plots on the abscissa
     unit_locations = np.linspace(1, 2 * dim - 1, dim) / (2.0 * dim)
