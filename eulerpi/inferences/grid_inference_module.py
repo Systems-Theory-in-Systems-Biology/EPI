@@ -14,14 +14,16 @@ from eulerpi.grids.grid_evaluation import (
     evaluate_function_on_grid_points_multiprocessing,
 )
 from eulerpi.models.base_model import BaseModel
-from eulerpi.result_manager import ResultManager
+from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
 
 
 def combined_evaluation(param, model, data_transformation, kde, slice):
-    param, sim_res, density = evaluate_density(
+    param, pushforward_evals, density = evaluate_density(
         param, model, data_transformation, kde, slice
     )
-    combined_result = np.concatenate([param, sim_res, np.array([density])])
+    combined_result = np.concatenate(
+        [param, pushforward_evals, np.array([density])]
+    )
     return combined_result
 
 
@@ -51,7 +53,7 @@ def grid_inference(
     data_transformation: DataTransformation,
     kde: KDE,
     slice: np.ndarray,
-    result_manager: ResultManager,
+    output_writer: OutputWriter,
     num_processes: int,
     grid: Grid = None,
     num_grid_points=10,
@@ -63,7 +65,7 @@ def grid_inference(
         model(BaseModel): The model for which the evaluation should be performed.
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         slice(np.ndarray): The slice for which the evaluation should be performed.
-        result_manager(ResultManager): The result manager that should be used to save the results.
+        output_writer(OutputWriter): The output writer that should be used to save the results.
         num_processes(int): The number of processes that should be used for the evaluation. (Default value = NUM_PROCESSES)
         grid_detail(Union[int, list[np.ndarray]]): The number of grid points for each dimension or another parameter defining the grid resolution
         grid_type(str): The type of grid that should be used. (Default value = "EQUIDISTANT")
@@ -72,7 +74,7 @@ def grid_inference(
             does not exceed the load_balancing_safety_factor. (Default value = 1)
 
     Returns:
-        Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the corresponding simulation results, the corresponding density
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameter samples, the corresponding pushforward evaluations, the corresponding density
         evaluations for the given slice.
 
     Raises:
@@ -80,7 +82,7 @@ def grid_inference(
         ValueError: If the grid type is unknown.
 
     """
-    result_manager.append_inference_information(
+    output_writer.append_inference_information(
         slice=slice,
         grid=type(grid).__name__,
         load_balancing_safety_factor=load_balancing_safety_factor,
@@ -109,13 +111,13 @@ def grid_inference(
 
     n_p = slice.shape[0]
     params = results[:, :n_p]
-    sim_res = results[:, n_p : n_p + model.data_dim]
+    pushforward_evals = results[:, n_p : n_p + model.data_dim]
     densities = results[:, -1]
 
-    result_manager.save_overall(
+    output_writer.save_overall(
         slice,
         params,
-        sim_res,
+        pushforward_evals,
         densities,
     )
-    return params, sim_res, densities
+    return params, pushforward_evals, densities

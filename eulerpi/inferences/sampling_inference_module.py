@@ -10,7 +10,7 @@ from eulerpi.evaluation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_log_density
 from eulerpi.function_wrappers import FunctionWithDimensions
 from eulerpi.models.base_model import BaseModel
-from eulerpi.result_manager import ResultManager
+from eulerpi.result_managers import OutputWriter, ResultReader
 from eulerpi.samplers.emcee_sampler import EmceeSampler
 from eulerpi.samplers.sampler import Sampler
 
@@ -19,28 +19,27 @@ logger = logging.getLogger(__name__)
 
 def calc_walker_acceptance(
     model: BaseModel,
-    slice: np.ndarray,
     num_walkers: int,
     num_burn_in_samples: int,
-    result_manager: ResultManager,
+    result_reader: ResultReader,
 ):
     """Calculate the acceptance ratio for each individual walker of the emcee chain.
     This is especially important to find "zombie" walkers, that are never moving.
 
     Args:
         model (BaseModel): The model for which the acceptance ratio should be calculated
-        slice (np.ndarray): slice for which the acceptance ratio should be calculated
-        num_walkers (int): number of walkers in the emcee chain
-        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
-        result_manager (ResultManager): ResultManager to load the results from
+        num_walkers (int): number of walkers in the emcee chain.
+        num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker).
+        result_reader (ResultReader): ResultReader to load the results from
 
     Returns:
         np.ndarray: Array with the acceptance ratio for each walker
 
     """
     thinning_factor = 1
-    params, _, _ = result_manager.load_slice_inference_results(
-        slice, num_burn_in_samples, thinning_factor
+    params, _, _ = result_reader.load_inference_results(
+        num_burn_in_samples=num_burn_in_samples,
+        thinning_factor=thinning_factor,
     )
     num_steps = (
         params.shape[0] // num_walkers - 1
@@ -58,7 +57,13 @@ def calc_walker_acceptance(
     return acceptance_ratio
 
 
-def combined_evaluation(param, model, data_transformation, kde, slice):
+def combined_evaluation(
+    param: np.ndarray,
+    model: BaseModel,
+    data_transformation: DataTransformation,
+    kde: KDE,
+    slice: np.ndarray,
+):
     param, sim_res, logdensity = evaluate_log_density(
         param, model, data_transformation, kde, slice
     )
@@ -87,25 +92,12 @@ def get_LogDensityEvaluator(
     )
 
 
-def _load_sampler_position(position_path: os.PathLike):
-    # If there are current walker positions defined by runs before this one, use them.
-
-    if os.path.isfile(position_path):
-        initial_walker_positions = np.loadtxt(
-            position_path,
-            delimiter=",",
-            ndmin=2,
-        )
-        return initial_walker_positions
-    return None
-
-
 def sampling_inference(
     model: BaseModel,
     data_transformation: DataTransformation,
     kde: KDE,
     slice: np.ndarray,
-    result_manager: ResultManager,
+    output_writer: OutputWriter,
     num_processes: int,
     sampler: Sampler = None,
     num_walkers: int = 10,
@@ -121,8 +113,8 @@ def sampling_inference(
         model (BaseModel): The model which will be sampled
         data_transformation (DataTransformation): The data transformation used to normalize the data.
         kde(KDE): The density estimator which should be used to estimate the data density.
-        slice (np.ndarray): slice of the parameter space which will be sampled
-        result_manager (ResultManager): ResultManager which will store the results
+        slice (np.ndarray): slice of the parameter space which will be sampled.
+        output_writer (OutputWriter): OutputWriter used to store the results.
         num_processes (int): number of parallel threads.
         num_walkers (int): number of particles in the particle swarm sampler.
         num_steps (int): number of samples each particle performs before storing the sub run.
@@ -131,10 +123,10 @@ def sampling_inference(
         get_walker_acceptance (bool): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
 
     Returns:
-        Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all data, array with all log probabilities
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: Array with all params, array with all pushforward evaluations, array with all log probabilities
 
     """
-    result_manager.append_inference_information(
+    output_writer.append_inference_information(
         slice=slice,
         num_walkers=num_walkers,
         num_steps=num_steps,
@@ -157,11 +149,14 @@ def sampling_inference(
     if sampler is None:
         sampler = EmceeSampler(sampling_dim=sampling_dim, logger=logger)
 
-    position_path = result_manager.get_slice_path(slice) + "/currentPos.csv"
-    if last_position := _load_sampler_position(position_path) is not None:
+    result_reader = ResultReader(
+        output_writer.model_name, output_writer.run_name
+    )
+
+    if last_position := result_reader.load_sampler_position() is not None:
         initial_walker_positions = last_position
         logger.info(
-            f"Continue sampling from saved sampler position in {position_path}"
+            f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
         )
     else:
         # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
@@ -175,7 +170,7 @@ def sampling_inference(
         ] * (np.random.rand(num_walkers, sampling_dim) - 0.5)
 
     # Count and print how many runs have already been performed for this model
-    num_existing_files = result_manager.count_sub_runs(slice)
+    num_existing_files = result_reader.path_manager.count_emcee_sub_runs()
     logger.debug(f"{num_existing_files} existing files found")
 
     # Run the sampler.
@@ -188,31 +183,28 @@ def sampling_inference(
         num_processes,
     )
 
-    result_manager.save_subrun(
-        model,
-        slice,
-        num_existing_files,
-        sampler_results,
-        final_walker_positions,
+    output_writer.save_sampler_run(
+        model=model,
+        chain_number=num_existing_files,
+        sampler_results=sampler_results,
+        final_walker_positions=final_walker_positions,
     )
 
     (
         overall_params,
         overall_sim_results,
         overall_density_evals,
-    ) = result_manager.load_slice_inference_results(
-        slice, num_burn_in_samples, thinning_factor
-    )
-    result_manager.save_overall(
-        slice,
-        overall_params,
-        overall_sim_results,
-        overall_density_evals,
+    ) = result_reader.load_inference_results(
+        num_burn_in_samples, thinning_factor
     )
 
     if get_walker_acceptance:
         acceptance = calc_walker_acceptance(
-            model, slice, num_walkers, num_burn_in_samples, result_manager
+            model=model,
+            slice=slice,
+            num_walkers=num_walkers,
+            num_burn_in_samples=num_burn_in_samples,
+            result_reader=result_reader,
         )
         logger.info(f"Acceptance rate for slice {slice}: {acceptance}")
 
