@@ -6,7 +6,7 @@ from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 from eulerpi.inference import InferenceType, inference
-from eulerpi.result_manager import ResultManager
+from eulerpi.result_managers import ResultReader, OutputWriter
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
@@ -33,38 +33,35 @@ def test_inference_mcmc_dense_exact(
     result_params, result_sim_res, result_densities = {}, {}, {}
     full_slice = np.arange(model.param_dim)
     for inference_type in InferenceType._member_map_.values():
-        result_manager = ResultManager(
-            model.name, str(inference_type), [full_slice]
-        )
+        output_writer = OutputWriter(model.name, str(inference_type))
         if InferenceType(inference_type) == InferenceType.SAMPLING:
             inference(
                 model,
                 data,
                 inference_type,
-                result_manager=result_manager,
+                output_writer=output_writer,
                 num_steps=num_steps,
             )
             # Take every second sample and skip the first 5% of the chain
+            result_reader = ResultReader(model.name, str(inference_type))
             (
                 result_params[inference_type],
                 result_sim_res[inference_type],
                 result_densities[inference_type],
-            ) = result_manager.load_inference_results(
-                [full_slice], num_steps // 20, 2
-            )
+            ) = result_reader.load_inference_results(num_steps // 20, 2)
         elif InferenceType(inference_type) == InferenceType.GRID:
             inference(
                 model,
                 data,
                 inference_type,
-                result_manager=result_manager,
+                output_writer=output_writer,
                 num_grid_points=num_grid_points,
             )
             (
                 result_params[inference_type],
                 result_sim_res[inference_type],
                 result_densities[inference_type],
-            ) = result_manager.load_inference_results(slices=[full_slice])
+            ) = result_reader.load_inference_results()
         else:
             # skip other inference types
             continue
@@ -260,7 +257,7 @@ def test_thinning_and_burn_in():
     thinning_factor = 4
 
     # MCMC inference
-    overall_params, sim_results, density_evals, result_manager = inference(
+    overall_params, sim_results, density_evals, result_reader = inference(
         model=model,
         data=data,
         slice=slice,
@@ -289,13 +286,13 @@ def test_thinning_and_burn_in():
         np.arange(num_walkers * num_steps) // thinning_factor
     )
     np.savetxt(
-        result_manager.get_slice_path(slice) + "/Params/params_0.csv",
+        result_reader.path_manager.get_run_path() + "/Params/params_0.csv",
         artificial_test_data_run,
         delimiter=",",
     )
     artificial_test_data_run += 1000
     np.savetxt(
-        result_manager.get_slice_path(slice) + "/Params/params_1.csv",
+        result_reader.path_manager.get_run_path() + "/Params/params_1.csv",
         artificial_test_data_run,
         delimiter=",",
     )
@@ -304,13 +301,13 @@ def test_thinning_and_burn_in():
         overall_params,
         sim_results,
         density_evals,
-    ) = result_manager.load_inference_results()
+    ) = result_reader.load_inference_results()
     # check if the correct samples where burned and thinned
     assert np.all(
-        (overall_params["Slice_Q0"] - num_burn_in_samples) % thinning_factor
-        == 0
+        (overall_params - num_burn_in_samples) % thinning_factor == 0
     )
-    assert np.all(overall_params["Slice_Q0"] >= num_burn_in_samples)
+    assert np.all(overall_params >= num_burn_in_samples)
+    # TODO discuss whether the last assert makes sense.
 
 
 # Run the inference if main
