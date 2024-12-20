@@ -13,7 +13,7 @@ from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
 from eulerpi.inferences import grid_inference, sampling_inference
 from eulerpi.models import BaseModel
-from eulerpi.result_manager import ResultManager
+from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
 
 
 class InferenceType(Enum):
@@ -30,13 +30,16 @@ def inference(
     slice: Optional[np.ndarray] = None,
     num_processes: Optional[int] = None,
     run_name: str = "default_run",
-    result_manager: ResultManager = None,
+    output_writer: OutputWriter = None,
+    result_reader: ResultReader = None,
+    path_manager: Optional[ResultReader] = None,
     continue_sampling: bool = False,
     data_transformation: DataTransformation = None,
     kde: KDE = None,
     **kwargs,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultManager]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultReader]:
     """Starts the parameter inference for the given model and data.
+    # TODO Update this docstring to reflect the changes in the function signature & result manager functionality
 
     Args:
         model(BaseModel): The model describing the mapping from parameters to data.
@@ -45,15 +48,17 @@ def inference(
         slices(list[np.ndarray], optional): A list of slices to be used for the inference. If None, the full joint distribution is computed. (Default value = None)
         num_processes(int, optional): The number of processes to be used for the inference. Per default the number of cores is used. (Default value = None)
         run_name(str): The name of the run. (Default value = "default_run")
-        result_manager(ResultManager, optional): The result manager to be used for the inference. If None, a new result manager is created with default paths and saving methods. (Default value = None)
+        output_writer(ResultManager, optional): The output writer to be used for the inference. If None, a new output writer is created with default paths and saving methods. (Default value = None)
+        result_reader(ResultManager, optional): The result reader to be used for the inference. If None, a new result reader is created with default paths and loading methods. (Default value = None)
+        path_manager(ResultManager, optional): The path manager to be used for the inference. If None, a new path manager is created with default paths. (Default value = None)
         continue_sampling(bool, optional): If True, the inference will continue sampling from the last saved point. (Default value = False)
         data_transformation(DataTransformation): The data transformation to use. If None is passed, a DataNormalization will be applied. Pass DataIdentity to avoid the transformation of the data. (Default value = None)
         kde(KDE): The density estimator which should be used to estimate the data density. If None is passed, a GaussianKDE will be used. (Default value = None)
         **kwargs: Additional keyword arguments to be passed to the inference function. The possible parameters depend on the inference type.
 
     Returns:
-        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultManager]: The parameter samples, the corresponding simulation results, the corresponding density
-        evaluations for each slice and the result manager used for the inference.
+        Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray], Dict[str, np.ndarray], ResultReader]: The parameter samples, the pushforward of the parameters, the corresponding density
+        evaluations for each slice, and a result reader to (re)-read and manipulate the results.
 
     Examples:
 
@@ -77,7 +82,7 @@ def inference(
         param_sample = param_sample_dict["Slice_Q0Q1Q2"]
 
     Of course, you can also specify additional parameters and import data from a file Data/Coronoa/data.csv.
-    In addition, the result manager is a convenient and versatile interface to access the inference results.
+    In addition, the result reader is a convenient and versatile interface to access the inference results.
 
     .. code-block:: python
 
@@ -96,7 +101,7 @@ def inference(
                                         thinning_factor = 10) # only use every 10th sample to avoid autocorrelation
 
         # use the result manager to retreive the inference results
-        param_sample, sim_res_sample, density_evals = res_manager.load_slice_inference_results(slice = np.array([0,1,2]))
+        param_sample, pushforward_evals_sample, density_evals = res_reader.load_inference_results()
 
     Principle Compoonent Analysis (PCA) can be useful to reduce the dimension of the data space and is supported by eulerpi.
     Grid based parameter density estimation is especially useful whenever parameter dimension can be assumed to be indepedent.
@@ -111,7 +116,7 @@ def inference(
         from eulerpi.examples.corona import Corona
         from eulerpi import inference, InferenceType
         from eulerpi.data_transformation import DataPCA
-        from eulerpi.result_manager import ResultManager
+        from eulerpi.result_managers import ResultReader
 
         model = Corona()
         data_transformation = DataPCA(data, n_components=model.param_dim)  # perform PCA on the data before inference
@@ -125,10 +130,10 @@ def inference(
                 num_grid_points = 30) # use 30 grid points per parameter dimension
 
         # initiate the result manager using the model and run name to retreive the inference results computed above and stored offline
-        grid_res_manager = ResultManager(model_name = Corona().name, run_name = "grid_run")
+        grid_res_reader = ResultReader(model_name = Corona().name, run_name = "grid_run")
 
         # load the inference results for the joint distribution of parameter dimensions 0 and 1
-        param_grid_dim01, sim_res_grid_dim01, density_evals_dim01 = grid_res_manager.load_slice_inference_results(slice = np.array([0,1]))
+        param_grid_dim01, pushforward_evals_grid_dim01, density_evals_dim01 = grid_res_reader.load_inference_results()
 
     """
 
@@ -161,47 +166,50 @@ def inference(
         slice = np.arange(
             model.param_dim
         )  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
-    result_manager = result_manager or ResultManager(
-        model.name, run_name, [slice]
-    )  # If no result_manager is given, create one with default paths
+
+    path_manager = path_manager or PathManager(
+        model.name, run_name
+    )  # If no path manager is given, create one with default paths
+    output_writer = output_writer or OutputWriter(path_manager=path_manager)
 
     if not continue_sampling:
-        result_manager.delete_application_folder_structure()
-    result_manager.create_application_folder_structure()
+        output_writer.delete_application_folder_structure()
+    output_writer.create_application_folder_structure()
 
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
 
-        result_manager.save_inference_information(
-            slice=slice,
+    output_writer.save_inference_information(
+        slice=slice,
+        model=model,
+        inference_type=inference_type.name,
+        num_processes=num_processes,
+        # **kwargs,
+    )
+    if inference_type == InferenceType.GRID:
+        params, pushforward_evals, densities = grid_inference(
             model=model,
-            inference_type=inference_type.name,
+            data_transformation=data_transformation,
+            kde=kde,
+            slice=slice,
+            output_writer=output_writer,
             num_processes=num_processes,
-            # **kwargs,
+            **kwargs,
         )
-        if inference_type == InferenceType.GRID:
-            params, sim_results, densities = grid_inference(
-                model=model,
-                data_transformation=data_transformation,
-                kde=kde,
-                slice=slice,
-                result_manager=result_manager,
-                num_processes=num_processes,
-                **kwargs,
-            )
-        elif inference_type == InferenceType.SAMPLING:
-            params, sim_results, densities = sampling_inference(
-                model,
-                data_transformation,
-                kde,
-                slice,
-                result_manager,
-                num_processes,
-                **kwargs,
-            )
-        else:
-            raise NotImplementedError(
-                f"The inference type {inference_type} is not implemented yet."
-            )
+    elif inference_type == InferenceType.SAMPLING:
+        params, pushforward_evals, densities = sampling_inference(
+            model=model,
+            data_transformation=data_transformation,
+            kde=kde,
+            slice=slice,
+            output_writer=output_writer,
+            num_processes=num_processes,
+            **kwargs,
+        )
+    else:
+        raise NotImplementedError(
+            f"The inference type {inference_type} is not implemented yet."
+        )
+    result_reader = result_reader or ResultReader(path_manager=path_manager)
 
-    return params, sim_results, densities, result_manager
+    return params, pushforward_evals, densities, result_reader

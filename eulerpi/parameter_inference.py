@@ -8,6 +8,7 @@ import numpy as np
 
 from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
+from eulerpi.grids.grid import Grid
 from eulerpi.inferences.grid_inference_module import (
     grid_inference as do_grid_inference,
 )
@@ -19,7 +20,8 @@ from eulerpi.inferences.sampling_inference_module import (
     sampling_inference as do_sampling_inference,
 )
 from eulerpi.models import BaseModel
-from eulerpi.result_manager import ResultManager
+from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
+from eulerpi.samplers.sampler import Sampler
 
 
 class ParameterInference:
@@ -55,13 +57,13 @@ class ParameterInference:
 
     def grid_inference(
         self,
-        slice=None,
-        result_manager=None,
-        num_processes=None,
-        grid=None,
-        num_grid_points=10,
-        load_balancing_safety_factor=1,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultManager]:
+        slice: Optional[np.ndarray] = None,
+        output_writer: Optional[OutputWriter] = None,
+        num_processes: Optional[int] = None,
+        grid: Optional[Grid] = None,
+        num_grid_points: int = 10,
+        load_balancing_safety_factor: int = 1,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultReader]:
         if slice is None:
             slice = np.arange(
                 self.model.param_dim
@@ -71,7 +73,7 @@ class ParameterInference:
             self.data_transformation,
             self.kde,
             slice,
-            result_manager,
+            output_writer,
             num_processes,
             grid,
             num_grid_points,
@@ -80,16 +82,17 @@ class ParameterInference:
 
     def sampling_inference(
         self,
-        slice=None,
-        result_manager=None,
-        num_processes=None,
-        sampler=None,
+        slice: Optional[np.ndarray] = None,
+        output_writer: Optional[OutputWriter] = None,
+        num_processes: Optional[int] = None,
+        sampler: Optional[Sampler] = None,
         num_walkers: int = 10,
         num_steps: int = 2500,
         num_burn_in_samples: Optional[int] = None,
         thinning_factor: Optional[int] = None,
         get_walker_acceptance=False,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultManager]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, ResultReader]:
+
         if slice is None:
             slice = np.arange(
                 self.model.param_dim
@@ -99,7 +102,7 @@ class ParameterInference:
             self.data_transformation,
             self.kde,
             slice,
-            result_manager,
+            output_writer,
             num_processes,
             sampler,
             num_walkers,
