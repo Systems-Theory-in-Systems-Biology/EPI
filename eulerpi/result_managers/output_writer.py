@@ -81,7 +81,10 @@ class OutputWriter:
 
         # Save the parameters
         np.savetxt(
-            results_path + "/Params/raw_params_" + str(chain_number) + ".csv",
+            results_path
+            + f"/{self.path_manager.PARAMS_FOLDER}/raw_params_"
+            + str(chain_number)
+            + ".csv",
             sampler_results[:, :sampling_dim],
             delimiter=",",
         )
@@ -89,7 +92,7 @@ class OutputWriter:
         # Save the density evaluations
         np.savetxt(
             results_path
-            + "/DensityEvals/raw_density_evals_"
+            + f"/{self.path_manager.DENSITY_EVALS_FOLDER}/raw_density_evals_"
             + str(chain_number)
             + ".csv",
             sampler_results[:, -1],
@@ -99,7 +102,7 @@ class OutputWriter:
         # Save the pushforward evaluations
         np.savetxt(
             results_path
-            + "/PushforwardEvals/raw_pushforward_evals_"
+            + f"/{self.path_manager.PUSHFORWARD_EVALS_FOLDER}/raw_pushforward_evals_"
             + str(chain_number)
             + ".csv",
             sampler_results[:, sampling_dim : sampling_dim + model.data_dim],
@@ -123,9 +126,9 @@ class OutputWriter:
             params(np.ndarray): The current walker positions.
 
         """
-        results_path = self.get_run_path()
+        positions_path = self.path_manager.get_current_walker_position_path()
         np.savetxt(
-            results_path + "Params/current_walker_positions.csv",
+            positions_path,
             params,
             delimiter=",",
         )

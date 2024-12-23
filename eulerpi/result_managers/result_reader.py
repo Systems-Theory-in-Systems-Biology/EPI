@@ -124,17 +124,20 @@ class ResultReader:
         # load samples from raw chains
         for i in range(inference_information["num_runs"]):
             params_current_chain = np.loadtxt(
-                run_path + f"/Params/raw_params_{i}.csv",
+                run_path
+                + f"/{self.path_manager.PARAMS_FOLDER}/raw_params_{i}.csv",
                 delimiter=",",
                 ndmin=2,
             )
             pushforward_evals_current_chain = np.loadtxt(
-                run_path + f"/PushforwardEvals/raw_pushforward_evals_{i}.csv",
+                run_path
+                + f"/{self.path_manager.PUSHFORWARD_EVALS_FOLDER}/raw_pushforward_evals_{i}.csv",
                 delimiter=",",
                 ndmin=2,
             )
             density_evals_current_chain = np.loadtxt(
-                run_path + f"/DensityEvals/raw_density_evals_{i}.csv",
+                run_path
+                + f"/{self.path_manager.DENSITY_EVALS_FOLDER}/raw_density_evals_{i}.csv",
                 delimiter=",",
             )
             if i == 0:
@@ -225,9 +228,7 @@ class ResultReader:
             Union[np.ndarray, None]: The current walker positions or None if there are no current walker positions.
         """
         # If there are current walker positions defined by runs before this one, use them.
-        position_path = (
-            self.get_run_path() + "/Params/current_walker_positions.csv"
-        )
+        position_path = self.path_manager.get_current_walker_position_path()
         if os.path.isfile(position_path):
             initial_walker_positions = np.loadtxt(
                 position_path,
