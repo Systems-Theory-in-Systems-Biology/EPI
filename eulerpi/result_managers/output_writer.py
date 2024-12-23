@@ -5,8 +5,8 @@ from os import path
 import numpy as np
 from typing import Optional
 
-from eulerpi.core.inference_types import InferenceType
-from eulerpi.core.models import BaseModel
+from eulerpi.inference import InferenceType
+from eulerpi.models import BaseModel
 
 from .path_manager import PathManager
 
