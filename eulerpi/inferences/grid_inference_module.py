@@ -13,7 +13,7 @@ from eulerpi.grids.grid_evaluation import (
     evaluate_function_on_grid_points_multiprocessing,
 )
 from eulerpi.models.base_model import BaseModel
-from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
+from eulerpi.result_managers import OutputWriter
 from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
 

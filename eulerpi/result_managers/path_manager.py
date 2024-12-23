@@ -1,8 +1,9 @@
 import os
 import shutil
+
+import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
-import numpy as np
 
 from eulerpi import logger
 

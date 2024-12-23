@@ -1,9 +1,7 @@
-# TODO: Import Path from pathlib?
 import json
-from os import path
+from typing import Optional
 
 import numpy as np
-from typing import Optional
 
 from eulerpi.inference import InferenceType
 from eulerpi.models import BaseModel

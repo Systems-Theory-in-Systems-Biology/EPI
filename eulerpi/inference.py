@@ -13,7 +13,7 @@ from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
 from eulerpi.inferences import grid_inference, sampling_inference
 from eulerpi.models import BaseModel
-from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
+from eulerpi.result_managers import OutputWriter, PathManager, ResultReader
 
 
 class InferenceType(Enum):

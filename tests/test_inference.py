@@ -6,7 +6,7 @@ from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 from eulerpi.inference import InferenceType, inference
-from eulerpi.result_managers import ResultReader, OutputWriter
+from eulerpi.result_managers import OutputWriter, ResultReader
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
