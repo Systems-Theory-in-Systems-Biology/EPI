@@ -188,6 +188,7 @@ def sampling_inference(
         sampler_results=sampler_results,
         final_walker_positions=final_walker_positions,
     )
+    output_writer.save_current_walker_pos(final_walker_positions)
 
     (
         overall_params,
