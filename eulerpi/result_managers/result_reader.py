@@ -56,8 +56,10 @@ class ResultReader:
         if hasattr(self, "inference_information"):
             return self.inference_information
 
-        run_path = self.get_run_path()
-        with open(run_path + "/inference_information.json", "r") as file:
+        inference_information_path = (
+            self.path_manager.get_inference_information_path()
+        )
+        with open(inference_information_path, "r") as file:
             inference_information = json.load(file)
 
         return inference_information
@@ -77,11 +79,8 @@ class ResultReader:
             typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the pushforward of the parameters, and the density evaluations.
 
         """
-        run_path = self.get_run_path()
 
-        # load information from json file
-        with open(run_path + "/inference_information.json", "r") as file:
-            inference_information = json.load(file)
+        inference_information = self.get_inference_information()
 
         if inference_information["inference_type"] == "MCMC":
             return self.load_mcmc_inference_results(

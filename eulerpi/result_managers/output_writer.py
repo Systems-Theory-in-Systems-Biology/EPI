@@ -210,7 +210,7 @@ class OutputWriter:
             ].name
         # save information as json file
         with open(
-            self.get_run_path() + "/inference_information.json",
+            self.path_manager.get_inference_information_path(),
             "w",
             encoding="utf-8",
         ) as file:

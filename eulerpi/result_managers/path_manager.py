@@ -126,3 +126,6 @@ class PathManager:
             num_existing_files += 1
 
         return num_existing_files
+
+    def get_inference_information_path(self) -> str:
+        return self.get_run_path() + "/inference_information.json"
