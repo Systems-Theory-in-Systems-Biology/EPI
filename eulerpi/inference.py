@@ -2,7 +2,6 @@
 
 import os
 import pathlib
-from enum import Enum
 from typing import Optional, Tuple, Union
 
 import jax.numpy as jnp
@@ -11,16 +10,14 @@ import psutil
 
 from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
-from eulerpi.inferences import grid_inference, sampling_inference
+from eulerpi.inferences import (
+    GridInferenceEngine,
+    InferenceEngine,
+    SamplingInferenceEngine,
+)
+from eulerpi.inferences.inference_type import InferenceType
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import OutputWriter, PathManager, ResultReader
-
-
-class InferenceType(Enum):
-    """Available modes for the :py:func:`inference <eulerpi.inference.inference>` function."""
-
-    GRID = 0  #: The grid inference uses a grid to evaluate the joint distribution.
-    SAMPLING = 1  #: The SAMPLING / MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
 
 
 def inference(
@@ -173,8 +170,8 @@ def inference(
     output_writer = output_writer or OutputWriter(path_manager=path_manager)
 
     if not continue_sampling:
-        output_writer.delete_application_folder_structure()
-    output_writer.create_application_folder_structure()
+        output_writer.delete_output_folder_structure()
+    output_writer.create_output_folder_structure()
 
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
@@ -182,34 +179,35 @@ def inference(
     output_writer.save_inference_information(
         slice=slice,
         model=model,
-        inference_type=inference_type.name,
+        inference_type=inference_type,
         num_processes=num_processes,
         # **kwargs,
     )
-    if inference_type == InferenceType.GRID:
-        params, pushforward_evals, densities = grid_inference(
-            model=model,
-            data_transformation=data_transformation,
-            kde=kde,
-            slice=slice,
-            output_writer=output_writer,
-            num_processes=num_processes,
-            **kwargs,
-        )
-    elif inference_type == InferenceType.SAMPLING:
-        params, pushforward_evals, densities = sampling_inference(
-            model=model,
-            data_transformation=data_transformation,
-            kde=kde,
-            slice=slice,
-            output_writer=output_writer,
-            num_processes=num_processes,
-            **kwargs,
-        )
-    else:
+
+    InferenceEngineClass: dict[InferenceType, InferenceEngine] = {
+        InferenceType.GRID: GridInferenceEngine,
+        InferenceType.SAMPLING: SamplingInferenceEngine,
+    }
+
+    try:
+        InferenceEngineType: InferenceEngine = InferenceEngineClass[
+            inference_type
+        ]
+    except KeyError:
         raise NotImplementedError(
             f"The inference type {inference_type} is not implemented yet."
         )
+
+    inference_engine: InferenceEngine = InferenceEngineType(
+        model, data_transformation, kde
+    )
+    params, pushforward_evals, densities = inference_engine.run(
+        slice=slice,
+        output_writer=output_writer,
+        num_processes=num_processes,
+        **kwargs,
+    )
+
     result_reader = result_reader or ResultReader(path_manager=path_manager)
 
     return params, pushforward_evals, densities, result_reader
