@@ -10,12 +10,12 @@ import psutil
 
 from eulerpi.data_transformations import DataNormalization, DataTransformation
 from eulerpi.evaluation import KDE, GaussKDE
-from eulerpi.inferences import (
+from eulerpi.inference_engines import (
     GridInferenceEngine,
     InferenceEngine,
     SamplingInferenceEngine,
 )
-from eulerpi.inferences.inference_type import InferenceType
+from eulerpi.inference_engines.inference_type import InferenceType
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import OutputWriter, PathManager, ResultReader
 

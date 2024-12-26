@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 
-from eulerpi.inferences.inference_type import InferenceType
+from eulerpi.inference_engines.inference_type import InferenceType
 from eulerpi.models.base_model import BaseModel
 
 from .path_manager import PathManager

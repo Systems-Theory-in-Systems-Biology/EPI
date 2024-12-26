@@ -6,7 +6,7 @@ import numpy as np
 
 from eulerpi.examples.corona import Corona
 from eulerpi.inference import inference
-from eulerpi.inferences.inference_type import InferenceType
+from eulerpi.inference_engines.inference_type import InferenceType
 from eulerpi.plotting import sample_violin_plot
 
 
