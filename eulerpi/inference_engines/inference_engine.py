@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from eulerpi.data_transformations.data_transformation import DataTransformation
-from eulerpi.evaluation.kde import KDE
+from eulerpi.estimation.kde import KDE
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_managers import OutputWriter
 

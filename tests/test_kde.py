@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from matplotlib import cm
 
-from eulerpi.evaluation.kde import CauchyKDE, GaussKDE
+from eulerpi.estimation import CauchyKDE, GaussKDE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 
 

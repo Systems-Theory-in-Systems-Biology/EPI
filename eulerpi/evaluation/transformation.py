@@ -8,10 +8,10 @@ import jax.numpy as jnp
 import numpy as np
 
 from eulerpi.data_transformations.data_transformation import DataTransformation
+from eulerpi.estimation.kde import KDE
 from eulerpi.models.base_model import BaseModel
 
 from .gram_determinant import calc_gram_determinant
-from .kde import KDE
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def evaluate_density(
 
         import numpy as np
         from eulerpi.examples.heat import Heat
-        from eulerpi.evaluation.kde import GaussKDE
+        from eulerpi.estimation.kde import GaussKDE
         from eulerpi.data_transformations import DataIdentity
         from eulerpi.transformations import evaluate_density
 

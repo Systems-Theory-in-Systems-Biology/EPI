@@ -9,7 +9,7 @@ import numpy as np
 import psutil
 
 from eulerpi.data_transformations import DataNormalization, DataTransformation
-from eulerpi.evaluation import KDE, GaussKDE
+from eulerpi.estimation import KDE, GaussKDE
 from eulerpi.inference_engines import (
     GridInferenceEngine,
     InferenceEngine,

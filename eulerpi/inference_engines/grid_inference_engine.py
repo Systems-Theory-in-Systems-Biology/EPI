@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from eulerpi.data_transformations.data_transformation import DataTransformation
-from eulerpi.evaluation.kde import KDE
+from eulerpi.estimation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 from eulerpi.grids.grid import Grid
