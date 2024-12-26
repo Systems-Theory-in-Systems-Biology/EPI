@@ -1,12 +1,13 @@
 import json
+import logging
 import os
 from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 
-from eulerpi import logger
-
 from .path_manager import PathManager
+
+logger = logging.getLogger(__name__)
 
 
 class ResultReader:

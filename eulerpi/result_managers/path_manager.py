@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 
@@ -5,7 +6,7 @@ import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
 
-from eulerpi import logger
+logger = logging.getLogger(__name__)
 
 
 class PathManager:
