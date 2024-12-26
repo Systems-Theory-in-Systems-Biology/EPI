@@ -5,7 +5,8 @@ Test the plotting of samples using the COVID model
 import numpy as np
 
 from eulerpi.examples.corona import Corona
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi.inferences.inference_type import InferenceType
 from eulerpi.plotting import sample_violin_plot
 
 

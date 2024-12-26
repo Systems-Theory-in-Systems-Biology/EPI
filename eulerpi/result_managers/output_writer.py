@@ -3,8 +3,8 @@ from typing import Optional
 
 import numpy as np
 
-from eulerpi.inference import InferenceType
-from eulerpi.models import BaseModel
+from eulerpi.inferences.inference_type import InferenceType
+from eulerpi.models.base_model import BaseModel
 
 from .path_manager import PathManager
 
@@ -199,7 +199,7 @@ class OutputWriter:
         information = {
             "model": model.name,
             "slice": self.path_manager.get_slice_name(slice),
-            "inference_type": inference_type.name,
+            "inference_type": inference_type,
             "num_processes": num_processes,
         }
         information.update(dict(kwargs))

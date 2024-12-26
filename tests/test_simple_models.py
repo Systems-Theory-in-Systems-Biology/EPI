@@ -10,7 +10,8 @@ from eulerpi.data_transformations import DataIdentity
 from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.examples.simple_models import Exponential, Linear, LinearODE
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi.inferences.inference_type import InferenceType
 
 
 def test_transformationLinear():

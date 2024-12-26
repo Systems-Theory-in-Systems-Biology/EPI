@@ -82,8 +82,7 @@ class ResultReader:
         """
 
         inference_information = self.get_inference_information()
-
-        if inference_information["inference_type"] == "MCMC":
+        if inference_information["inference_type"] == "SAMPLING":
             return self.load_mcmc_inference_results(
                 inference_information, num_burn_in_samples, thinning_factor
             )
