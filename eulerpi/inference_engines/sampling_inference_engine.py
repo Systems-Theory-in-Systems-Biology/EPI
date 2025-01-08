@@ -155,26 +155,29 @@ class SamplingInferenceEngine(InferenceEngine):
         )
 
         for intermediate_file_index in range(num_sub_runs):
-            if (
-                last_position := result_reader.load_sampler_position()
-                is not None
-            ):
-                initial_walker_positions = last_position
-                logger.info(
-                    f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
-                )
-            else:
-                # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-                # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
-                d_min = np.minimum(
-                    self.model.central_param - self.model.param_limits[:, 0],
-                    self.model.param_limits[:, 1] - self.model.central_param,
-                )
-                initial_walker_positions = self.model.central_param[
-                    slice
-                ] + d_min[slice] * (
-                    np.random.rand(num_walkers, sampling_dim) - 0.5
-                )
+            if intermediate_file_index == 0:
+                if (
+                    last_position := result_reader.load_sampler_position()
+                    is not None
+                ):
+                    initial_walker_positions = last_position
+                    logger.info(
+                        f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
+                    )
+                else:
+                    # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
+                    # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
+                    d_min = np.minimum(
+                        self.model.central_param
+                        - self.model.param_limits[:, 0],
+                        self.model.param_limits[:, 1]
+                        - self.model.central_param,
+                    )
+                    initial_walker_positions = self.model.central_param[
+                        slice
+                    ] + d_min[slice] * (
+                        np.random.rand(num_walkers, sampling_dim) - 0.5
+                    )
 
             # Count and print how many runs have already been performed for this model
             num_existing_files = (
@@ -199,6 +202,7 @@ class SamplingInferenceEngine(InferenceEngine):
                 final_walker_positions=final_walker_positions,
             )
             output_writer.save_current_walker_pos(final_walker_positions)
+            initial_walker_positions = final_walker_positions
 
         (
             overall_params,
