@@ -285,7 +285,7 @@ def sample_violin_plot(
 
         # repeat all plotting for the reconstruction
         reconstructed_kde = GaussKDE(reconstructed_matrix)
-        if reference_kde:
+        if reference_available:
             reconstructed_kde.kernel_width = (
                 reference_kde.kernel_width
             )  # Uses the reference kernel width if available
