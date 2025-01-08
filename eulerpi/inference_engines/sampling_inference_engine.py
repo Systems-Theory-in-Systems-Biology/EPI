@@ -101,7 +101,8 @@ class SamplingInferenceEngine(InferenceEngine):
         num_processes: int,
         sampler: Sampler = None,
         num_walkers: int = 10,
-        num_steps: int = 2500,
+        num_steps_per_sub_run: int = 500,
+        num_sub_runs: int = 5,
         num_burn_in_samples: Optional[int] = None,
         thinning_factor: Optional[int] = None,
         get_walker_acceptance: bool = False,
@@ -112,12 +113,12 @@ class SamplingInferenceEngine(InferenceEngine):
         Args:
             model (BaseModel): The model which will be sampled
             data_transformation (DataTransformation): The data transformation used to normalize the data.
-            kde(KDE): The density estimator which should be used to estimate the data density.
             slice (np.ndarray): slice of the parameter space which will be sampled.
             output_writer (OutputWriter): OutputWriter used to store the results.
             num_processes (int): number of parallel threads.
             num_walkers (int): number of particles in the particle swarm sampler.
-            num_steps (int): number of samples each particle performs before storing the sub run.
+            num_steps_per_sub_run (int): number of samples each particle performs before storing the sub run.
+            num_sub_runs (int): The number of times intermediate results are written to file. Defaults to 5. Use a higher value if your problem has long run-times to prevent data loss should something go wrong.
             num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
             thinning_factor (int): thinning factor for the samples.
             get_walker_acceptance (bool): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
@@ -129,7 +130,7 @@ class SamplingInferenceEngine(InferenceEngine):
         output_writer.append_inference_information(
             slice=slice,
             num_walkers=num_walkers,
-            num_steps=num_steps,
+            num_steps_per_sub_run=num_steps_per_sub_run,
             num_burn_in_samples=num_burn_in_samples,
             thinning_factor=thinning_factor,
             get_walker_acceptance=get_walker_acceptance,
@@ -140,7 +141,7 @@ class SamplingInferenceEngine(InferenceEngine):
         )
 
         if num_burn_in_samples is None:
-            num_burn_in_samples = int(num_steps * 0.1)
+            num_burn_in_samples = int(num_steps_per_sub_run * 0.1)
         if thinning_factor is None:
             thinning_factor = 1
 
@@ -179,7 +180,7 @@ class SamplingInferenceEngine(InferenceEngine):
             logdensity_blob_function,
             initial_walker_positions,
             num_walkers,
-            num_steps,
+            num_steps_per_sub_run,
             num_processes,
         )
 
