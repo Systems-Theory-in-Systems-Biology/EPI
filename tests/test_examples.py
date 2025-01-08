@@ -6,7 +6,8 @@ import importlib
 
 import pytest
 
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi import InferenceType
 from eulerpi.model_check import basic_model_check
 from eulerpi.models import ArtificialModelInterface, BaseModel
 from eulerpi.models.sbml_model import is_amici_available
@@ -123,7 +124,8 @@ def test_examples(example, inference_type):
     kwargs["inference_type"] = inference_type
     if inference_type == InferenceType.SAMPLING:
         kwargs["num_walkers"] = max(4, model.param_dim * 2)
-        kwargs["num_steps"] = 10
+        kwargs["num_steps_per_sub_run"] = 10
+        kwargs["num_sub_runs"] = 1
     elif inference_type == InferenceType.GRID:
         kwargs["num_grid_points"] = 3  # Also works as num_levels currently
 
@@ -132,7 +134,7 @@ def test_examples(example, inference_type):
         num_data_points = 100
         params = model.generate_artificial_params(num_data_points)
         data = model.generate_artificial_data(params)
-        params, sim_res, densities, result_manager = inference(
+        params, sim_res, densities, result_reader = inference(
             model,
             data,
             **kwargs,
@@ -143,13 +145,13 @@ def test_examples(example, inference_type):
             dataFileName
         )
         with importlib.resources.as_file(data_resource) as data_file:
-            params, sim_res, densities, result_manager = inference(
+            params, sim_res, densities, result_reader = inference(
                 model,
                 data_file,
                 **kwargs,
             )
 
-    assert result_manager is not None
+    assert result_reader is not None
 
     assert params.shape[0] == sim_res.shape[0]
     assert params.shape[0] == densities.shape[0]

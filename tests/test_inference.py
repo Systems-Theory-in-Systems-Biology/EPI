@@ -1,3 +1,4 @@
+import json
 import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,7 +6,8 @@ import numpy as np
 from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi import InferenceType
 from eulerpi.result_managers import ResultReader, OutputWriter
 
 
@@ -19,7 +21,7 @@ def integrate(z, x, y):
 # TODO: Generalize, currently only works for dense vs mcmc
 def test_inference_mcmc_dense_exact(
     num_data_points=1000,
-    num_steps=3000,
+    num_steps_per_sub_run=3000,
     num_grid_points=50,
 ):
     # define the model
@@ -40,7 +42,7 @@ def test_inference_mcmc_dense_exact(
                 data,
                 inference_type,
                 output_writer=output_writer,
-                num_steps=num_steps,
+                num_steps_per_sub_run=num_steps_per_sub_run,
             )
             # Take every second sample and skip the first 5% of the chain
             result_reader = ResultReader(model.name, str(inference_type))
@@ -48,7 +50,9 @@ def test_inference_mcmc_dense_exact(
                 result_params[inference_type],
                 result_sim_res[inference_type],
                 result_densities[inference_type],
-            ) = result_reader.load_inference_results(num_steps // 20, 2)
+            ) = result_reader.load_inference_results(
+                num_steps_per_sub_run // 20, 2
+            )
         elif InferenceType(inference_type) == InferenceType.GRID:
             inference(
                 model,
@@ -57,6 +61,7 @@ def test_inference_mcmc_dense_exact(
                 output_writer=output_writer,
                 num_grid_points=num_grid_points,
             )
+            result_reader = ResultReader(model.name, str(inference_type))
             (
                 result_params[inference_type],
                 result_sim_res[inference_type],
@@ -110,10 +115,10 @@ def test_inference_mcmc_dense_exact(
     grid_2d = grid.reshape(num_grid_points, num_grid_points, model.param_dim)
     # grid = results[InferenceType.GRID][2]
 
-    mcmc_params = result_params[InferenceType.SAMPLING]["Slice_Q0Q1"]
+    mcmc_params = result_params[InferenceType.SAMPLING]
     mcmc_kde = GaussKDE(mcmc_params)(grid)
 
-    dense_grid_pdf = result_densities[InferenceType.GRID]["Slice_Q0Q1"]
+    dense_grid_pdf = result_densities[InferenceType.GRID]
 
     true_pdf_grid = true_pdf(grid)
     true_kde = GaussKDE(params)(grid)
@@ -251,9 +256,10 @@ def test_thinning_and_burn_in():
 
     # run EPI with one trivial slice
     slice = np.array([0])
-    num_steps = 1000
+    num_steps_per_sub_run = 1000
     num_walkers = 4
     num_burn_in_samples = 100
+    num_sub_runs = 2
     thinning_factor = 4
 
     # MCMC inference
@@ -262,8 +268,9 @@ def test_thinning_and_burn_in():
         data=data,
         slice=slice,
         inference_type=InferenceType.SAMPLING,
-        num_steps=num_steps,
+        num_steps_per_sub_run=num_steps_per_sub_run,
         num_walkers=num_walkers,
+        num_sub_runs=num_sub_runs,
         num_burn_in_samples=num_burn_in_samples,
         thinning_factor=thinning_factor,
         run_name="test_thinning_and_burn_in",
@@ -271,7 +278,8 @@ def test_thinning_and_burn_in():
 
     # Check if the thinning and burn in results in the expected shapes
     num_total_samples = (
-        num_steps * num_walkers - num_walkers * num_burn_in_samples
+        num_sub_runs * num_steps_per_sub_run * num_walkers
+        - num_walkers * num_burn_in_samples
     ) // thinning_factor
 
     assert overall_params.shape[1] == slice.shape[0]
@@ -283,19 +291,44 @@ def test_thinning_and_burn_in():
 
     # create some artificial runs to test the thinning and burn in
     artificial_test_data_run = (
-        np.arange(num_walkers * num_steps) // thinning_factor
+        np.arange(num_walkers * num_steps_per_sub_run) // thinning_factor
     )
     np.savetxt(
-        result_reader.path_manager.get_run_path() + "/Params/params_0.csv",
+        result_reader.path_manager.get_run_path() + "/Params/raw_params_0.csv",
         artificial_test_data_run,
         delimiter=",",
     )
     artificial_test_data_run += 1000
     np.savetxt(
-        result_reader.path_manager.get_run_path() + "/Params/params_1.csv",
+        result_reader.path_manager.get_run_path() + "/Params/raw_params_1.csv",
         artificial_test_data_run,
         delimiter=",",
     )
+    # np.savetxt(
+    #     result_reader.path_manager.get_run_path()
+    #     + "/DensityEvals/density_evals_1.csv",
+    #     density_evals,
+    #     delimiter=",",
+    # )
+    # np.savetxt(
+    #     result_reader.path_manager.get_run_path()
+    #     + "/SimResults/sim_results_1.csv",
+    #     sim_results,
+    #     delimiter=",",
+    # )
+    # # update the inference information
+    # inference_information = result_reader.get_inference_information()
+    # inference_information["num_steps_per_sub_run"] *= 2
+    # output_writer = OutputWriter(
+    #     path_manager=result_reader.path_manager,
+    # )
+    # with open(
+    #     result_reader.path_manager.get_run_path()
+    #     + "/inference_information.json",
+    #     "w",
+    #     encoding="utf-8",
+    # ) as file:
+    #     json.dump(inference_information, file, ensure_ascii=False, indent=4)
 
     (
         overall_params,
@@ -307,7 +340,6 @@ def test_thinning_and_burn_in():
         (overall_params - num_burn_in_samples) % thinning_factor == 0
     )
     assert np.all(overall_params >= num_burn_in_samples)
-    # TODO discuss whether the last assert makes sense.
 
 
 # Run the inference if main

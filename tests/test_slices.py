@@ -6,7 +6,8 @@ import numpy as np
 import pytest
 
 from eulerpi.examples.corona import CoronaArtificial
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi import InferenceType
 
 
 # Parametrize the test to run for each inference type
@@ -28,7 +29,7 @@ def test_slices(inference_type):
     slice3 = np.array([0, 1, 2])
     slices = [slice1, slice2, slice3]
     if inference_type == InferenceType.SAMPLING:
-        kwargs = {"num_steps": 100}
+        kwargs = {"num_steps_per_sub_run": 100}
     else:
         kwargs = {}
     for slice in slices:

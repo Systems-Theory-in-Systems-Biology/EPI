@@ -5,7 +5,8 @@ Test the plotting of samples using the COVID model
 import numpy as np
 
 from eulerpi.examples.corona import Corona
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi import InferenceType
 from eulerpi.plotting import sample_violin_plot
 
 
@@ -21,7 +22,7 @@ def test_sample_plotting():
     print(data.shape)
 
     num_walkers = 10
-    num_steps = 100
+    num_steps_per_sub_run = 100
     num_burn_in_samples = 10
     thinning_factor = 1
 
@@ -34,7 +35,7 @@ def test_sample_plotting():
         slice=np.arange(model.param_dim),
         run_name=run_name,
         num_walkers=num_walkers,
-        num_steps=num_steps,
+        num_steps_per_sub_run=num_steps_per_sub_run,
         num_burn_in_samples=num_burn_in_samples,
         thinning_factor=thinning_factor,
     )

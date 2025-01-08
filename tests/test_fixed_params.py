@@ -44,6 +44,6 @@ def test_fixed_params(temperatures):
         inference(
             model,
             data_file,
-            num_steps=100,
+            num_steps_per_sub_run=100,
             run_name=run_name,
         )

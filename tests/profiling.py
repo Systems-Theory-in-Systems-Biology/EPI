@@ -10,7 +10,8 @@ import jax
 import numpy as np
 
 from eulerpi.examples.corona import CoronaArtificial
-from eulerpi.inference import InferenceType, inference
+from eulerpi.inference import inference
+from eulerpi import InferenceType
 from eulerpi.models import BaseModel
 
 
