@@ -1,10 +1,11 @@
+import logging
 import os
 import shutil
 import seedir
 from seedir import FakeDir, FakeFile
 import numpy as np
 
-from eulerpi import logger
+logger = logging.getLogger(__name__)
 
 
 class PathManager:
@@ -118,7 +119,7 @@ class PathManager:
         while os.path.isfile(
             self.get_run_path()
             + "/PushforwardEvals/"
-            + "pushforward_evals_"
+            + "raw_pushforward_evals_"
             + str(num_existing_files)
             + ".csv"
         ):
