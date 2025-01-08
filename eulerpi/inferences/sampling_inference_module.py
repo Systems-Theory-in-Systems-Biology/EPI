@@ -101,13 +101,14 @@ def sampling_inference(
     num_processes: int,
     sampler: Sampler = None,
     num_walkers: int = 10,
-    num_steps: int = 2500,
+    num_steps_per_sub_run: int = 500,
+    num_sub_runs: int = 5,
     num_burn_in_samples: Optional[int] = None,
     thinning_factor: Optional[int] = None,
     get_walker_acceptance: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Create a representative sample from the transformed parameter density using the emcee particle swarm sampler.
-       Inital values are not stored in the chain and each file contains <num_steps> blocks of size num_walkers.
+       Inital values are not stored in the chain and each file contains <num_steps_per_sub_run> blocks of size num_walkers.
 
     Args:
         model (BaseModel): The model which will be sampled
@@ -117,7 +118,8 @@ def sampling_inference(
         output_writer (OutputWriter): OutputWriter used to store the results.
         num_processes (int): number of parallel threads.
         num_walkers (int): number of particles in the particle swarm sampler.
-        num_steps (int): number of samples each particle performs before storing the sub run.
+        num_steps_per_sub_run (int): number of samples each particle performs before storing the sub run.
+        num_sub_runs (int): The number of times intermediate results are written to file. Defaults to 5. Use a higher value if your problem has long run-times to prevent data loss should something go wrong.
         num_burn_in_samples(int): Number of samples that will be deleted (burned) per chain (i.e. walker). Only for mcmc inference.
         thinning_factor (int): thinning factor for the samples.
         get_walker_acceptance (bool): If True, the acceptance rate of the walkers is calculated and printed. Defaults to False.
@@ -129,7 +131,8 @@ def sampling_inference(
     output_writer.append_inference_information(
         slice=slice,
         num_walkers=num_walkers,
-        num_steps=num_steps,
+        num_steps_per_sub_run=num_steps_per_sub_run,
+        num_sub_runs=num_sub_runs,
         num_burn_in_samples=num_burn_in_samples,
         thinning_factor=thinning_factor,
         get_walker_acceptance=get_walker_acceptance,
@@ -140,7 +143,7 @@ def sampling_inference(
     )
 
     if num_burn_in_samples is None:
-        num_burn_in_samples = int(num_steps * 0.1)
+        num_burn_in_samples = int(num_steps_per_sub_run * 0.1)
     if thinning_factor is None:
         thinning_factor = 1
 
@@ -152,43 +155,43 @@ def sampling_inference(
     result_reader = ResultReader(
         output_writer.model_name, output_writer.run_name
     )
+    for intermediate_file_index in range(num_sub_runs):
+        if last_position := result_reader.load_sampler_position() is not None:
+            initial_walker_positions = last_position
+            logger.info(
+                f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
+            )
+        else:
+            # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
+            # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
+            d_min = np.minimum(
+                model.central_param - model.param_limits[:, 0],
+                model.param_limits[:, 1] - model.central_param,
+            )
+            initial_walker_positions = model.central_param[slice] + d_min[
+                slice
+            ] * (np.random.rand(num_walkers, sampling_dim) - 0.5)
 
-    if last_position := result_reader.load_sampler_position() is not None:
-        initial_walker_positions = last_position
-        logger.info(
-            f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
+        # Count and print how many runs have already been performed for this model
+        num_existing_files = result_reader.path_manager.count_emcee_sub_runs()
+        logger.debug(f"{num_existing_files} existing files found")
+
+        # Run the sampler.
+        logger.info(f"Starting sampler run {num_existing_files}")
+        sampler_results, final_walker_positions = sampler.run(
+            logdensity_blob_function,
+            initial_walker_positions,
+            num_walkers,
+            num_steps_per_sub_run,
+            num_processes,
         )
-    else:
-        # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-        # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
-        d_min = np.minimum(
-            model.central_param - model.param_limits[:, 0],
-            model.param_limits[:, 1] - model.central_param,
+
+        output_writer.save_sampler_run(
+            model=model,
+            sub_run_index=num_existing_files,
+            sampler_results=sampler_results,
+            final_walker_positions=final_walker_positions,
         )
-        initial_walker_positions = model.central_param[slice] + d_min[
-            slice
-        ] * (np.random.rand(num_walkers, sampling_dim) - 0.5)
-
-    # Count and print how many runs have already been performed for this model
-    num_existing_files = result_reader.path_manager.count_emcee_sub_runs()
-    logger.debug(f"{num_existing_files} existing files found")
-
-    # Run the sampler.
-    logger.info(f"Starting sampler run {num_existing_files}")
-    sampler_results, final_walker_positions = sampler.run(
-        logdensity_blob_function,
-        initial_walker_positions,
-        num_walkers,
-        num_steps,
-        num_processes,
-    )
-
-    output_writer.save_sampler_run(
-        model=model,
-        chain_number=num_existing_files,
-        sampler_results=sampler_results,
-        final_walker_positions=final_walker_positions,
-    )
 
     (
         overall_params,

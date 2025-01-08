@@ -112,12 +112,11 @@ def grid_inference(
     n_p = slice.shape[0]
     params = results[:, :n_p]
     pushforward_evals = results[:, n_p : n_p + model.data_dim]
-    densities = results[:, -1]
+    density_evals = results[:, -1]
 
-    output_writer.save_overall(
-        slice,
-        params,
-        pushforward_evals,
-        densities,
+    output_writer.save_grid_based_run(
+        params=params,
+        pushforward_evals=pushforward_evals,
+        density_evals=density_evals,
     )
-    return params, pushforward_evals, densities
+    return params, pushforward_evals, density_evals
