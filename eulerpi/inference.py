@@ -1,5 +1,6 @@
 """The inference module provides the main interface to the eulerpi library in the form of the :py:func:`inference <inference>` function."""
 
+import logging
 import os
 import pathlib
 from enum import Enum
@@ -14,13 +15,9 @@ from eulerpi.evaluation import KDE, GaussKDE
 from eulerpi.inferences import grid_inference, sampling_inference
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import OutputWriter, ResultReader, PathManager
+from eulerpi import InferenceType
 
-
-class InferenceType(Enum):
-    """Available modes for the :py:func:`inference <eulerpi.inference.inference>` function."""
-
-    GRID = 0  #: The grid inference uses a grid to evaluate the joint distribution.
-    SAMPLING = 1  #: The SAMPLING / MCMC inference uses a Markov Chain Monte Carlo sampler to sample from the joint distribution.
+logger = logging.getLogger(__name__)
 
 
 def inference(
@@ -96,7 +93,7 @@ def inference(
                                         num_processes = 8, # use 8 processes in parallelization
                                         run_name = "second_run", # specify the run
                                         num_walkers = 50, # use 50 walkers during sampling
-                                        num_steps = 200, # each walker performs 200 steps
+                                        num_steps_per_sub_run = 200, # the walkers perform 200 steps per sub run
                                         num_burn_in_samples = 20, # discard the first 20 steps of each walker
                                         thinning_factor = 10) # only use every 10th sample to avoid autocorrelation
 
@@ -167,14 +164,25 @@ def inference(
             model.param_dim
         )  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
 
-    path_manager = path_manager or PathManager(
-        model.name, run_name
-    )  # If no path manager is given, create one with default paths
+    if output_writer:  # if an output writer is passed, use its path manager
+        if path_manager:
+            logger.warning(
+                "Both output_writer and path_manager are passed. Using the path_manager from the output_writer."
+            )
+        path_manager = output_writer.path_manager
+
+    path_manager = (
+        path_manager
+        or PathManager(  # if no path manager (and no output writer) is passed, create a new one
+            model_name=model.name, run_name=run_name
+        )
+    )
+
     output_writer = output_writer or OutputWriter(path_manager=path_manager)
 
     if not continue_sampling:
-        output_writer.delete_application_folder_structure()
-    output_writer.create_application_folder_structure()
+        output_writer.delete_output_folder_structure()
+    output_writer.create_output_folder_structure()
 
     if not num_processes:
         num_processes = psutil.cpu_count(logical=False)
@@ -210,6 +218,8 @@ def inference(
         raise NotImplementedError(
             f"The inference type {inference_type} is not implemented yet."
         )
-    result_reader = result_reader or ResultReader(path_manager=path_manager)
 
+    result_reader = result_reader or ResultReader(
+        path_manager=output_writer.path_manager
+    )
     return params, pushforward_evals, densities, result_reader
