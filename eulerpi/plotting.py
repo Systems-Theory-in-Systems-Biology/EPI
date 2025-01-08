@@ -5,17 +5,16 @@ Uses burn_in and thinning accordinng to the simulation settings.
 """
 
 import os
-import pathlib
 from typing import Optional, Union
 
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import axes
 
-from eulerpi.evaluation.kde import calc_kernel_width, eval_kde_gauss
+from eulerpi.estimation import GaussKDE
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import ResultReader
+from eulerpi.utils.io import load_data
 
 # general plotting function for joint runs
 
@@ -101,14 +100,7 @@ def sample_violin_plot(
 
     # Load data from file if necessary
     if reference_available:
-        if isinstance(reference_sample, (str, os.PathLike, pathlib.Path)):
-            reference_sample = np.loadtxt(
-                reference_sample, delimiter=",", ndmin=2
-            )
-        elif not isinstance(reference_sample, (np.ndarray, jnp.ndarray)):
-            raise TypeError(
-                f"The data argument must be a path to a file or a numpy array. The argument passed was of type {type(reference_sample)}."
-            )
+        reference_sample = load_data(reference_sample)
 
     # define the locations and extends of the violin plots on the abscissa
     unit_locations = np.linspace(1, 2 * dim - 1, dim) / (2.0 * dim)
@@ -179,13 +171,8 @@ def sample_violin_plot(
             # cast to 2d array
             reference_matrix = np.transpose(np.array([reference_sample[:, i]]))
 
-            # calculate kernel width for KDE
-            scales = calc_kernel_width(reference_matrix)
-
-            # evaluate KDEs over the grid
-            reference_KDE = eval_kde_gauss(
-                reference_matrix, vertical_grid, scales
-            )
+            reference_kde = GaussKDE(reference_matrix)
+            reference_KDE = reference_kde(vertical_grid)
 
             # normalize the KDEs and caluculate their cumulative distribution
             reference_KDE_norm_cumsum = np.cumsum(
@@ -296,14 +283,13 @@ def sample_violin_plot(
                 "%.2f" % (np.round(max_density, 2)),
             )
 
-        # in case of no reference, caluclate the kernel bandwidth from the reconstruction
-        else:
-            scales = calc_kernel_width(reconstructed_matrix)
-
         # repeat all plotting for the reconstruction
-        reconstructed_KDE = eval_kde_gauss(
-            reconstructed_matrix, vertical_grid, scales
-        )
+        reconstructed_kde = GaussKDE(reconstructed_matrix)
+        if reference_kde:
+            reconstructed_kde.kernel_width = (
+                reference_kde.kernel_width
+            )  # Uses the reference kernel width if available
+        reconstructed_KDE = reconstructed_kde(vertical_grid)
 
         if not reference_available:
             max_density = np.amax(reconstructed_KDE)

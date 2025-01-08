@@ -3,8 +3,8 @@
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi import InferenceType
 from eulerpi.inference import inference
+from eulerpi.inference_engines.inference_type import InferenceType
 from eulerpi.models import BaseModel
 from eulerpi.plotting import sample_violin_plot
 

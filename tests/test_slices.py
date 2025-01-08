@@ -7,7 +7,7 @@ import pytest
 
 from eulerpi.examples.corona import CoronaArtificial
 from eulerpi.inference import inference
-from eulerpi import InferenceType
+from eulerpi.inference_engines.inference_type import InferenceType
 
 
 # Parametrize the test to run for each inference type

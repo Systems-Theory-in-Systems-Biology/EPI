@@ -1,9 +1,9 @@
 import json
+import logging
 import os
 from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
-import logging
 
 from .path_manager import PathManager
 
@@ -57,8 +57,10 @@ class ResultReader:
         if hasattr(self, "inference_information"):
             return self.inference_information
 
-        run_path = self.get_run_path()
-        with open(run_path + "/inference_information.json", "r") as file:
+        inference_information_path = (
+            self.path_manager.get_inference_information_path()
+        )
+        with open(inference_information_path, "r") as file:
             inference_information = json.load(file)
 
         return inference_information
@@ -78,11 +80,11 @@ class ResultReader:
             typing.Tuple[np.ndarray, np.ndarray, np.ndarray]: The parameters, the pushforward of the parameters, and the density evaluations.
 
         """
-        if self.inference_information["inference_type"] == "SAMPLING":
-            return self.load_sampling_inference_results(
-                self.inference_information,
-                num_burn_in_samples,
-                thinning_factor,
+
+        inference_information = self.get_inference_information()
+        if inference_information["inference_type"] == "SAMPLING":
+            return self.load_mcmc_inference_results(
+                inference_information, num_burn_in_samples, thinning_factor
             )
 
         if num_burn_in_samples is not None or thinning_factor is not None:
@@ -122,17 +124,20 @@ class ResultReader:
         # load samples from raw chains
         for i in range(self.path_manager.count_emcee_sub_runs()):
             params_current_chain = np.loadtxt(
-                run_path + f"/Params/raw_params_{i}.csv",
+                run_path
+                + f"/{self.path_manager.PARAMS_FOLDER}/raw_params_{i}.csv",
                 delimiter=",",
                 ndmin=2,
             )
             pushforward_evals_current_chain = np.loadtxt(
-                run_path + f"/PushforwardEvals/raw_pushforward_evals_{i}.csv",
+                run_path
+                + f"/{self.path_manager.PUSHFORWARD_EVALS_FOLDER}/raw_pushforward_evals_{i}.csv",
                 delimiter=",",
                 ndmin=2,
             )
             density_evals_current_chain = np.loadtxt(
-                run_path + f"/DensityEvals/raw_density_evals_{i}.csv",
+                run_path
+                + f"/{self.path_manager.DENSITY_EVALS_FOLDER}/raw_density_evals_{i}.csv",
                 delimiter=",",
             )
             if i == 0:
@@ -223,9 +228,7 @@ class ResultReader:
             Union[np.ndarray, None]: The current walker positions or None if there are no current walker positions.
         """
         # If there are current walker positions defined by runs before this one, use them.
-        position_path = (
-            self.get_run_path() + "/Params/current_walker_positions.csv"
-        )
+        position_path = self.path_manager.get_current_walker_position_path()
         if os.path.isfile(position_path):
             initial_walker_positions = np.loadtxt(
                 position_path,

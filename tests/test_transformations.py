@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 
 from eulerpi.data_transformations import DataIdentity
+from eulerpi.estimation import GaussKDE
 from eulerpi.evaluation.gram_determinant import calc_gram_determinant
-from eulerpi.evaluation.kde import GaussKDE
 from eulerpi.models import ArtificialModelInterface, JaxModel
 
 

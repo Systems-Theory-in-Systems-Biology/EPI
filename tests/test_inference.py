@@ -3,12 +3,12 @@ import jax.scipy.stats as jstats
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.estimation import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
 from eulerpi.grids.equidistant_grid import EquidistantGrid
 from eulerpi.inference import inference
-from eulerpi import InferenceType
-from eulerpi.result_managers import ResultReader, OutputWriter
+from eulerpi.inference_engines.inference_type import InferenceType
+from eulerpi.result_managers import OutputWriter, ResultReader
 
 
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...

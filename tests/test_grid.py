@@ -10,7 +10,7 @@ import pytest
 from eulerpi.examples.corona import CoronaArtificial
 from eulerpi.grids.grid import Grid
 from eulerpi.inference import inference
-from eulerpi import InferenceType
+from eulerpi.inference_engines.inference_type import InferenceType
 
 
 def Grids():

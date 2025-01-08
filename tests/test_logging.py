@@ -1,7 +1,7 @@
 import numpy as np
 
 from eulerpi.data_transformations import DataIdentity
-from eulerpi.evaluation.kde import GaussKDE
+from eulerpi.estimation import GaussKDE
 from eulerpi.evaluation.transformation import evaluate_density
 from eulerpi.models import BaseModel
 

@@ -10,7 +10,7 @@ eulerpi.core package
    Dense Grid Types<eulerpi.dense_grid_types>
    Inference<eulerpi.inference>
    Inference Types<eulerpi.inference_types>
-   KDE<eulerpi.evaluation.kde>
+   KDE<eulerpi.estimation>
    Models<eulerpi.models>
    Model Check<eulerpi.model_check>
    Plotting<eulerpi.plotting>

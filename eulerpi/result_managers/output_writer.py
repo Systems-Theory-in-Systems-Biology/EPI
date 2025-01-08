@@ -1,12 +1,10 @@
-# TODO: Import Path from pathlib?
 import json
-from os import path
-
-import numpy as np
 from typing import Optional
 
-from eulerpi import InferenceType
-from eulerpi.models import BaseModel
+import numpy as np
+
+from eulerpi.inference_engines.inference_type import InferenceType
+from eulerpi.models.base_model import BaseModel
 
 from .path_manager import PathManager
 
@@ -87,7 +85,10 @@ class OutputWriter:
 
         # Save the parameters
         np.savetxt(
-            results_path + "/Params/raw_params_" + str(sub_run_index) + ".csv",
+            results_path
+            + f"/{self.path_manager.PARAMS_FOLDER}/raw_params_"
+            + str(sub_run_index)
+            + ".csv",
             sampler_results[:, :sampling_dim],
             delimiter=",",
         )
@@ -95,7 +96,7 @@ class OutputWriter:
         # Save the density evaluations
         np.savetxt(
             results_path
-            + "/DensityEvals/raw_density_evals_"
+            + f"/{self.path_manager.DENSITY_EVALS_FOLDER}/raw_density_evals_"
             + str(sub_run_index)
             + ".csv",
             sampler_results[:, -1],
@@ -105,7 +106,7 @@ class OutputWriter:
         # Save the pushforward evaluations
         np.savetxt(
             results_path
-            + "/PushforwardEvals/raw_pushforward_evals_"
+            + f"/{self.path_manager.PUSHFORWARD_EVALS_FOLDER}/raw_pushforward_evals_"
             + str(sub_run_index)
             + ".csv",
             sampler_results[:, sampling_dim : sampling_dim + model.data_dim],
@@ -129,9 +130,9 @@ class OutputWriter:
             params(np.ndarray): The current walker positions.
 
         """
-        results_path = self.get_run_path()
+        positions_path = self.path_manager.get_current_walker_position_path()
         np.savetxt(
-            results_path + "Params/current_walker_positions.csv",
+            positions_path,
             params,
             delimiter=",",
         )
@@ -216,7 +217,7 @@ class OutputWriter:
             ].name
         # save information as json file
         with open(
-            self.get_run_path() + "/inference_information.json",
+            self.path_manager.get_inference_information_path(),
             "w",
             encoding="utf-8",
         ) as file:

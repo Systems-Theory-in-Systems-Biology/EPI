@@ -1,14 +1,24 @@
 import logging
 import os
 import shutil
+
+import numpy as np
 import seedir
 from seedir import FakeDir, FakeFile
-import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
 class PathManager:
+
+    OUTPUT_FOLDER = "Output"
+
+    DENSITY_EVALS_FOLDER = "DensityEvals"
+    PARAMS_FOLDER = "Params"
+    PUSHFORWARD_EVALS_FOLDER = "PushforwardEvals"
+
+    INFERENCE_INFORMATION_FILENAME = "inference_information.json"
+    CURRENT_WALKER_POSITION_FILENAME = "current_walker_positions.csv"
 
     def __init__(self, model_name: str, run_name):
         self.model_name = model_name
@@ -33,7 +43,7 @@ class PathManager:
             str: The path to the output folder, containing also intermediate results.
 
         """
-        return os.path.join("Output", self.model_name)
+        return os.path.join(self.OUTPUT_FOLDER, self.model_name)
 
     def get_run_path(self) -> str:
         """Returns the path to the folder where the results for the given run are stored.
@@ -42,23 +52,21 @@ class PathManager:
             str: The path to the folder where the results for the given run are stored.
 
         """
-        return os.path.join("Output", self.model_name, self.run_name)
+        return os.path.join(self.OUTPUT_FOLDER, self.model_name, self.run_name)
 
     def create_output_folder_structure(self) -> None:
         """Creates the subfolders in `Output` for the given run where all simulation results
         are stored for this model and run. No files are deleted during this action.
 
         """
-        outputFolderStructure = (
-            "Output/ \n"
-            "  - {modelName}/ \n"
-            "    - {runName}/ \n"
-            "       - DensityEvals/ \n"
-            "       - Params/ \n"
-            "       - PushforwardEvals/ \n"
+        folder_structure = (
+            f"{self.OUTPUT_FOLDER}/ \n"
+            f"  - {self.model_name}/ \n"
+            f"    - {self.run_name}/ \n"
+            f"       - {self.DENSITY_EVALS_FOLDER}/ \n"
+            f"       - {self.PARAMS_FOLDER}/ \n"
+            f"       - {self.PUSHFORWARD_EVALS_FOLDER}/ \n"
         )
-        path = "."
-        structure = outputFolderStructure
 
         def create(f, root):
             """
@@ -84,16 +92,11 @@ class PathManager:
                 except FileExistsError:
                     logger.info(f"File `{joined}` already exists")
 
-        fakeStructure = seedir.fakedir_fromstring(
-            structure.format(
-                modelName=self.model_name,
-                runName=self.run_name,
-            )
-        )
+        fakeStructure = seedir.fakedir_fromstring(folder_structure)
         fakeStructure.realize = lambda path_arg: fakeStructure.walk_apply(
             create, root=path_arg
         )
-        fakeStructure.realize(path)
+        fakeStructure.realize(".")
 
     def delete_output_folder_structure(self) -> None:
         """Deletes the `Output` folder."""
@@ -118,7 +121,7 @@ class PathManager:
         # Increase the just defined number until no corresponding file is found anymore ...
         while os.path.isfile(
             self.get_run_path()
-            + "/PushforwardEvals/"
+            + f"/{self.PUSHFORWARD_EVALS_FOLDER}/"
             + "raw_pushforward_evals_"
             + str(num_existing_files)
             + ".csv"
@@ -126,3 +129,15 @@ class PathManager:
             num_existing_files += 1
 
         return num_existing_files
+
+    def get_inference_information_path(self) -> str:
+        return self.get_run_path() + "/" + self.INFERENCE_INFORMATION_FILENAME
+
+    def get_current_walker_position_path(self) -> str:
+        return (
+            self.get_run_path()
+            + "/"
+            + self.PARAMS_FOLDER
+            + "/"
+            + self.CURRENT_WALKER_POSITION_FILENAME
+        )
