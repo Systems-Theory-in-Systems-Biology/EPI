@@ -5,7 +5,7 @@ from os import path
 import numpy as np
 from typing import Optional
 
-from eulerpi.inference import InferenceType
+from eulerpi import InferenceType
 from eulerpi.models import BaseModel
 
 from .path_manager import PathManager
@@ -33,6 +33,10 @@ class OutputWriter:
             run_name (str, optional): Name of the run. Defaults to None. Only required (and used) if no path manager is provided.
             path_manager (PathManager, optional): Path manager Object to manage the folder structure. Defaults to None creates a new path manager.
         """
+        if path_manager is None and (model_name is None or run_name is None):
+            raise ValueError(
+                "If no path manager is provided, model_name and run_name must be provided."
+            )
         self.path_manager = path_manager or PathManager(model_name, run_name)
         self.model_name = self.path_manager.model_name
         self.run_name = self.path_manager.run_name
@@ -60,19 +64,19 @@ class OutputWriter:
     def save_sampler_run(
         self,
         model: BaseModel,
-        chain_number: int,
+        sub_run_index: int,
         sampler_results: np.ndarray,
         final_walker_positions: np.ndarray,
     ) -> None:
         """Saves the results of a single run of the emcee particle swarm sampler.
-        sampler_results has the shape (num_walkers * num_steps, sampling_dim + data_dim + 1), we save them
+        sampler_results has the shape (num_walkers * num_steps_per_sub_run, sampling_dim + data_dim + 1), we save them
         as seperate files in the folders 'Params' and'PushforwardEvals' and 'DensityEvals'.
 
         Args:
             model(BaseModel): The model for which the results will be saved
             slice(np.ndarray): The slice for which the results will be saved
-            chain_number(int): The run for which the results will be saved
-            sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps, sampling_dim + data_dim + 1)
+            sub_run_index(int): The run index for the current subrun being saved to file
+            sampler_results(np.ndarray): The results of the sampler, expects an np.array with shape (num_walkers * num_steps_per_sub_run, sampling_dim + data_dim + 1)
             final_walker_positions(np.ndarray): The final positions of the walkers, expects an np.array with shape (num_walkers, sampling_dim)
 
         """
@@ -83,7 +87,7 @@ class OutputWriter:
 
         # Save the parameters
         np.savetxt(
-            results_path + "/Params/raw_params_" + str(chain_number) + ".csv",
+            results_path + "/Params/raw_params_" + str(sub_run_index) + ".csv",
             sampler_results[:, :sampling_dim],
             delimiter=",",
         )
@@ -92,7 +96,7 @@ class OutputWriter:
         np.savetxt(
             results_path
             + "/DensityEvals/raw_density_evals_"
-            + str(chain_number)
+            + str(sub_run_index)
             + ".csv",
             sampler_results[:, -1],
             delimiter=",",
@@ -102,7 +106,7 @@ class OutputWriter:
         np.savetxt(
             results_path
             + "/PushforwardEvals/raw_pushforward_evals_"
-            + str(chain_number)
+            + str(sub_run_index)
             + ".csv",
             sampler_results[:, sampling_dim : sampling_dim + model.data_dim],
             delimiter=",",
@@ -112,7 +116,7 @@ class OutputWriter:
         np.savetxt(
             results_path
             + "/final_walker_positions_"
-            + str(chain_number)
+            + str(sub_run_index)
             + ".csv",
             final_walker_positions,
             delimiter=",",
@@ -181,9 +185,9 @@ class OutputWriter:
             inference_type(InferenceType): The type of inference that was performed.
             num_processes(int): The number of processes that were used for the inference.
             **kwargs: Additional information about the inference run.
-                num_runs(int): The number of runs that were performed. Only for mcmc inference.
+                num_intermediate_file_writes(int): The number of times intermediate results were saved to file. Only for sampling inference.
                 num_walkers(int): The number of walkers that were used. Only for mcmc inference.
-                num_steps(int): The number of steps that were performed. Only for mcmc inference.
+                num_steps_per_sub_run(int): The number of steps that were performed. Only for mcmc inference.
                 num_burn_in_samples(int): Number of samples that will be ignored per chain (i.e. walker). Only for mcmc inference.
                 thinning_factor(int): The thinning factor that was used to thin the Markov chain. Only for mcmc inference.
                 load_balancing_safety_faktor(int): The safety factor that was used for load balancing. Only for dense grid inference.
@@ -198,7 +202,7 @@ class OutputWriter:
         information = {
             "model": model.name,
             "slice": self.path_manager.get_slice_name(slice),
-            "inference_type": inference_type.name,
+            "inference_type": inference_type,
             "num_processes": num_processes,
         }
         information.update(dict(kwargs))
@@ -223,4 +227,36 @@ class OutputWriter:
         **kwargs,
     ) -> None:
         """Appends information about the inference run to the existing information."""
-        pass  # TODO implement
+        new_information = dict(kwargs)
+        if "model" in new_information:
+            new_information["model"] = (new_information["model"].name,)
+        if "slice" in new_information:
+            new_information["slice"] = self.path_manager.get_slice_name(
+                new_information["slice"]
+            )
+        if "num_grid_points" in new_information:
+            if new_information["num_grid_points"] is np.ndarray:
+                new_information["num_grid_points"] = np.array2string(
+                    new_information["num_grid_points"]
+                )
+        if "dense_grid_type" in new_information:
+            new_information["dense_grid_type"] = new_information[
+                "dense_grid_type"
+            ].name
+
+        # read inference information already saved to file
+        with open(
+            self.get_run_path() + "/inference_information.json", "r"
+        ) as file:
+            inference_information = json.load(file)
+
+        # update and save
+        inference_information.update(new_information)
+        with open(
+            self.get_run_path() + "/inference_information.json",
+            "w",
+            encoding="utf-8",
+        ) as file:
+            json.dump(
+                inference_information, file, ensure_ascii=False, indent=4
+            )
