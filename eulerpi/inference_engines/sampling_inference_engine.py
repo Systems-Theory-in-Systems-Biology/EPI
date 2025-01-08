@@ -154,43 +154,51 @@ class SamplingInferenceEngine(InferenceEngine):
             output_writer.model_name, output_writer.run_name
         )
 
-        if last_position := result_reader.load_sampler_position() is not None:
-            initial_walker_positions = last_position
-            logger.info(
-                f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
+        for intermediate_file_index in range(num_sub_runs):
+            if (
+                last_position := result_reader.load_sampler_position()
+                is not None
+            ):
+                initial_walker_positions = last_position
+                logger.info(
+                    f"Continue sampling from saved sampler position in {result_reader.path_manager.get_run_path()}"
+                )
+            else:
+                # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
+                # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
+                d_min = np.minimum(
+                    self.model.central_param - self.model.param_limits[:, 0],
+                    self.model.param_limits[:, 1] - self.model.central_param,
+                )
+                initial_walker_positions = self.model.central_param[
+                    slice
+                ] + d_min[slice] * (
+                    np.random.rand(num_walkers, sampling_dim) - 0.5
+                )
+
+            # Count and print how many runs have already been performed for this model
+            num_existing_files = (
+                result_reader.path_manager.count_emcee_sub_runs()
             )
-        else:
-            # Initialize each walker at a Gaussian-drawn random, slightly different parameter close to the central parameter.
-            # compute element-wise min of the difference between the central parameter and the lower sampling limit and the difference between the central parameter and the upper sampling limit
-            d_min = np.minimum(
-                self.model.central_param - self.model.param_limits[:, 0],
-                self.model.param_limits[:, 1] - self.model.central_param,
+            logger.debug(f"{num_existing_files} existing files found")
+
+            # Run the sampler.
+            logger.info(f"Starting sampler run {num_existing_files}")
+            sampler_results, final_walker_positions = sampler.run(
+                logdensity_blob_function,
+                initial_walker_positions,
+                num_walkers,
+                num_steps_per_sub_run,
+                num_processes,
             )
-            initial_walker_positions = self.model.central_param[slice] + d_min[
-                slice
-            ] * (np.random.rand(num_walkers, sampling_dim) - 0.5)
 
-        # Count and print how many runs have already been performed for this model
-        num_existing_files = result_reader.path_manager.count_emcee_sub_runs()
-        logger.debug(f"{num_existing_files} existing files found")
-
-        # Run the sampler.
-        logger.info(f"Starting sampler run {num_existing_files}")
-        sampler_results, final_walker_positions = sampler.run(
-            logdensity_blob_function,
-            initial_walker_positions,
-            num_walkers,
-            num_steps_per_sub_run,
-            num_processes,
-        )
-
-        output_writer.save_sampler_run(
-            model=self.model,
-            chain_number=num_existing_files,
-            sampler_results=sampler_results,
-            final_walker_positions=final_walker_positions,
-        )
-        output_writer.save_current_walker_pos(final_walker_positions)
+            output_writer.save_sampler_run(
+                model=self.model,
+                sub_run_index=num_existing_files,
+                sampler_results=sampler_results,
+                final_walker_positions=final_walker_positions,
+            )
+            output_writer.save_current_walker_pos(final_walker_positions)
 
         (
             overall_params,
