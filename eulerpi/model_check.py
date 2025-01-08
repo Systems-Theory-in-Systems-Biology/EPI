@@ -3,7 +3,8 @@
 import jax.numpy as jnp
 import numpy as np
 
-from eulerpi.inference import InferenceType, inference
+from eulerpi import InferenceType
+from eulerpi.inference import inference
 from eulerpi.models import BaseModel
 from eulerpi.plotting import sample_violin_plot
 
@@ -177,7 +178,7 @@ def inference_model_check(
     num_inference_evaluations = num_model_evaluations - num_data_points
 
     num_walkers = int(np.sqrt(num_inference_evaluations / 10))
-    num_steps = int(num_inference_evaluations / num_walkers)
+    num_steps_per_sub_run = int(num_inference_evaluations / num_walkers)
 
     num_burn_in_samples = num_walkers
     thinning_factor = int(np.ceil(num_walkers / 10))
@@ -185,7 +186,7 @@ def inference_model_check(
     print("Attempting inference with hyperparameters chosen as follows:")
     print(f"num_data_points: {num_data_points}")
     print(f"num_walkers: {num_walkers}")
-    print(f"num_steps: {num_steps}")
+    print(f"num_steps_per_sub_run: {num_steps_per_sub_run}")
     print(f"num_burn_in_samples: {num_burn_in_samples}")
     print(f"thinning_factor: {thinning_factor}")
 
@@ -199,13 +200,14 @@ def inference_model_check(
         slice=np.arange(model.param_dim),
         run_name=run_name,
         num_walkers=num_walkers,
-        num_steps=num_steps,
+        num_steps_per_sub_run=num_steps_per_sub_run,
+        num_sub_runs=1,
         num_burn_in_samples=num_burn_in_samples,
         thinning_factor=thinning_factor,
     )
 
     print(
-        f"Successfully finishes inference run with {num_walkers*num_steps} samples.\n"
+        f"Successfully finishes inference run with {num_walkers*num_steps_per_sub_run} samples.\n"
     )
 
     # plot the results
