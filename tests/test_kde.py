@@ -7,7 +7,9 @@ import pytest
 from matplotlib import cm
 
 from eulerpi.estimation import CauchyKDE, GaussKDE
-from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.inference_engines.grid_inference.grids.equidistant_grid import (
+    EquidistantGrid,
+)
 
 
 def kernel_estimators():

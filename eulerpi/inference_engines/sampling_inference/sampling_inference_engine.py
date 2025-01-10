@@ -9,8 +9,7 @@ from eulerpi.estimation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_log_density
 from eulerpi.models.base_model import BaseModel
 from eulerpi.result_managers import OutputWriter, ResultReader
-from eulerpi.samplers.emcee_sampler import EmceeSampler
-from eulerpi.samplers.sampler import Sampler
+from .samplers import EmceeSampler, Sampler
 from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
 from ..inference_engine import InferenceEngine

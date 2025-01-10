@@ -6,9 +6,9 @@ import numpy as np
 from eulerpi.data_transformations.data_transformation import DataTransformation
 from eulerpi.estimation.kde import KDE
 from eulerpi.evaluation.transformation import evaluate_density
-from eulerpi.grids.equidistant_grid import EquidistantGrid
-from eulerpi.grids.grid import Grid
-from eulerpi.grids.grid_evaluation import (
+
+from .grids import Grid, EquidistantGrid
+from .grids.grid_evaluation import (
     evaluate_function_on_grid_points_iterative,
     evaluate_function_on_grid_points_multiprocessing,
 )

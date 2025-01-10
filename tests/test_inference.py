@@ -5,7 +5,9 @@ import numpy as np
 
 from eulerpi.estimation import GaussKDE
 from eulerpi.examples.simple_models import LinearODE
-from eulerpi.grids.equidistant_grid import EquidistantGrid
+from eulerpi.inference_engines.grid_inference.grids.equidistant_grid import (
+    EquidistantGrid,
+)
 from eulerpi.inference import inference
 from eulerpi.inference_engines.inference_type import InferenceType
 from eulerpi.result_managers import OutputWriter, ResultReader

@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 
 from eulerpi.examples.corona import CoronaArtificial
-from eulerpi.grids.grid import Grid
+from eulerpi.inference_engines.grid_inference.grids.grid import Grid
 from eulerpi.inference import inference
 from eulerpi.inference_engines.inference_type import InferenceType
 
