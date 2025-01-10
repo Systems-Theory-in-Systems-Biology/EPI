@@ -13,7 +13,7 @@ from eulerpi.samplers.emcee_sampler import EmceeSampler
 from eulerpi.samplers.sampler import Sampler
 from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
-from .inference_engine import InferenceEngine
+from ..inference_engine import InferenceEngine
 
 logger = logging.getLogger(__name__)
 

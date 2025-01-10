@@ -16,7 +16,7 @@ from eulerpi.models.base_model import BaseModel
 from eulerpi.result_managers import OutputWriter
 from eulerpi.utils.function_wrappers import FunctionWithDimensions
 
-from .inference_engine import InferenceEngine
+from ..inference_engine import InferenceEngine
 
 
 def combined_evaluation(param, model, data_transformation, kde, slice):
