@@ -15,8 +15,13 @@ from eulerpi.estimation import GaussKDE
 from eulerpi.models import BaseModel
 from eulerpi.result_managers import ResultReader
 from eulerpi.utils.io import load_data
+from eulerpi import InferenceResult
 
 # general plotting function for joint runs
+
+
+def plot_inference_result(inference_result: InferenceResult):
+    pass
 
 
 def sample_violin_plot(
