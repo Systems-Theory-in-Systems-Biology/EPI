@@ -8,8 +8,10 @@ import pytest
 
 from eulerpi.core.inference import InferenceType, inference
 from eulerpi.core.model_check import basic_model_check
-from eulerpi.core.models import ArtificialModelInterface, BaseModel
+from eulerpi.core.models import ArtificialModelInterface
 from eulerpi.core.models.sbml_model import is_amici_available
+
+from .helper import get_model_and_data
 
 cpp_plant_example = pytest.param(
     ("eulerpi.examples.cpp.cpp_plant", "CppPlant"),
@@ -78,18 +80,7 @@ def test_model_requirements(example):
     Args:
         example: Tuple of the form (module_location, className, dataFileName) or (module_location, className)
     """
-
-    # extract example parameters from tuple
-    try:
-        module_location, className, dataFileName = example
-    except ValueError:
-        module_location, className = example
-        dataFileName = None
-
-    # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
-    module = importlib.import_module(module_location)
-    ModelClass = getattr(module, className)
-    model: BaseModel = ModelClass()
+    model, _ = get_model_and_data(example)
 
     # Use the basic model check to assert all model attribute dimension requirements as well as forward simulations and the corresponding jacobian.
     basic_model_check(model)
@@ -106,17 +97,7 @@ def test_examples(example, inference_type):
     Returns:
 
     """
-    # extract example parameters from tuple
-    try:
-        module_location, className, dataFileName = example
-    except ValueError:
-        module_location, className = example
-        dataFileName = None
-
-    # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
-    module = importlib.import_module(module_location)
-    ModelClass = getattr(module, className)
-    model: BaseModel = ModelClass()
+    model, data_resource = get_model_and_data(example)
 
     # Define kwargs for inference
     kwargs = {}
@@ -140,10 +121,7 @@ def test_examples(example, inference_type):
             **kwargs,
         )
     else:
-        assert dataFileName is not None
-        data_resource = importlib.resources.files(module_location).joinpath(
-            dataFileName
-        )
+        assert data_resource is not None
         with importlib.resources.as_file(data_resource) as data_file:
             params, sim_res, densities, result_manager = inference(
                 model,
