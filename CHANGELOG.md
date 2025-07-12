@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 
 - Updating minimal python version to 3.11 to fix issues with cpp dependencies
 - Switched from poetry to uv
+- Switched to python 3.13 as default
 
 ### Fixed
 
