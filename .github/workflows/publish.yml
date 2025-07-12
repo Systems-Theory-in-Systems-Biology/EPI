@@ -9,19 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.10"
-          cache: pip
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.8.3
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-      - name: Verify poetry installation
-        run: poetry --version
+          version: "0.7.20"
+      - name: Verify uv installation
+        run: uv --version
+      - name: Set up Python
+        run: uv python install
       - name: Install amici dependencies
         run: |
           sudo apt update
@@ -30,17 +25,17 @@ jobs:
           sudo apt install -y libatlas-base-dev
           sudo apt install -y libhdf5-dev
       - name: Load cached venv
-        id: cached-poetry-dependencies
+        id: cached-uv-dependencies
         uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ hashFiles('**/uv.lock') }}
       - name: Install dependencies
-        run: poetry install --no-interaction --with=dev --extras=sbml
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: uv pip install -e .[sbml]
+        if: steps.cached-uv-dependencies.outputs.cache-hit != 'true'
       - name: Publish to PyPI
         env:
-          PYPI_USERNAME: __token__
-          PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          UV_PUBLISH_USERNAME: __token__
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          poetry publish --build -u $PYPI_USERNAME -p $PYPI_PASSWORD
+          uv publish --username $UV_PUBLISH_USERNAME --token $UV_PUBLISH_TOKEN
