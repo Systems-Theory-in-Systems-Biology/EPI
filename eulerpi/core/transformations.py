@@ -1,5 +1,4 @@
-"""This module implements the random variable transformation of the EPI algorithm.
-"""
+"""This module implements the random variable transformation of the EPI algorithm."""
 
 from typing import Tuple
 

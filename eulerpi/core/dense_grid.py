@@ -91,7 +91,7 @@ def evaluate_on_grid_chunk(
         DataTransformation,
         np.ndarray,
         np.ndarray,
-    ]
+    ],
 ) -> np.ndarray:
     """Define a function which evaluates the density for a given grid chunk. The input args contains the grid chunk, the model, the data, the data_stdevs and the slice.
 
