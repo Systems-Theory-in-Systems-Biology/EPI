@@ -36,15 +36,13 @@
   - For cpp:
 
     ```bash
-    sudo apt install cmake
     sudo apt install libeigen3-dev
-    sudo apt install pybind11-dev
     ```
 
 - Install eulerpi:
 
   ```bash
-  uv pip install -e .[sbml]
+  uv sync --all-extras
   ```
 
 - Run the tests:
@@ -193,7 +191,7 @@ uvx --directory ./.. --no-project --with eulerpi --refresh-package eulerpi --ind
 2. Set a new version tag `git tag -a vX.X.X -m "Release version X.X.X"` and push it `git push origin vX.X.X`
 3. Check if the CI deployment was successful on [GitHub](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/publish.yml) and finally on [PyPi](https://pypi.org/project/eulerpi/#history). The CI and PyPi may needs some time to run and update.
 
-### Deployment with Poetry (not recommended)
+### Local Deployment (not recommended)
 
 ```bash
 export UV_PUBLISH_TOKEN
@@ -202,6 +200,7 @@ export UV_PUBLISH_TOKEN
 Build and deploy:
 
 ```bash
+uv build
 uv publish --token $UV_PUBLISH_TOKEN
 ```
 
