@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         run: uv python install
       - name: Run pre-commit
-        uses: pre-commit/action@v3
+        uses: pre-commit/action@v3.0.1
 
   tests:
     strategy:
