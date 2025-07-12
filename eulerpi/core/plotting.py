@@ -171,7 +171,6 @@ def sample_violin_plot(
 
     # loop over all dimensions of either the param or the data
     for i in range(dim):
-
         reconstructed_matrix = np.transpose(
             np.array([reconstructed_sample[:, i]])
         )

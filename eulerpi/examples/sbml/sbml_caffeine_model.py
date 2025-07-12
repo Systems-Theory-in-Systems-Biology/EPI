@@ -6,7 +6,6 @@ from eulerpi.core.models import ArtificialModelInterface, SBMLModel
 
 
 class CaffeineSBMLModel(SBMLModel, ArtificialModelInterface):
-
     CENTRAL_PARAM = np.array([1.0, 1.0])
     PARAM_LIMITS = np.array([[0.0, 2.0], [0.0, 2.0]])
 

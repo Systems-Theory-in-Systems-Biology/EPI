@@ -1,28 +1,19 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-    -   id: check-toml
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: mixed-line-ending
--   repo: https://github.com/astral-sh/uv-pre-commit
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+  - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.7.20
     hooks:
       - id: uv-lock
--   repo: https://github.com/psf/black
-    rev: 24.4.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.3
     hooks:
-    -   id: black
-        language_version: python3.10
--   repo: https://github.com/PyCQA/flake8
-    rev: 7.0.0
-    hooks:
-    -   id: flake8
-        entry: pflake8
-        additional_dependencies: [pyproject-flake8]
--   repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-    -   id: isort
-        args: [--settings-path=pyproject.toml]
+      - id: ruff-check
+        types_or: [ python, pyi ]
+      - id: ruff-format
+        types_or: [ python, pyi ]

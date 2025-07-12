@@ -6,7 +6,7 @@ import jax.numpy as jnp
 
 
 def value_and_jacfwd(
-    fun: Callable[[jnp.ndarray], jnp.ndarray]
+    fun: Callable[[jnp.ndarray], jnp.ndarray],
 ) -> Callable[[jnp.ndarray], Callable[[jnp.ndarray], jnp.ndarray]]:
     """Returns a function that computes the value and the jacobian of the passed function using forward mode AD.
 
@@ -40,7 +40,7 @@ def value_and_jacfwd(
 
 
 def value_and_jacrev(
-    fun: Callable[..., jnp.ndarray]
+    fun: Callable[..., jnp.ndarray],
 ) -> Callable[[jnp.ndarray], Callable[[jnp.ndarray], jnp.ndarray]]:
     """Returns a function that computes the value and the jacobian of the passed function using reverse mode AD.
 

@@ -150,9 +150,9 @@ def inference(
         )
     data = data_transformation.transform(data)
 
-    slices = slices or [
-        np.arange(model.param_dim)
-    ]  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
+    slices = (
+        slices or [np.arange(model.param_dim)]
+    )  # If no slice is given, compute full joint distribution, i.e. a slice with all parameters
     result_manager = result_manager or ResultManager(
         model.name, run_name, slices
     )  # If no result_manager is given, create one with default paths

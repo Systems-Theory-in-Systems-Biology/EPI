@@ -217,7 +217,6 @@ class Heat(JaxModel):
 
 
 class HeatArtificial(Heat, ArtificialModelInterface):
-
     CENTRAL_PARAM = np.array([1.5, 1.5, 0.5])
     PARAM_LIMITS = np.array([[1.0, 2.0], [1.0, 2.0], [0.0, 1.0]])
     num_grid_points = 20

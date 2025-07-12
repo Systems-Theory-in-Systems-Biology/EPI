@@ -7,7 +7,6 @@ from eulerpi.core.models import BaseModel
 
 
 class Temperature(BaseModel):
-
     param_dim = 1
     data_dim = 1
 

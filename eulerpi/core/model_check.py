@@ -49,12 +49,12 @@ def basic_model_check(model: BaseModel) -> None:
     )
 
     # test the shapes
-    assert (
-        model.param_dim > 0
-    ), f"Model {model} has a non-positive parameter dimension"
-    assert (
-        model.data_dim > 0
-    ), f"Model {model} has a non-positive data dimension"
+    assert model.param_dim > 0, (
+        f"Model {model} has a non-positive parameter dimension"
+    )
+    assert model.data_dim > 0, (
+        f"Model {model} has a non-positive data dimension"
+    )
     assert model.data_dim >= model.param_dim, (
         f"Model {model} has a data dimension smaller than the parameter dimension. "
         "This is not supported by the inference."
@@ -206,7 +206,7 @@ def inference_model_check(
     )
 
     print(
-        f"Successfully finishes inference run with {num_walkers*num_steps} samples.\n"
+        f"Successfully finishes inference run with {num_walkers * num_steps} samples.\n"
     )
 
     # plot the results

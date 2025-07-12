@@ -1,4 +1,4 @@
-""" This module provides functions to handle create Sparse Grids (SGs_) and work with them.
+"""This module provides functions to handle create Sparse Grids (SGs_) and work with them.
     All pure SG functions are defined on the unit hypercube $[0,1]^d$.
 
     .. warning::
@@ -377,7 +377,7 @@ def evaluate_on_sparse_grid(
         DataTransformation,
         np.ndarray,
         np.ndarray,
-    ]
+    ],
 ) -> np.ndarray:
     """This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.
 
