@@ -12,7 +12,7 @@
 [![flake8](https://img.shields.io/badge/flake8-checked-blue.svg)](https://flake8.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.md)
-[![Python](https://img.shields.io/badge/python-3.10-purple.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.13-purple.svg)](https://www.python.org/)
 ![PyPI](https://img.shields.io/pypi/v/eulerpi)
 
 Eulerian Parameter Inference (EPI) is a powerful and novel method for inverse model parameter inference. The eulerpi package provides an implementation of the EPI algorithm, which takes observed data and a model as input and returns a parameter distribution consistent with the observed data by solving the inverse problem directly. In case the model describes a one-to-one mapping between parameters and simulation results, the inferred parameter distribution is the true underlying distribution.
