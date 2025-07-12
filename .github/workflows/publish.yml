@@ -13,8 +13,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           version: "0.7.20"
-      - name: Verify uv installation
-        run: uv --version
+          enable-cache: true
       - name: Set up Python
         run: uv python install
       - name: Install amici dependencies
@@ -24,15 +23,8 @@ jobs:
           sudo apt install -y libblas-dev
           sudo apt install -y libatlas-base-dev
           sudo apt install -y libhdf5-dev
-      - name: Load cached venv
-        id: cached-uv-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/uv.lock') }}
       - name: Install dependencies
-        run: uv pip install -e .[sbml]
-        if: steps.cached-uv-dependencies.outputs.cache-hit != 'true'
+        run: uv sync --all-extras
       - name: Publish to PyPI
         env:
           UV_PUBLISH_USERNAME: __token__
