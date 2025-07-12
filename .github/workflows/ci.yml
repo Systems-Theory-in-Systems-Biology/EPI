@@ -58,10 +58,8 @@ jobs:
         run: uv sync --all-extras
       - name: Prepare cpp test
         run: |
-          sudo apt install -y cmake
           sudo apt install -y libeigen3-dev
           sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
-          sudo apt install -y pybind11-dev
           source .\venv\bin\activate
           cd eulerpi/examples/cpp
           mkdir build
@@ -70,8 +68,7 @@ jobs:
           make -j
       - name: Run pytest
         run: |
-          source .\venv\bin\activate
-          pytest -v
+          uv run pytest -v
       # TODO: coverage run creates segmentation fault on Github ci, but not locally. Debug it
       # - name: Run coverage
       #   run: |

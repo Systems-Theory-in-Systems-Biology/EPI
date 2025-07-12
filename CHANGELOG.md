@@ -17,13 +17,15 @@ All notable changes to this project will be documented in this file.
 
 - Bug in module B that caused a crash
   
-## [Unreleased]
+## [0.11.0] - unreleased
 
 ### Added
 
 
 ### Changed
 
+- Updating minimal python version to 3.11 to fix issues with cpp dependencies
+- Switched from poetry to uv
 
 ### Fixed
 
