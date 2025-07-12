@@ -590,7 +590,7 @@ dev = [
     { name = "myst-parser" },
     { name = "nbmake" },
     { name = "pre-commit" },
-    { name = "pybind11" },
+    { name = "pybind11", extra = ["global"] },
     { name = "pyproject-flake8" },
     { name = "pyqt6" },
     { name = "pytest" },
@@ -624,7 +624,7 @@ dev = [
     { name = "myst-parser", specifier = ">=3.0.1" },
     { name = "nbmake", specifier = ">=1.5.3" },
     { name = "pre-commit", specifier = ">=3.7.1" },
-    { name = "pybind11", specifier = ">=3.0.0" },
+    { name = "pybind11", extras = ["global"], specifier = ">=3.0.0" },
     { name = "pyproject-flake8", specifier = ">=7.0.0" },
     { name = "pyqt6", specifier = ">=6.7.0" },
     { name = "pytest", specifier = ">=8.2.0" },
@@ -2170,6 +2170,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ef/83/698d120e257a116f2472c710932023ad779409adf2734d2e940f34eea2c5/pybind11-3.0.0.tar.gz", hash = "sha256:c3f07bce3ada51c3e4b76badfa85df11688d12c46111f9d242bc5c9415af7862", size = 544819, upload-time = "2025-07-10T16:52:09.335Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/41/9c/85f50a5476832c3efc67b6d7997808388236ae4754bf53e1749b3bc27577/pybind11-3.0.0-py3-none-any.whl", hash = "sha256:7c5cac504da5a701b5163f0e6a7ba736c713a096a5378383c5b4b064b753f607", size = 292118, upload-time = "2025-07-10T16:52:07.828Z" },
+]
+
+[package.optional-dependencies]
+global = [
+    { name = "pybind11-global" },
+]
+
+[[package]]
+name = "pybind11-global"
+version = "3.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b8/23/d74a7a4302e86fa984cb059d9693786a1237a2dbb3ffa1101fa277857a02/pybind11_global-3.0.0.tar.gz", hash = "sha256:1c9846d489999b958f36ed32779bc572a89f9d0b299045e13f2c50be8017a4f3", size = 544662, upload-time = "2025-07-10T16:52:18.661Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/25/84/880542c58c89c0d380a4aee56f003c1ec19dff8394f227a67db137f57407/pybind11_global-3.0.0-py3-none-any.whl", hash = "sha256:9114f28aab0743a429244a61988ef8f7dd92230c4aab08b316e6054c840e5cd6", size = 536343, upload-time = "2025-07-10T16:52:16.848Z" },
 ]
 
 [[package]]
