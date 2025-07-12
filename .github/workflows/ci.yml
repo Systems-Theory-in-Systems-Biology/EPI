@@ -59,7 +59,7 @@ jobs:
         run: |
           sudo apt install -y libeigen3-dev
           sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
-          source .\venv\bin\activate
+          source .venv/bin/activate
           cd eulerpi/examples/cpp
           mkdir build
           cd build
