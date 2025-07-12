@@ -1,27 +1,18 @@
 """Test pickling of the various classes in the package."""
 
-import importlib
 import pickle
 
 import numpy as np
 import pytest
 
-from eulerpi.core.models import BaseModel
 from tests.test_examples import Examples, get_example_name
+
+from .helper import get_model_and_data
 
 
 @pytest.mark.parametrize("example", Examples(), ids=get_example_name)
 def test_pickling_model(example):
-    try:
-        module_location, className, _ = example
-    except ValueError:
-        module_location, className = example
-        dataFileName = None
-
-    # Import class dynamically to avoid error on imports at the top which cant be tracked back to a specific test
-    module = importlib.import_module(module_location)
-    ModelClass = getattr(module, className)
-    model: BaseModel = ModelClass()
+    model, _ = get_model_and_data(example)
 
     # Test pickling
     dumped = pickle.dumps(model)
