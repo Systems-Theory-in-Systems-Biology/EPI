@@ -16,10 +16,10 @@
   <summary>Should I choose https or ssh?</summary>
   You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case, you have to clone your fork, not this repository. </details>
 
-- Install [poetry](https://python-poetry.org/docs/):
+- Install [uv](https://docs.astral.sh/uv/):
   
   ```bash
-  curl -sSL https://install.python-poetry.org | python3 -
+  curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
   
 - Install dependencies:
@@ -44,13 +44,13 @@
 - Install eulerpi:
 
   ```bash
-  poetry install --with=dev --extras=sbml
+  uv pip install -e .[sbml]
   ```
 
 - Run the tests:
 
   ```bash
-  poetry run pytest
+  uv run pytest
   ```
 
   You can add the ```--verbose``` parameter to get a more detailed report.
@@ -59,20 +59,20 @@
 
 Here are the most important information on how to maintain this repository.
 
-### Dependency Management with Poetry
+### Dependency Management with uv
 
-We use poetry as build system, for the dependency management and the virtual environment. During the [Quickstart](#quickstart) we installed all dependencies into the virtual environment, therefore:
+We use uv to manage the project dependencies and the virtual python environment. During the [Quickstart](#quickstart) we installed all dependencies into the virtual environment, therefore:
 
 ---
 **IMPORTANT**
 
-Run all commands in the next section in the poetry shell. It can be started with `poetry shell`. Alternatively, you can run commands with `poetry run <yourcommand>`.
+Run all commands in the next section in the uv shell. It can be started with `source .venv/bin/activate`. Alternatively, you can run commands with `uv run <yourcommand>`.
 
 ---
 
-Run ```poetry add package_name``` to add the library/package with the name ```package_name``` as dependencie to your project. Use ```poetry add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
+Run ```uv add package_name``` to add the library/package with the name ```package_name``` as dependency to your project. Use ```uv add --group dev package_name``` to add ```package_name``` to your ```dev``` dependencies. You can have arbitrary group names.
   
-For more information read the [Poetry Documentation](https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project).
+For more information read the [uv Documentation](https://docs.astral.sh/uv/concepts/projects/).
 
 ### Code quality checks
 
@@ -109,7 +109,7 @@ The jupyter notebook can be run using
 - vs code: https://code.visualstudio.com/docs/datascience/jupyter-notebooks
 - shell + browser: `jupyter notebook`
 
-In the first case you need to select the poetry environment when selecting the interpreter, in the second case you need to run the command in the poetry shell.
+In the first case you need to select the uv virtual env when selecting the interpreter, in the second case you need to run the command in the uv shell.
 
 ### Profiling with scalene
 
@@ -173,24 +173,17 @@ Please update the version number in the `pyproject.toml` file before tagging the
 
 ### Test Deployment to TestPyPi
 
-You have to set-up testpypi once:
-
-```bash
-poetry config repositories.testpypi https://test.pypi.org/legacy/
-poetry config http-basic.testpypi __token__ pypi-your-api-token-here
-```
-
 Build and deploy:
 
 ```bash
-poetry build
-poetry publish -r testpypi
+uv build
+uv publish --index testpypi --token $TESTPYPI_TOKEN
 ```
 
 Test this with
 
 ```bash
-python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps eulerpi
+uvx --directory ./.. --no-project --with eulerpi --refresh-package eulerpi --index testpypi -- python -c "from importlib.metadata import version; import eulerpi; print(version('eulerpi')); print(eulerpi)"
 ```
 
 ### Deployment with GitHub CI (recommended)
@@ -201,23 +194,21 @@ python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps euler
 3. Check if the CI deployment was successful on [GitHub](https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/publish.yml) and finally on [PyPi](https://pypi.org/project/eulerpi/#history). The CI and PyPi may needs some time to run and update.
 
 ### Deployment with Poetry (not recommended)
-  
-You have to set-up pypi once:
 
 ```bash
-poetry config pypi-token.pypi pypi-your-token-here
+export UV_PUBLISH_TOKEN
 ```
 
 Build and deploy:
 
 ```bash
-poetry publish --build
+uv publish --token $UV_PUBLISH_TOKEN
 ```
 
 Test this with
 
 ```bash
-pip install eulerpi[sbml]
+uvx --directory ./.. --no-project --with eulerpi --refresh-package eulerpi -- python -c "from importlib.metadata import version; import eulerpi; print(version('eulerpi')); print(eulerpi)"
 ```
 
 ## Jax with CUDA
