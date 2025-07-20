@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tests.test_inference &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -83,21 +81,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for tests.test_inference</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">jax.scipy.stats</span> <span class="k">as</span> <span class="nn">jstats</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jstats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi.core.dense_grid</span> <span class="kn">import</span> <span class="n">generate_regular_grid</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.inference</span> <span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span><span class="p">,</span> <span class="n">eval_kde_gauss</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
-<span class="kn">from</span> <span class="nn">eulerpi.examples.simple_models</span> <span class="kn">import</span> <span class="n">LinearODE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.dense_grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_regular_grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceType</span><span class="p">,</span> <span class="n">inference</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.kde</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_kernel_width</span><span class="p">,</span> <span class="n">eval_kde_gauss</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.result_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.examples.simple_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearODE</span>
 
 
 <span class="c1"># WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...</span>
 <div class="viewcode-block" id="integrate">
 <a class="viewcode-back" href="../../tests.test_inference.html#tests.test_inference.integrate">[docs]</a>
-<span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="c1"># Integrate the function over the grid</span>
     <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">integral</span></div>
@@ -107,7 +105,7 @@
 <span class="c1"># TODO: Generalize, currently only works for dense vs mcmc</span>
 <div class="viewcode-block" id="test_inference_mcmc_dense_exact">
 <a class="viewcode-back" href="../../tests.test_inference.html#tests.test_inference.test_inference_mcmc_dense_exact">[docs]</a>
-<span class="k">def</span> <span class="nf">test_inference_mcmc_dense_exact</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_inference_mcmc_dense_exact</span><span class="p">(</span>
     <span class="n">num_data_points</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">num_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
     <span class="n">num_runs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Please keep this higher than 1. This tests is also responsible for testing whether the MCMC sampler and result_manager can concatenate multiple runs.</span>
@@ -162,7 +160,7 @@
             <span class="k">continue</span>
 
     <span class="c1"># define true pdf</span>
-    <span class="k">def</span> <span class="nf">true_pdf</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">true_pdf</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">distribution</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mf">1.0</span>
@@ -216,7 +214,7 @@
     <span class="n">true_kde</span> <span class="o">=</span> <span class="n">eval_kde_gauss</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
     <span class="n">true_pdf_samples</span> <span class="o">=</span> <span class="n">true_pdf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to2d</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to2d</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">grid</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_grid_points</span><span class="p">,</span> <span class="n">num_grid_points</span><span class="p">)</span>
 
     <span class="n">integral_mcmc_kde</span> <span class="o">=</span> <span class="n">integrate</span><span class="p">(</span><span class="n">to2d</span><span class="p">(</span><span class="n">mcmc_kde</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -240,7 +238,7 @@
     <span class="n">mcmc_kde_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mcmc_kde</span> <span class="o">-</span> <span class="n">true_pdf_grid</span><span class="p">)</span>
     <span class="n">dense_grid_pdf_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dense_grid_pdf</span> <span class="o">-</span> <span class="n">true_pdf_grid</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">l2_error</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">l2_error</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">integrate</span><span class="p">(</span><span class="n">to2d</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
 
     <span class="c1"># Calculate the L2 error</span>
@@ -341,7 +339,7 @@
 
 <div class="viewcode-block" id="test_thinning_and_burn_in">
 <a class="viewcode-back" href="../../tests.test_inference.html#tests.test_inference.test_thinning_and_burn_in">[docs]</a>
-<span class="k">def</span> <span class="nf">test_thinning_and_burn_in</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_thinning_and_burn_in</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test if the thinning and burn in works as expected&quot;&quot;&quot;</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">LinearODE</span><span class="p">()</span>
@@ -425,7 +423,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

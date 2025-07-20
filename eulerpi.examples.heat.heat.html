@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -5,24 +7,20 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Heat Conduction Model &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -60,8 +58,8 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Heat Conduction Model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat"><code class="docutils literal notranslate"><span class="pre">Heat</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.forward"><code class="docutils literal notranslate"><span class="pre">Heat.forward()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.param_is_within_domain"><code class="docutils literal notranslate"><span class="pre">Heat.param_is_within_domain()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.perform_simulation"><code class="docutils literal notranslate"><span class="pre">Heat.perform_simulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.param_is_within_domain"><code class="docutils literal notranslate"><span class="pre">Heat.param_is_within_domain()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.CENTRAL_PARAM"><code class="docutils literal notranslate"><span class="pre">Heat.CENTRAL_PARAM</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.PARAM_LIMITS"><code class="docutils literal notranslate"><span class="pre">Heat.PARAM_LIMITS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#eulerpi.examples.heat.heat.Heat.data_dim"><code class="docutils literal notranslate"><span class="pre">Heat.data_dim</span></code></a></li>
@@ -122,7 +120,7 @@
 <span id="heat-conduction-model"></span><h1>Heat Conduction Model<a class="headerlink" href="#module-eulerpi.examples.heat.heat" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="eulerpi.examples.heat.heat.Heat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Heat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.5,</span> <span class="pre">1.5,</span> <span class="pre">0.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">2.],</span> <span class="pre">[1.,</span> <span class="pre">2.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Heat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.5,</span> <span class="pre">1.5,</span> <span class="pre">0.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">2.],</span> <span class="pre">[1.,</span> <span class="pre">2.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="eulerpi.core.models.jax_model.html#eulerpi.core.models.jax_model.JaxModel" title="eulerpi.core.models.jax_model.JaxModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxModel</span></code></a></p>
 <p>A two-dimensional anisotropic heat conduction equation model on a square domain with four dirichlet boundaries.</p>
 <p>The model is defined by the following partial differential equation on the square spacial domain <span class="math notranslate nohighlight">\(\Omega = [0, 1]^2\)</span> on the time interval <span class="math notranslate nohighlight">\([0, 0.1]\)</span>:</p>
@@ -138,7 +136,7 @@
 Inference is performed on the entries of <span class="math notranslate nohighlight">\(\kappa\)</span>: param[0] = <span class="math notranslate nohighlight">\(\kappa_{11}\)</span>, param[1] = <span class="math notranslate nohighlight">\(\kappa_{22}\)</span>, param[2] = <span class="math notranslate nohighlight">\(\kappa_{12}\)</span>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.examples.heat.heat.Heat.forward">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat.forward" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat.forward" title="Link to this definition"></a></dt>
 <dd><p>Forward method for the heat model.</p>
 <p>Yields the solution of the anisotropic heat conduction equation at time <span class="math notranslate nohighlight">\(t=0.1\)</span>
 in five spatial points, which are arranged similar to the number “five” on a dice.</p>
@@ -157,6 +155,23 @@ in five spatial points, which are arranged similar to the number “five” on a
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.examples.heat.heat.Heat.perform_simulation">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat.perform_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat.perform_simulation" title="Link to this definition"></a></dt>
+<dd><p>Performs a simulation of the heat equation with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kappa</strong> (<em>np.ndarray</em>) – Entries of the conductivity matrix: kappa[0] = <span class="math notranslate nohighlight">\(\kappa_{11}\)</span>, kappa[1] = <span class="math notranslate nohighlight">\(\kappa_{22}\)</span>, kapp[2] = <span class="math notranslate nohighlight">\(\kappa_{12}\)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An array containing the solution of the anisotropic heat conduction equation, where the first two indices correspond to the x and y coordinates, respectively. The time is fixed to the class variable t_end.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.examples.heat.heat.Heat.param_is_within_domain">
 <span class="sig-name descname"><span class="pre">param_is_within_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat.param_is_within_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat.param_is_within_domain" title="Link to this definition"></a></dt>
 <dd><p>Checks whether a parameter is within the parameter domain of the model.
@@ -170,23 +185,6 @@ This condition stems from thermodynamical considerations.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="eulerpi.examples.heat.heat.Heat.perform_simulation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">perform_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#Heat.perform_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.Heat.perform_simulation" title="Link to this definition"></a></dt>
-<dd><p>Performs a simulation of the heat equation with the given parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kappa</strong> (<em>np.ndarray</em>) – Entries of the conductivity matrix: kappa[0] = <span class="math notranslate nohighlight">\(\kappa_{11}\)</span>, kappa[1] = <span class="math notranslate nohighlight">\(\kappa_{22}\)</span>, kapp[2] = <span class="math notranslate nohighlight">\(\kappa_{12}\)</span></p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An array containing the solution of the anisotropic heat conduction equation, where the first two indices correspond to the x and y coordinates, respectively. The time is fixed to the class variable t_end.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -240,7 +238,7 @@ This condition stems from thermodynamical considerations.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="eulerpi.examples.heat.heat.HeatArtificial">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HeatArtificial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.5,</span> <span class="pre">1.5,</span> <span class="pre">0.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">2.],</span> <span class="pre">[1.,</span> <span class="pre">2.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#HeatArtificial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.HeatArtificial" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HeatArtificial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([1.5,</span> <span class="pre">1.5,</span> <span class="pre">0.5])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">2.],</span> <span class="pre">[1.,</span> <span class="pre">2.],</span> <span class="pre">[0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/examples/heat/heat.html#HeatArtificial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.examples.heat.heat.HeatArtificial" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#eulerpi.examples.heat.heat.Heat" title="eulerpi.examples.heat.heat.Heat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Heat</span></code></a>, <a class="reference internal" href="eulerpi.core.models.artificial_model_interface.html#eulerpi.core.models.artificial_model_interface.ArtificialModelInterface" title="eulerpi.core.models.artificial_model_interface.ArtificialModelInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArtificialModelInterface</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.examples.heat.heat.HeatArtificial.generate_artificial_params">
@@ -314,7 +312,7 @@ This condition stems from thermodynamical considerations.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

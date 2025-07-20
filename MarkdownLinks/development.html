@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
@@ -5,23 +7,19 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Development &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -57,7 +55,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maintaining-the-repository">Maintaining the repository</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#dependency-management-with-poetry">Dependency Management with Poetry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependency-management-with-uv">Dependency Management with uv</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#code-quality-checks">Code quality checks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#running-the-tutorial-jupyter-notebook">Running the tutorial (jupyter notebook)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#profiling-with-scalene">Profiling with scalene</a></li>
@@ -67,7 +65,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#versioning">Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#test-deployment-to-testpypi">Test Deployment to TestPyPi</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#deployment-with-github-ci-recommended">Deployment with GitHub CI (recommended)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#deployment-with-poetry-not-recommended">Deployment with Poetry (not recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#local-deployment-not-recommended">Local Deployment (not recommended)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#jax-with-cuda">Jax with CUDA</a></li>
@@ -119,8 +117,8 @@
 <summary>Should I choose https or ssh?</summary>
 You can clone the repository over https or ssh. Use https if you only want to obtain the code. Use ssh if you are a registered as developer on the repository and want to push changes to the code base. If you want to contribute to the project but are not a registered developer, create a fork of the project first. In this case, you have to clone your fork, not this repository. </details>
 </li>
-<li><p>Install <a class="reference external" href="https://python-poetry.org/docs/">poetry</a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.python-poetry.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-
+<li><p>Install <a class="reference external" href="https://docs.astral.sh/uv/">uv</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
 </pre></div>
 </div>
 </li>
@@ -135,21 +133,19 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 </div>
 </li>
 <li><p>For cpp:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>cmake
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libeigen3-dev
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>pybind11-dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libeigen3-dev
 </pre></div>
 </div>
 </li>
 </ul>
 </li>
 <li><p>Install eulerpi:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--with<span class="o">=</span>dev<span class="w"> </span>--extras<span class="o">=</span>sbml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 </pre></div>
 </div>
 </li>
 <li><p>Run the tests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>pytest
 </pre></div>
 </div>
 <p>You can add the <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> parameter to get a more detailed report.</p>
@@ -159,15 +155,15 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 <section id="maintaining-the-repository">
 <h2>Maintaining the repository<a class="headerlink" href="#maintaining-the-repository" title="Link to this heading"></a></h2>
 <p>Here are the most important information on how to maintain this repository.</p>
-<section id="dependency-management-with-poetry">
-<h3>Dependency Management with Poetry<a class="headerlink" href="#dependency-management-with-poetry" title="Link to this heading"></a></h3>
-<p>We use poetry as build system, for the dependency management and the virtual environment. During the <a class="reference internal" href="#quickstart">Quickstart</a> we installed all dependencies into the virtual environment, therefore:</p>
+<section id="dependency-management-with-uv">
+<h3>Dependency Management with uv<a class="headerlink" href="#dependency-management-with-uv" title="Link to this heading"></a></h3>
+<p>We use uv to manage the project dependencies and the virtual python environment. During the <a class="reference internal" href="#quickstart">Quickstart</a> we installed all dependencies into the virtual environment, therefore:</p>
 <hr class="docutils" />
 <p><strong>IMPORTANT</strong></p>
-<p>Run all commands in the next section in the poetry shell. It can be started with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell</span></code>. Alternatively, you can run commands with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">&lt;yourcommand&gt;</span></code>.</p>
+<p>Run all commands in the next section in the uv shell. It can be started with <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">.venv/bin/activate</span></code>. Alternatively, you can run commands with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">&lt;yourcommand&gt;</span></code>.</p>
 <hr class="docutils" />
-<p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">package_name</span></code> to add the library/package with the name <code class="docutils literal notranslate"><span class="pre">package_name</span></code> as dependencie to your project. Use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">package_name</span></code> to add <code class="docutils literal notranslate"><span class="pre">package_name</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependencies. You can have arbitrary group names.</p>
-<p>For more information read the <a class="reference external" href="https://python-poetry.org/docs/basic-usage/#initialising-a-pre-existing-project">Poetry Documentation</a>.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">add</span> <span class="pre">package_name</span></code> to add the library/package with the name <code class="docutils literal notranslate"><span class="pre">package_name</span></code> as dependency to your project. Use <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">add</span> <span class="pre">--group</span> <span class="pre">dev</span> <span class="pre">package_name</span></code> to add <code class="docutils literal notranslate"><span class="pre">package_name</span></code> to your <code class="docutils literal notranslate"><span class="pre">dev</span></code> dependencies. You can have arbitrary group names.</p>
+<p>For more information read the <a class="reference external" href="https://docs.astral.sh/uv/concepts/projects/">uv Documentation</a>.</p>
 </section>
 <section id="code-quality-checks">
 <h3>Code quality checks<a class="headerlink" href="#code-quality-checks" title="Link to this heading"></a></h3>
@@ -197,7 +193,7 @@ coverage<span class="w"> </span>html
 <li><p>vs code: https://code.visualstudio.com/docs/datascience/jupyter-notebooks</p></li>
 <li><p>shell + browser: <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code></p></li>
 </ul>
-<p>In the first case you need to select the poetry environment when selecting the interpreter, in the second case you need to run the command in the poetry shell.</p>
+<p>In the first case you need to select the uv virtual env when selecting the interpreter, in the second case you need to run the command in the uv shell.</p>
 </section>
 <section id="profiling-with-scalene">
 <h3>Profiling with scalene<a class="headerlink" href="#profiling-with-scalene" title="Link to this heading"></a></h3>
@@ -254,18 +250,13 @@ If you add extensions to <code class="docutils literal notranslate"><span class=
 </section>
 <section id="test-deployment-to-testpypi">
 <h3>Test Deployment to TestPyPi<a class="headerlink" href="#test-deployment-to-testpypi" title="Link to this heading"></a></h3>
-<p>You have to set-up testpypi once:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>repositories.testpypi<span class="w"> </span>https://test.pypi.org/legacy/
-poetry<span class="w"> </span>config<span class="w"> </span>http-basic.testpypi<span class="w"> </span>__token__<span class="w"> </span>pypi-your-api-token-here
-</pre></div>
-</div>
 <p>Build and deploy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>build
-poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> </span>testpypi
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>build
+uv<span class="w"> </span>publish<span class="w"> </span>--index<span class="w"> </span>testpypi<span class="w"> </span>--token<span class="w"> </span><span class="nv">$TESTPYPI_TOKEN</span>
 </pre></div>
 </div>
 <p>Test this with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--index-url<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--no-deps<span class="w"> </span>eulerpi
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvx<span class="w"> </span>--directory<span class="w"> </span>./..<span class="w"> </span>--no-project<span class="w"> </span>--with<span class="w"> </span>eulerpi<span class="w"> </span>--refresh-package<span class="w"> </span>eulerpi<span class="w"> </span>--index<span class="w"> </span>testpypi<span class="w"> </span>--<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from importlib.metadata import version; import eulerpi; print(version(&#39;eulerpi&#39;)); print(eulerpi)&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -278,18 +269,18 @@ poetry<span class="w"> </span>publish<span class="w"> </span>-r<span class="w"> 
 <li><p>Check if the CI deployment was successful on <a class="reference external" href="https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/publish.yml">GitHub</a> and finally on <a class="reference external" href="https://pypi.org/project/eulerpi/#history">PyPi</a>. The CI and PyPi may needs some time to run and update.</p></li>
 </ol>
 </section>
-<section id="deployment-with-poetry-not-recommended">
-<h3>Deployment with Poetry (not recommended)<a class="headerlink" href="#deployment-with-poetry-not-recommended" title="Link to this heading"></a></h3>
-<p>You have to set-up pypi once:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>config<span class="w"> </span>pypi-token.pypi<span class="w"> </span>pypi-your-token-here
+<section id="local-deployment-not-recommended">
+<h3>Local Deployment (not recommended)<a class="headerlink" href="#local-deployment-not-recommended" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span>UV_PUBLISH_TOKEN
 </pre></div>
 </div>
 <p>Build and deploy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>publish<span class="w"> </span>--build
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>build
+uv<span class="w"> </span>publish<span class="w"> </span>--token<span class="w"> </span><span class="nv">$UV_PUBLISH_TOKEN</span>
 </pre></div>
 </div>
 <p>Test this with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>eulerpi<span class="o">[</span>sbml<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvx<span class="w"> </span>--directory<span class="w"> </span>./..<span class="w"> </span>--no-project<span class="w"> </span>--with<span class="w"> </span>eulerpi<span class="w"> </span>--refresh-package<span class="w"> </span>eulerpi<span class="w"> </span>--<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from importlib.metadata import version; import eulerpi; print(version(&#39;eulerpi&#39;)); print(eulerpi)&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -343,7 +334,7 @@ py3clean<span class="w"> </span>.
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

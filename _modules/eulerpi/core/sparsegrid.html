@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eulerpi.core.sparsegrid &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -83,7 +81,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for eulerpi.core.sparsegrid</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; This module provides functions to handle create Sparse Grids (SGs_) and work with them.</span>
+<span></span><span class="sd">&quot;&quot;&quot;This module provides functions to handle create Sparse Grids (SGs_) and work with them.</span>
 <span class="sd">    All pure SG functions are defined on the unit hypercube $[0,1]^d$.</span>
 
 <span class="sd">    .. warning::</span>
@@ -93,24 +91,24 @@
 <span class="sd">.. _SGs: https://en.wikipedia.org/wiki/Sparse_grid</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">typing</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">get_context</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.data_transformations</span> <span class="kn">import</span> <span class="n">DataTransformation</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.result_manager</span> <span class="kn">import</span> <span class="n">ResultManager</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.transformations</span> <span class="kn">import</span> <span class="n">evaluate_density</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.data_transformations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataTransformation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.inference_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.kde</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_kernel_width</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.result_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.transformations</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_density</span>
 
 
 <div class="viewcode-block" id="basis_1d">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.basis_1d">[docs]</a>
-<span class="k">def</span> <span class="nf">basis_1d</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">basis_1d</span><span class="p">(</span>
     <span class="n">points1D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centre1D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a 1D hat function in an array of doubles. The hat is centered around centre1D</span>
@@ -134,7 +132,7 @@
 
 <div class="viewcode-block" id="basis_nd">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.basis_nd">[docs]</a>
-<span class="k">def</span> <span class="nf">basis_nd</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">basis_nd</span><span class="p">(</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centre</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use a tensor product to generalise the 1D basis function to arbitrarily high dimensions.</span>
@@ -163,7 +161,7 @@
 
 <div class="viewcode-block" id="meshgrid2matrix">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.meshgrid2matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">meshgrid2matrix</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">meshgrid2matrix</span><span class="p">(</span><span class="n">meshgrid</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a np.meshgrid into a np.2darray of grid points.</span>
 <span class="sd">    The function is mainly used when assigning grid points to Smolnyak-Subspaces.</span>
 
@@ -193,7 +191,7 @@
 
 <div class="viewcode-block" id="SparseGrid">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid">[docs]</a>
-<span class="k">class</span> <span class="nc">SparseGrid</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SparseGrid</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Each object of this class respresents a sparse grid.</span>
 <span class="sd">    In this implementation, a sparse grid is a list of Smolnyak-subspaces.</span>
 <span class="sd">    Each subspace is in principle a regular grid of a certain grid width but every second grid point is negelcted.</span>
@@ -210,7 +208,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_level_sum</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_level_sum</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for a sparse grid.</span>
 <span class="sd">        A sparse grid is uniquely defined by its dimension and a level sum that must not be exceeded by any of the Smolnyak subspaces.</span>
 <span class="sd">        A subspace&#39;s levels define how fine the grid is resolved in each of the respective dimensions.</span>
@@ -245,7 +243,7 @@
 
 <div class="viewcode-block" id="SparseGrid.refine_subspace">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.refine_subspace">[docs]</a>
-    <span class="k">def</span> <span class="nf">refine_subspace</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refine_subspace</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">current_levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">indexRefinedLevel</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursive function used to accumulate all subspaces up to a specified level sum in the form of a list</span>
@@ -280,7 +278,7 @@
 
 <div class="viewcode-block" id="SparseGrid.compute_n_points">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_n_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_n_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_n_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over all subspaces of the sparse grid and accumulates the total number of gridpoints.&quot;&quot;&quot;</span>
 
         <span class="c1"># initiate the counter to be 0</span>
@@ -296,7 +294,7 @@
 
 <div class="viewcode-block" id="SparseGrid.compute_all_points">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_all_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_all_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_all_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect all SG points in one array by iterating over all subspaces.&quot;&quot;&quot;</span>
 
         <span class="c1"># allocate enough storage for all points</span>
@@ -325,7 +323,7 @@
 
 <div class="viewcode-block" id="SparseGrid.compute_index_list4top_down_sparse_grid_traverse">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_index_list4top_down_sparse_grid_traverse">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_index_list4top_down_sparse_grid_traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_index_list4top_down_sparse_grid_traverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an ordering of subspaces where low-level subspaces come before high-level ones.&quot;&quot;&quot;</span>
 
         <span class="c1"># allocate storage to count the sum of levels of each subspace</span>
@@ -342,7 +340,7 @@
     <span class="c1"># TODO: Shouldn&#39;t an eval function return something?</span>
 <div class="viewcode-block" id="SparseGrid.eval_function_sg">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.eval_function_sg">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_function_sg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_function_sg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the provided function for all subspaces of a sparse grid by using Subspace.eval_function</span>
 
 <span class="sd">        Args:</span>
@@ -357,7 +355,7 @@
 
 <div class="viewcode-block" id="SparseGrid.compute_coefficients">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_coefficients">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_coefficients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;When using sparse grids for function interpolation (and quadrature),</span>
 <span class="sd">        this function computes the coefficients of all basis function of the whole sparse grid.</span>
 
@@ -387,7 +385,7 @@
 
 <div class="viewcode-block" id="SparseGrid.compute_integral">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.SparseGrid.compute_integral">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_integral</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform sparse grid integration over whole Sparse Grid using the computed coefficients (coeffs) and the volume of each basis function (basis_func_vol)&quot;&quot;&quot;</span>
         <span class="c1"># initialise the integral to be 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">integral</span> <span class="o">=</span> <span class="mi">0</span>
@@ -409,10 +407,10 @@
 
 <div class="viewcode-block" id="Subspace">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace">[docs]</a>
-<span class="k">class</span> <span class="nc">Subspace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Subspace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Objects represent one Smolnyak-Subspace of a sparse grid and are only defined by a level for each dimension.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SG</span><span class="p">:</span> <span class="n">SparseGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SG</span><span class="p">:</span> <span class="n">SparseGrid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the subspace by assigning a level, dimension, number of points and the actual points themselves.</span>
 
 <span class="sd">        Args:</span>
@@ -454,7 +452,7 @@
 
 <div class="viewcode-block" id="Subspace.eval_function">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace.eval_function">[docs]</a>
-    <span class="k">def</span> <span class="nf">eval_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate a function in all points of the respective subspace.</span>
 <span class="sd">        This function is typically called by SparseGrid.eval_function_sg.</span>
 
@@ -473,7 +471,7 @@
 
 <div class="viewcode-block" id="Subspace.pass_contributions2higher_levels">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.Subspace.pass_contributions2higher_levels">[docs]</a>
-    <span class="k">def</span> <span class="nf">pass_contributions2higher_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pass_contributions2higher_levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;During sparse grid interpolation, this function passes contributions to all subspaces with higher level.&quot;&quot;&quot;</span>
 
         <span class="c1"># loop over all subspaces of the SG (this can be made more efficient)</span>
@@ -498,7 +496,7 @@
 
 <div class="viewcode-block" id="evaluate_on_sparse_grid">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.evaluate_on_sparse_grid">[docs]</a>
-<span class="k">def</span> <span class="nf">evaluate_on_sparse_grid</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_on_sparse_grid</span><span class="p">(</span>
     <span class="n">args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">BaseModel</span><span class="p">,</span>
@@ -506,7 +504,7 @@
         <span class="n">DataTransformation</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is used to evaluate a function on a sparse grid in parallel. The input args is a tuple containing the function, the sparse grid and the number of processes to be used.</span>
 
@@ -531,7 +529,7 @@
 
 <div class="viewcode-block" id="inference_sparse_grid">
 <a class="viewcode-back" href="../../../eulerpi.core.sparsegrid.html#eulerpi.core.sparsegrid.inference_sparse_grid">[docs]</a>
-<span class="k">def</span> <span class="nf">inference_sparse_grid</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">inference_sparse_grid</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">data_transformation</span><span class="p">:</span> <span class="n">DataTransformation</span><span class="p">,</span>
@@ -646,7 +644,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -5,23 +7,19 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>External C++ Models &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -239,13 +237,13 @@ make<span class="w"> </span>-j
 </section>
 <section id="python-side-model">
 <h2>Python Side Model<a class="headerlink" href="#python-side-model" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">eulerpi.examples.cpp</span> <span class="kn">import</span> <span class="n">cpp_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArtificialModelInterface</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.examples.cpp</span><span class="w"> </span><span class="kn">import</span> <span class="n">cpp_model</span>
 
 
-<span class="k">class</span> <span class="nc">CppPlant</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CppPlant</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">ArtificialModelInterface</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A plant model which uses a c++ library with eigen3 to evaluate the forward pass and the gradient</span>
 <span class="sd">    Param0: Water [0,1]</span>
 <span class="sd">    Param1: Sun   [0,1]</span>
@@ -261,7 +259,7 @@ make<span class="w"> </span>-j
     <span class="n">PARAM_LIMITS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
     <span class="n">CENTRAL_PARAM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">central_param</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">CENTRAL_PARAM</span><span class="p">,</span>
         <span class="n">param_limits</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">PARAM_LIMITS</span><span class="p">,</span>
@@ -275,13 +273,13 @@ make<span class="w"> </span>-j
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cpp_model</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_artificial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -330,7 +328,7 @@ make<span class="w"> </span>-j
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

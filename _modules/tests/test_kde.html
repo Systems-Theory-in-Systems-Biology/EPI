@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tests.test_kde &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -85,20 +83,20 @@
   <h1>Source code for tests.test_kde</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Tests for the Kernel Density Estimation module&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.scipy.stats</span> <span class="k">as</span> <span class="nn">jstats</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jstats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">cm</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi.core.dense_grid</span> <span class="kn">import</span> <span class="n">generate_regular_grid</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">calc_kernel_width</span><span class="p">,</span> <span class="n">eval_kde_cauchy</span><span class="p">,</span> <span class="n">eval_kde_gauss</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.dense_grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_regular_grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.kde</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_kernel_width</span><span class="p">,</span> <span class="n">eval_kde_cauchy</span><span class="p">,</span> <span class="n">eval_kde_gauss</span>
 
 
 <div class="viewcode-block" id="kernel_estimators">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.kernel_estimators">[docs]</a>
-<span class="k">def</span> <span class="nf">kernel_estimators</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kernel_estimators</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the kernel density estimators&quot;&quot;&quot;</span>
     <span class="k">yield</span> <span class="n">eval_kde_cauchy</span>
     <span class="k">yield</span> <span class="n">eval_kde_gauss</span></div>
@@ -107,7 +105,7 @@
 
 <div class="viewcode-block" id="kde_data_test_set">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.kde_data_test_set">[docs]</a>
-<span class="k">def</span> <span class="nf">kde_data_test_set</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kde_data_test_set</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields test data for the KDE data tests&quot;&quot;&quot;</span>
     <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]),</span>
@@ -124,7 +122,7 @@
 <div class="viewcode-block" id="test_calc_kernel_width">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.test_calc_kernel_width">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Not implemented yet, but is important!&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_calc_kernel_width</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_calc_kernel_width</span><span class="p">():</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
     <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">==</span> <span class="mi">1</span></div>
@@ -134,8 +132,8 @@
 <div class="viewcode-block" id="test_kde_gauss">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.test_kde_gauss">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">xfail</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Not implemented yet, contains false values&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_kde_gauss</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">eulerpi.core.kde</span> <span class="kn">import</span> <span class="n">eval_kde_gauss</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_kde_gauss</span><span class="p">():</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.kde</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_kde_gauss</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">]])</span>
     <span class="n">data_stdevs</span> <span class="o">=</span> <span class="n">calc_kernel_width</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -149,7 +147,7 @@
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.test_KDE_batch">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;evalKDE&quot;</span><span class="p">,</span> <span class="n">kernel_estimators</span><span class="p">())</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_KDE_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">evalKDE</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_KDE_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">evalKDE</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test both kernel density estimators by using random data points and evaluating the Kernel Density Estimation at one point</span>
 
 <span class="sd">    Args:</span>
@@ -187,7 +185,7 @@
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.test_KDE_data">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data, stdevs, grid_bounds&quot;</span><span class="p">,</span> <span class="n">kde_data_test_set</span><span class="p">())</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;evalKDE&quot;</span><span class="p">,</span> <span class="n">kernel_estimators</span><span class="p">())</span>
-<span class="k">def</span> <span class="nf">test_KDE_data</span><span class="p">(</span><span class="n">evalKDE</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stdevs</span><span class="p">,</span> <span class="n">grid_bounds</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">33</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_KDE_data</span><span class="p">(</span><span class="n">evalKDE</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stdevs</span><span class="p">,</span> <span class="n">grid_bounds</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">33</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test both kernel density estimators by using one data point and evaluating the Kernel Density Estimation over a grid</span>
 
 <span class="sd">    Args:</span>
@@ -228,7 +226,7 @@
 <span class="c1"># WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...</span>
 <div class="viewcode-block" id="integrate">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.integrate">[docs]</a>
-<span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="c1"># Integrate the function over the grid</span>
     <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">integral</span></div>
@@ -238,7 +236,7 @@
 <div class="viewcode-block" id="test_kde_convergence_gauss">
 <a class="viewcode-back" href="../../tests.test_kde.html#tests.test_kde.test_kde_convergence_gauss">[docs]</a>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1D&quot;</span><span class="p">,</span> <span class="s2">&quot;2D&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_kde_convergence_gauss</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_kde_convergence_gauss</span><span class="p">(</span>
     <span class="n">dim</span><span class="p">,</span> <span class="n">num_grid_points</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_data_points</span><span class="o">=</span><span class="mi">10000</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test whether the KDE converges to the true distribution.&quot;&quot;&quot;</span>
@@ -262,7 +260,7 @@
     <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">kde_on_grid</span> <span class="o">-</span> <span class="n">exact_on_grid</span><span class="p">)</span>  <span class="c1"># difference between the two</span>
 
     <span class="c1"># Plot the KDE</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
@@ -321,7 +319,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

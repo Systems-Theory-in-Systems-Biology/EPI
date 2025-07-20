@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eulerpi.core.result_manager &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -84,24 +82,24 @@
              
   <h1>Source code for eulerpi.core.result_manager</h1><div class="highlight"><pre>
 <span></span><span class="c1"># TODO: Import Path from pathlib?</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seedir</span>
-<span class="kn">from</span> <span class="nn">seedir</span> <span class="kn">import</span> <span class="n">FakeDir</span><span class="p">,</span> <span class="n">FakeFile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seedir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seedir</span><span class="w"> </span><span class="kn">import</span> <span class="n">FakeDir</span><span class="p">,</span> <span class="n">FakeFile</span>
 
-<span class="kn">from</span> <span class="nn">eulerpi</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.inference_types</span> <span class="kn">import</span> <span class="n">InferenceType</span>
-<span class="kn">from</span> <span class="nn">eulerpi.core.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.inference_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">eulerpi.core.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
 
 <div class="viewcode-block" id="ResultManager">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager">[docs]</a>
-<span class="k">class</span> <span class="nc">ResultManager</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResultManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The result manager is responsible for saving the results of the inference and loading them again.</span>
 
 <span class="sd">    Attributes:</span>
@@ -109,7 +107,7 @@
 <span class="sd">        run_name(str): The name of the run which shall be saved. It is used to create subfolders for different runs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
@@ -118,7 +116,7 @@
 
 <div class="viewcode-block" id="ResultManager.count_emcee_sub_runs">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.count_emcee_sub_runs">[docs]</a>
-    <span class="k">def</span> <span class="nf">count_emcee_sub_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_emcee_sub_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This data organization function counts how many sub runs are saved for the specified scenario.</span>
 
 <span class="sd">        Args:</span>
@@ -146,7 +144,7 @@
 
 <div class="viewcode-block" id="ResultManager.get_slice_name">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_slice_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_slice_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_slice_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This organization function returns the name of the folder for the current slice.</span>
 
 <span class="sd">        Args:</span>
@@ -162,7 +160,7 @@
 
 <div class="viewcode-block" id="ResultManager.get_slice_path">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_slice_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_slice_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_slice_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the path to the folder where the results for the given slice are stored.</span>
 
 <span class="sd">        Args:</span>
@@ -180,7 +178,7 @@
 
 <div class="viewcode-block" id="ResultManager.create_application_folder_structure">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.create_application_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the `Application` folder including subfolder where all simulation results</span>
 <span class="sd">        are stored for this model. No files are deleted during this action.</span>
 
@@ -192,7 +190,7 @@
 
 <div class="viewcode-block" id="ResultManager.create_slice_folder_structure">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.create_slice_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the subfolders in `Aplication` for the given slice where all simulation results</span>
 <span class="sd">        are stored for this model and slice. No files are deleted during this action.</span>
 
@@ -212,7 +210,7 @@
         <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
         <span class="n">structure</span> <span class="o">=</span> <span class="n">applicationFolderStructure</span>
 
-        <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">            Args:</span>
@@ -252,7 +250,7 @@
 
 <div class="viewcode-block" id="ResultManager.delete_application_folder_structure">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_application_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_application_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes the `Applications` subfolder&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -265,7 +263,7 @@
 
 <div class="viewcode-block" id="ResultManager.delete_slice_folder_structure">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.delete_slice_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_slice_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes the `Applications/[slice]` subfolder</span>
 
 <span class="sd">        Args:</span>
@@ -278,7 +276,7 @@
 
 <div class="viewcode-block" id="ResultManager.get_application_path">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.get_application_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_application_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_application_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the path to the simulation results folder, containing also intermediate results.</span>
 
 <span class="sd">        Returns:</span>
@@ -291,7 +289,7 @@
 
 <div class="viewcode-block" id="ResultManager.save_run">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_run">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_run</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
         <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -347,7 +345,7 @@
 
 <div class="viewcode-block" id="ResultManager.save_overall">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_overall">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_overall</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_overall</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">overall_params</span><span class="p">,</span> <span class="n">overall_sim_results</span><span class="p">,</span> <span class="n">overall_density_evals</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the results of all runs of the emcee particle swarm sampler for the given slice.</span>
@@ -379,7 +377,7 @@
 
 <div class="viewcode-block" id="ResultManager.save_inference_information">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.save_inference_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_inference_information</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_inference_information</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
@@ -435,7 +433,7 @@
 
 <div class="viewcode-block" id="ResultManager.load_inference_results">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.load_inference_results">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_inference_results</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_inference_results</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">slices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -473,7 +471,7 @@
 
 <div class="viewcode-block" id="ResultManager.load_slice_inference_results">
 <a class="viewcode-back" href="../../../eulerpi.core.result_manager.html#eulerpi.core.result_manager.ResultManager.load_slice_inference_results">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_slice_inference_results</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_slice_inference_results</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">slice</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">num_burn_in_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -608,7 +606,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -5,23 +7,19 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>eulerpi.core.models.jax_model module &mdash; EPI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5c84b33f" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -87,7 +85,7 @@
 <span id="eulerpi-core-models-jax-model-module"></span><h1>eulerpi.core.models.jax_model module<a class="headerlink" href="#module-eulerpi.core.models.jax_model" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JaxModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JaxModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_limits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="eulerpi.core.models.base_model.html#eulerpi.core.models.base_model.BaseModel" title="eulerpi.core.models.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>The JaxModel is a base class for models using the JAX library.</p>
 <p>It automatically creates the jacobian method based on the forward method.
@@ -98,6 +96,31 @@ Additionally it jit compiles the forward and jacobian method with jax for faster
 Dont overwrite the __init__ method of JaxModel without calling the super constructor.
 Else your forward method wont be jitted.</p>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel.init_fw_and_bw">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_fw_and_bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel.init_fw_and_bw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel.init_fw_and_bw" title="Link to this definition"></a></dt>
+<dd><p>Calculates the jitted methods for the subclass(es).
+It is an unintended sideeffect that this happens for all intermediate classes also.
+E.g. for: class CoronaArtificial(Corona)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel.forward_method">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel.forward_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel.forward_method" title="Link to this definition"></a></dt>
+<dd><p>This method is called by the jitted forward method. It is not intended to be called directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the data should be generated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data generated from the parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel.forward_and_jacobian">
 <span class="sig-name descname"><span class="pre">forward_and_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel.forward_and_jacobian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel.forward_and_jacobian" title="Link to this definition"></a></dt>
@@ -111,23 +134,6 @@ Else your forward method wont be jitted.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>Tuple</em>[np.ndarray, np.ndarray]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel.forward_method">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel.forward_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel.forward_method" title="Link to this definition"></a></dt>
-<dd><p>This method is called by the jitted forward method. It is not intended to be called directly.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>param</strong> (<em>np.ndarray</em>) – The parameter for which the data should be generated.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The data generated from the parameter.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -147,14 +153,6 @@ Else your forward method wont be jitted.</p>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="eulerpi.core.models.jax_model.JaxModel.init_fw_and_bw">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_fw_and_bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/eulerpi/core/models/jax_model.html#JaxModel.init_fw_and_bw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#eulerpi.core.models.jax_model.JaxModel.init_fw_and_bw" title="Link to this definition"></a></dt>
-<dd><p>Calculates the jitted methods for the subclass(es).
-It is an unintended sideeffect that this happens for all intermediate classes also.
-E.g. for: class CoronaArtificial(Corona)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -201,7 +199,7 @@ Additionally it jit compiles the forward and jacobian method with jax.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022-2024, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
+    <p>&#169; Copyright 2022-2025, Vincent Wagner, Sebastian Höpfl, Lars Kaiser.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
