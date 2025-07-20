@@ -16,10 +16,8 @@ Euler Parameter Inference (EPI) is a Python package for inverse parameter infere
     :target: https://github.com/Systems-Theory-in-Systems-Biology/EPI/actions/workflows/ci.yml
     :alt: pytest
 
-.. image:: https://img.shields.io/badge/flake8-checked-blue.svg
-    :target: https://flake8.pycqa.org/
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+    :target: https://docs.astral.sh/ruff/
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: ./LICENSE.md
 .. image:: https://img.shields.io/badge/python-3.10-purple.svg
