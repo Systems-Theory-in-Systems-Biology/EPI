@@ -74,7 +74,7 @@ For more information read the [uv Documentation](https://docs.astral.sh/uv/conce
 
 ### Code quality checks
 
-We use black, flake8, isort to maintain a common style and check the code. Please check your code install the pre-commit hook:
+We use ruff to maintain a common code style to lint the code. Please check your code install the pre-commit hook:
 
   ``` bash
   pre-commit install
