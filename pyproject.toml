@@ -68,6 +68,7 @@ src = [".", "eulerpi"]
 [tool.ruff.format]
 
 [tool.ruff.lint]
+#select = ["E","F", "W", "B", "ANN", "B", "A", "COM", "C4", "INP", "SIM", "TID", "I", "NPY", "N", "PL", "RUF", "UP"]
 extend-ignore = ["E501", "E203", "F841"] # Length of lines already handled by black, spacing, unused variables
 
 [tool.ruff.lint.per-file-ignores]
