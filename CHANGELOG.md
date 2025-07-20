@@ -16,19 +16,23 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Bug in module B that caused a crash
-  
-## [0.11.0] - unreleased
+
+## [Unreleased] - unreleased
 
 ### Added
 
+### Changed
+
+### Fixed
+  
+## [0.11.0] - 2025-07-20
 
 ### Changed
 
-- Updating minimal python version to 3.11 to fix issues with cpp dependencies
-- Switched from poetry to uv
+- Switched from poetry to uv as project management tool
 - Switched to python 3.13 as default
-
-### Fixed
+- Updating minimal python version to 3.11 to fix issues with cpp dependencies
+- Increased upper policy version of cmake in cpp example
 
 ## [0.10.0] - 2024-11-22
 
