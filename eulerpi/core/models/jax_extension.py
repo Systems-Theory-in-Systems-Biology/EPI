@@ -1,4 +1,4 @@
-from functools import partial
+import functools
 from typing import Callable
 
 import jax
@@ -30,7 +30,7 @@ def value_and_jacfwd(
           typing.Tuple[jnp.ndarray, jnp.ndarray]: The value and the jacobian of the passed function using forward mode AD.
 
         """
-        pushfwd = partial(jax.jvp, fun, (x,))
+        pushfwd = functools.partial(jax.jvp, fun, (x,))
         y, jac = jax.vmap(pushfwd, out_axes=(None, -1))(
             (jnp.eye(x.shape[0], dtype=x.dtype),)
         )
