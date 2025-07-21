@@ -1,0 +1,30 @@
+name: Setup UV
+description: Install uv and set up Python with caching
+inputs:
+  version:
+    required: false
+    default: "0.7.20"
+  python-version:
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Install uv (with Python version)
+      if: inputs.python-version != ''
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: ${{ inputs.version }}
+        python-version: ${{ inputs.python-version }}
+        enable-cache: true
+
+    - name: Install uv (default Python)
+      if: inputs.python-version == ''
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: ${{ inputs.version }}
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install
+      shell: bash

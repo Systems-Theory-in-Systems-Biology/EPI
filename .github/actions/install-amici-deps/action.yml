@@ -1,0 +1,10 @@
+name: Install amici dependencies
+description: Install SWIG, BLAS, HDF5, etc. needed for amici
+runs:
+  using: "composite"
+  steps:
+    - name: Install amici dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y swig libblas-dev libatlas-base-dev libhdf5-dev
+      shell: bash
