@@ -1,0 +1,20 @@
+name: Prepare C++ test
+description: Install Eigen and build C++ test project
+runs:
+  using: "composite"
+  steps:
+    - name: Install Eigen
+      run: |
+        sudo apt install -y libeigen3-dev
+        sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+      shell: bash
+
+    - name: Build C++ example
+      run: |
+        source .venv/bin/activate
+        cd eulerpi/examples/cpp
+        mkdir build
+        cd build
+        cmake ..
+        make -j
+      shell: bash

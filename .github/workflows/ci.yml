@@ -11,62 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          version: "0.7.20"
-          enable-cache: true
-      - name: Verify uv installation
-        run: uv --version
-      - name: Set up Python
-        run: uv python install
-      - name: Run pre-commit
-        uses: pre-commit/action@v3.0.1
+      - uses: ./.github/actions/setup-uv
+      - uses: pre-commit/action@v3.0.1
 
   tests:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          # - windows-latest Reason: get it running on ubuntu-latest first
-          # - macOS-latest   Reason: get it running on ubuntu-latest first
-        python-version: ["3.13",]
-    name: Run tests
+        os: [ubuntu-latest]
+        python-version: ["3.13"]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-uv
         with:
-          version: "0.7.20"
           python-version: ${{ matrix.python-version }}
-          enable-cache: true
-      - name: Set up Python
-        run: uv python install
-      - name: Install amici dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y swig
-          sudo apt install -y libblas-dev
-          sudo apt install -y libatlas-base-dev
-          sudo apt install -y libhdf5-dev
-      - name: Install dependencies
-        run: uv sync --all-extras
-      - name: Prepare cpp test
-        run: |
-          sudo apt install -y libeigen3-dev
-          sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
-          source .venv/bin/activate
-          cd eulerpi/examples/cpp
-          mkdir build
-          cd build
-          cmake ..
-          make -j
+      - uses: ./.github/actions/install-amici-deps
+      - uses: ./.github/actions/install-project-deps
+      - uses: ./.github/actions/prepare-cpp-test
       - name: Run pytest
-        run: |
-          uv run pytest -v
+        run: uv run pytest -v
       # TODO: coverage run creates segmentation fault on Github ci, but not locally. Debug it
       # - name: Run coverage
       #   run: |
