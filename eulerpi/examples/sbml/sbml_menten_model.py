@@ -24,7 +24,7 @@ class MentenSBMLModel(SBMLModel, ArtificialModelInterface):
         timepoints = np.array([0.5, 1.0])
         param_ids = ["Km", "kcat"]
         state_ids = ["s1"]
-        sbml_files = files(package="eulerpi.examples.sbml")
+        sbml_files = files("eulerpi.examples.sbml")
         sbml_file_name = "sbml_menten_model.xml"
         with as_file(sbml_files.joinpath(sbml_file_name)) as sbml_file:
             super().__init__(
