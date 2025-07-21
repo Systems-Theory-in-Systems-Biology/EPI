@@ -12,7 +12,7 @@ from eulerpi.examples.simple_models import LinearODE
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
 def integrate(z, x, y):
     # Integrate the function over the grid
-    integral = np.trapz(np.trapz(z, y, axis=0), x, axis=0)
+    integral = np.trapezoid(np.trapezoid(z, y, axis=0), x, axis=0)
     return integral
 
 

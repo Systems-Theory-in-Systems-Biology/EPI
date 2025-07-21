@@ -125,7 +125,7 @@ def test_KDE_data(evalKDE, data, stdevs, grid_bounds, resolution=33):
 # WARNING: The following code only works for the simplest case. Equidistant grid, same number of points in each dimension, ...
 def integrate(z, x, y):
     # Integrate the function over the grid
-    integral = np.trapz(np.trapz(z, y, axis=0), x, axis=0)
+    integral = np.trapezoid(np.trapezoid(z, y, axis=0), x, axis=0)
     return integral
 
 
@@ -158,7 +158,7 @@ def test_kde_convergence_gauss(
 
     if dim == 1:
         grid = grid[:, 0]
-        error = np.trapz(diff, grid)  # Calculate the error
+        error = np.trapezoid(diff, grid)  # Calculate the error
         assert error < 0.1  # ~0.06 for 100 grid points, 1000 data points
 
         plt.plot(grid, kde_on_grid)
