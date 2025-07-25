@@ -81,7 +81,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for eulerpi.core.models.jax_extension</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
@@ -115,7 +115,7 @@
 <span class="sd">          typing.Tuple[jnp.ndarray, jnp.ndarray]: The value and the jacobian of the passed function using forward mode AD.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pushfwd</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jvp</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,))</span>
+        <span class="n">pushfwd</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jvp</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,))</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">pushfwd</span><span class="p">,</span> <span class="n">out_axes</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))(</span>
             <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),)</span>
         <span class="p">)</span>

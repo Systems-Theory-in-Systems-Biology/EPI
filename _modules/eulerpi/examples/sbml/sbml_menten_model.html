@@ -109,7 +109,7 @@
         <span class="n">timepoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
         <span class="n">param_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Km&quot;</span><span class="p">,</span> <span class="s2">&quot;kcat&quot;</span><span class="p">]</span>
         <span class="n">state_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">]</span>
-        <span class="n">sbml_files</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="s2">&quot;eulerpi.examples.sbml&quot;</span><span class="p">)</span>
+        <span class="n">sbml_files</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="s2">&quot;eulerpi.examples.sbml&quot;</span><span class="p">)</span>
         <span class="n">sbml_file_name</span> <span class="o">=</span> <span class="s2">&quot;sbml_menten_model.xml&quot;</span>
         <span class="k">with</span> <span class="n">as_file</span><span class="p">(</span><span class="n">sbml_files</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">sbml_file_name</span><span class="p">))</span> <span class="k">as</span> <span class="n">sbml_file</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
