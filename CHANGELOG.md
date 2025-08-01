@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Introduced automatic updates for the github actions through dependabot
+
 ### Changed
 
 ### Fixed
