@@ -9,11 +9,11 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.26
+    rev: 0.10.9
     hooks:
       - id: uv-lock
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
+    rev: v0.15.5
     hooks:
       - id: ruff-check
         types_or: [ python, pyi ]
